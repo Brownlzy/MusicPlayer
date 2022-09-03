@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 30
     buildToolsVersion "33.0.0"
 
     defaultConfig {
         applicationId "com.liux.musicplayer"
         minSdkVersion 29
-        targetSdkVersion 32
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 

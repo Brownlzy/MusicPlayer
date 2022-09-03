@@ -1,4 +1,4 @@
-package com.liux.musicplayer.ui.dashboard;
+package com.liux.musicplayer.ui.playlist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,24 +10,23 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import com.liux.musicplayer.R;
-import com.liux.musicplayer.databinding.FragmentDashboardBinding;
+import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 
-public class DashboardFragment extends Fragment {
+public class PlaylistFragment extends Fragment {
 
-    private DashboardViewModel dashboardViewModel;
-    private FragmentDashboardBinding binding;
+    private PlaylistViewModel playlistViewModel;
+    private FragmentPlaylistBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        playlistViewModel =
+                new ViewModelProvider(this).get(PlaylistViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentPlaylistBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        playlistViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

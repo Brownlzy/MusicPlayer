@@ -15,7 +15,6 @@ import com.liux.musicplayer.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
-    private Button btn_settings_permission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

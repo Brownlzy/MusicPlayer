@@ -4,5 +4,14 @@
     <string name="title_home">主页</string>
     <string name="title_playlist">播放列表</string>
     <string name="title_settings">设置</string>
-    <string name="ask_permission">检查存储权限</string>
+    <string name="check_permission">检查存储权限</string>
+    <string name="permission_granted">已取得权限</string>
+    <string name="permission_not_granted">未取得权限</string>
+    <string name="asking_permission">正在申请权限，若无权限管理窗口出现，请前往应用信息页手动设置</string>
+    <string name="ask_permission">请求存储权限</string>
+    <string name="title_permission">权限</string>
+    <string name="give_permission">给予存储权限</string>
+    <string name="switch_permission_on">音乐播放器已获得存储权限。</string>
+    <string name="switch_permission_off">音乐播放器必须获得存储权限才能查找并播放音乐，开启此选项将请求读取外部存储权限。</string>
+    <string name="example">示例</string>
 </resources>

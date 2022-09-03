@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">音乐播放器</string>
+    <string name="title_home">主页</string>
+    <string name="title_playlist">播放列表</string>
+    <string name="title_settings">设置</string>
+    <string name="ask_permission">检查存储权限</string>
+</resources>

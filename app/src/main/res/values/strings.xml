@@ -16,4 +16,8 @@
     <string name="title_play">Play</string>
     <string name="title_playersettings">Player Settings</string>
     <string name="click_mainfolder">Main Folder</string>
+    <string name="isMoveMusic">Move music to main folder</string>
+    <string name="isMoveMusic_summary">After opening, the music and lyrics files in the newly scanned directory will be automatically copied to the main folder</string>
+    <string name="title_about">About</string>
+    <string name="aboutApp">About MusicPlayer</string>
 </resources>

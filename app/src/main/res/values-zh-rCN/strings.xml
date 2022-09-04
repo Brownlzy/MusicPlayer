@@ -17,4 +17,8 @@
     <string name="title_play">播放</string>
     <string name="title_playersettings">播放器设置</string>
     <string name="click_mainfolder">主文件夹</string>
+    <string name="isMoveMusic">移动音乐至主文件夹</string>
+    <string name="isMoveMusic_summary">开启后将自动把新扫描目录下的音乐及歌词文件复制至主文件夹</string>
+    <string name="title_about">关于</string>
+    <string name="aboutApp">关于此应用</string>
 </resources>

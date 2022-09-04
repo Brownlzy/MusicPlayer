@@ -3,12 +3,12 @@
 
     <item
             android:id="@+id/navigation_home"
-            android:icon="@drawable/ic_baseline_home_24"
-            android:title="@string/title_home"/>
+            android:icon="@drawable/ic_baseline_library_music_24"
+            android:title="@string/title_play" />
 
     <item
             android:id="@+id/navigation_playlist"
-            android:icon="@drawable/ic_baseline_playlist_play_24"
+            android:icon="@drawable/ic_baseline_queue_music_24"
             android:title="@string/title_playlist"/>
 
     <item

@@ -8,23 +8,12 @@
     <string name="permission_not_granted">Permission NOT granted</string>
     <string name="asking_permission">Asking permission</string>
     <string name="ask_permission">Ask Permission</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_permission">Permission</string>
     <string name="give_permission">Give Storage Permission</string>
     <string name="switch_permission_on">The music player has obtained storage permission.</string>
     <string name="switch_permission_off">The music player must obtain storage permission to find and play music. Turning on this option will request to read external storage permission.</string>
     <string name="example">Example</string>
+    <string name="title_play">Play</string>
+    <string name="title_playersettings">Player Settings</string>
+    <string name="click_mainfolder">Main Folder</string>
 </resources>

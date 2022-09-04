@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">音乐播放器</string>
     <string name="title_home">主页</string>
-    <string name="title_playlist">播放列表</string>
+    <string name="title_playlist">列表</string>
     <string name="title_settings">设置</string>
     <string name="check_permission">检查存储权限</string>
     <string name="permission_granted">已取得权限</string>
@@ -14,4 +14,7 @@
     <string name="switch_permission_on">音乐播放器已获得存储权限。</string>
     <string name="switch_permission_off">音乐播放器必须获得存储权限才能查找并播放音乐，开启此选项将请求读取外部存储权限。</string>
     <string name="example">示例</string>
+    <string name="title_play">播放</string>
+    <string name="title_playersettings">播放器设置</string>
+    <string name="click_mainfolder">主文件夹</string>
 </resources>

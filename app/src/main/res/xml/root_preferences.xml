@@ -6,10 +6,18 @@
         <SwitchPreferenceCompat
             android:persistent="false"
             app:icon="@drawable/ic_baseline_sd_storage_24"
-            app:key="permission"
-            app:summaryOff="@string/switch_permission_off"
-            app:summaryOn="@string/switch_permission_on"
-            app:title="@string/give_permission" />
+            app:key="storage_permission"
+            app:summaryOff="@string/switch_storage_permission_off"
+            app:summaryOn="@string/switch_storage_permission_on"
+            app:title="@string/give_storage_permission" />
+
+        <SwitchPreferenceCompat
+            android:persistent="false"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="layer_permission"
+            app:summaryOff="@string/switch_layer_permission_off"
+            app:summaryOn="@string/switch_layer_permission_on"
+            app:title="@string/give_layer_permission" />
 
 
     </PreferenceCategory>
@@ -30,6 +38,12 @@
             app:key="isMoveMusic"
             app:title="@string/isMoveMusic"
             app:summary="@string/isMoveMusic_summary" />
+
+        <SwitchPreferenceCompat
+            app:key="isShowLyric"
+            app:title="@string/isShowLyric"
+            app:summary="@string/isShowLyric_summary"
+            app:dependency="layer_permission" />
 
     </PreferenceCategory>
 

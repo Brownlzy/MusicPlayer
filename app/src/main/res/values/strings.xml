@@ -28,4 +28,11 @@
     <string name="isShowLyric_summary">This settings need overlay permision</string>
     <string name="appInfo">ABOUT</string>
     <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="inverse">Inverse</string>
+    <string name="select_all">Sellect All</string>
+    <string name="addSongs">Add Songs</string>
+    <string name="addFolder">Add Folder</string>
+    <string name="editList">Edit List</string>
 </resources>

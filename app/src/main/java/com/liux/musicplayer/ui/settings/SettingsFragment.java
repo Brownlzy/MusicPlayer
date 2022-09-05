@@ -182,18 +182,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void popInfo() {
-        AlertDialog alertDialog2 = new AlertDialog.Builder(getContext())
+        AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.appInfo)
                 .setIcon(R.mipmap.ic_launcher)
-                .setNeutralButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 })
                 .create();
-        alertDialog2.show();
+        alertInfoDialog.show();
     }
 
     //检查权限是否获取成功

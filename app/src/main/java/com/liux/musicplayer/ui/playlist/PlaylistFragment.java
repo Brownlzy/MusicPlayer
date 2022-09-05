@@ -19,12 +19,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.liux.musicplayer.R;
 
 public class PlaylistFragment extends Fragment implements View.OnClickListener {
 

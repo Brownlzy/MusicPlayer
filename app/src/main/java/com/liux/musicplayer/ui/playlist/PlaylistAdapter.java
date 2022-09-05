@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.liux.musicplayer.R;
+
+import java.util.List;
 
 /**
  * Created by yangms on 2018/7/16.

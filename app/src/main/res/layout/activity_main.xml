@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,70 +9,91 @@
     <LinearLayout
         android:id="@+id/PlayBar"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="#C0DABF"
-        android:orientation="horizontal"
+        android:layout_height="96dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/nav_view">
 
         <LinearLayout
-            android:id="@+id/playBarPic"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_weight="1"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/musicPlaying"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:text="56789-5678"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/PlayFun"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:background="@drawable/layerlist"
+            app:layout_constraintBottom_toTopOf="@+id/nav_view">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal|center_vertical"
-                android:orientation="horizontal">
+                android:id="@+id/playBarPic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_round_skip_previous_24" />
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_round_pause_circle_outline_24" />
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_round_skip_next_24" />
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_round_repeat_24" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_launcher" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:fadingEdge="horizontal"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="24dp"
-                    android:text="56789-5678"
-                    android:textAlignment="center"
-                    android:textSize="16sp" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_round_skip_previous_24" />
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_round_pause_circle_outline_24" />
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_round_skip_next_24" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_round_repeat_24" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

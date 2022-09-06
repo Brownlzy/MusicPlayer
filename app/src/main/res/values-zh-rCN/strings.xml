@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">音乐播放器</string>
     <string name="title_home">主页</string>
-    <string name="title_playlist">列表</string>
+    <string name="title_playlist">播放列表</string>
     <string name="title_settings">设置</string>
     <string name="check_storage_permission">检查存储权限</string>
     <string name="permission_granted">已取得权限</string>
@@ -16,7 +16,7 @@
     <string name="example">示例</string>
     <string name="title_play">播放</string>
     <string name="title_playersettings">播放器设置</string>
-    <string name="click_mainfolder">主文件夹</string>
+    <string name="mainfolder">主文件夹</string>
     <string name="isMoveMusic">复制音乐至主文件夹</string>
     <string name="isMoveMusic_summary">开启后将自动把新扫描目录下的音乐及歌词文件复制至主文件夹</string>
     <string name="title_about">关于</string>
@@ -36,4 +36,8 @@
     <string name="addSongs">添加文件</string>
     <string name="addFolder">添加文件夹</string>
     <string name="editList">编辑列表</string>
+    <string name="confirmDelete">确定删除？</string>
+    <string name="deleteInfo">此操作不会删除相应音乐文件。</string>
+    <string name="item_menu_moreInfo">详细信息</string>
+    <string name="title_debug">调试选项</string>
 </resources>

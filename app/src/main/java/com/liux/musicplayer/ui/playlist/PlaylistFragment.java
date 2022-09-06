@@ -19,11 +19,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.liux.musicplayer.MainActivity;
+import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
@@ -33,10 +36,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private ListView lvData;
     private LinearLayout mLlEditBar;//控制下方那一行的显示与隐藏
     private PlaylistAdapter adapter;
-    private List<String> mData = new ArrayList<>();//所有数据
-    private List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
-    private SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
+    private List<MusicPlayer.Song> mSongList = new ArrayList<>();//所有数据
+    private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
+    private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
+    private boolean mutilChooseFlag = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         playlistViewModel = new ViewModelProvider(this).get(PlaylistViewModel.class);
@@ -54,7 +58,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
         initView(view);
         initData();
-        adapter = new PlaylistAdapter(getContext(), mData, stateCheckedMap);
+        adapter = new PlaylistAdapter(getContext(), mSongList, stateCheckedMap);
         lvData.setAdapter(adapter);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
@@ -92,6 +96,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         mLlEditBar.setVisibility(View.GONE);//隐藏下方布局
         adapter.setShowCheckBox(false);//让CheckBox那个方框隐藏
         adapter.notifyDataSetChanged();//更新ListView
+        mutilChooseFlag = false;
     }
 
     private void delete() {
@@ -100,8 +105,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             return;
         }
         AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.appInfo)
+                .setTitle(R.string.confirmDelete)
+                .setMessage(R.string.deleteInfo)
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
@@ -121,7 +126,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void beSureDelete() {
-        mData.removeAll(mCheckedData);//删除选中数据
+        mSongList.removeAll(mCheckedData);//删除选中数据
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();
@@ -133,12 +138,12 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
      */
     private void inverse() {
         mCheckedData.clear();
-        for (int i = 0; i < mData.size(); i++) {
+        for (int i = 0; i < mSongList.size(); i++) {
             if (stateCheckedMap.get(i)) {
                 stateCheckedMap.put(i, false);
             } else {
                 stateCheckedMap.put(i, true);
-                mCheckedData.add(mData.get(i));
+                mCheckedData.add(mSongList.get(i).source_uri);
             }
             lvData.setItemChecked(i, stateCheckedMap.get(i));//这个好行可以控制ListView复用的问题，不设置这个会出现点击一个会选中多个
         }
@@ -150,7 +155,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (isSelectedAll) {
             setStateCheckedMap(true);//将CheckBox的所有选中状态变成选中
             isSelectedAll = false;
-            mCheckedData.addAll(mData);//把所有的数据添加到选中列表中
+            //取出source——uri
+            List<String> uriList = mSongList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList());
+            mCheckedData.addAll(uriList);//把所有的数据添加到选中列表中
         } else {
             setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
             isSelectedAll = true;
@@ -162,7 +169,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateCheckBoxStatus(view, position);
+                if (mutilChooseFlag)
+                    updateCheckBoxStatus(view, position);
+                else {
+                    ((MainActivity) getActivity()).setNowPlayThis(position);
+                }
             }
         });
     }
@@ -176,6 +187,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                mutilChooseFlag = true;
                 mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
                 adapter.setShowCheckBox(true);//CheckBox的那个方框显示
                 updateCheckBoxStatus(view, position);
@@ -190,9 +202,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setItemChecked(position, holder.checkBox.isChecked());//长按ListView时选中按的那一项
         stateCheckedMap.put(position, holder.checkBox.isChecked());//存放CheckBox的选中状态
         if (holder.checkBox.isChecked()) {
-            mCheckedData.add(mData.get(position));//CheckBox选中时，把这一项的数据加到选中数据列表
+            mCheckedData.add(mSongList.get(position).source_uri);//CheckBox选中时，把这一项的数据加到选中数据列表
         } else {
-            mCheckedData.remove(mData.get(position));//CheckBox未选中时，把这一项的数据从选中数据列表移除
+            mCheckedData.remove(mSongList.get(position).source_uri);//CheckBox未选中时，把这一项的数据从选中数据列表移除
         }
         adapter.notifyDataSetChanged();
     }
@@ -209,9 +221,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
-        for (int i = 0; i < 1000; i++) {
-            mData.add("第" + i + "项");
-        }
+        mSongList = ((MainActivity) getActivity()).getMusicPlayer().getPlayList();
         setStateCheckedMap(false);
     }
 
@@ -219,7 +229,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
      * 设置所有CheckBox的选中状态
      */
     private void setStateCheckedMap(boolean isSelectedAll) {
-        for (int i = 0; i < mData.size(); i++) {
+        for (int i = 0; i < mSongList.size(); i++) {
             stateCheckedMap.put(i, isSelectedAll);
             lvData.setItemChecked(i, isSelectedAll);
         }

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class PlaylistViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final MutableLiveData<String> mText;
 
     public PlaylistViewModel() {
         mText = new MutableLiveData<>();

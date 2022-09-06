@@ -27,12 +27,7 @@
         <Preference
             app:icon="@drawable/ic_baseline_folder_24"
             app:key="setMainFolder"
-            app:title="@string/click_mainfolder" />
-
-        <EditTextPreference
-            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
-            app:key="mainFolder"
-            app:title="@string/click_mainfolder" />
+            app:title="@string/mainfolder" />
 
         <SwitchPreferenceCompat
             app:key="isMoveMusic"
@@ -53,6 +48,19 @@
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/title_debug">
+
+        <EditTextPreference
+            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
+            app:key="mainFolder"
+            app:title="@string/mainfolder" />
+
+        <EditTextPreference
+            app:key="playList"
+            app:title="@string/title_playlist" />
 
     </PreferenceCategory>
 

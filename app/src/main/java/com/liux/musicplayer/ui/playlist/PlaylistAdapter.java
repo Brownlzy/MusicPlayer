@@ -5,10 +5,12 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 
+import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 
 import java.util.List;
@@ -19,13 +21,13 @@ import java.util.List;
 
 public class PlaylistAdapter extends BaseAdapter {
 
-    List<String> data;
-    private Context mContext;
+    List<MusicPlayer.Song> data;
+    private final Context mContext;
     ViewHolder holder;
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
-    private SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
+    private final SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
 
-    public PlaylistAdapter(Context context, List<String> data, SparseBooleanArray stateCheckedMap) {
+    public PlaylistAdapter(Context context, List<MusicPlayer.Song> data, SparseBooleanArray stateCheckedMap) {
         this.data = data;
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;
@@ -57,24 +59,35 @@ public class PlaylistAdapter extends BaseAdapter {
         }
 
         holder.checkBox = convertView.findViewById(R.id.chb_select_way_point);
-        holder.mTvData = convertView.findViewById(R.id.tv_data);
+        holder.btnMore = convertView.findViewById(R.id.btn_more_vert);
+        holder.mItemTitle = convertView.findViewById(R.id.item_title);
+        holder.mItemId = convertView.findViewById(R.id.item_id);
+        holder.mItemSinger = convertView.findViewById(R.id.item_singer);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
 
-        holder.mTvData.setText(data.get(position));
+        holder.mItemTitle.setText(data.get(position).title);
+        holder.mItemId.setText(String.valueOf(data.get(position).id + 1));
+        holder.mItemSinger.setText(data.get(position).artist +
+                (data.get(position).album.equals("") ? "" : (" - " + data.get(position).album)));
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
         return convertView;
     }
 
     public class ViewHolder {
-        public TextView mTvData;
+        public TextView mItemTitle;
+        public TextView mItemId;
+        public TextView mItemSinger;
         public AppCompatCheckBox checkBox;
+        public ImageView btnMore;
     }
 
     private void showAndHideCheckBox() {
         if (isShowCheckBox) {
             holder.checkBox.setVisibility(View.VISIBLE);
+            holder.btnMore.setVisibility(View.GONE);
         } else {
             holder.checkBox.setVisibility(View.GONE);
+            holder.btnMore.setVisibility(View.VISIBLE);
         }
     }
 

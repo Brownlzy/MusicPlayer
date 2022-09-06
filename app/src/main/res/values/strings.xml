@@ -15,7 +15,7 @@
     <string name="example">Example</string>
     <string name="title_play">Play</string>
     <string name="title_playersettings">Player Settings</string>
-    <string name="click_mainfolder">Main Folder</string>
+    <string name="mainfolder">Main Folder</string>
     <string name="isMoveMusic">Move music to main folder</string>
     <string name="isMoveMusic_summary">After opening, the music and lyrics files in the newly scanned directory will be automatically copied to the main folder</string>
     <string name="title_about">About</string>
@@ -35,4 +35,8 @@
     <string name="addSongs">Add Songs</string>
     <string name="addFolder">Add Folder</string>
     <string name="editList">Edit List</string>
+    <string name="confirmDelete">Sure to delete?</string>
+    <string name="deleteInfo">This operation will not delete the corresponding music file.</string>
+    <string name="item_menu_moreInfo">Show Details</string>
+    <string name="title_debug">Debug</string>
 </resources>

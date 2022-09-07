@@ -115,7 +115,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void beSureDelete() {
-        mSongList.removeAll(mCheckedData);//删除选中数据
+        //mSongList.removeAll(mCheckedData);//删除选中数据
+        mSongList.removeIf(song -> mCheckedData.contains(song.source_uri));
+        for (int i = 0; i < mSongList.size(); i++) {
+            mSongList.get(i).id = i;
+        }
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();

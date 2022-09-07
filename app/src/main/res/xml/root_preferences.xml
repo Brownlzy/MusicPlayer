@@ -3,7 +3,16 @@
 
     <PreferenceCategory app:title="@string/title_permission">
 
-        <SwitchPreferenceCompat
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
+        <!--
+                <SwitchPreferenceCompat
+                    android:persistent="false"
+                    app:key="bugfix"
+                    app:title="" />-->
+
+        <CheckBoxPreference
             android:persistent="false"
             app:icon="@drawable/ic_baseline_sd_storage_24"
             app:key="storage_permission"
@@ -11,7 +20,7 @@
             app:summaryOn="@string/switch_storage_permission_on"
             app:title="@string/give_storage_permission" />
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             android:persistent="false"
             app:icon="@drawable/ic_baseline_layers_24"
             app:key="layer_permission"
@@ -27,19 +36,14 @@
         <Preference
             app:icon="@drawable/ic_baseline_folder_24"
             app:key="setMainFolder"
-            app:title="@string/click_mainfolder" />
+            app:title="@string/mainfolder" />
 
-        <EditTextPreference
-            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
-            app:key="mainFolder"
-            app:title="@string/click_mainfolder" />
-
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             app:key="isMoveMusic"
             app:title="@string/isMoveMusic"
             app:summary="@string/isMoveMusic_summary" />
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             app:key="isShowLyric"
             app:title="@string/isShowLyric"
             app:summary="@string/isShowLyric_summary"
@@ -53,6 +57,19 @@
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/title_debug">
+
+        <EditTextPreference
+            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
+            app:key="mainFolder"
+            app:title="@string/mainfolder" />
+
+        <EditTextPreference
+            app:key="playList"
+            app:title="@string/title_playlist" />
 
     </PreferenceCategory>
 

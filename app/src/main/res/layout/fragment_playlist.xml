@@ -1,137 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.playlist.PlaylistFragment">
-
-    <TextView
-            android:id="@+id/text_dashboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.playlist.PlaylistFragment">
 
     <LinearLayout
-            android:id="@+id/playlist_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
+        android:id="@+id/playlist_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@drawable/shape_rectangle">
 
         <LinearLayout
-                android:id="@+id/ll_addSongs"
-                style="@style/HeaderBarAddSongs">
+            android:id="@+id/ll_addSongs"
+            style="@style/HeaderBarAddSongs"
+            android:layout_height="48dp"
+            android:gravity="bottom">
 
-            <Button
-                    android:id="@+id/addSongs"
-                    android:text="@string/addSongs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/addSongs"
+                android:layout_width="42dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_outline_add_box_24"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:text="@string/addSongs" />
 
-            <Button
-                    android:id="@+id/addFolder"
-                    android:text="@string/addFolder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/addFolder"
+                android:layout_width="54dp"
+                android:layout_marginLeft="20dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_outline_create_new_folder_24"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:text="@string/addFolder" />
         </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/ll_editList"
-                style="@style/HeaderBarEditSongs">
+            android:id="@+id/ll_editList"
+            android:layout_height="match_parent"
+            style="@style/HeaderBarEditSongs">
 
-            <Button
-                    android:id="@+id/edit_list"
-                    android:text="@string/editList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/edit_list"
+                android:src="@drawable/ic_outline_create_24"
+                android:layout_marginRight="10dp"
+                android:layout_width="54dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:text="@string/editList" />
         </LinearLayout>
 
     </LinearLayout>
 
     <ListView
-            android:id="@+id/lv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/ll_edit_bar"
-            android:layout_below="@+id/playlist_header" />
+        android:id="@+id/lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_edit_bar"
+        android:layout_below="@+id/playlist_header"
+        android:background="@drawable/shape_rectangle" />
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_below="@+id/lv"
-            android:background="@android:color/darker_gray" />
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/lv"
+        android:background="@android:color/darker_gray" />
 
     <LinearLayout
-            android:id="@+id/ll_edit_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:translationZ="10dp"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone"
-            android:gravity="center_horizontal">
+        android:id="@+id/ll_edit_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="4dp"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:translationZ="10dp"
+        android:visibility="gone">
 
         <LinearLayout
-                android:id="@+id/ll_cancel"
-                style="@style/EditBarItemStyle">
+            android:id="@+id/ll_cancel"
+            style="@style/EditBarItemStyle">
 
             <ImageView
-                    style="@style/EditBarImageViewStyle"
-                    android:src="@drawable/ic_baseline_reply_24" />
+                style="@style/EditBarImageViewStyle"
+                android:src="@drawable/ic_baseline_reply_24" />
 
             <TextView
-                    style="@style/EditBarTextViewStyle"
-                    android:text="@string/cancel" />
+                style="@style/EditBarTextViewStyle"
+                android:text="@string/cancel" />
         </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/ll_delete"
-                style="@style/EditBarItemStyle">
+            android:id="@+id/ll_delete"
+            style="@style/EditBarItemStyle">
 
             <ImageView
-                    style="@style/EditBarImageViewStyle"
-                    android:src="@drawable/ic_baseline_delete_24" />
+                style="@style/EditBarImageViewStyle"
+                android:src="@drawable/ic_baseline_delete_24" />
 
             <TextView
-                    style="@style/EditBarTextViewStyle"
-                    android:text="@string/delete" />
+                style="@style/EditBarTextViewStyle"
+                android:text="@string/delete" />
         </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/ll_inverse"
-                style="@style/EditBarItemStyle">
+            android:id="@+id/ll_inverse"
+            style="@style/EditBarItemStyle">
 
             <ImageView
-                    style="@style/EditBarImageViewStyle"
-                    android:src="@drawable/ic_baseline_done_outline_24" />
+                style="@style/EditBarImageViewStyle"
+                android:src="@drawable/ic_baseline_done_outline_24" />
 
             <TextView
-                    style="@style/EditBarTextViewStyle"
-                    android:text="@string/inverse" />
+                style="@style/EditBarTextViewStyle"
+                android:text="@string/inverse" />
         </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/ll_select_all"
-                style="@style/EditBarItemStyle">
+            android:id="@+id/ll_select_all"
+            style="@style/EditBarItemStyle">
 
             <ImageView
-                    style="@style/EditBarImageViewStyle"
-                    android:src="@drawable/ic_baseline_done_all_24" />
+                style="@style/EditBarImageViewStyle"
+                android:src="@drawable/ic_baseline_done_all_24" />
 
             <TextView
-                    style="@style/EditBarTextViewStyle"
-                    android:text="@string/select_all" />
+                style="@style/EditBarTextViewStyle"
+                android:text="@string/select_all" />
         </LinearLayout>
     </LinearLayout>
 

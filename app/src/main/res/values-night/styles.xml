@@ -43,4 +43,9 @@
         <item name="android:gravity">right</item>
         <item name="android:orientation">horizontal</item>
     </style>
+
+    <style name="TabBarStyle">
+        <item name="android:background">@color/black</item>
+    </style>
+
 </resources>

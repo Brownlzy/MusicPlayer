@@ -25,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -34,10 +35,12 @@ import com.liux.musicplayer.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     //Preference控件
-    private SwitchPreferenceCompat switch_storage_permission;
-    private SwitchPreferenceCompat switch_layer_permission;
+    private CheckBoxPreference switch_storage_permission;
+    private CheckBoxPreference switch_layer_permission;
     private Preference setMainFolder;
+    private Preference clickGotoAppDetails;
     private EditTextPreference MainFolder;
+    private EditTextPreference dPlayList;
     private Preference About;
     //注册Activity回调
     ActivityResultLauncher<Intent> gotoAppInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -52,7 +55,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     });
     //注册Activity回调，用于处理权限申请
-    private ActivityResultLauncher<String> requestPermissionLauncher =
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
@@ -70,7 +73,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     gotoAppInfo.launch(intent);
                 }
             });
-    private ActivityResultLauncher<Intent> requestOverlayPermissionLauncher =
+    private final ActivityResultLauncher<Intent> requestOverlayPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), isGranted -> {
                 if (checkFloatPermission(getContext())) {
                     Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
@@ -104,7 +107,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("mainFolder", path);
             editor.apply();
-            MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
+            //MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
             setMainFolder.setSummary(MainFolder.getSummary());
             //Toast.makeText(getActivity(), sp.getString("mainFolder","---"), Toast.LENGTH_LONG).show();
         }
@@ -117,15 +120,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         MainFolder = findPreference("mainFolder");
+        clickGotoAppDetails = findPreference("gotoAppDetails");
+        dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
         About = findPreference("info");
-        //隐藏手动输入文件路径的设置选项
-        MainFolder.setVisible(false);
+        clickGotoAppDetails.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                Intent intent = new Intent("/");
+                ComponentName cm = new ComponentName("com.android.settings", "com.android.settings.applications.InstalledAppDetails");
+                intent.setComponent(cm);
+                intent.setAction("android.intent.action.VIEW");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setData(Uri.parse("package:com.liux.musicplayer"));
+                //调用
+                gotoAppInfo.launch(intent);
+                return true;
+            }
+        });
         //设置权限开关的监听
         switch_storage_permission.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if ((Boolean) newValue == Boolean.TRUE) {
+                if (newValue == Boolean.TRUE) {
                     return askPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
                 } else {
                     return !checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -135,23 +152,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch_layer_permission.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if ((Boolean) newValue == Boolean.TRUE) {
+                if (newValue == Boolean.TRUE) {
                     return requestSettingCanDrawOverlays();
                 } else {
                     return !checkFloatPermission(getContext());
                 }
             }
         });
+        if (checkFloatPermission(getContext()))
+            switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
-        if (checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
-
+        //findPreference("bugfix").setVisible(false);
+/*
         // 获取SharedPreferences对象
         SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         // 获取Editor对象
         SharedPreferences.Editor editor = sp.edit();
+*/
         //选择主文件目录
-        MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
+        MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         //监听权限开关按钮
         setMainFolder.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -176,6 +197,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
+
     private void popInfo() {
         AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.app_name)
@@ -193,12 +215,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     //检查权限是否获取成功
     public boolean checkPermission(String permission) {
-        if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            //拒绝修改开关
-            return false;
-        }
+        //拒绝修改开关
+        return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     //判断是否开启悬浮窗权限   context可以用你的Activity.或者tiis

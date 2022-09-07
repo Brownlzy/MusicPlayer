@@ -1,0 +1,146 @@
+[
+  {
+    "id": 0,
+    "title": "Counting Stars",
+    "artist": "OneRepublic",
+    "album": "Native (Deluxe Version)",
+    "filename": "OneRepublic - Counting Stars.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/OneRepublic - Counting Stars.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/OneRepublic - Counting Stars.lrc"
+  },
+  {
+    "id": 1,
+    "title": "夜、萤火虫和你",
+    "artist": "AniFace",
+    "album": "",
+    "filename": "AniFace - 夜、萤火虫和你.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/AniFace - 夜、萤火虫和你.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/AniFace - 夜、萤火虫和你.lrc"
+  },
+  {
+    "id": 2,
+    "title": "侠",
+    "artist": "FOX胡天渝、李丁丁",
+    "album": "生来如此",
+    "filename": "FOX胡天渝、李丁丁 - 侠.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/FOX胡天渝、李丁丁 - 侠.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/FOX胡天渝、李丁丁 - 侠.lrc"
+  },
+  {
+    "id": 3,
+    "title": "Cornfield Chase",
+    "artist": "Hans Zimmer",
+    "album": "Interstellar (Original Motion Picture Soundtrack) [Expanded Edition]",
+    "filename": "Hans Zimmer - Cornfield Chase.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/Hans Zimmer - Cornfield Chase.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/Hans Zimmer - Cornfield Chase.lrc"
+  },
+  {
+    "id": 4,
+    "title": "单车",
+    "artist": "陈奕迅",
+    "album": "Shall We Dance? Shall We Talk!",
+    "filename": "陈奕迅 - 单车.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/陈奕迅 - 单车.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/陈奕迅 - 单车.lrc"
+  },
+  {
+    "id": 5,
+    "title": "十年",
+    "artist": "陈奕迅",
+    "album": "黑白灰",
+    "filename": "陈奕迅 - 十年.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/陈奕迅 - 十年.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/陈奕迅 - 十年.lrc"
+  },
+  {
+    "id": 6,
+    "title": "暖暖",
+    "artist": "梁静茹",
+    "album": "亲亲",
+    "filename": "梁静茹 - 暖暖.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/梁静茹 - 暖暖.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/梁静茹 - 暖暖.lrc"
+  },
+  {
+    "id": 7,
+    "title": "风犬少年的天空",
+    "artist": "旅行团乐队",
+    "album": "青春剧原声专辑",
+    "filename": "旅行团乐队 - 风犬少年的天空.MP3",
+    "source_uri": "file:///storage/emulated/0/Music/旅行团乐队 - 风犬少年的天空.MP3",
+    "lyric_uri": "file:///storage/emulated/0/Music/旅行团乐队 - 风犬少年的天空.lrc"
+  },
+  {
+    "id": 8,
+    "title": "爷爷泡的茶",
+    "artist": "周杰伦",
+    "album": "八度空间",
+    "filename": "周杰伦 - 爷爷泡的茶.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/周杰伦 - 爷爷泡的茶.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/周杰伦 - 爷爷泡的茶.lrc"
+  },
+  {
+    "id": 9,
+    "title": "最伟大的作品",
+    "artist": "周杰伦",
+    "album": "最伟大的作品",
+    "filename": "周杰伦 - 最伟大的作品.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/周杰伦 - 最伟大的作品.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/周杰伦 - 最伟大的作品.lrc"
+  },
+  {
+    "id": 10,
+    "title": "万圣街",
+    "artist": "洛天依、乐正绫、墨清弦、言和",
+    "album": "万圣街",
+    "filename": "洛天依、乐正绫、墨清弦、言和 - 万圣街.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/洛天依、乐正绫、墨清弦、言和 - 万圣街.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/洛天依、乐正绫、墨清弦、言和 - 万圣街.lrc"
+  },
+  {
+    "id": 11,
+    "title": "少年中国说",
+    "artist": "张杰",
+    "album": "2018开学第一课",
+    "filename": "张杰 - 少年中国说.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/张杰 - 少年中国说.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/张杰 - 少年中国说.lrc"
+  },
+  {
+    "id": 12,
+    "title": "说好的再见",
+    "artist": "彭昱畅、张婧仪、梁靖康、周依然、张宥浩",
+    "album": "青春剧原声专辑",
+    "filename": "彭昱畅、张婧仪、梁靖康、周依然、张宥浩 - 说好的再见.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/彭昱畅、张婧仪、梁靖康、周依然、张宥浩 - 说好的再见.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/彭昱畅、张婧仪、梁靖康、周依然、张宥浩 - 说好的再见.lrc"
+  },
+  {
+    "id": 13,
+    "title": "MEGALOBOX",
+    "artist": "Mabanua",
+    "album": "メガロボクス オリジナル・サウンドトラック",
+    "filename": "Mabanua - MEGALOBOX.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/Mabanua - MEGALOBOX.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/Mabanua - MEGALOBOX.lrc"
+  },
+  {
+    "id": 14,
+    "title": "咖喱咖喱",
+    "artist": "牛奶咖啡",
+    "album": "欢乐颂2 电视原声带",
+    "filename": "牛奶咖啡 - 咖喱咖喱.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/牛奶咖啡 - 咖喱咖喱.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/牛奶咖啡 - 咖喱咖喱.lrc"
+  },
+  {
+    "id": 15,
+    "title": "形容",
+    "artist": "张寒崎; ",
+    "album": "形容",
+    "filename": "张寒崎 - 形容.mp3",
+    "source_uri": "file:///storage/emulated/0/Music/张寒崎 - 形容.mp3",
+    "lyric_uri": "file:///storage/emulated/0/Music/张寒崎 - 形容.lrc"
+  }
+]

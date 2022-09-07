@@ -68,6 +68,10 @@
             app:title="@string/mainfolder" />
 
         <EditTextPreference
+            app:key="nowId"
+            app:title="@string/nowId" />
+
+        <EditTextPreference
             app:key="playList"
             app:title="@string/title_playlist" />
 

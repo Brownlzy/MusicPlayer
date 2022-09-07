@@ -26,6 +26,8 @@ public class MusicPlayer {
     //0=顺序循环 1=单曲循环 2=随机播放
     private int playOrder;
     private final Context mContext;
+    private SharedPreferences sp;
+
 
     public class Song {
         public int id;
@@ -44,6 +46,7 @@ public class MusicPlayer {
         playOrder = 0;
         mContext = context;
         mainActivity = mMainActivity;
+        sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         setPlayList();
         setMediaPlayerListener();
     }
@@ -93,7 +96,7 @@ public class MusicPlayer {
     }
 
     private void setPlayList() {
-        SharedPreferences sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+        nowID = Integer.parseInt(sp.getString("nowId", "0"));
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"," +
@@ -195,8 +198,15 @@ public class MusicPlayer {
     private int playThis(int id) {
         int reId = 0;
         nowID = id;
-        reId = playThis(Uri.parse(songList.get(nowID).source_uri));
-        mp.start();
+        SharedPreferences.Editor spEditor = sp.edit();
+        spEditor.putString("nowId", String.valueOf(nowID));
+        spEditor.apply();
+        if (nowID > getMaxID()) {
+            reId = -1;
+        } else {
+            reId = playThis(Uri.parse(songList.get(nowID).source_uri));
+            mp.start();
+        }
         return reId;
     }
 

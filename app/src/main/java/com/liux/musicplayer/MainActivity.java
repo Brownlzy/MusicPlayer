@@ -229,7 +229,7 @@ public class MainActivity extends FragmentActivity {
                 playPrevOrNext(true);
             }
         });
-        startProgressBar();
+        initProgress();
     }
 
     private void initViewPager2() {

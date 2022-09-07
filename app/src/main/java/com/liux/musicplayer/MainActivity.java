@@ -3,6 +3,7 @@ package com.liux.musicplayer;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +54,28 @@ public class MainActivity extends FragmentActivity {
      * The pager adapter, which provides the pages to the view pager widget.
      */
     private FragmentStateAdapter pagerAdapter;
+    private ProgressThread progressThread;
 
+    private class ProgressThread extends Thread {
+        boolean flag = true;
+
+        @Override
+        public void run() {
+            super.run();
+            while (flag) {
+                if (musicPlayer.getMediaPlayer().isPlaying()) {
+                    playProgress.setProgress(musicPlayer.getMediaPlayer().getCurrentPosition()); //实时获取播放音乐的位置并且设置进度条的位置
+                }
+            }
+        }
+
+        //下面的函数是外部调用种植线程的，因为现在是不提倡直接带哦用stop方法的
+        public void stopThread() {
+
+            this.flag = false;
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,26 +107,11 @@ public class MainActivity extends FragmentActivity {
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            /**
-             * This method will be invoked when the current page is scrolled, either as part
-             * of a programmatically initiated smooth scroll or a user initiated touch scroll.
-             *
-             * @param position             Position index of the first page currently being displayed.
-             *                             Page position+1 will be visible if positionOffset is nonzero.
-             * @param positionOffset       Value from [0, 1) indicating the offset from the page at position.
-             * @param positionOffsetPixels Value in pixels indicating the offset from position.
-             */
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
 
-            /**
-             * This method will be invoked when a new page becomes selected. Animation is not
-             * necessarily complete.
-             *
-             * @param position Position index of the new selected page.
-             */
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -131,13 +138,6 @@ public class MainActivity extends FragmentActivity {
                 //setToolBarTitle(position);
             }
 
-            /**
-             * Called when the scroll state changes. Useful for discovering when the user begins
-             * dragging, when a fake drag is started, when the pager is automatically settling to the
-             * current page, or when it is fully stopped/idle. .
-             *
-             * @param state
-             */
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
@@ -223,6 +223,7 @@ public class MainActivity extends FragmentActivity {
         //}*/
     }
 
+
     private void setPlayOrPause() {
         if (musicPlayer.isPlaying()) {
             musicPlayer.pause();
@@ -247,6 +248,20 @@ public class MainActivity extends FragmentActivity {
                 setPlayBarTitle(musicId);
                 homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicId));
                 PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+                musicPlayer.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        //把所有的都回归到0
+                        playProgress.setProgress(0);
+                        musicPlayer.getMediaPlayer().seekTo(0);
+                    }
+                });
+                //初始化进度条
+                initProgress();
+                //I am thinking about use a thread to listen to the progress of the music
+                //开启进度条跟踪线程
+                progressThread = new ProgressThread();
+                progressThread.start();
                 break;
             default:
             case 1:
@@ -329,4 +344,27 @@ public class MainActivity extends FragmentActivity {
             return NUM_PAGES;
         }
     }
+
+    private void initProgress() {
+        //根据音乐的时长设置进度条的最大进度
+        playProgress.setMax(musicPlayer.getMediaPlayer().getDuration());
+        playProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                musicPlayer.getMediaPlayer().seekTo(seekBar.getProgress());
+                //松开之后音乐跳转到相应位置
+            }
+        });
+    }
+
 }

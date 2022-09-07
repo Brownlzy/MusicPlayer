@@ -7,10 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.MusicPlayer;
@@ -47,6 +44,7 @@ public class HomeFragment extends Fragment {
 
     public void setMusicInfo(MusicPlayer.Song song) {
         songTitle.setText(song.title);
-        songArtist.setText(song.artist);
+        songArtist.setText(song.artist +
+                (song.album.equals("") ? "" : (" - " + song.album)));
     }
 }

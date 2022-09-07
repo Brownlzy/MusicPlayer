@@ -92,6 +92,12 @@ public class MusicPlayer {
         return playOrder;
     }
 
+    public MediaPlayer getMediaPlayer() {
+        return mp;
+    }
+
+    ;
+
     public void setPlayOrder(int order) {
         playOrder = order;
     }
@@ -140,3 +146,4 @@ public class MusicPlayer {
         return mp.isPlaying();
     }
 }
+

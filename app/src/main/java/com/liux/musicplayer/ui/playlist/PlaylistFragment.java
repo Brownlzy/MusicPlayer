@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private ListView lvData;
     private LinearLayout mLlEditBar;//控制下方那一行的显示与隐藏
     private PlaylistAdapter adapter;
+    private ImageView editPen;
     private List<MusicPlayer.Song> mSongList = new ArrayList<>();//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
@@ -210,6 +212,19 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.ll_delete).setOnClickListener(this);
         view.findViewById(R.id.ll_inverse).setOnClickListener(this);
         view.findViewById(R.id.ll_select_all).setOnClickListener(this);
+        editPen = view.findViewById(R.id.edit_list);
+        editPen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mutilChooseFlag) {
+                    cancel();
+                } else {
+                    mutilChooseFlag = true;
+                    mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
+                    adapter.setShowCheckBox(true);//CheckBox的那个方框显示
+                }
+            }
+        });
         lvData.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
 

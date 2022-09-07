@@ -11,12 +11,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/musicPicAndInfoLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/musicPicLayout"
                 android:layout_width="match_parent"
                 android:layout_height="370dp"
                 android:layout_marginLeft="20dp"
@@ -29,25 +31,28 @@
                     android:src="@drawable/ic_launcher1080" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/home_song_title"
+            <LinearLayout
+                android:id="@+id/lyricLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text=""
-                android:textSize="32sp" />
+                android:layout_alignTop="@+id/musicPicLayout"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/musicPicLayout">
 
-            <TextView
-                android:id="@+id/home_song_artist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text=""
-                android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/songLyric"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:text="这里是歌词"
+                    android:textAlignment="center"
+                    android:textSize="32sp" />
 
-        </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,9 +60,46 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/musicInfoLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/musicPicLayout"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/musicPicLayout">
+
+                <TextView
+                    android:id="@+id/home_song_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:text="1343242"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:id="@+id/home_song_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:text="4324324"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/home_song_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:text="@string/fileInfo"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

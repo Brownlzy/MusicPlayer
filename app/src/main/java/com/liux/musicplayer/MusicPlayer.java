@@ -94,6 +94,10 @@ public class MusicPlayer {
         });
     }
 
+    public void refreshPlayList() {
+        setPlayList();
+    }
+
     private void setPlayList() {
         nowId = Integer.parseInt(sp.getString("nowId", "0"));
         String playListJson = sp.getString("playList",

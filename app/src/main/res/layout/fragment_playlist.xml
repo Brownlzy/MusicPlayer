@@ -46,10 +46,20 @@
             style="@style/HeaderBarEditSongs">
 
             <ImageView
+                android:id="@+id/refresh_list"
+                android:src="@drawable/ic_baseline_sync_24"
+                android:layout_marginRight="20dp"
+                android:layout_width="54dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:text="@string/editList" />
+
+            <ImageView
                 android:id="@+id/edit_list"
                 android:src="@drawable/ic_outline_create_24"
-                android:layout_marginRight="10dp"
-                android:layout_width="54dp"
+                android:layout_marginRight="15dp"
+                android:layout_width="42dp"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"

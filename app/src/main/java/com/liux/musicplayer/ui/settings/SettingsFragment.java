@@ -40,6 +40,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private EditTextPreference MainFolder;
+    private EditTextPreference NowId;
     private EditTextPreference dPlayList;
     private Preference About;
     //注册Activity回调
@@ -120,6 +121,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         MainFolder = findPreference("mainFolder");
+        NowId = findPreference("nowId");
         clickGotoAppDetails = findPreference("gotoAppDetails");
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
@@ -172,6 +174,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 */
         //选择主文件目录
         MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        NowId.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         //监听权限开关按钮

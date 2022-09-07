@@ -37,6 +37,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private LinearLayout mLlEditBar;//控制下方那一行的显示与隐藏
     private PlaylistAdapter adapter;
     private ImageView editPen;
+    private ImageView Refresh;
     private List<MusicPlayer.Song> mSongList = new ArrayList<>();//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
@@ -167,7 +168,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 if (mutilChooseFlag)
                     updateCheckBoxStatus(view, position);
                 else {
-                    ((MainActivity) getActivity()).setNowPlayThis(position);
+                    ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
                 }
             }
         });
@@ -225,7 +226,21 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
+        Refresh = view.findViewById(R.id.refresh_list);
+        Refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshList();
+            }
+        });
         lvData.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+    }
+
+    private void refreshList() {
+        ((MainActivity) getActivity()).getMusicPlayer().refreshPlayList();
+        initData();
+        adapter = new PlaylistAdapter(getContext(), mSongList, stateCheckedMap);
+        lvData.setAdapter(adapter);
     }
 
     private void initData() {

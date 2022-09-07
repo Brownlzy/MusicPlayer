@@ -25,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -34,8 +35,8 @@ import com.liux.musicplayer.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     //Preference控件
-    private SwitchPreferenceCompat switch_storage_permission;
-    private SwitchPreferenceCompat switch_layer_permission;
+    private CheckBoxPreference switch_storage_permission;
+    private CheckBoxPreference switch_layer_permission;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private EditTextPreference MainFolder;
@@ -162,6 +163,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
+        //findPreference("bugfix").setVisible(false);
 /*
         // 获取SharedPreferences对象
         SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
@@ -194,6 +196,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
     }
+
 
     private void popInfo() {
         AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())

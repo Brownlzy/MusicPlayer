@@ -80,7 +80,7 @@ public class MainActivity extends FragmentActivity {
                         "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"}]"));
 
         // Instantiate a ViewPager2 and a PagerAdapter.
-        viewPager = findViewById(R.id.nav_host_fragment_activity_main);
+        viewPager = findViewById(R.id.pager);
         bottomNavigationView = findViewById(R.id.nav_view);
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);

@@ -6,8 +6,13 @@
         <Preference
             app:key="gotoAppDetails"
             app:title="@string/gotoAppDetails" />
+        <!--
+                <SwitchPreferenceCompat
+                    android:persistent="false"
+                    app:key="bugfix"
+                    app:title="" />-->
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             android:persistent="false"
             app:icon="@drawable/ic_baseline_sd_storage_24"
             app:key="storage_permission"
@@ -15,7 +20,7 @@
             app:summaryOn="@string/switch_storage_permission_on"
             app:title="@string/give_storage_permission" />
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             android:persistent="false"
             app:icon="@drawable/ic_baseline_layers_24"
             app:key="layer_permission"
@@ -33,12 +38,12 @@
             app:key="setMainFolder"
             app:title="@string/mainfolder" />
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             app:key="isMoveMusic"
             app:title="@string/isMoveMusic"
             app:summary="@string/isMoveMusic_summary" />
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             app:key="isShowLyric"
             app:title="@string/isShowLyric"
             app:summary="@string/isShowLyric_summary"

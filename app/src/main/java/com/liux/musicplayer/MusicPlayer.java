@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -21,7 +20,7 @@ import java.util.Random;
 public class MusicPlayer {
     private final MediaPlayer mp;
     private List<Song> songList;
-    private int nowID;
+    private int nowId;
     private MainActivity mainActivity;
     //0=顺序循环 1=单曲循环 2=随机播放
     private int playOrder;
@@ -42,7 +41,7 @@ public class MusicPlayer {
     public MusicPlayer(MainActivity mMainActivity, Context context) {
         songList = new ArrayList<>();
         mp = new MediaPlayer();
-        nowID = 0;
+        nowId = 0;
         playOrder = 0;
         mContext = context;
         mainActivity = mMainActivity;
@@ -53,7 +52,7 @@ public class MusicPlayer {
 
     public void playPrevOrNext(boolean isNext) {
         int maxId = getMaxID();
-        int nowId = getNowID();
+        int nowId = getNowId();
         int order = getPlayOrder();
         switch (order) {
             case 2:
@@ -96,7 +95,7 @@ public class MusicPlayer {
     }
 
     private void setPlayList() {
-        nowID = Integer.parseInt(sp.getString("nowId", "0"));
+        nowId = Integer.parseInt(sp.getString("nowId", "0"));
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"," +
@@ -140,8 +139,8 @@ public class MusicPlayer {
         return songList;
     }
 
-    public int getNowID() {
-        return nowID;
+    public int getNowId() {
+        return nowId;
     }
 
     public int getMaxID() {
@@ -160,8 +159,8 @@ public class MusicPlayer {
         playOrder = order;
     }
 
-    public void setNowID(int id) {
-        nowID = id;
+    public void setNowId(int id) {
+        nowId = id;
     }
 
     public void playThisNow(int musicId) {
@@ -197,14 +196,14 @@ public class MusicPlayer {
 
     private int playThis(int id) {
         int reId = 0;
-        nowID = id;
+        nowId = id;
         SharedPreferences.Editor spEditor = sp.edit();
-        spEditor.putString("nowId", String.valueOf(nowID));
+        spEditor.putString("nowId", String.valueOf(nowId));
         spEditor.apply();
-        if (nowID > getMaxID()) {
+        if (nowId > getMaxID()) {
             reId = -1;
         } else {
-            reId = playThis(Uri.parse(songList.get(nowID).source_uri));
+            reId = playThis(Uri.parse(songList.get(nowId).source_uri));
             mp.start();
         }
         return reId;

@@ -1,9 +1,7 @@
 package com.liux.musicplayer;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +10,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -23,8 +20,6 @@ import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
-
-import java.util.Random;
 
 public class MainActivity extends FragmentActivity {
 
@@ -144,12 +139,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void initHomeFragment() {
-        musicPlayer.playThisNow(musicPlayer.getNowID());
+        musicPlayer.playThisNow(musicPlayer.getNowId());
         setPlayOrPause();
     }
 
     public void setHomeFragment() {
-        homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicPlayer.getNowID()));
+        homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicPlayer.getNowId()));
     }
 
     public void initProgress() {

@@ -158,7 +158,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
             }
         });
-        if (checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
+        if (checkFloatPermission(getContext()))
+            switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
 /*

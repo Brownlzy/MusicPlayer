@@ -46,4 +46,5 @@
     <string name="pauseOrPlay">Pause Or Play</string>
     <string name="playNext">Play Next</string>
     <string name="playOrder">Play Order</string>
+    <string name="give_permission">Give Permision</string>
 </resources>

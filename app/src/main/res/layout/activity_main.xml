@@ -11,7 +11,7 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/green_700"
+        style="@style/TabBarStyle"
         android:gravity="left|center_vertical"
         app:layout_constraintTop_toTopOf="parent">
 

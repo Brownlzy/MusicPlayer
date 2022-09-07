@@ -37,45 +37,66 @@ public class MainActivity extends FragmentActivity {
     private ImageView PlayBarPrev;
     private ImageView PlayBarNext;
     private MusicPlayer musicPlayer;
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
     private static final int NUM_PAGES = 3;
     private HomeFragment homeFragment;
     private PlaylistFragment playlistFragment;
     private SettingsFragment settingsFragment;
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNavigationView;
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
     private FragmentStateAdapter pagerAdapter;
     private ProgressThread progressThread;
 
     private class ProgressThread extends Thread {
-        boolean flag = true;
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        /**
+         * 调用这个方法实现暂停线程
+         */
+        void pauseThread() {
+            pause = true;
+        }
+
+        /**
+         * 调用这个方法实现恢复线程的运行
+         */
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        /**
+         * 注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+         */
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         @Override
         public void run() {
             super.run();
-            while (flag) {
+            int index = 0;
+            while (true) {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
                 if (musicPlayer.getMediaPlayer().isPlaying()) {
                     playProgress.setProgress(musicPlayer.getMediaPlayer().getCurrentPosition()); //实时获取播放音乐的位置并且设置进度条的位置
                 }
             }
         }
 
-        //下面的函数是外部调用种植线程的，因为现在是不提倡直接带哦用stop方法的
-        public void stopThread() {
-
-            this.flag = false;
-        }
-
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +104,115 @@ public class MainActivity extends FragmentActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        initViewCompat();
+    }
+
+    private void setPlayOrPause() {
+        if (musicPlayer.isPlaying()) {
+            musicPlayer.pause();
+            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+        } else {
+            musicPlayer.start();
+            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+        }
+    }
+
+    public MusicPlayer getMusicPlayer() {
+        return musicPlayer;
+    }
+
+    public void setPlayBarTitle(int musicId) {
+        PlayBarTitle.setText(musicPlayer.getPlayList().get(musicId).title + " - " + musicPlayer.getPlayList().get(musicId).artist);
+    }
+
+    public void setNowPlayThis(int musicId) {
+        switch (musicPlayer.playThis(musicId)) {
+            case 0:
+                setPlayBarTitle(musicId);
+                homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicId));
+                PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+                //初始化进度条
+                initProgress();
+                //I am thinking about use a thread to listen to the progress of the music
+                //开启进度条跟踪线程
+                progressThread = new ProgressThread();
+                progressThread.start();
+                break;
+            default:
+            case 1:
+                AlertDialog alertInfoDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.play_error)
+                        .setMessage(R.string.play_err_Info)
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .create();
+                alertInfoDialog.show();
+                break;
+        }
+    }
+
+    public void playPrevOrNext(boolean isNext) {
+        musicPlayer.playPrevOrNext(isNext);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
+    }
+
+    public void initHomeFragment() {
+        setNowPlayThis(musicPlayer.getNowID());
+        setPlayOrPause();
+    }
+
+    public void setHomeFragment() {
+        setNowPlayThis(musicPlayer.getNowID());
+    }
+
+    public void initProgress() {
+        //根据音乐的时长设置进度条的最大进度
+        playProgress.setMax(musicPlayer.getMediaPlayer().getDuration());
+        playProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                progressThread.pauseThread();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                musicPlayer.getMediaPlayer().seekTo(seekBar.getProgress());
+                //松开之后音乐跳转到相应位置
+                //progressThread = new ProgressThread();
+                if (progressThread != null)
+                    progressThread.resumeThread();
+            }
+        });
+        progressThread = new ProgressThread();
+        progressThread.start();
+    }
+
+    public void resetPlayProgress() {
+        playProgress.setProgress(0);
+        PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+    }
+
+    public void initViewCompat() {
         //BottomNavigationView navView = findViewById(R.id.nav_view);
         playProgress = findViewById(R.id.seekBar);
         PlayBarTitle = findViewById(R.id.musicPlaying);
@@ -96,11 +226,51 @@ public class MainActivity extends FragmentActivity {
         settingsFragment = new SettingsFragment();
 
         SharedPreferences sp = getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        musicPlayer = new MusicPlayer(MainActivity.this, sp.getString("playList",
-                "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
-                        "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"," +
-                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"}]"));
+        musicPlayer = new MusicPlayer(MainActivity.this, MainActivity.this);
 
+        initViewPager2();
+
+        PlayBarPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPlayOrPause();
+            }
+        });
+        PlayBarOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (musicPlayer.getPlayOrder()) {
+                    case 0:
+                        musicPlayer.setPlayOrder(1);
+                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
+                        break;
+                    case 1:
+                        musicPlayer.setPlayOrder(2);
+                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
+                        break;
+                    case 2:
+                    default:
+                        musicPlayer.setPlayOrder(0);
+                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
+                        break;
+                }
+            }
+        });
+        PlayBarPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrevOrNext(false);
+            }
+        });
+        PlayBarNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrevOrNext(true);
+            }
+        });
+    }
+
+    private void initViewPager2() {
         // Instantiate a ViewPager2 and a PagerAdapter.
         viewPager = findViewById(R.id.pager);
         bottomNavigationView = findViewById(R.id.nav_view);
@@ -171,156 +341,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        PlayBarPause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setPlayOrPause();
-            }
-        });
-        PlayBarOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (musicPlayer.getPlayOrder()) {
-                    case 0:
-                        musicPlayer.setPlayOrder(1);
-                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
-                        break;
-                    case 1:
-                        musicPlayer.setPlayOrder(2);
-                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
-                        break;
-                    case 2:
-                    default:
-                        musicPlayer.setPlayOrder(0);
-                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
-                        break;
-                }
-            }
-        });
-        PlayBarPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrevOrNext(false);
-            }
-        });
-        PlayBarNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrevOrNext(true);
-            }
-        });
-        /*if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            switch (musicPlayer.playThis(Uri.parse("file:///storage/emulated/0/Music/OneRepublic - Counting Stars.mp3"))) {
-                case -1:
-                    Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(MainActivity.this, "READY", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        //} else {
-            Toast.makeText(MainActivity.this, "noPermission", Toast.LENGTH_SHORT).show();
-        //}*/
     }
 
-
-    private void setPlayOrPause() {
-        if (musicPlayer.isPlaying()) {
-            musicPlayer.pause();
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
-        } else {
-            musicPlayer.start();
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
-        }
-    }
-
-    public MusicPlayer getMusicPlayer() {
-        return musicPlayer;
-    }
-
-    public void setPlayBarTitle(int musicId) {
-        PlayBarTitle.setText(musicPlayer.getPlayList().get(musicId).title + " - " + musicPlayer.getPlayList().get(musicId).artist);
-    }
-
-    public void setNowPlayThis(int musicId) {
-        switch (musicPlayer.playThis(musicId)) {
-            case 0:
-                setPlayBarTitle(musicId);
-                homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicId));
-                PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
-                musicPlayer.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        //把所有的都回归到0
-                        playProgress.setProgress(0);
-                        musicPlayer.getMediaPlayer().seekTo(0);
-                    }
-                });
-                //初始化进度条
-                initProgress();
-                //I am thinking about use a thread to listen to the progress of the music
-                //开启进度条跟踪线程
-                progressThread = new ProgressThread();
-                progressThread.start();
-                break;
-            default:
-            case 1:
-                AlertDialog alertInfoDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.play_error)
-                        .setMessage(R.string.play_err_Info)
-                        .setIcon(R.mipmap.ic_launcher)
-                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .create();
-                alertInfoDialog.show();
-                break;
-        }
-    }
-
-    public void playPrevOrNext(boolean isNext) {
-        int maxId = musicPlayer.getMaxID();
-        int nowId = musicPlayer.getNowID();
-        int order = musicPlayer.getPlayOrder();
-        if (order == 2) {
-            Random r = new Random();
-            nowId = r.nextInt(maxId + 1);
-        } else {
-            if (isNext) {
-                if (nowId < maxId) nowId += 1;
-                else nowId = 0;
-            } else {
-                if (nowId > 0) nowId = 0;
-                else nowId = maxId;
-            }
-        }
-        setNowPlayThis(nowId);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (viewPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
-        } else {
-            // Otherwise, select the previous step.
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-        }
-    }
-
-    public void initHomeFragment() {
-        setNowPlayThis(musicPlayer.getNowID());
-        setPlayOrPause();
-    }
-
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         public ScreenSlidePagerAdapter(FragmentActivity fa) {
             super(fa);
@@ -344,27 +366,4 @@ public class MainActivity extends FragmentActivity {
             return NUM_PAGES;
         }
     }
-
-    private void initProgress() {
-        //根据音乐的时长设置进度条的最大进度
-        playProgress.setMax(musicPlayer.getMediaPlayer().getDuration());
-        playProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                musicPlayer.getMediaPlayer().seekTo(seekBar.getProgress());
-                //松开之后音乐跳转到相应位置
-            }
-        });
-    }
-
 }

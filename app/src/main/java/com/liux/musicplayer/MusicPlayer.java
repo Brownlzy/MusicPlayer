@@ -2,9 +2,13 @@ package com.liux.musicplayer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -12,8 +16,17 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MusicPlayer {
+    private final MediaPlayer mp;
+    private List<Song> songList;
+    private int nowID;
+    private MainActivity mainActivity;
+    //0=顺序循环 1=单曲循环 2=随机播放
+    private int playOrder;
+    private final Context mContext;
+
     public class Song {
         public int id;
         public String title;
@@ -24,23 +37,68 @@ public class MusicPlayer {
         public String lyric_uri;
     }
 
-    private final MediaPlayer mp;
-    private List<Song> songList;
-    private int nowID;
-    //0=顺序循环 1=单曲循环 2=随机播放
-    private int playOrder;
-    private final Context mContext;
+    public void playPrevOrNext(boolean isNext) {
+        int maxId = getMaxID();
+        int nowId = getNowID();
+        int order = getPlayOrder();
+        switch (order) {
+            case 2:
+                Random r = new Random();
+                nowId = r.nextInt(maxId + 1);
+                break;
+            default:
+            case 0:
+                if (isNext) {
+                    if (nowId < maxId) nowId += 1;
+                    else nowId = 0;
+                } else {
+                    if (nowId > 0) nowId = 0;
+                    else nowId = maxId;
+                }
+                break;
+            case 1:
+                break;
+        }
+        playThis(nowId);
+        mainActivity.setHomeFragment();
+    }
 
-    public MusicPlayer(Context context, String playListJson) {
+    public MusicPlayer(MainActivity mMainActivity, Context context) {
         songList = new ArrayList<>();
         mp = new MediaPlayer();
         nowID = 0;
         playOrder = 0;
         mContext = context;
-        setPlayList(playListJson);
+        mainActivity = mMainActivity;
+        setPlayList();
+        setMediaPlayerListener();
     }
 
-    private void setPlayList(String playListJson) {
+    private void setMediaPlayerListener() {
+        //MediaPlayer准备资源的监听器
+        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+
+            }
+        });
+        //音频播放完成的监听器
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                //把所有的都回归到0
+                mainActivity.resetPlayProgress();
+                playPrevOrNext(true);
+            }
+        });
+    }
+
+    private void setPlayList() {
+        SharedPreferences sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+        String playListJson = sp.getString("playList",
+                "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
+                        "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"," +
+                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"}]");
         Gson gson = new Gson();
         java.lang.reflect.Type playListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
@@ -96,8 +154,6 @@ public class MusicPlayer {
         return mp;
     }
 
-    ;
-
     public void setPlayOrder(int order) {
         playOrder = order;
     }
@@ -134,12 +190,7 @@ public class MusicPlayer {
         mp.start();
     }
 
-    public void playNext() {
-
-    }
-
     public void setProgress(int second) {
-
     }
 
     public boolean isPlaying() {

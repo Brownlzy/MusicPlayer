@@ -37,6 +37,17 @@ public class MusicPlayer {
         public String lyric_uri;
     }
 
+    public MusicPlayer(MainActivity mMainActivity, Context context) {
+        songList = new ArrayList<>();
+        mp = new MediaPlayer();
+        nowID = 0;
+        playOrder = 0;
+        mContext = context;
+        mainActivity = mMainActivity;
+        setPlayList();
+        setMediaPlayerListener();
+    }
+
     public void playPrevOrNext(boolean isNext) {
         int maxId = getMaxID();
         int nowId = getNowID();
@@ -52,26 +63,14 @@ public class MusicPlayer {
                     if (nowId < maxId) nowId += 1;
                     else nowId = 0;
                 } else {
-                    if (nowId > 0) nowId = 0;
+                    if (nowId > 0) nowId -= 1;
                     else nowId = maxId;
                 }
                 break;
             case 1:
                 break;
         }
-        playThis(nowId);
-        mainActivity.setHomeFragment();
-    }
-
-    public MusicPlayer(MainActivity mMainActivity, Context context) {
-        songList = new ArrayList<>();
-        mp = new MediaPlayer();
-        nowID = 0;
-        playOrder = 0;
-        mContext = context;
-        mainActivity = mMainActivity;
-        setPlayList();
-        setMediaPlayerListener();
+        playThisNow(nowId);
     }
 
     private void setMediaPlayerListener() {
@@ -162,7 +161,38 @@ public class MusicPlayer {
         nowID = id;
     }
 
-    public int playThis(int id) {
+    public void playThisNow(int musicId) {
+        switch (playThis(musicId)) {
+            case 0:
+                mainActivity.setPlayBarTitle(musicId);
+                mainActivity.setHomeFragment();
+                //初始化进度条
+                mainActivity.resetPlayProgress();
+                //开启进度条跟踪线程
+                mainActivity.startProgressBar();
+                mainActivity.setPlayOrPause(true);
+                break;
+            default:
+            case 1:
+                mainActivity.setPlayBarTitle(musicId);
+                mainActivity.setHomeFragment();
+                AlertDialog alertInfoDialog = new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.play_error)
+                        .setMessage(R.string.play_err_Info)
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mainActivity.setViewPagerToId(2);
+                            }
+                        })
+                        .create();
+                alertInfoDialog.show();
+                break;
+        }
+    }
+
+    private int playThis(int id) {
         int reId = 0;
         nowID = id;
         reId = playThis(Uri.parse(songList.get(nowID).source_uri));

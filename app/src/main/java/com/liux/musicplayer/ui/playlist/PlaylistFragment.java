@@ -167,7 +167,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 if (mutilChooseFlag)
                     updateCheckBoxStatus(view, position);
                 else {
-                    ((MainActivity) getActivity()).setNowPlayThis(position);
+                    ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
                 }
             }
         });

@@ -12,34 +12,41 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.liux.musicplayer.MainActivity;
+import com.liux.musicplayer.MusicPlayer;
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
+    private TextView songTitle;
+    private TextView songArtist;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+        songTitle = view.findViewById(R.id.home_song_title);
+        songArtist = view.findViewById(R.id.home_song_artist);
+
+        callMainActivityForInfo();
+        return view;
+    }
+
+    private void callMainActivityForInfo() {
+        ((MainActivity) getActivity()).initHomeFragment();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public void setMusicInfo(MusicPlayer.Song song) {
+        songTitle.setText(song.title);
+        songArtist.setText(song.artist);
     }
 }

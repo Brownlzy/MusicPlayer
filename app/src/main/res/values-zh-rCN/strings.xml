@@ -40,4 +40,11 @@
     <string name="deleteInfo">此操作不会删除相应音乐文件。</string>
     <string name="item_menu_moreInfo">详细信息</string>
     <string name="title_debug">调试选项</string>
+    <string name="play_error">发生错误</string>
+    <string name="play_err_Info">准备播放时发生错误！文件可能不存在或未授予音乐播放器存储权限，请前往设置页进行设置。</string>
+    <string name="gotoAppDetails">前往应用详情页</string>
+    <string name="playPrev">上一个</string>
+    <string name="pauseOrPlay">暂停/播放</string>
+    <string name="playNext">下一个</string>
+    <string name="playOrder">播放顺序</string>
 </resources>

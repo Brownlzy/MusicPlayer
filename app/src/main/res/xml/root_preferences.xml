@@ -3,6 +3,10 @@
 
     <PreferenceCategory app:title="@string/title_permission">
 
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
+
         <SwitchPreferenceCompat
             android:persistent="false"
             app:icon="@drawable/ic_baseline_sd_storage_24"

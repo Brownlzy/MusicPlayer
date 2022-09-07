@@ -37,6 +37,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private SwitchPreferenceCompat switch_storage_permission;
     private SwitchPreferenceCompat switch_layer_permission;
     private Preference setMainFolder;
+    private Preference clickGotoAppDetails;
     private EditTextPreference MainFolder;
     private EditTextPreference dPlayList;
     private Preference About;
@@ -118,16 +119,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         MainFolder = findPreference("mainFolder");
+        clickGotoAppDetails = findPreference("gotoAppDetails");
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
         About = findPreference("info");
-        //DEBUG
-        //MainFolder.setVisible(false);
+        clickGotoAppDetails.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                Intent intent = new Intent("/");
+                ComponentName cm = new ComponentName("com.android.settings", "com.android.settings.applications.InstalledAppDetails");
+                intent.setComponent(cm);
+                intent.setAction("android.intent.action.VIEW");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setData(Uri.parse("package:com.liux.musicplayer"));
+                //调用
+                gotoAppInfo.launch(intent);
+                return true;
+            }
+        });
         //设置权限开关的监听
         switch_storage_permission.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if ((Boolean) newValue == Boolean.TRUE) {
+                if (newValue == Boolean.TRUE) {
                     return askPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
                 } else {
                     return !checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -137,16 +151,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch_layer_permission.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if ((Boolean) newValue == Boolean.TRUE) {
+                if (newValue == Boolean.TRUE) {
                     return requestSettingCanDrawOverlays();
                 } else {
                     return !checkFloatPermission(getContext());
                 }
             }
         });
+        if (checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
-        if (checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
 /*
         // 获取SharedPreferences对象
         SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);

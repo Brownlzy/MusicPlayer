@@ -39,4 +39,11 @@
     <string name="deleteInfo">This operation will not delete the corresponding music file.</string>
     <string name="item_menu_moreInfo">Show Details</string>
     <string name="title_debug">Debug</string>
+    <string name="play_error">Error</string>
+    <string name="play_err_Info">An error occurred while preparing to play! The file may not exist or the music player storage permission is not granted. Please go to the settings page to set it.</string>
+    <string name="gotoAppDetails">Go To AppDetails</string>
+    <string name="playPrev">Play Previous</string>
+    <string name="pauseOrPlay">Pause Or Play</string>
+    <string name="playNext">Play Next</string>
+    <string name="playOrder">Play Order</string>
 </resources>

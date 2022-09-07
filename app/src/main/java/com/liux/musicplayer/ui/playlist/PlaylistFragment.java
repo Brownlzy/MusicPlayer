@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
-    private PlaylistViewModel playlistViewModel;
     private FragmentPlaylistBinding binding;
 
     private ListView lvData;
@@ -43,18 +42,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private boolean mutilChooseFlag = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        playlistViewModel = new ViewModelProvider(this).get(PlaylistViewModel.class);
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         binding = FragmentPlaylistBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textDashboard;
-        playlistViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
         initView(view);
         initData();
@@ -210,7 +199,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView(View view) {
-        lvData = (ListView) view.findViewById(R.id.lv);
+        lvData = view.findViewById(R.id.lv);
         mLlEditBar = view.findViewById(R.id.ll_edit_bar);
 
         view.findViewById(R.id.ll_cancel).setOnClickListener(this);

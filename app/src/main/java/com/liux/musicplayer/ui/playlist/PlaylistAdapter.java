@@ -5,10 +5,9 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
@@ -77,7 +76,7 @@ public class PlaylistAdapter extends BaseAdapter {
         public TextView mItemTitle;
         public TextView mItemId;
         public TextView mItemSinger;
-        public AppCompatCheckBox checkBox;
+        public CheckBox checkBox;
         public ImageView btnMore;
     }
 

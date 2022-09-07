@@ -45,9 +45,6 @@ public class MusicPlayer {
         java.lang.reflect.Type playListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         songList = gson.fromJson(playListJson, playListType);
-        for (Song playlist : songList) {
-            System.out.print(playlist);
-        }
     }
 
     private void savePlayList() {
@@ -104,10 +101,11 @@ public class MusicPlayer {
     }
 
     public int playThis(int id) {
+        int reId = 0;
         nowID = id;
-        playThis(Uri.parse(songList.get(nowID).source_uri));
+        reId = playThis(Uri.parse(songList.get(nowID).source_uri));
         mp.start();
-        return 0;
+        return reId;
     }
 
     public int playThis(Uri musicPath) {

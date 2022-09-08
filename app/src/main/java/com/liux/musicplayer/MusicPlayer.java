@@ -115,8 +115,6 @@ public class MusicPlayer {
 
     private void setPlayList() {
         nowId = Integer.parseInt(sp.getString("nowId", "0"));
-        playOrder = Integer.parseInt(sp.getString("playOrder", "0"));
-        mainActivity.setPlayOrder(playOrder);
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"," +
@@ -125,6 +123,8 @@ public class MusicPlayer {
         java.lang.reflect.Type playListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         songList = gson.fromJson(playListJson, playListType);
+        setPlayOrder(Integer.parseInt(sp.getString("playOrder", "0")));
+        mainActivity.setPlayOrder(playOrder);
     }
 
     private void savePlayList() {
@@ -233,7 +233,7 @@ public class MusicPlayer {
     }
 
     private int playThis(int id) {
-        int reId = 0;
+        int reId;
         nowId = id;
         SharedPreferences.Editor spEditor = sp.edit();
         spEditor.putString("nowId", String.valueOf(nowId));

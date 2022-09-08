@@ -1,13 +1,20 @@
 package com.liux.musicplayer;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,7 +31,7 @@ import com.liux.musicplayer.ui.settings.SettingsFragment;
 public class MainActivity extends FragmentActivity {
 
     private ActivityMainBinding binding;
-    private SeekBar playProgress;
+    private SeekBar playProgressBar;
     private TextView PlayBarTitle;
     private TextView TabTitle;
     private ImageView PlayBarPause;
@@ -40,13 +47,35 @@ public class MainActivity extends FragmentActivity {
     private BottomNavigationView bottomNavigationView;
     private FragmentStateAdapter pagerAdapter;
     private ProgressThread progressThread;
+    private LinearLayout playProgressLayout;
+    private LinearLayout musicPlayingLayout;
+    private TextView playProgressNowText;
+    private TextView playProgressAllText;
+    //是否进入后台
+    private int countActivity = 0;
+    private boolean isBackground = false;
+
+    private Handler progressHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 100) {
+                playProgressBar.setProgress((int) msg.obj); //实时获取播放音乐的位置并且设置进度条的位置
+                playProgressNowText.setText((int) msg.obj / 60000 + (((int) msg.obj / 1000 % 60 < 10) ? ":0" : ":") + (int) msg.obj / 1000 % 60);
+            }
+        }
+    };
 
     private class ProgressThread extends Thread {
         private final Object lock = new Object();
         private boolean pause = false;
+
         //调用这个方法实现暂停线程
         void pauseThread() {
             pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
         }
 
         //调用这个方法实现恢复线程的运行
@@ -76,8 +105,17 @@ public class MainActivity extends FragmentActivity {
                 while (pause) {
                     onPause();
                 }
-                if (musicPlayer.getMediaPlayer().isPlaying()) {
-                    playProgress.setProgress(musicPlayer.getMediaPlayer().getCurrentPosition()); //实时获取播放音乐的位置并且设置进度条的位置
+                try {
+                    Thread.sleep(1000);
+                    if (musicPlayer.getMediaPlayer().isPlaying()) {
+                        int nowMillionSeconds = musicPlayer.getMediaPlayer().getCurrentPosition();
+                        Message msg = new Message();
+                        msg.what = 100;  //消息发送的标志
+                        msg.obj = nowMillionSeconds; //消息发送的内容如：  Object String 类 int
+                        progressHandler.sendMessage(msg);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -92,15 +130,74 @@ public class MainActivity extends FragmentActivity {
         setContentView(binding.getRoot());
 
         initViewCompat();
+        initBackgroundCallBack();
+    }
+
+    private void initBackgroundCallBack() {
+        registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+                countActivity++;
+                if (countActivity == 1 && isBackground) {
+                    Log.e("MyApplication", "onActivityStarted: 应用进入前台");
+                    isBackground = false;
+                    //说明应用重新进入了前台
+                    //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
+                    if (viewPager.getCurrentItem() == 0)
+                        startProgressBar();
+                }
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+                countActivity--;
+                if (countActivity <= 0 && !isBackground) {
+                    Log.e("MyApplication", "onActivityStarted: 应用进入后台");
+                    isBackground = true;
+                    //说明应用进入了后台
+                    //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
+                }
+                if (viewPager.getCurrentItem() == 0)
+                    startProgressBar();
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+
+            }
+        });
     }
 
     public void setPlayOrPause() {
         if (musicPlayer.isPlaying()) {
             musicPlayer.pause();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+            stopProgressBar();
         } else {
             musicPlayer.start();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+            startProgressBar();
         }
     }
 
@@ -147,9 +244,9 @@ public class MainActivity extends FragmentActivity {
         homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicPlayer.getNowId()));
     }
 
-    public void initProgress() {
+    private void initProgress() {
         //根据音乐的时长设置进度条的最大进度
-        playProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        playProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
             }
@@ -163,14 +260,19 @@ public class MainActivity extends FragmentActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 musicPlayer.getMediaPlayer().seekTo(seekBar.getProgress());
                 //松开之后音乐跳转到相应位置
+                playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
                 startProgressBar();
             }
         });
     }
 
-    public void initViewCompat() {
+    private void initViewCompat() {
         //BottomNavigationView navView = findViewById(R.id.nav_view);
-        playProgress = findViewById(R.id.seekBar);
+        playProgressBar = findViewById(R.id.seekBar);
+        playProgressLayout = findViewById(R.id.playProgress);
+        musicPlayingLayout = findViewById(R.id.musicPlayingLayout);
+        playProgressNowText = findViewById(R.id.nowProgress);
+        playProgressAllText = findViewById(R.id.allProgress);
         PlayBarTitle = findViewById(R.id.musicPlaying);
         TabTitle = findViewById(R.id.tabText);
         PlayBarPause = findViewById(R.id.playPause);
@@ -195,21 +297,7 @@ public class MainActivity extends FragmentActivity {
         PlayBarOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (musicPlayer.getPlayOrder()) {
-                    case 0:
-                        musicPlayer.setPlayOrder(1);
-                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
-                        break;
-                    case 1:
-                        musicPlayer.setPlayOrder(2);
-                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
-                        break;
-                    case 2:
-                    default:
-                        musicPlayer.setPlayOrder(0);
-                        PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
-                        break;
-                }
+                setPlayOrder();
             }
         });
         PlayBarPrev.setOnClickListener(new View.OnClickListener() {
@@ -225,6 +313,39 @@ public class MainActivity extends FragmentActivity {
             }
         });
         initProgress();
+    }
+
+    private void setPlayOrder() {
+        switch (musicPlayer.getPlayOrder()) {
+            case 0:
+                musicPlayer.setPlayOrder(1);
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
+                break;
+            case 1:
+                musicPlayer.setPlayOrder(2);
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
+                break;
+            case 2:
+            default:
+                musicPlayer.setPlayOrder(0);
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
+                break;
+        }
+    }
+
+    public void setPlayOrder(int playOrder) {
+        switch (playOrder) {
+            default:
+            case 0:
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
+                break;
+            case 1:
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
+                break;
+            case 2:
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
+                break;
+        }
     }
 
     private void initViewPager2() {
@@ -246,18 +367,21 @@ public class MainActivity extends FragmentActivity {
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
-                        PlayBarTitle.setVisibility(View.GONE);
-                        playProgress.setVisibility(View.VISIBLE);
+                        musicPlayingLayout.setVisibility(View.GONE);
+                        playProgressLayout.setVisibility(View.VISIBLE);
+                        startProgressBar();
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
-                        PlayBarTitle.setVisibility(View.VISIBLE);
-                        playProgress.setVisibility(View.GONE);
+                        musicPlayingLayout.setVisibility(View.VISIBLE);
+                        playProgressLayout.setVisibility(View.GONE);
+                        stopProgressBar();
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
-                        PlayBarTitle.setVisibility(View.VISIBLE);
-                        playProgress.setVisibility(View.GONE);
+                        musicPlayingLayout.setVisibility(View.VISIBLE);
+                        playProgressLayout.setVisibility(View.GONE);
+                        stopProgressBar();
                         break;
                 }
             }
@@ -273,21 +397,24 @@ public class MainActivity extends FragmentActivity {
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
-                        PlayBarTitle.setVisibility(View.GONE);
-                        playProgress.setVisibility(View.VISIBLE);
+                        musicPlayingLayout.setVisibility(View.GONE);
+                        playProgressLayout.setVisibility(View.VISIBLE);
                         viewPager.setCurrentItem(0, false);
+                        startProgressBar();
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
-                        PlayBarTitle.setVisibility(View.VISIBLE);
-                        playProgress.setVisibility(View.GONE);
+                        musicPlayingLayout.setVisibility(View.VISIBLE);
+                        playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(1, false);
+                        stopProgressBar();
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
-                        PlayBarTitle.setVisibility(View.VISIBLE);
-                        playProgress.setVisibility(View.GONE);
+                        musicPlayingLayout.setVisibility(View.VISIBLE);
+                        playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(2, false);
+                        stopProgressBar();
                         break;
                 }
                 return true;
@@ -327,18 +454,21 @@ public class MainActivity extends FragmentActivity {
         if (progressThread == null) {
             progressThread = new MainActivity.ProgressThread();
             progressThread.start();
-        } else {
+        } else if (progressThread.isPaused()) {
             progressThread.resumeThread();
         }
     }
 
     public void stopProgressBar() {
-        if (progressThread != null) progressThread.pauseThread();
+        if (progressThread != null && !progressThread.isPaused())
+            progressThread.pauseThread();
     }
 
     public void resetPlayProgress() {
-        playProgress.setMax(musicPlayer.getMediaPlayer().getDuration());
-        playProgress.setProgress(0);
+        int maxMillionSeconds = musicPlayer.getMediaPlayer().getDuration();
+        playProgressBar.setMax(maxMillionSeconds);
+        playProgressAllText.setText(maxMillionSeconds / 60000 + (((int) maxMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + maxMillionSeconds / 1000 % 60);
+        playProgressBar.setProgress(0);
         setPlayOrPause(false);
     }
 

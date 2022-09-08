@@ -50,4 +50,9 @@
     <string name="give_permission">授权</string>
     <string name="fileInfo">文件信息：</string>
     <string name="nowId">当前播放ID</string>
+    <string name="title_album">专辑：</string>
+    <string name="title_path">文件路径：</string>
+    <string name="title_filename">文件名：</string>
+    <string name="title_lyric">歌词路径：</string>
+    <string name="item_menu_play">播放</string>
 </resources>

@@ -2,13 +2,18 @@ package com.liux.musicplayer.ui.playlist;
 
 import android.content.Context;
 import android.util.SparseBooleanArray;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.widget.PopupMenu;
+
+import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 
@@ -25,11 +30,13 @@ public class PlaylistAdapter extends BaseAdapter {
     ViewHolder holder;
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
     private final SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
+    private PlaylistFragment mPlaylistFragment;
 
-    public PlaylistAdapter(Context context, List<MusicPlayer.Song> data, SparseBooleanArray stateCheckedMap) {
+    public PlaylistAdapter(PlaylistFragment playlistFragment, Context context, List<MusicPlayer.Song> data, SparseBooleanArray stateCheckedMap) {
         this.data = data;
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;
+        mPlaylistFragment = playlistFragment;
     }
 
     @Override
@@ -69,6 +76,12 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemSinger.setText(data.get(position).artist +
                 (data.get(position).album.equals("") ? "" : (" - " + data.get(position).album)));
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
+        holder.btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlaylistFragment.popMenu(position, v);
+            }
+        });
         return convertView;
     }
 

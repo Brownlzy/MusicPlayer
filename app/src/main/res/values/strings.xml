@@ -49,4 +49,8 @@
     <string name="give_permission">Give Permision</string>
     <string name="fileInfo">File Information:</string>
     <string name="nowId">Current Playing</string>
+    <string name="title_album">"Album : "</string>
+    <string name="title_path">"FilePath : "</string>
+    <string name="title_filename">"Filename : "</string>
+    <string name="title_lyric">"LyricPath : "</string>
 </resources>

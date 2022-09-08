@@ -147,7 +147,7 @@ public class MainActivity extends FragmentActivity {
                     Log.e("MyApplication", "onActivityStarted: 应用进入前台");
                     isBackground = false;
                     //说明应用重新进入了前台
-                    Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
                     if (viewPager.getCurrentItem() == 0)
                         startProgressBar();
                 }
@@ -171,7 +171,7 @@ public class MainActivity extends FragmentActivity {
                     Log.e("MyApplication", "onActivityStarted: 应用进入后台");
                     isBackground = true;
                     //说明应用进入了后台
-                    Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
                 }
                 if (viewPager.getCurrentItem() == 0)
                     startProgressBar();
@@ -466,7 +466,7 @@ public class MainActivity extends FragmentActivity {
     public void resetPlayProgress() {
         int maxMillionSeconds = musicPlayer.getMediaPlayer().getDuration();
         playProgressBar.setMax(maxMillionSeconds);
-        playProgressAllText.setText(maxMillionSeconds / 60000 + ":" + maxMillionSeconds / 1000 % 60);
+        playProgressAllText.setText(maxMillionSeconds / 60000 + (((int) maxMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + maxMillionSeconds / 1000 % 60);
         playProgressBar.setProgress(0);
         setPlayOrPause(false);
     }

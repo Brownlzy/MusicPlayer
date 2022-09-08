@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -26,6 +27,8 @@ public class MusicPlayer {
     private int playOrder;
     private final Context mContext;
     private SharedPreferences sp;
+    private List<Integer> shuffleOrder;
+    private int shuffleId;
 
 
     public class Song {
@@ -56,8 +59,20 @@ public class MusicPlayer {
         int order = getPlayOrder();
         switch (order) {
             case 2:
-                Random r = new Random();
-                nowId = r.nextInt(maxId + 1);
+                if (isNext) {
+                    if (shuffleId < shuffleOrder.size() - 1) {
+                        shuffleId += 1;
+                    } else {
+                        shuffleId = 0;
+                    }
+                } else {
+                    if (shuffleId > 0) {
+                        shuffleId -= 1;
+                    } else {
+                        shuffleId = shuffleOrder.size() - 1;
+                    }
+                }
+                nowId = shuffleOrder.get(shuffleId);
                 break;
             default:
             case 0:
@@ -163,6 +178,20 @@ public class MusicPlayer {
 
     public void setPlayOrder(int order) {
         playOrder = order;
+        savePlayOrder();
+        if (playOrder == 2) {
+            shuffleOrder = new ArrayList<>();
+            for (int i = 0; i < songList.size(); i++) {
+                if (i != nowId)
+                    shuffleOrder.add(i);
+            }
+            Collections.shuffle(shuffleOrder);
+            shuffleOrder.add(nowId);
+            shuffleId = shuffleOrder.size() - 1;
+        }
+    }
+
+    private void savePlayOrder() {
         SharedPreferences.Editor spEditor = sp.edit();
         spEditor.putString("playOrder", String.valueOf(playOrder));
         spEditor.apply();

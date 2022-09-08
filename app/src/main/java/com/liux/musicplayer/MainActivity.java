@@ -260,6 +260,7 @@ public class MainActivity extends FragmentActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 musicPlayer.getMediaPlayer().seekTo(seekBar.getProgress());
                 //松开之后音乐跳转到相应位置
+                playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
                 startProgressBar();
             }
         });

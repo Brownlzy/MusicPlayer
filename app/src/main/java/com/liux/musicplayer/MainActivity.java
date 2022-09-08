@@ -317,18 +317,26 @@ public class MainActivity extends FragmentActivity {
 
     private void setPlayOrder() {
         switch (musicPlayer.getPlayOrder()) {
-            case 0:
-                musicPlayer.setPlayOrder(1);
-                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
-                break;
-            case 1:
-                musicPlayer.setPlayOrder(2);
-                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
-                break;
-            case 2:
-            default:
-                musicPlayer.setPlayOrder(0);
+            case MusicPlayer.LIST_PLAY:
+                musicPlayer.setPlayOrder(MusicPlayer.REPEAT_LIST);
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
+                Toast.makeText(this, R.string.repeat_list, Toast.LENGTH_SHORT).show();
+                break;
+            case MusicPlayer.REPEAT_LIST:
+                musicPlayer.setPlayOrder(MusicPlayer.REPEAT_ONE);
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
+                Toast.makeText(this, R.string.repeat_one, Toast.LENGTH_SHORT).show();
+                break;
+            case MusicPlayer.REPEAT_ONE:
+                musicPlayer.setPlayOrder(MusicPlayer.SHUFFLE_PLAY);
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
+                Toast.makeText(this, R.string.shuffle_play, Toast.LENGTH_SHORT).show();
+                break;
+            default:
+            case MusicPlayer.SHUFFLE_PLAY:
+                musicPlayer.setPlayOrder(MusicPlayer.LIST_PLAY);
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_baseline_low_priority_24));
+                Toast.makeText(this, R.string.list_play, Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -336,13 +344,16 @@ public class MainActivity extends FragmentActivity {
     public void setPlayOrder(int playOrder) {
         switch (playOrder) {
             default:
-            case 0:
+            case MusicPlayer.LIST_PLAY:
+                PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_baseline_low_priority_24));
+                break;
+            case MusicPlayer.REPEAT_LIST:
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
                 break;
-            case 1:
+            case MusicPlayer.REPEAT_ONE:
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
                 break;
-            case 2:
+            case MusicPlayer.SHUFFLE_PLAY:
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
                 break;
         }
@@ -468,6 +479,7 @@ public class MainActivity extends FragmentActivity {
         int maxMillionSeconds = musicPlayer.getMediaPlayer().getDuration();
         playProgressBar.setMax(maxMillionSeconds);
         playProgressAllText.setText(maxMillionSeconds / 60000 + (((int) maxMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + maxMillionSeconds / 1000 % 60);
+        playProgressNowText.setText("0:00");
         playProgressBar.setProgress(0);
         setPlayOrPause(false);
     }

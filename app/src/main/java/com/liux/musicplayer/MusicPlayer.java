@@ -23,8 +23,12 @@ public class MusicPlayer {
     private List<Song> songList;
     private int nowId;
     private MainActivity mainActivity;
-    //0=顺序循环 1=单曲循环 2=随机播放
+    //0=顺序播放 1=列表循环 2=单曲循环 3=随机播放
     private int playOrder;
+    public static final int LIST_PLAY = 0;
+    public static final int REPEAT_LIST = 1;
+    public static final int REPEAT_ONE = 2;
+    public static final int SHUFFLE_PLAY = 3;
     private final Context mContext;
     private SharedPreferences sp;
     private List<Integer> shuffleOrder;
@@ -58,7 +62,7 @@ public class MusicPlayer {
         int nowId = getNowId();
         int order = getPlayOrder();
         switch (order) {
-            case 2:
+            case SHUFFLE_PLAY:
                 if (isNext) {
                     if (shuffleId < shuffleOrder.size() - 1) {
                         shuffleId += 1;
@@ -74,8 +78,8 @@ public class MusicPlayer {
                 }
                 nowId = shuffleOrder.get(shuffleId);
                 break;
-            default:
-            case 0:
+            case REPEAT_ONE:
+            case REPEAT_LIST:
                 if (isNext) {
                     if (nowId < maxId) nowId += 1;
                     else nowId = 0;
@@ -84,7 +88,19 @@ public class MusicPlayer {
                     else nowId = maxId;
                 }
                 break;
-            case 1:
+            default:
+            case LIST_PLAY:
+                if (isNext) {
+                    if (nowId < maxId)
+                        nowId += 1;
+                    else
+                        return;
+                } else {
+                    if (nowId > 0)
+                        nowId -= 1;
+                    else
+                        nowId = 0;
+                }
                 break;
         }
         playThisNow(nowId);
@@ -179,7 +195,8 @@ public class MusicPlayer {
     public void setPlayOrder(int order) {
         playOrder = order;
         savePlayOrder();
-        if (playOrder == 2) {
+        if (playOrder == SHUFFLE_PLAY) {
+            mp.setLooping(false);
             shuffleOrder = new ArrayList<>();
             for (int i = 0; i < songList.size(); i++) {
                 if (i != nowId)
@@ -188,6 +205,10 @@ public class MusicPlayer {
             Collections.shuffle(shuffleOrder);
             shuffleOrder.add(nowId);
             shuffleId = shuffleOrder.size() - 1;
+        } else if (playOrder == REPEAT_ONE) {
+            mp.setLooping(true);
+        } else {
+            mp.setLooping(false);
         }
     }
 
@@ -204,6 +225,8 @@ public class MusicPlayer {
     public void playThisNow(int musicId) {
         switch (playThis(musicId)) {
             case 0:
+                if (playOrder == REPEAT_ONE)
+                    mp.setLooping(true);
                 mainActivity.setPlayBarTitle(musicId);
                 mainActivity.setHomeFragment();
                 //初始化进度条
@@ -223,7 +246,7 @@ public class MusicPlayer {
                         .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mainActivity.setViewPagerToId(2);
+                                mainActivity.setPlayOrPause(false);
                             }
                         })
                         .create();

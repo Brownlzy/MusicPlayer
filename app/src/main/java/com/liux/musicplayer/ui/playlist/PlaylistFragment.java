@@ -3,7 +3,10 @@ package com.liux.musicplayer.ui.playlist;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -50,7 +54,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
         initView(view);
         initData();
-        adapter = new PlaylistAdapter(getContext(), mSongList, stateCheckedMap);
+        adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
         lvData.setAdapter(adapter);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
@@ -239,7 +243,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private void refreshList() {
         ((MainActivity) getActivity()).getMusicPlayer().refreshPlayList();
         initData();
-        adapter = new PlaylistAdapter(getContext(), mSongList, stateCheckedMap);
+        adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
         lvData.setAdapter(adapter);
     }
 
@@ -256,6 +260,27 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             stateCheckedMap.put(i, isSelectedAll);
             lvData.setItemChecked(i, isSelectedAll);
         }
+    }
+
+    public void popMenu(int position, View view) {
+        PopupMenu popup = new PopupMenu(getContext(), view);
+        popup.getMenuInflater().inflate(R.menu.playlist_item_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item_menu_play:
+                        ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
+                        break;
+                    case R.id.item_menu_moreInfo:
+                        Toast.makeText(getContext(), "你点了详情",
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
     }
     //TODO:Fragment下的返回监听 参考https://blog.csdn.net/itheima_mxh/article/details/45774689
     /*@Override

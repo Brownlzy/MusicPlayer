@@ -53,4 +53,5 @@
     <string name="title_path">"FilePath : "</string>
     <string name="title_filename">"Filename : "</string>
     <string name="title_lyric">"LyricPath : "</string>
+    <string name="item_menu_play">Play</string>
 </resources>

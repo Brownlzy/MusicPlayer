@@ -55,4 +55,8 @@
     <string name="title_filename">文件名：</string>
     <string name="title_lyric">歌词路径：</string>
     <string name="item_menu_play">播放</string>
+    <string name="repeat_list">列表循环</string>
+    <string name="repeat_one">单曲循环</string>
+    <string name="shuffle_play">随机播放</string>
+    <string name="list_play">顺序播放</string>
 </resources>

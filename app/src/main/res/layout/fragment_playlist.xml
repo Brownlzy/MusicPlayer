@@ -18,7 +18,7 @@
         app:cardElevation="4dp"
         app:contentPadding="4dp"
         app:rippleColor="@color/teal_200"
-        app:strokeColor="@color/teal_200"
+        app:strokeColor="@color/green_700"
         app:strokeWidth="2dp">
 
         <LinearLayout

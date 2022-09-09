@@ -369,8 +369,7 @@ public class MainActivity extends FragmentActivity {
         bottomNavigationView = findViewById(R.id.nav_view);
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
-        // 重点是这一句
-        viewPager.setSaveEnabled(true);
+        viewPager.setSaveEnabled(false);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -414,6 +413,7 @@ public class MainActivity extends FragmentActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                     default:
+                        Log.e("ViewPager2大小", "width-" + viewPager.getWidth() + ",height-" + viewPager.getHeight() + ";比例：" + (double) viewPager.getHeight() / viewPager.getWidth());
                         TabTitle.setText(R.string.app_name);
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);

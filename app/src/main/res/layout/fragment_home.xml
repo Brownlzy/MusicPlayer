@@ -17,22 +17,60 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/musicPicLinearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="25dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/albumImageView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintDimensionRatio="1:1"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="25dp"
                     android:adjustViewBounds="true"
                     android:src="@drawable/ic_launcher1080"
-                    app:shapeAppearance="@style/RoundedStyle" />
-            </LinearLayout>
+                    android:visibility="visible"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:shapeAppearance="@style/RoundedStyle"
+                    app:strokeColor="@color/green_700"
+                    app:strokeWidth="2dp" />
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/albumImageView"
+                    android:layout_alignTop="@+id/albumImageView"
+                    android:layout_alignEnd="@+id/albumImageView"
+                    android:layout_alignBottom="@+id/albumImageView"
+                    android:layout_marginStart="-10dp"
+                    android:layout_marginTop="-20dp"
+                    android:layout_marginEnd="-10dp"
+                    android:layout_marginBottom="-20dp"
+                    android:orientation="vertical">
+
+                    <com.github.mmin18.widget.RealtimeBlurView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:realtimeBlurRadius="10dp"
+                        app:realtimeOverlayColor="#004CAF50" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="10dp"
+                        android:text="这是歌词"
+                        android:textAlignment="center"
+                        android:textSize="30sp" />
+                </RelativeLayout>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/lyricLayout"
@@ -51,7 +89,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
-                    android:text="这里是歌词"
                     android:textAlignment="center"
                     android:textSize="32sp" />
 
@@ -79,11 +116,11 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintDimensionRatio="1:1"
                         android:adjustViewBounds="true"
                         android:src="@drawable/ic_launcher1080"
-                        app:shapeAppearance="@style/RoundedStyle"
-                        android:visibility="invisible" />
+                        android:visibility="invisible"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:shapeAppearance="@style/RoundedStyle" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -97,12 +134,12 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:contentPadding="4dp"
-                        app:cardElevation="8dp"
-                        app:cardCornerRadius="15dp"
                         android:layout_marginLeft="25dp"
                         android:layout_marginRight="25dp"
                         android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="15dp"
+                        app:cardElevation="8dp"
+                        app:contentPadding="4dp"
                         app:rippleColor="@color/teal_200"
                         app:strokeColor="@color/teal_200"
                         app:strokeWidth="2dp">
@@ -122,17 +159,17 @@
                             <TextView
                                 android:id="@+id/home_song_artist"
                                 android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="4324324"
-                        android:textSize="20sp" />
+                                android:layout_height="wrap_content"
+                                android:text="4324324"
+                                android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/home_song_info_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:text="@string/fileInfo"
-                        android:textSize="16sp" />
+                            <TextView
+                                android:id="@+id/home_song_info_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:text="@string/fileInfo"
+                                android:textSize="16sp" />
 
                             <TextView
                                 android:id="@+id/home_song_info"

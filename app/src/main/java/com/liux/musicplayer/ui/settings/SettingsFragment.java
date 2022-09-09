@@ -31,6 +31,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.blankj.utilcode.util.PathUtils;
 import com.liux.musicplayer.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -97,10 +98,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         //根据接收的选择结果保存设置并显示
         private void setNewMainFolder(Uri uri) {
+            Toast.makeText(getActivity(), uri.toString(), Toast.LENGTH_LONG).show();
+            /*
             Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
             //TODO：选择特殊文件夹时崩溃
             String path = getPath(getContext(), docUri);
-            //Toast.makeText(getActivity(), uri.toString()+"\n"+path, Toast.LENGTH_LONG).show();
             //获取SharedPreferences对象
             SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
             //获取Editor对象
@@ -110,6 +112,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
             setMainFolder.setSummary(MainFolder.getSummary());
             //Toast.makeText(getActivity(), sp.getString("mainFolder","---"), Toast.LENGTH_LONG).show();
+             */
         }
     });
 

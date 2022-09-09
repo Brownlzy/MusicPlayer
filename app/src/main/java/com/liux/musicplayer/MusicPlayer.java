@@ -133,12 +133,19 @@ public class MusicPlayer {
         nowId = Integer.parseInt(sp.getString("nowId", "0"));
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
-                        "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"," +
-                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/eg\"}]");
+                        "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
+                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]");
         Gson gson = new Gson();
         java.lang.reflect.Type playListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         songList = gson.fromJson(playListJson, playListType);
+        if (songList == null) {
+            playListJson = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
+                    "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
+                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]";
+            songList = gson.fromJson(playListJson, playListType);
+        }
+        if (nowId >= songList.size()) nowId = 0;
         setPlayOrder(Integer.parseInt(sp.getString("playOrder", "0")));
         mainActivity.setPlayOrder(playOrder);
     }

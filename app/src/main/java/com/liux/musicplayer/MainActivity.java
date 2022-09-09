@@ -370,7 +370,7 @@ public class MainActivity extends FragmentActivity {
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         // 重点是这一句
-        viewPager.setSaveEnabled(false);
+        viewPager.setSaveEnabled(true);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

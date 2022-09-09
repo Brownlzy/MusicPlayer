@@ -65,8 +65,7 @@
         <EditTextPreference
             android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
             app:key="mainFolder"
-            app:title="@string/mainfolder"
-            app:useSimpleSummaryProvider="true" />
+            app:title="@string/mainfolder" />
 
         <EditTextPreference
             app:key="nowId"

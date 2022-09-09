@@ -107,7 +107,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("mainFolder", path);
             editor.apply();
-            //MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
+            MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
             setMainFolder.setSummary(MainFolder.getSummary());
             //Toast.makeText(getActivity(), sp.getString("mainFolder","---"), Toast.LENGTH_LONG).show();
         }
@@ -171,7 +171,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SharedPreferences.Editor editor = sp.edit();
 */
         //选择主文件目录
-        MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+        MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
+        //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         //监听权限开关按钮

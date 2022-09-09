@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -230,8 +231,11 @@ public class MainActivity extends FragmentActivity {
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
         } else {
-            // Otherwise, select the previous step.
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+            if (viewPager.getCurrentItem() == 1 && playlistFragment.onBackPressed() != 1
+                    || viewPager.getCurrentItem() == 2) {
+                // Otherwise, select the previous step.
+                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+            }
         }
     }
 
@@ -365,11 +369,14 @@ public class MainActivity extends FragmentActivity {
         bottomNavigationView = findViewById(R.id.nav_view);
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
+        // 重点是这一句
+        viewPager.setSaveEnabled(false);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
+
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);

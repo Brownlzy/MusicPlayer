@@ -6,145 +6,173 @@
     android:layout_height="match_parent"
     tools:context=".ui.playlist.PlaylistFragment">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/playlist_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="@drawable/shape_rectangle">
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/playlist_view_top"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="4dp"
+        app:contentPadding="4dp"
+        app:rippleColor="@color/teal_200"
+        app:strokeColor="@color/teal_200"
+        app:strokeWidth="2dp">
 
         <LinearLayout
-            android:id="@+id/ll_addSongs"
-            style="@style/HeaderBarAddSongs"
-            android:layout_height="48dp"
-            android:gravity="bottom">
 
-            <ImageView
-                android:id="@+id/addSongs"
-                android:layout_width="42dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/ic_outline_add_box_24"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:text="@string/addSongs" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
 
-            <ImageView
-                android:id="@+id/addFolder"
-                android:layout_width="54dp"
-                android:layout_marginLeft="20dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_outline_create_new_folder_24"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:text="@string/addFolder" />
+            <LinearLayout
+                android:id="@+id/ll_addSongs"
+                style="@style/HeaderBarAddSongs"
+                android:layout_height="36dp"
+                android:gravity="bottom">
+
+                <ImageView
+                    android:id="@+id/addSongs"
+                    android:layout_width="42dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/ic_outline_add_box_24"
+                    android:text="@string/addSongs" />
+
+                <ImageView
+                    android:id="@+id/addFolder"
+                    android:layout_width="54dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/ic_outline_create_new_folder_24"
+                    android:text="@string/addFolder" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_editList"
+                style="@style/HeaderBarEditSongs"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/refresh_list"
+                    android:layout_width="54dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/ic_baseline_sync_24"
+                    android:text="@string/editList" />
+
+                <ImageView
+                    android:id="@+id/edit_list"
+                    android:layout_width="42dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="15dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/ic_outline_create_24"
+                    android:text="@string/editList" />
+            </LinearLayout>
+
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_editList"
-            android:layout_height="match_parent"
-            style="@style/HeaderBarEditSongs">
-
-            <ImageView
-                android:id="@+id/refresh_list"
-                android:src="@drawable/ic_baseline_sync_24"
-                android:layout_marginRight="20dp"
-                android:layout_width="54dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:text="@string/editList" />
-
-            <ImageView
-                android:id="@+id/edit_list"
-                android:src="@drawable/ic_outline_create_24"
-                android:layout_marginRight="15dp"
-                android:layout_width="42dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:text="@string/editList" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <!-- android:layout_below="@+id/playlist_header"
+            android:layout_above="@+id/ll_edit_bar"
+-->
+    <View
+        android:id="@+id/playlist_view_top"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_above="@+id/lv"
+        android:background="@android:color/darker_gray" />
 
     <ListView
         android:id="@+id/lv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/ll_edit_bar"
-        android:layout_below="@+id/playlist_header"
-        android:background="@drawable/shape_rectangle" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="60dp"
+        android:paddingBottom="60dp"></ListView>
+
 
     <View
+        android:id="@+id/playlist_view_bottom"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_below="@+id/lv"
         android:background="@android:color/darker_gray" />
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/ll_edit_bar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="4dp"
-        android:background="@color/white"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:translationZ="10dp"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@id/playlist_view_bottom"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="4dp"
+        app:contentPadding="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/teal_200"
+        app:strokeColor="@color/teal_200"
+        app:strokeWidth="2dp"
         android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/ll_cancel"
-            style="@style/EditBarItemStyle">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/EditBarItemStyle"
+            android:orientation="horizontal">
 
-            <ImageView
-                style="@style/EditBarImageViewStyle"
-                android:src="@drawable/ic_baseline_reply_24" />
+            <LinearLayout
+                android:id="@+id/ll_cancel"
+                style="@style/EditBarItemStyle"
+                android:visibility="gone">
 
-            <TextView
-                style="@style/EditBarTextViewStyle"
-                android:text="@string/cancel" />
+                <ImageView
+                    style="@style/EditBarImageViewStyle"
+                    android:src="@drawable/ic_baseline_reply_24" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_delete"
+                style="@style/EditBarItemStyle">
+
+                <ImageView
+                    style="@style/EditBarImageViewStyle"
+                    android:src="@drawable/ic_baseline_delete_24" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_inverse"
+                style="@style/EditBarItemStyle"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp">
+
+                <ImageView
+                    style="@style/EditBarImageViewStyle"
+                    android:src="@drawable/ic_baseline_done_outline_24" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_select_all"
+                style="@style/EditBarItemStyle">
+
+                <ImageView
+                    style="@style/EditBarImageViewStyle"
+                    android:src="@drawable/ic_baseline_done_all_24" />
+
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_delete"
-            style="@style/EditBarItemStyle">
-
-            <ImageView
-                style="@style/EditBarImageViewStyle"
-                android:src="@drawable/ic_baseline_delete_24" />
-
-            <TextView
-                style="@style/EditBarTextViewStyle"
-                android:text="@string/delete" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_inverse"
-            style="@style/EditBarItemStyle">
-
-            <ImageView
-                style="@style/EditBarImageViewStyle"
-                android:src="@drawable/ic_baseline_done_outline_24" />
-
-            <TextView
-                style="@style/EditBarTextViewStyle"
-                android:text="@string/inverse" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_select_all"
-            style="@style/EditBarItemStyle">
-
-            <ImageView
-                style="@style/EditBarImageViewStyle"
-                android:src="@drawable/ic_baseline_done_all_24" />
-
-            <TextView
-                style="@style/EditBarTextViewStyle"
-                android:text="@string/select_all" />
-        </LinearLayout>
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>

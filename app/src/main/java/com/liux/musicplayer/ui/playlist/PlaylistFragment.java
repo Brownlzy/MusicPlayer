@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
@@ -38,7 +39,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private FragmentPlaylistBinding binding;
 
     private ListView lvData;
-    private LinearLayout mLlEditBar;//控制下方那一行的显示与隐藏
+    private MaterialCardView mLlEditBar;//控制下方那一行的显示与隐藏
     private PlaylistAdapter adapter;
     private ImageView editPen;
     private ImageView Refresh;
@@ -282,15 +283,16 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         });
         popup.show();
     }
+
     //TODO:Fragment下的返回监听 参考https://blog.csdn.net/itheima_mxh/article/details/45774689
-    /*@Override
-    public void onBackPressed() {
+    public int onBackPressed() {
         if (mLlEditBar.getVisibility() == View.VISIBLE) {
             cancel();
-            return;
+            return 1;
+        } else {
+            return 0;
         }
-        super.onBackPressed();
-    }*/
+    }
 }
 
 

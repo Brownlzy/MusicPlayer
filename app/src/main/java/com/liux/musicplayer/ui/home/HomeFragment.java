@@ -47,12 +47,13 @@ public class HomeFragment extends Fragment {
 
     @SuppressLint("SetTextI18n")
     public void setMusicInfo(MusicPlayer.Song song) {
-        songTitle.setText(song.title);
-        songArtist.setText(song.artist + (song.album.equals("") ? "" : (" - " + song.album)));
-        songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
-                getString(R.string.title_filename) + song.filename + "\n" +
-                getString(R.string.title_path) + song.source_uri + "\n" +
-                getString(R.string.title_lyric) + song.lyric_uri);
-
+        if (songTitle != null) {
+            songTitle.setText(song.title);
+            songArtist.setText(song.artist + (song.album.equals("") ? "" : (" - " + song.album)));
+            songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
+                    getString(R.string.title_filename) + song.filename + "\n" +
+                    getString(R.string.title_path) + song.source_uri + "\n" +
+                    getString(R.string.title_lyric) + song.lyric_uri);
+        }
     }
 }

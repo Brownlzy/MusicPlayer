@@ -6,40 +6,44 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/musicPicAndInfoLayout"
+            android:id="@+id/musicPicLayout"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/musicPicLayout"
+                android:id="@+id/musicPicLinearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="370dp"
-                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp">
+                android:layout_marginRight="25dp">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_launcher1080" />
+                    android:layout_height="wrap_content"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_launcher1080"
+                    app:shapeAppearance="@style/RoundedStyle" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/lyricLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignTop="@+id/musicPicLayout"
+                android:layout_alignTop="@+id/musicPicLinearLayout"
+                android:layout_alignBottom="@+id/musicPicLinearLayout"
                 android:layout_marginTop="0dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/musicPicLayout">
+                app:layout_constraintBottom_toBottomOf="@+id/musicPicLinearLayout">
 
                 <TextView
                     android:id="@+id/songLyric"
@@ -55,64 +59,92 @@
 
         </RelativeLayout>
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:scrollbars="none">
 
             <LinearLayout
-                android:id="@+id/musicInfoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/musicPicLayout"
-                android:layout_marginTop="0dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/musicPicLayout">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/home_song_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:text="1343242"
-                    android:textSize="32sp" />
+                    android:layout_marginRight="25dp">
 
-                <TextView
-                    android:id="@+id/home_song_artist"
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_launcher1080"
+                        app:shapeAppearance="@style/RoundedStyle"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/musicInfoLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:text="4324324"
-                    android:textSize="20sp" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="@+id/musicPicLayout">
 
-                <TextView
-                    android:id="@+id/home_song_info_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:text="@string/fileInfo"
-                    android:textSize="16sp" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:contentPadding="4dp"
+                        app:cardElevation="8dp"
+                        app:cardCornerRadius="15dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginBottom="8dp"
+                        app:rippleColor="@color/teal_200"
+                        app:strokeColor="@color/teal_200"
+                        app:strokeWidth="2dp">
 
-                <TextView
-                    android:id="@+id/home_song_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:text=""
-                    android:textSize="16sp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
+                            <TextView
+                                android:id="@+id/home_song_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="1343242"
+                                android:textSize="32sp" />
 
+                            <TextView
+                                android:id="@+id/home_song_artist"
+                                android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="4324324"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/home_song_info_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="@string/fileInfo"
+                        android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/home_song_info"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text=""
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
             </LinearLayout>
-
-
-        </LinearLayout>
-
-    </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

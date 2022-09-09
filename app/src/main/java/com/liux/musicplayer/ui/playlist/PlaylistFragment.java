@@ -228,6 +228,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                     mutilChooseFlag = true;
                     mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
                     adapter.setShowCheckBox(true);//CheckBox的那个方框显示
+                    adapter.notifyDataSetChanged();//更新ListView
                 }
             }
         });

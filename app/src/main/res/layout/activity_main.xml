@@ -30,163 +30,173 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/PlayBar"
+        app:layout_constraintBottom_toTopOf="@id/playBarCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout"
         app:layout_constraintVertical_bias="0.0" />
 
-    <LinearLayout
-        android:id="@+id/PlayBar"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/playBarCard"
         android:layout_width="match_parent"
-        android:layout_height="108dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view">
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="4dp"
+        app:contentPadding="0dp"
+        app:rippleColor="@color/white"
+        app:strokeColor="@color/green_700"
+        app:strokeWidth="1dp">
 
         <LinearLayout
+            android:id="@+id/PlayBar"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:gravity="center_vertical"
+            android:layout_height="108dp"
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/playProgress"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:id="@+id/nowProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="0:00"
-                    android:visibility="visible" />
-
-                <SeekBar
-                    android:layout_weight="1"
-                    android:id="@+id/seekBar"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/allProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="0:00"
-                    android:visibility="visible" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/musicPlayingLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/shape_rectangle"
-                android:gravity="center_vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/musicPlaying"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp"
-                    android:text=""
-                    android:textAlignment="center"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/PlayFun"
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:background="@drawable/shape_rectangle"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/nav_view">
-
-            <LinearLayout
-                android:id="@+id/playBarPic"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fadingEdge="horizontal"
+                android:layout_height="36dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/playProgress"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
 
-                    <ImageView
-                        android:id="@+id/playPrevious"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:contentDescription="@string/playPrev"
-                        android:src="@drawable/ic_round_skip_previous_24" />
+                    <TextView
+                        android:id="@+id/nowProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="0:00"
+                        android:visibility="visible" />
 
-                    <ImageView
-                        android:id="@+id/playPause"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                    <SeekBar
                         android:layout_weight="1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:contentDescription="@string/pauseOrPlay"
-                        android:src="@drawable/ic_round_play_circle_outline_24" />
+                        android:id="@+id/seekBar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:visibility="visible" />
 
-                    <ImageView
-                        android:id="@+id/playNext"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:contentDescription="@string/playNext"
-                        android:src="@drawable/ic_round_skip_next_24" />
+                    <TextView
+                        android:id="@+id/allProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="0:00"
+                        android:visibility="visible" />
 
-                    <ImageView
-                        android:id="@+id/playOrder"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:contentDescription="@string/playOrder"
-                        android:src="@drawable/ic_round_repeat_24"
-                        tools:ignore="TouchTargetSizeCheck" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/musicPlayingLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/musicPlaying"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="16sp"
+                        android:singleLine="true" />
                 </LinearLayout>
 
             </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/PlayFun"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="@drawable/shape_rectangle"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@+id/nav_view">
+
+                <LinearLayout
+                    android:id="@+id/playBarPic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/ic_launcher" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fadingEdge="horizontal"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/playPrevious"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:contentDescription="@string/playPrev"
+                            android:src="@drawable/ic_round_skip_previous_24" />
+
+                        <ImageView
+                            android:id="@+id/playPause"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:contentDescription="@string/pauseOrPlay"
+                            android:src="@drawable/ic_round_play_circle_outline_24" />
+
+                        <ImageView
+                            android:id="@+id/playNext"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:contentDescription="@string/playNext"
+                            android:src="@drawable/ic_round_skip_next_24" />
+
+                        <ImageView
+                            android:id="@+id/playOrder"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:contentDescription="@string/playOrder"
+                            android:src="@drawable/ic_round_repeat_24"
+                            tools:ignore="TouchTargetSizeCheck" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
-        app:layout_constraintBottom_toBottomOf="@id/PlayBar"
+        app:layout_constraintBottom_toBottomOf="@id/playBarCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"

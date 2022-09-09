@@ -41,10 +41,10 @@
         android:id="@+id/playBarCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:cardCornerRadius="5dp"
         app:cardElevation="4dp"
         app:contentPadding="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:rippleColor="@color/white"
         app:strokeColor="@color/green_700"
         app:strokeWidth="1dp">
@@ -77,10 +77,10 @@
                         android:visibility="visible" />
 
                     <SeekBar
-                        android:layout_weight="1"
                         android:id="@+id/seekBar"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
                     <TextView
@@ -98,17 +98,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:visibility="gone">
+                    android:gravity="center_vertical|center_horizontal"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/playBarAlbumImage"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:shapeAppearance="@style/CircleStyle"
+                        android:src="@mipmap/ic_launcher" />
 
                     <TextView
                         android:id="@+id/musicPlaying"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:singleLine="true"
                         android:text=""
                         android:textAlignment="center"
-                        android:textSize="16sp"
-                        android:singleLine="true" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -122,17 +131,6 @@
                 app:layout_constraintBottom_toTopOf="@+id/nav_view">
 
                 <LinearLayout
-                    android:id="@+id/playBarPic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_launcher" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:fadingEdge="horizontal"
@@ -144,6 +142,16 @@
                         android:layout_height="match_parent"
                         android:gravity="center_horizontal|center_vertical"
                         android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/playLyric"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:contentDescription="@string/playPrev"
+                            android:src="@drawable/ic_baseline_subtitles_24" />
 
                         <ImageView
                             android:id="@+id/playPrevious"
@@ -191,6 +199,7 @@
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"

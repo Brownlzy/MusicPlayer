@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +24,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
@@ -35,6 +36,7 @@ public class MainActivity extends FragmentActivity {
     private SeekBar playProgressBar;
     private TextView PlayBarTitle;
     private TextView TabTitle;
+    private ImageView PlayBarLyric;
     private ImageView PlayBarPause;
     private ImageView PlayBarOrder;
     private ImageView PlayBarPrev;
@@ -52,6 +54,7 @@ public class MainActivity extends FragmentActivity {
     private LinearLayout musicPlayingLayout;
     private TextView playProgressNowText;
     private TextView playProgressAllText;
+    private ShapeableImageView shapeableImageView;
     //是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
@@ -245,7 +248,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setHomeFragment() {
-        homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicPlayer.getNowId()));
+        homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicPlayer.getNowId()), shapeableImageView);
     }
 
     private void initProgress() {
@@ -279,10 +282,12 @@ public class MainActivity extends FragmentActivity {
         playProgressAllText = findViewById(R.id.allProgress);
         PlayBarTitle = findViewById(R.id.musicPlaying);
         TabTitle = findViewById(R.id.tabText);
+        PlayBarLyric = findViewById(R.id.playLyric);
         PlayBarPause = findViewById(R.id.playPause);
         PlayBarOrder = findViewById(R.id.playOrder);
         PlayBarPrev = findViewById(R.id.playPrevious);
         PlayBarNext = findViewById(R.id.playNext);
+        shapeableImageView = findViewById(R.id.playBarAlbumImage);
         homeFragment = new HomeFragment();
         playlistFragment = new PlaylistFragment();
         settingsFragment = new SettingsFragment();
@@ -292,6 +297,12 @@ public class MainActivity extends FragmentActivity {
 
         initViewPager2();
 
+        PlayBarLyric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setIsLyric();
+            }
+        });
         PlayBarPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,6 +328,18 @@ public class MainActivity extends FragmentActivity {
             }
         });
         initProgress();
+    }
+
+    private void setIsLyric() {
+        if (musicPlayer.isLyric()) {
+            homeFragment.setIsLyric(false);
+            PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_24));
+            musicPlayer.setLyric(false);
+        } else {
+            homeFragment.setIsLyric(true);
+            PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_green_24));
+            musicPlayer.setLyric(true);
+        }
     }
 
     private void setPlayOrder() {

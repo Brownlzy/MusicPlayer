@@ -33,6 +33,7 @@ public class MusicPlayer {
     private SharedPreferences sp;
     private List<Integer> shuffleOrder;
     private int shuffleId;
+    private boolean isLyric = false;
 
 
     public static class Song {
@@ -60,6 +61,14 @@ public class MusicPlayer {
         sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         setPlayList();
         setMediaPlayerListener();
+    }
+
+    public boolean isLyric() {
+        return isLyric;
+    }
+
+    public void setLyric(boolean lyric) {
+        isLyric = lyric;
     }
 
     public void playPrevOrNext(boolean isNext) {

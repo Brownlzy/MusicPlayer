@@ -12,7 +12,9 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -33,6 +35,7 @@ public class HomeFragment extends Fragment {
     private TextView songArtist;
     private TextView songInfo;
     private ShapeableImageView albumImageView;
+    private RelativeLayout songLyricLayout;
     private View mView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,12 +58,13 @@ public class HomeFragment extends Fragment {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setMusicInfo(MusicPlayer.Song song) {
+    public void setMusicInfo(MusicPlayer.Song song, ShapeableImageView playBarPic) {
         if (mView != null) {
             songTitle = mView.findViewById(R.id.home_song_title);
             songArtist = mView.findViewById(R.id.home_song_artist);
             songInfo = mView.findViewById(R.id.home_song_info);
             albumImageView = mView.findViewById(R.id.albumImageView);
+            songLyricLayout = mView.findViewById(R.id.songLyricLayout);
             songTitle.setText(song.title);
             songArtist.setText(song.artist + (song.album.equals("") ? "" : (" - " + song.album)));
             songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
@@ -74,17 +78,29 @@ public class HomeFragment extends Fragment {
                 byte[] cover = mediaMetadataRetriever.getEmbeddedPicture();
                 Bitmap bitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
                 albumImageView.setImageBitmap(bitmap);
-
+                playBarPic.setImageBitmap(bitmap);
             } catch (IllegalArgumentException e) {
                 //文件路径错误或无权限
-                albumImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_launcher1080));
+                albumImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+                playBarPic.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+                Toast.makeText(getContext(), "专辑图片读取失败", Toast.LENGTH_SHORT).show();
             } catch (NullPointerException e) {
                 //文件本身无专辑图片
                 albumImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+                playBarPic.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+    public void setIsLyric(boolean isLyric) {
+        if (songLyricLayout != null) {
+            if (!isLyric) {
+                songLyricLayout.setVisibility(View.GONE);
+            } else {
+                songLyricLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 }

@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MusicPlayer {
-    private final MediaPlayer mp;
+    private final static MediaPlayer mp = new MediaPlayer();
     private List<Song> songList;
     private int nowId;
     private MainActivity mainActivity;
@@ -54,7 +54,6 @@ public class MusicPlayer {
 
     public MusicPlayer(MainActivity mMainActivity, Context context) {
         songList = new ArrayList<>();
-        mp = new MediaPlayer();
         nowId = 0;
         playOrder = 0;
         mContext = context;

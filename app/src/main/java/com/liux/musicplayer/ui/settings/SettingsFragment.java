@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -29,20 +30,31 @@ import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreferenceCompat;
 
-import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.RegexUtils;
 import com.liux.musicplayer.R;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     //Preference控件
     private CheckBoxPreference switch_storage_permission;
     private CheckBoxPreference switch_layer_permission;
+    private CheckBoxPreference switch_web_playlist;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private EditTextPreference dPlayList;
+    private EditTextPreference webPlayList;
     private EditTextPreference MainFolder;
     private Preference About;
+
+    private final static String TAG = "SettingFragment";
     //注册Activity回调
     ActivityResultLauncher<Intent> gotoAppInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -99,10 +111,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         //根据接收的选择结果保存设置并显示
         private void setNewMainFolder(Uri uri) {
             Toast.makeText(getActivity(), uri.toString(), Toast.LENGTH_LONG).show();
-            /*
             Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
             //TODO：选择特殊文件夹时崩溃
             String path = getPath(getContext(), docUri);
+            path = path.replace("/storage/emulated/0", "/sdcard");
             //获取SharedPreferences对象
             SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
             //获取Editor对象
@@ -112,7 +124,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
             setMainFolder.setSummary(MainFolder.getSummary());
             //Toast.makeText(getActivity(), sp.getString("mainFolder","---"), Toast.LENGTH_LONG).show();
-             */
         }
     });
 
@@ -122,6 +133,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         //绑定权限选项
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
+        switch_web_playlist = findPreference("isUseWebPlayList");
         MainFolder = findPreference("mainFolder");
         clickGotoAppDetails = findPreference("gotoAppDetails");
         dPlayList = findPreference("playList");
@@ -159,6 +171,38 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return requestSettingCanDrawOverlays();
                 } else {
                     return !checkFloatPermission(getContext());
+                }
+            }
+        });
+        switch_web_playlist.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                String url = sp.getString("WebPlayListUrl", "NULL");
+                if (!RegexUtils.isURL(url)) {
+                    Toast.makeText(getContext(), "请先设置正确的URL", Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .get()//default
+                            .build();
+                    Call call = client.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.d(TAG, "onFailure: ");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Log.d(TAG, "onResponse: " + response.body().string());
+                        }
+                    });
+                    editor.apply();
+                    return true;
                 }
             }
         });

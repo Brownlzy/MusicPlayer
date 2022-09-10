@@ -50,13 +50,20 @@
     <string name="give_permission">授权</string>
     <string name="fileInfo">文件信息：</string>
     <string name="nowId">当前播放ID</string>
-    <string name="title_album">专辑：</string>
+    <string name="title_album">专　辑　名：</string>
     <string name="title_path">文件路径：</string>
-    <string name="title_filename">文件名：</string>
+    <string name="title_filename">文 件 名：</string>
     <string name="title_lyric">歌词路径：</string>
     <string name="item_menu_play">播放</string>
     <string name="repeat_list">列表循环</string>
     <string name="repeat_one">单曲循环</string>
     <string name="shuffle_play">随机播放</string>
     <string name="list_play">顺序播放</string>
+    <string name="WebPlayListUrl">在线播放列表URL</string>
+    <string name="isUseWebPlayList">使用在线播放</string>
+    <string name="isUseWebPlayList_summary">使用来自网络链接的播放列表</string>
+    <string name="title_webPlayList">在线播放列表</string>
+    <string name="title_duration">总　时　长：</string>
+    <string name="title_mimetype">文件类型：</string>
+    <string name="title_bitrate">比 特 率：</string>
 </resources>

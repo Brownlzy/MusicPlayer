@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -16,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class MusicPlayer {
     private final MediaPlayer mp;
@@ -292,12 +293,17 @@ public class MusicPlayer {
     }
 
     public int playThis(Uri musicPath) {
-        try {
-            mp.reset();
-            mp.setDataSource(mContext, musicPath);
-            mp.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (FileUtils.isFileExists(musicPath.getPath())) {
+            try {
+                mp.reset();
+                mp.setDataSource(mContext, musicPath);
+                mp.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } else {
+            Toast.makeText(mainActivity, "文件不存在", Toast.LENGTH_SHORT).show();
             return -1;
         }
         return 0;

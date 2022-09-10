@@ -39,6 +39,17 @@
             app:title="@string/mainfolder" />
 
         <CheckBoxPreference
+            app:key="isUseWebPlayList"
+            app:enabled="false"
+            app:title="@string/isUseWebPlayList"
+            app:summary="@string/isUseWebPlayList_summary" />
+
+        <EditTextPreference
+            app:key="WebPlayListUrl"
+            app:title="@string/WebPlayListUrl"
+            app:useSimpleSummaryProvider="true" />
+
+        <CheckBoxPreference
             app:key="isMoveMusic"
             app:title="@string/isMoveMusic"
             app:summary="@string/isMoveMusic_summary" />
@@ -80,6 +91,11 @@
         <EditTextPreference
             app:key="playList"
             app:title="@string/title_playlist"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="webPlayList"
+            app:title="@string/title_webPlayList"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>

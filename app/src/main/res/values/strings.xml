@@ -58,4 +58,11 @@
     <string name="repeat_one">Repeat One</string>
     <string name="shuffle_play">Shuffle Play</string>
     <string name="list_play">List Play</string>
+    <string name="WebPlayListUrl">Web Playlist Url</string>
+    <string name="isUseWebPlayList">Use Web Playlist</string>
+    <string name="isUseWebPlayList_summary">Use playlists from network links</string>
+    <string name="title_webPlayList">Web Playlist</string>
+    <string name="title_duration">"Duration : "</string>
+    <string name="title_mimetype">"MimeType : "</string>
+    <string name="title_bitrate">"Bitrate : "</string>
 </resources>

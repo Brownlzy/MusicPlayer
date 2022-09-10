@@ -60,8 +60,8 @@ public class HomeFragment extends Fragment {
             songLyricLayout = mView.findViewById(R.id.songLyricLayout);
             MusicUtils.Metadata metadata = MusicUtils.getMetadata(getContext(), song);
             if (metadata.isValid) {
-                songTitle.setText(metadata.title);
-                songArtist.setText(metadata.artist);
+                songTitle.setText((metadata.title == null) ? song.title : metadata.title);
+                songArtist.setText((metadata.artist == null) ? song.artist : metadata.artist);
                 //songArtist.setText(metadata.artist + (metadata.album.equals("null") ? "" : (" - " + song.album)));
                 songInfo.setText(getString(R.string.title_album) + metadata.album + "\n" +
                         getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +

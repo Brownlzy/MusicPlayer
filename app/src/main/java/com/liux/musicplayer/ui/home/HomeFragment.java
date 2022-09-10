@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.blankj.utilcode.util.ConvertUtils;
@@ -58,25 +59,33 @@ public class HomeFragment extends Fragment {
             albumImageView = mView.findViewById(R.id.albumImageView);
             songLyricLayout = mView.findViewById(R.id.songLyricLayout);
             MusicUtils.Metadata metadata = MusicUtils.getMetadata(getContext(), song);
-            songTitle.setText(metadata.title);
-            songArtist.setText(metadata.artist);
-            //songArtist.setText(metadata.artist + (metadata.album.equals("null") ? "" : (" - " + song.album)));
-            songInfo.setText(getString(R.string.title_album) + metadata.album + "\n" +
-                    getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
-                    getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
-                    getString(R.string.title_filename) + song.filename + "\n" +
-                    getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
-                    getString(R.string.title_path) + song.source_uri + "\n" +
-                    getString(R.string.title_lyric) + song.lyric_uri);
-            /*songTitle.setText(song.title);
-            songArtist.setText(song.artist + (song.album.equals("") ? "" : (" - " + song.album)));
-            songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
-                    getString(R.string.title_filename) + song.filename + "\n" +
-                    getString(R.string.title_path) + song.source_uri + "\n" +
-                    getString(R.string.title_lyric) + song.lyric_uri);*/
+            if (metadata.isValid) {
+                songTitle.setText(metadata.title);
+                songArtist.setText(metadata.artist);
+                //songArtist.setText(metadata.artist + (metadata.album.equals("null") ? "" : (" - " + song.album)));
+                songInfo.setText(getString(R.string.title_album) + metadata.album + "\n" +
+                        getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+                        getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+                        getString(R.string.title_filename) + song.filename + "\n" +
+                        getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+                        getString(R.string.title_path) + song.source_uri + "\n" +
+                        getString(R.string.title_lyric) + song.lyric_uri);
+            } else {
+                songTitle.setText(song.title);
+                songArtist.setText(song.artist);
+                songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
+                        getString(R.string.title_filename) + song.filename + "\n" +
+                        getString(R.string.title_path) + song.source_uri + "\n" +
+                        getString(R.string.title_lyric) + song.lyric_uri);
+            }
             Bitmap bitmap = MusicUtils.getAlbumImage(getContext(), song);
-            albumImageView.setImageBitmap(bitmap);
-            playBarPic.setImageBitmap(bitmap);
+            if (bitmap == null) {
+                albumImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+                playBarPic.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+            } else {
+                albumImageView.setImageBitmap(bitmap);
+                playBarPic.setImageBitmap(bitmap);
+            }
         }
     }
 

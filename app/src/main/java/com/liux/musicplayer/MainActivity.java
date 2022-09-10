@@ -110,7 +110,6 @@ public class MainActivity extends FragmentActivity {
                     onPause();
                 }
                 try {
-                    Thread.sleep(1000);
                     if (musicPlayer.getMediaPlayer().isPlaying()) {
                         int nowMillionSeconds = musicPlayer.getMediaPlayer().getCurrentPosition();
                         Message msg = new Message();
@@ -118,6 +117,7 @@ public class MainActivity extends FragmentActivity {
                         msg.obj = nowMillionSeconds; //消息发送的内容如：  Object String 类 int
                         progressHandler.sendMessage(msg);
                     }
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

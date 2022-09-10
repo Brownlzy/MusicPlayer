@@ -285,7 +285,6 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         popup.show();
     }
 
-    //TODO:Fragment下的返回监听 参考https://blog.csdn.net/itheima_mxh/article/details/45774689
     public int onBackPressed() {
         if (mLlEditBar.getVisibility() == View.VISIBLE) {
             cancel();

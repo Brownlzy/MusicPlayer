@@ -3,14 +3,18 @@ package com.liux.musicplayer.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 
 public class MusicUtils {
     public static class Metadata {
+        public boolean isValid = false;
         public String title = "null";
         public String album = "null";
         public String artist = "null";
@@ -31,14 +35,15 @@ public class MusicUtils {
         } catch (IllegalArgumentException e) {
             //文件路径错误或无权限
             Toast.makeText(context, "专辑图片读取失败", Toast.LENGTH_SHORT).show();
-            return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
+            return null;
         } catch (NullPointerException e) {
             //文件本身无专辑图片
-            return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
+            Toast.makeText(context, "该文件无专辑图片", Toast.LENGTH_SHORT).show();
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
-            return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
+            return null;
         }
     }
 
@@ -54,8 +59,8 @@ public class MusicUtils {
             md.mimetype = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
             md.bitrate = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
             mediaMetadataRetriever.release();
+            md.isValid = true;
             return md;
-            //获取专辑图片
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             //文件路径错误或无权限

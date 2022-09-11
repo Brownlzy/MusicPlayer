@@ -2,27 +2,21 @@ package com.liux.musicplayer.ui.playlist;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
@@ -43,6 +37,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private PlaylistAdapter adapter;
     private ImageView editPen;
     private ImageView Refresh;
+    private int listPosition = -1;
+    private int listPositionY = 0;
     private List<MusicPlayer.Song> mSongList = new ArrayList<>();//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
@@ -81,6 +77,21 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        listPosition = lvData.getFirstVisiblePosition();
+        listPositionY = lvData.getChildAt(0).getTop();
+        Log.e("playList", String.valueOf(listPosition));
+        Log.e("playList", String.valueOf(listPositionY));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        if (listPosition != -1)
+            lvData.setSelectionFromTop(listPosition + 1, listPositionY - 14);
+    }
 
     @Override
     public void onDestroyView() {

@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setMusicInfo(MusicPlayer.Song song, ShapeableImageView playBarPic) {
+    public void setMusicInfo(MusicUtils.Song song, ShapeableImageView playBarPic) {
         if (mView != null) {
             songTitle = mView.findViewById(R.id.home_song_title);
             songArtist = mView.findViewById(R.id.home_song_artist);

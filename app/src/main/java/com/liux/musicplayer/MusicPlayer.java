@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.liux.musicplayer.util.MusicUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class MusicPlayer {
     private final static MediaPlayer mp = new MediaPlayer();
-    private List<Song> songList;
+    private List<MusicUtils.Song> songList;
     private int nowId;
     private MainActivity mainActivity;
     //0=顺序播放 1=列表循环 2=单曲循环 3=随机播放
@@ -35,22 +36,6 @@ public class MusicPlayer {
     private List<Integer> shuffleOrder;
     private int shuffleId;
     private boolean isLyric = false;
-
-
-    public static class Song {
-        public int id;
-        public Long songId;
-        public int albumId;
-        public String title;
-        public String artist;
-        public String album;
-        public String filename;
-        public String source_uri;
-        public String lyric_uri;
-        public String duration;
-        public Long size;
-
-    }
 
     public MusicPlayer(MainActivity mMainActivity, Context context) {
         songList = new ArrayList<>();
@@ -150,7 +135,7 @@ public class MusicPlayer {
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
                         "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]");
         Gson gson = new Gson();
-        java.lang.reflect.Type playListType = new TypeToken<ArrayList<Song>>() {
+        java.lang.reflect.Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         songList = gson.fromJson(playListJson, playListType);
         if (songList == null) {
@@ -166,7 +151,7 @@ public class MusicPlayer {
 
     private void savePlayList() {
         Gson gson = new Gson();
-        java.lang.reflect.Type playListType = new TypeToken<ArrayList<Song>>() {
+        java.lang.reflect.Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         String playListJson = gson.toJson(songList, playListType);
         SharedPreferences sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
@@ -193,7 +178,7 @@ public class MusicPlayer {
         return 0;
     }
 
-    public List<Song> getPlayList() {
+    public List<MusicUtils.Song> getPlayList() {
         return songList;
     }
 

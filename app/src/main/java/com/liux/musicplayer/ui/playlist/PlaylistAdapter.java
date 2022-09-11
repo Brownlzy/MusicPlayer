@@ -16,6 +16,7 @@ import androidx.appcompat.widget.PopupMenu;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.util.MusicUtils;
 
 import java.util.List;
 
@@ -25,14 +26,14 @@ import java.util.List;
 
 public class PlaylistAdapter extends BaseAdapter {
 
-    List<MusicPlayer.Song> data;
+    List<MusicUtils.Song> data;
     private final Context mContext;
     ViewHolder holder;
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
     private final SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private PlaylistFragment mPlaylistFragment;
 
-    public PlaylistAdapter(PlaylistFragment playlistFragment, Context context, List<MusicPlayer.Song> data, SparseBooleanArray stateCheckedMap) {
+    public PlaylistAdapter(PlaylistFragment playlistFragment, Context context, List<MusicUtils.Song> data, SparseBooleanArray stateCheckedMap) {
         this.data = data;
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;

@@ -23,6 +23,7 @@ import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
+import com.liux.musicplayer.util.MusicUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private ImageView Refresh;
     private int listPosition = -1;
     private int listPositionY = 0;
-    private List<MusicPlayer.Song> mSongList = new ArrayList<>();//所有数据
+    private List<MusicUtils.Song> mSongList = new ArrayList<>();//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换

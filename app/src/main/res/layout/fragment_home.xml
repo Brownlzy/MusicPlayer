@@ -61,15 +61,13 @@
                         app:realtimeBlurRadius="10dp"
                         app:realtimeOverlayColor="#004CAF50" />
 
-                    <TextView
+                    <ListView
+                        android:id="@+id/lyricList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginRight="10dp"
-                        android:text="这是歌词"
-                        android:textAlignment="center"
-                        android:textSize="30sp" />
+                        android:layout_marginRight="10dp" />
                 </RelativeLayout>
 
             </RelativeLayout>

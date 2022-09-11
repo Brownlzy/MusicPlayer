@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
-import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 import com.liux.musicplayer.util.MusicUtils;
@@ -36,15 +35,13 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private ListView lvData;
     private MaterialCardView mLlEditBar;//控制下方那一行的显示与隐藏
     private PlaylistAdapter adapter;
-    private ImageView editPen;
-    private ImageView Refresh;
     private int listPosition = -1;
     private int listPositionY = 0;
     private List<MusicUtils.Song> mSongList = new ArrayList<>();//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
-    private boolean mutilChooseFlag = false;
+    private boolean multipleChooseFlag = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
@@ -75,6 +72,29 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             case R.id.ll_select_all:
                 selectAll();
                 break;
+            case R.id.edit_list:
+                editList();
+                break;
+            case R.id.refresh_list:
+                refreshList();
+                break;
+            case R.id.addSongs:
+
+                break;
+            case R.id.addFolder:
+
+                break;
+        }
+    }
+
+    private void editList() {
+        if (multipleChooseFlag) {
+            cancel();
+        } else {
+            multipleChooseFlag = true;
+            mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
+            adapter.setShowCheckBox(true);//CheckBox的那个方框显示
+            adapter.notifyDataSetChanged();//更新ListView
         }
     }
 
@@ -105,7 +125,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         mLlEditBar.setVisibility(View.GONE);//隐藏下方布局
         adapter.setShowCheckBox(false);//让CheckBox那个方框隐藏
         adapter.notifyDataSetChanged();//更新ListView
-        mutilChooseFlag = false;
+        multipleChooseFlag = false;
     }
 
     private void delete() {
@@ -182,7 +202,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mutilChooseFlag)
+                if (multipleChooseFlag)
                     updateCheckBoxStatus(view, position);
                 else {
                     ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
@@ -200,7 +220,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                mutilChooseFlag = true;
+                multipleChooseFlag = true;
                 mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
                 adapter.setShowCheckBox(true);//CheckBox的那个方框显示
                 updateCheckBoxStatus(view, position);
@@ -230,27 +250,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.ll_delete).setOnClickListener(this);
         view.findViewById(R.id.ll_inverse).setOnClickListener(this);
         view.findViewById(R.id.ll_select_all).setOnClickListener(this);
-        editPen = view.findViewById(R.id.edit_list);
-        editPen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mutilChooseFlag) {
-                    cancel();
-                } else {
-                    mutilChooseFlag = true;
-                    mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
-                    adapter.setShowCheckBox(true);//CheckBox的那个方框显示
-                    adapter.notifyDataSetChanged();//更新ListView
-                }
-            }
-        });
-        Refresh = view.findViewById(R.id.refresh_list);
-        Refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshList();
-            }
-        });
+        view.findViewById(R.id.addSongs).setOnClickListener(this);
+        view.findViewById(R.id.addFolder).setOnClickListener(this);
+        view.findViewById(R.id.refresh_list).setOnClickListener(this);
+        view.findViewById(R.id.edit_list).setOnClickListener(this);
         lvData.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
 
@@ -304,6 +307,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         } else {
             return 0;
         }
+    }
+
+    public void setListViewPosition(int listViewPosition) {
+        lvData.setSelectionFromTop(listViewPosition, 200);
     }
 }
 

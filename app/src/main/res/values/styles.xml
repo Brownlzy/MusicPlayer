@@ -62,4 +62,8 @@
         <item name="cornerFamily">cut</item>
         <item name="cornerSize">10dp</item>
     </style>
+
+    <style name="BlurColor">
+        <item name="realtimeOverlayColor">#66FFFFFF</item>
+    </style>
 </resources>

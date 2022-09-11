@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -328,6 +327,12 @@ public class MainActivity extends FragmentActivity {
             }
         });
         initProgress();
+        findViewById(R.id.musicPlayingLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playlistFragment.setListViewPosition(musicPlayer.getNowId());
+            }
+        });
     }
 
     private void setIsLyric() {

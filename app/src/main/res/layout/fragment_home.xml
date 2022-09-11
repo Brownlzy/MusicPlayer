@@ -52,22 +52,25 @@
                     android:layout_marginEnd="-10dp"
                     android:layout_marginBottom="-20dp"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="invisible">
 
                     <com.github.mmin18.widget.RealtimeBlurView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintDimensionRatio="1:1"
                         app:realtimeBlurRadius="10dp"
-                        app:realtimeOverlayColor="#004CAF50" />
+                        style="@style/BlurColor" />
 
                     <ListView
                         android:id="@+id/lyricList"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:divider="@null"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginRight="10dp" />
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginRight="10dp"
+                        android:scrollbars="none" />
                 </RelativeLayout>
 
             </RelativeLayout>

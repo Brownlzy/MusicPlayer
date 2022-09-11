@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MusicUtils {
@@ -50,6 +51,9 @@ public class MusicUtils {
         public List<Long> delayMillionSeconds;
 
         public Lyric(Uri lyricUri) {
+            lyricList = new ArrayList<>();
+            startTime = new ArrayList<>();
+            delayMillionSeconds = new ArrayList<>();
             try {
                 File lyricFile = FileUtils.getFileByPath(lyricUri.toString());
                 InputStream inStream = null;
@@ -75,7 +79,12 @@ public class MusicUtils {
         }
 
         private void splitLyricFromLine(String line) {
-            String lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]\\]")[1];
+            String lineLyric;
+            try {
+                lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]\\]")[1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return;
+            }
             if (lineLyric != null) {
                 lyricList.add(lineLyric);
                 startTime.add(line.substring(1, 9));
@@ -86,7 +95,7 @@ public class MusicUtils {
             if (lyricList.size() > 1) {
                 String time1 = startTime.get(0);
                 String time2 = startTime.get(1);
-                for (int i = 0; i < startTime.size() - 1; i++, time1 = time2) {
+                for (int i = 0; i < startTime.size() - 1; i++, time1 = time2, time2 = startTime.get(i)) {
                     delayMillionSeconds.add(formatTime(time2) - formatTime(time1));
                 }
             }
@@ -100,6 +109,10 @@ public class MusicUtils {
                     Long.parseLong(stringTime.substring(3, 5)) * 1000 +
                     Long.parseLong(stringTime.substring(6, 8)) * 10;
             return mSeconds;
+        }
+
+        public int size() {
+            return lyricList.size();
         }
     }
 

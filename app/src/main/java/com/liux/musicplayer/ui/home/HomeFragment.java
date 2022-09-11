@@ -2,10 +2,14 @@ package com.liux.musicplayer.ui.home;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +25,8 @@ import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentHomeBinding;
 import com.liux.musicplayer.util.MusicUtils;
 
+import java.util.List;
+
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
@@ -30,6 +36,11 @@ public class HomeFragment extends Fragment {
     private ShapeableImageView albumImageView;
     private RelativeLayout songLyricLayout;
     private View mView;
+    private ListView lyricList;
+    private ListAdapter adapter;
+    private MusicUtils.Lyric lyric;
+    private int listPosition = -1;
+    private int listPositionY = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +69,8 @@ public class HomeFragment extends Fragment {
             songInfo = mView.findViewById(R.id.home_song_info);
             albumImageView = mView.findViewById(R.id.albumImageView);
             songLyricLayout = mView.findViewById(R.id.songLyricLayout);
+            lyricList = mView.findViewById(R.id.lyricList);
+            lyricList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             MusicUtils.Metadata metadata = MusicUtils.getMetadata(getContext(), song);
             if (metadata.isValid) {
                 songTitle.setText((metadata.title == null) ? song.title : metadata.title);
@@ -86,6 +99,9 @@ public class HomeFragment extends Fragment {
                 albumImageView.setImageBitmap(bitmap);
                 playBarPic.setImageBitmap(bitmap);
             }
+            lyric = new MusicUtils.Lyric(Uri.parse(song.lyric_uri));
+            adapter = new LyricAdapter(this, getContext(), lyric);
+            lyricList.setAdapter(adapter);
         }
     }
 
@@ -98,4 +114,23 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        if (lyricList != null) {
+            listPosition = lyricList.getFirstVisiblePosition();
+            listPositionY = lyricList.getChildAt(0).getTop();
+            Log.e("lyricList", String.valueOf(listPosition));
+            Log.e("lyricList", String.valueOf(listPositionY));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        if (listPosition != -1)
+            lyricList.setSelectionFromTop(listPosition, listPositionY);
+    }
+
 }

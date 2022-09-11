@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/item_lyric"
+        android:id="@+id/item_lyric_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:gravity="center_vertical"
         android:text="这是歌词"
+        android:textAlignment="center"
         android:textSize="18sp" />
 
 </LinearLayout>

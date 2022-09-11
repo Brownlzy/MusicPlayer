@@ -97,6 +97,8 @@
                     android:id="@+id/musicPlayingLayout"
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:visibility="gone"

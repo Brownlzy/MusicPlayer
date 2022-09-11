@@ -20,10 +20,6 @@ import com.liux.musicplayer.util.MusicUtils;
 
 import java.util.List;
 
-/**
- * Created by yangms on 2018/7/16.
- */
-
 public class PlaylistAdapter extends BaseAdapter {
 
     List<MusicUtils.Song> data;

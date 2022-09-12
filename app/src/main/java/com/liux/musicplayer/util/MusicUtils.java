@@ -99,7 +99,9 @@ public class MusicUtils {
                 String time1 = startTime.get(0);
                 String time2 = startTime.get(1);
                 startMillionTime.add(formatTime(time1));
-                for (int i = 0; i < startTime.size() - 1; i++, time1 = time2, time2 = startTime.get(i)) {
+                for (int i = 0; i < startTime.size() - 1; i++) {
+                    time1 = time2;
+                    time2 = startTime.get(i + 1);
                     delayMillionSeconds.add(formatTime(time2) - formatTime(time1));
                     startMillionTime.add(formatTime(time2));
                 }
@@ -124,7 +126,7 @@ public class MusicUtils {
             if (lyricList.size() > 0) {
                 for (int i = 0; i < lyricList.size(); i++) {
                     if (startMillionTime.get(i) > currentPosition)
-                        return (i - 1 > 0) ? i - 2 : i - 1;
+                        return (i - 1 >= 0) ? i - 1 : i;
                 }
                 return lyricList.size() - 1;
             } else {

@@ -49,11 +49,13 @@ public class MusicUtils {
         public List<String> lyricList;
         public List<String> startTime;
         public List<Long> delayMillionSeconds;
+        public List<Long> startMillionTime;
 
         public Lyric(Uri lyricUri) {
             lyricList = new ArrayList<>();
             startTime = new ArrayList<>();
             delayMillionSeconds = new ArrayList<>();
+            startMillionTime = new ArrayList<>();
             try {
                 File lyricFile = FileUtils.getFileByPath(lyricUri.toString());
                 InputStream inStream = null;
@@ -73,6 +75,7 @@ public class MusicUtils {
                 lyricList.add("歌词文件不存在");
                 startTime.add("00:00.00");
                 delayMillionSeconds.add((long) -1);
+                startMillionTime.add((long) 0);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -95,8 +98,10 @@ public class MusicUtils {
             if (lyricList.size() > 1) {
                 String time1 = startTime.get(0);
                 String time2 = startTime.get(1);
+                startMillionTime.add(formatTime(time1));
                 for (int i = 0; i < startTime.size() - 1; i++, time1 = time2, time2 = startTime.get(i)) {
                     delayMillionSeconds.add(formatTime(time2) - formatTime(time1));
+                    startMillionTime.add(formatTime(time2));
                 }
             }
             delayMillionSeconds.add((long) -1);
@@ -113,6 +118,18 @@ public class MusicUtils {
 
         public int size() {
             return lyricList.size();
+        }
+
+        public int getNowLyric(int currentPosition) {
+            if (lyricList.size() > 0) {
+                for (int i = 0; i < lyricList.size(); i++) {
+                    if (startMillionTime.get(i) > currentPosition)
+                        return (i - 1 > 0) ? i - 2 : i - 1;
+                }
+                return lyricList.size() - 1;
+            } else {
+                return -1;
+            }
         }
     }
 

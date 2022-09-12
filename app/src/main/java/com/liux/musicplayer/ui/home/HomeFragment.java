@@ -1,11 +1,17 @@
 package com.liux.musicplayer.ui.home;
 
 import android.annotation.SuppressLint;
+import android.app.ListActivity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -23,12 +29,15 @@ import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentHomeBinding;
+import com.liux.musicplayer.util.DisplayUtils;
 import com.liux.musicplayer.util.MusicUtils;
 
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    public MusicUtils.Lyric lyric;
+    public ListView lyricList;
     private FragmentHomeBinding binding;
     private TextView songTitle;
     private TextView songArtist;
@@ -36,11 +45,11 @@ public class HomeFragment extends Fragment {
     private ShapeableImageView albumImageView;
     private RelativeLayout songLyricLayout;
     private View mView;
-    private ListView lyricList;
-    private ListAdapter adapter;
-    private MusicUtils.Lyric lyric;
+    private LyricAdapter adapter;
     private int listPosition = -1;
     private int listPositionY = 0;
+    private final SparseBooleanArray nowLyricMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -100,7 +109,7 @@ public class HomeFragment extends Fragment {
                 playBarPic.setImageBitmap(bitmap);
             }
             lyric = new MusicUtils.Lyric(Uri.parse(song.lyric_uri));
-            adapter = new LyricAdapter(this, getContext(), lyric);
+            adapter = new LyricAdapter(this, getContext(), lyric, nowLyricMap);
             lyricList.setAdapter(adapter);
         }
     }
@@ -133,4 +142,18 @@ public class HomeFragment extends Fragment {
             lyricList.setSelectionFromTop(listPosition, listPositionY);
     }
 
+    public void setLyricPosition(int lyricPosition) {
+        nowLyricMap.clear();
+        nowLyricMap.put(lyricPosition, true);
+        adapter.notifyDataSetChanged();
+        try {
+            lyricList.setSelectionFromTop(lyricPosition, lyricList.getWidth() / 2 - 20);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initLyric() {
+
+    }
 }

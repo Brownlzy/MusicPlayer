@@ -1,6 +1,8 @@
 package com.liux.musicplayer.ui.home;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,11 +17,13 @@ public class LyricAdapter extends BaseAdapter {
     private final Context mContext;
     ViewHolder holder;
     private HomeFragment mHomeFragment;
+    private SparseBooleanArray mNowLyricMap;
 
-    public LyricAdapter(HomeFragment homeFragment, Context context, MusicUtils.Lyric lyric) {
+    public LyricAdapter(HomeFragment homeFragment, Context context, MusicUtils.Lyric lyric, SparseBooleanArray nowLyricMap) {
         lyricData = lyric;
         mContext = context;
         mHomeFragment = homeFragment;
+        mNowLyricMap = nowLyricMap;
     }
 
     @Override
@@ -48,6 +52,10 @@ public class LyricAdapter extends BaseAdapter {
         }
         holder.lyricText = convertView.findViewById(R.id.item_lyric_text);
         holder.lyricText.setText(lyricData.lyricList.get(position));
+        if (mNowLyricMap.get(position, false))
+            holder.lyricText.setTextColor(Color.CYAN);
+        else
+            holder.lyricText.setTextColor(mContext.getColor(R.color.design_default_color_on_primary));
         return convertView;
     }
 

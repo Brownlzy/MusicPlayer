@@ -239,6 +239,8 @@ public class MusicPlayer {
                 mainActivity.resetPlayProgress();
                 //开启进度条跟踪线程
                 mainActivity.startProgressBar();
+                mainActivity.startLyric();
+                ;
                 mainActivity.setPlayOrPause(true);
                 break;
             default:

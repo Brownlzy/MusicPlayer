@@ -28,6 +28,7 @@ import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
+import com.liux.musicplayer.util.DisplayUtils;
 
 public class MainActivity extends FragmentActivity {
 
@@ -49,6 +50,7 @@ public class MainActivity extends FragmentActivity {
     private BottomNavigationView bottomNavigationView;
     private FragmentStateAdapter pagerAdapter;
     private ProgressThread progressThread;
+    private LyricThread lyricThread;
     private LinearLayout playProgressLayout;
     private LinearLayout musicPlayingLayout;
     private TextView playProgressNowText;
@@ -122,8 +124,77 @@ public class MainActivity extends FragmentActivity {
                 }
             }
         }
+    }
+
+    private Handler LyricHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 100) {
+                homeFragment.setLyricPosition((int) msg.obj);
+            }
+        }
+    };
+
+    private class LyricThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            int index = 0;
+            while (true) {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
+                try {
+                    if (musicPlayer.getMediaPlayer().isPlaying()) {
+                        int currentLyricId = homeFragment.lyric.getNowLyric(musicPlayer.getMediaPlayer().getCurrentPosition());
+                        if (currentLyricId >= 0) {
+                            Message msg = new Message();
+                            msg.what = 100;  //消息发送的标志
+                            msg.obj = currentLyricId; //消息发送的内容如：  Object String 类 int
+                            LyricHandler.sendMessage(msg);
+                        }
+                    }
+                    Thread.sleep(10);
+                } catch (InterruptedException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,8 +222,10 @@ public class MainActivity extends FragmentActivity {
                     isBackground = false;
                     //说明应用重新进入了前台
                     //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
-                    if (viewPager.getCurrentItem() == 0)
+                    if (viewPager.getCurrentItem() == 0) {
                         startProgressBar();
+                        startLyric();
+                    }
                 }
 
             }
@@ -176,8 +249,10 @@ public class MainActivity extends FragmentActivity {
                     //说明应用进入了后台
                     //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
                 }
-                if (viewPager.getCurrentItem() == 0)
+                if (viewPager.getCurrentItem() == 0) {
                     startProgressBar();
+                    startLyric();
+                }
             }
 
             @Override
@@ -197,10 +272,12 @@ public class MainActivity extends FragmentActivity {
             musicPlayer.pause();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
             stopProgressBar();
+            stopLyric();
         } else {
             musicPlayer.start();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
             startProgressBar();
+            startLyric();
         }
     }
 
@@ -208,9 +285,13 @@ public class MainActivity extends FragmentActivity {
         if (isPlay) {
             musicPlayer.start();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+            startProgressBar();
+            startLyric();
         } else {
             musicPlayer.pause();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+            stopProgressBar();
+            stopLyric();
         }
     }
 
@@ -260,6 +341,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 stopProgressBar();
+                stopLyric();
             }
 
             @Override
@@ -268,8 +350,13 @@ public class MainActivity extends FragmentActivity {
                 //松开之后音乐跳转到相应位置
                 playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
                 startProgressBar();
+                startLyric();
             }
         });
+    }
+
+    private void initLyric() {
+        startLyric();
     }
 
     private void initViewCompat() {
@@ -415,18 +502,21 @@ public class MainActivity extends FragmentActivity {
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);
                         startProgressBar();
+                        startLyric();
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         stopProgressBar();
+                        stopLyric();
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         stopProgressBar();
+                        stopLyric();
                         break;
                 }
             }
@@ -447,6 +537,7 @@ public class MainActivity extends FragmentActivity {
                         playProgressLayout.setVisibility(View.VISIBLE);
                         viewPager.setCurrentItem(0, false);
                         startProgressBar();
+                        startLyric();
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
@@ -454,6 +545,7 @@ public class MainActivity extends FragmentActivity {
                         playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(1, false);
                         stopProgressBar();
+                        stopLyric();
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
@@ -461,6 +553,7 @@ public class MainActivity extends FragmentActivity {
                         playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(2, false);
                         stopProgressBar();
+                        stopLyric();
                         break;
                 }
                 return true;
@@ -498,16 +591,17 @@ public class MainActivity extends FragmentActivity {
 
     public void startProgressBar() {
         if (progressThread == null) {
-            progressThread = new MainActivity.ProgressThread();
+            progressThread = new ProgressThread();
             progressThread.start();
         } else if (progressThread.isPaused()) {
             progressThread.resumeThread();
         }
     }
-
     public void stopProgressBar() {
         if (progressThread != null && !progressThread.isPaused())
             progressThread.pauseThread();
+        if (lyricThread != null && !lyricThread.isPaused())
+            lyricThread.pauseThread();
     }
 
     public void resetPlayProgress() {
@@ -517,6 +611,20 @@ public class MainActivity extends FragmentActivity {
         playProgressNowText.setText("0:00");
         playProgressBar.setProgress(0);
         setPlayOrPause(false);
+    }
+
+    public void startLyric() {
+        if (lyricThread == null) {
+            lyricThread = new LyricThread();
+            lyricThread.start();
+        } else if (lyricThread.isPaused()) {
+            lyricThread.resumeThread();
+        }
+    }
+
+    public void stopLyric() {
+        if (lyricThread != null && !lyricThread.isPaused())
+            lyricThread.pauseThread();
     }
 
 }

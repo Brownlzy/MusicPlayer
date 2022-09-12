@@ -28,7 +28,6 @@ import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
-import com.liux.musicplayer.util.DisplayUtils;
 
 public class MainActivity extends FragmentActivity {
 
@@ -424,11 +423,11 @@ public class MainActivity extends FragmentActivity {
 
     private void setIsLyric() {
         if (musicPlayer.isLyric()) {
-            homeFragment.setIsLyric(false);
+            homeFragment.setIsLyricLayoutShow(false);
             PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_24));
             musicPlayer.setLyric(false);
         } else {
-            homeFragment.setIsLyric(true);
+            homeFragment.setIsLyricLayoutShow(true);
             PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_green_24));
             musicPlayer.setLyric(true);
         }

@@ -186,8 +186,8 @@ public class HomeFragment extends Fragment {
             lyricList.setAdapter(adapter);
         }
     }
-
-    public void setIsLyric(boolean isLyric) {
+    
+    public void setIsLyricLayoutShow(boolean isLyric) {
         if (songLyricLayout != null) {
             if (!isLyric) {
                 songLyricLayout.setVisibility(View.INVISIBLE);
@@ -202,7 +202,8 @@ public class HomeFragment extends Fragment {
         super.onPause();  // Always call the superclass method first
         if (lyricList != null) {
             listPosition = lyricList.getFirstVisiblePosition();
-            listPositionY = lyricList.getChildAt(0).getTop();
+            if (lyricList.getChildAt(0) != null)
+                listPositionY = lyricList.getChildAt(0).getTop();
             Log.e("lyricList", String.valueOf(listPosition));
             Log.e("lyricList", String.valueOf(listPositionY));
         }

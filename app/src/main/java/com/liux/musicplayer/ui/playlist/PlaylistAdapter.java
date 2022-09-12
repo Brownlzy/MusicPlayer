@@ -60,23 +60,23 @@ public class PlaylistAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
+        //绑定对象
         holder.checkBox = convertView.findViewById(R.id.chb_select_way_point);
         holder.btnMore = convertView.findViewById(R.id.btn_more_vert);
         holder.mItemTitle = convertView.findViewById(R.id.item_title);
         holder.mItemId = convertView.findViewById(R.id.item_id);
         holder.mItemSinger = convertView.findViewById(R.id.item_singer);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
-
+        //设置数据
         holder.mItemTitle.setText(data.get(position).title);
         holder.mItemId.setText(String.valueOf(data.get(position).id + 1));
         holder.mItemSinger.setText(data.get(position).artist +
                 (data.get(position).album.equals("") ? "" : (" - " + data.get(position).album)));
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
-        holder.btnMore.setOnClickListener(new View.OnClickListener() {
+        holder.btnMore.setOnClickListener(new View.OnClickListener() {  //设置单击监听器
             @Override
             public void onClick(View v) {
-                mPlaylistFragment.popMenu(position, v);
+                mPlaylistFragment.popMenu(position, v); //弹出popup菜单
             }
         });
         return convertView;

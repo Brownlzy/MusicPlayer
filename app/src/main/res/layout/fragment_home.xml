@@ -36,6 +36,8 @@
                     app:layout_constraintDimensionRatio="1:1"
                     app:shapeAppearance="@style/RoundedStyle"
                     app:strokeColor="@color/green_700"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     app:strokeWidth="2dp" />
 
 

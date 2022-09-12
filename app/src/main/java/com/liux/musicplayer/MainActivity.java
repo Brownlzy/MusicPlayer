@@ -421,7 +421,7 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    private void setIsLyric() {
+    public void setIsLyric() {
         if (musicPlayer.isLyric()) {
             homeFragment.setIsLyricLayoutShow(false);
             PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_24));

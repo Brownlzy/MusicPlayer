@@ -22,6 +22,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
+import com.liux.musicplayer.util.DisplayUtils;
 import com.liux.musicplayer.util.MusicUtils;
 
 import java.util.ArrayList;
@@ -310,7 +311,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     public void setListViewPosition(int listViewPosition) {
-        lvData.setSelectionFromTop(listViewPosition, 200);
+        lvData.setSelectionFromTop(listViewPosition, 0);
     }
 }
 

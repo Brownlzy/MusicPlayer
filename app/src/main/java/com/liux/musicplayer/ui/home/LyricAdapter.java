@@ -50,12 +50,22 @@ public class LyricAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        //绑定对象
         holder.lyricText = convertView.findViewById(R.id.item_lyric_text);
         holder.lyricText.setText(lyricData.lyricList.get(position));
-        if (mNowLyricMap.get(position, false))
-            holder.lyricText.setTextColor(Color.CYAN);
-        else
-            holder.lyricText.setTextColor(mContext.getColor(R.color.design_default_color_on_primary));
+        if (mContext.getApplicationContext().getResources().getConfiguration().uiMode == 0x21) {    //深色模式
+            if (mNowLyricMap.get(position, false))  //被选中则设置高亮颜色
+                holder.lyricText.setTextColor(Color.CYAN);
+            else {
+                holder.lyricText.setTextColor(Color.WHITE);
+            }
+        } else {
+            if (mNowLyricMap.get(position, false))  //被选中则设置高亮颜色
+                holder.lyricText.setTextColor(Color.GREEN);
+            else {
+                holder.lyricText.setTextColor(Color.DKGRAY);
+            }
+        }
         return convertView;
     }
 

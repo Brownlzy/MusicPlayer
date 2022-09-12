@@ -1,23 +1,20 @@
 package com.liux.musicplayer.ui.home;
 
 import android.annotation.SuppressLint;
-import android.app.ListActivity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -26,13 +23,9 @@ import androidx.fragment.app.Fragment;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.MainActivity;
-import com.liux.musicplayer.MusicPlayer;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentHomeBinding;
-import com.liux.musicplayer.util.DisplayUtils;
 import com.liux.musicplayer.util.MusicUtils;
-
-import java.util.List;
 
 public class HomeFragment extends Fragment {
 
@@ -48,14 +41,94 @@ public class HomeFragment extends Fragment {
     private LyricAdapter adapter;
     private int listPosition = -1;
     private int listPositionY = 0;
+    private boolean isSetLyricPosition = true;
     private final SparseBooleanArray nowLyricMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
+    private StartLyricScrollThread startLyricScrollThread;
+    private int lastLyricId;
 
+    private class StartLyricScrollThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(5000);
+                if (pause) return;
+                isSetLyricPosition = true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         mView = view;
+        lyricList = mView.findViewById(R.id.lyricList);
+        lyricList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        lyricList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // OnScrollListener.SCROLL_STATE_FLING; //屏幕处于甩动状态
+                // OnScrollListener.SCROLL_STATE_IDLE; //停止滑动状态
+                // OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;// 手指接触状态
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isSetLyricPosition = false;
+                    //if (startLyricScrollThread != null)
+                    //    startLyricScrollThread.pauseThread();
+                } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    isSetLyricPosition = true;
+                    //if (startLyricScrollThread == null){
+                    //    startLyricScrollThread = new StartLyricScrollThread();
+                    //    startLyricScrollThread.start();
+                    //}else {
+                    //    startLyricScrollThread.resumeThread();
+                    //}
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
+        lyricList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+                ((MainActivity) getActivity()).getMusicPlayer().getMediaPlayer().seekTo(lyric.startMillionTime.get(position).intValue());
+            }
+        });
         callMainActivityForInfo();
         return view;
     }
@@ -143,13 +216,19 @@ public class HomeFragment extends Fragment {
     }
 
     public void setLyricPosition(int lyricPosition) {
-        nowLyricMap.clear();
-        nowLyricMap.put(lyricPosition, true);
-        adapter.notifyDataSetChanged();
-        try {
-            lyricList.setSelectionFromTop(lyricPosition, lyricList.getWidth() / 2 - 20);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        if (lyricPosition != lastLyricId) {
+            nowLyricMap.clear();
+            nowLyricMap.put(lyricPosition, true);
+            adapter.notifyDataSetChanged();
+
+            if (isSetLyricPosition) {
+                try {
+                    lyricList.setSelectionFromTop(lyricPosition, lyricList.getWidth() / 2 - 20);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+            lastLyricId = lyricPosition;
         }
     }
 

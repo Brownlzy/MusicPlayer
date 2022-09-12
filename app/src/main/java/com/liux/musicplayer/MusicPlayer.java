@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 public class MusicPlayer {
-    private final MediaPlayer mp;
+    private final MediaPlayer mp;//主要的播放类，搜MediaPlayer生命周期
     private List<Song> songList;
     private int nowId;
     private MainActivity mainActivity;
@@ -32,10 +32,10 @@ public class MusicPlayer {
     private final Context mContext;
     private SharedPreferences sp;
     private List<Integer> shuffleOrder;
-    private int shuffleId;
+    private int shuffleId;//随机播放列表的正在播放id
 
 
-    public class Song {
+    public class Song {//歌曲信息类
         public int id;
         public String title;
         public String artist;
@@ -53,11 +53,11 @@ public class MusicPlayer {
         mContext = context;
         mainActivity = mMainActivity;
         sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        setPlayList();
-        setMediaPlayerListener();
+        setPlayList();//读取播放列表
+        setMediaPlayerListener();//设置mediaplayer的监听器
     }
 
-    public void playPrevOrNext(boolean isNext) {
+    public void playPrevOrNext(boolean isNext) {//根据播放顺序信息确定前后曲目
         int maxId = getMaxID();
         int nowId = getNowId();
         int order = getPlayOrder();
@@ -103,7 +103,7 @@ public class MusicPlayer {
                 }
                 break;
         }
-        playThisNow(nowId);
+        playThisNow(nowId);//播放
     }
 
     private void setMediaPlayerListener() {
@@ -130,6 +130,7 @@ public class MusicPlayer {
     }
 
     private void setPlayList() {
+        //读取nowId/Playlist/这些key值在/res/xml/root_。。。
         nowId = Integer.parseInt(sp.getString("nowId", "0"));
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
@@ -200,6 +201,7 @@ public class MusicPlayer {
     }
 
     public void setPlayOrder(int order) {
+        //设置播放顺序
         playOrder = order;
         savePlayOrder();
         if (playOrder == SHUFFLE_PLAY) {
@@ -220,6 +222,7 @@ public class MusicPlayer {
     }
 
     private void savePlayOrder() {
+        //保存播放顺序
         SharedPreferences.Editor spEditor = sp.edit();
         spEditor.putString("playOrder", String.valueOf(playOrder));
         spEditor.apply();

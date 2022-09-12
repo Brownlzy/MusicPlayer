@@ -30,7 +30,7 @@ public class HomeFragment extends Fragment {
         songTitle = view.findViewById(R.id.home_song_title);
         songArtist = view.findViewById(R.id.home_song_artist);
         songInfo = view.findViewById(R.id.home_song_info);
-
+        //告诉MainActivity准备好了
         callMainActivityForInfo();
         return view;
     }

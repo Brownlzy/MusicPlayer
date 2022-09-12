@@ -33,7 +33,7 @@ public class PlaylistAdapter extends BaseAdapter {
     private PlaylistFragment mPlaylistFragment;
 
     public PlaylistAdapter(PlaylistFragment playlistFragment, Context context, List<MusicPlayer.Song> data, SparseBooleanArray stateCheckedMap) {
-        this.data = data;
+        this.data = data;//保存传入的数据
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;
         mPlaylistFragment = playlistFragment;
@@ -54,6 +54,7 @@ public class PlaylistAdapter extends BaseAdapter {
         return i;
     }
 
+    //listView会通过这个方法找adaptar要每一个元素的View（布局），我们重写这个函数把带数据的元素返回给它
     @Override
     public View getView(final int position, View convertView, ViewGroup viewGroup) {
         if (convertView == null) {
@@ -76,16 +77,18 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemSinger.setText(data.get(position).artist +
                 (data.get(position).album.equals("") ? "" : (" - " + data.get(position).album)));
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
+        //设置右边三点的监听器
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //弹出焦点在这个元素的菜单
                 mPlaylistFragment.popMenu(position, v);
             }
         });
-        return convertView;
+        return convertView;//返回给listview
     }
 
-    public class ViewHolder {
+    public class ViewHolder {   //便于管理
         public TextView mItemTitle;
         public TextView mItemId;
         public TextView mItemSinger;
@@ -93,6 +96,7 @@ public class PlaylistAdapter extends BaseAdapter {
         public ImageView btnMore;
     }
 
+    //设置勾选框的开关
     private void showAndHideCheckBox() {
         if (isShowCheckBox) {
             holder.checkBox.setVisibility(View.VISIBLE);

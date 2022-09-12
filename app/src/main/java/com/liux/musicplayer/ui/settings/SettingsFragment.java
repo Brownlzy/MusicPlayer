@@ -116,7 +116,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
-        //绑定权限选项
+        //绑定（res/xml/root_preferences.xml）控件
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         MainFolder = findPreference("mainFolder");
@@ -124,6 +124,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
         About = findPreference("info");
+        //为控件设置监听器，触发后执行重写的方法
+        //前往应用详情页
         clickGotoAppDetails.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -132,7 +134,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 intent.setComponent(cm);
                 intent.setAction("android.intent.action.VIEW");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setData(Uri.parse("package:com.liux.musicplayer"));
+                intent.setData(Uri.parse("package:com.liux.musicplayer"));//设置Intent用于作为参数
                 //调用
                 gotoAppInfo.launch(intent);
                 return true;
@@ -159,6 +161,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
             }
         });
+        //检查权限获得情况，并体现在开关上
         if (checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -167,10 +170,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 /*
         // 获取SharedPreferences对象
         SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        // 获取Editor对象
+        // 获取Editor对象，可以用put方法修改设置，但要apply提交
         SharedPreferences.Editor editor = sp.edit();
 */
         //选择主文件目录
+        //SharedPreferences类用于读取设置
         SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
         //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
@@ -180,10 +184,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setMainFolder.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                //系统调用Action属性
                 try {
+                    //启动之前注册的回调，并设置参数
                     getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
                 } catch (Exception e) {
+                    //报错
                     Toast.makeText(getActivity(), "没有正确打开文件管理器", Toast.LENGTH_SHORT).show();
                 }
                 return false;
@@ -193,7 +198,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         About.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                popInfo();
+                popInfo();//弹出关于窗口
                 return false;
             }
         });
@@ -202,13 +207,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void popInfo() {
         AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.appInfo)
+                .setTitle(R.string.app_name)//标题，R类是由res文件夹下内容生成的
+                .setMessage(R.string.appInfo)//内容
                 .setIcon(R.mipmap.ic_launcher)
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {//设置监听器
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        //按钮点击后执行
                     }
                 })
                 .create();
@@ -217,11 +222,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     //检查权限是否获取成功
     public boolean checkPermission(String permission) {
-        //拒绝修改开关
+        //根据返回结果选择拒绝修改开关
         return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    //判断是否开启悬浮窗权限   context可以用你的Activity.或者tiis
+    //判断是否开启悬浮窗权限
     public static boolean checkFloatPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             AppOpsManager appOpsMgr = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
@@ -236,7 +241,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     }
 
-    //请求权限
+    //请求权限（先检查再请求）
     public boolean askPermission(String permission) {
         if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
             //Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
@@ -248,11 +253,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
-    //权限打开
+    //同上
     private boolean requestSettingCanDrawOverlays() {
         if (checkFloatPermission(getContext()))
             return true;
         else {
+            //未成功，跳到设置页面让用户设置
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             intent.setData(Uri.parse("package:com.liux.musicplayer"));
             requestOverlayPermissionLauncher.launch(intent);

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlaylistFragment extends Fragment implements View.OnClickListener {
+public class PlaylistFragment extends Fragment implements View.OnClickListener {//声明了点击接口
 
     private FragmentPlaylistBinding binding;
 
@@ -53,10 +53,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         binding = FragmentPlaylistBinding.inflate(inflater, container, false);
 
-        initView(view);
-        initData();
+        initView(view);//初始化控件
+        initData();//初始化播放列表的数据
         adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
-        lvData.setAdapter(adapter);
+        lvData.setAdapter(adapter);//将listView和adapter绑定
+        //设置列表的单击和长按监听器
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
 
@@ -65,7 +66,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        switch (v.getId()) {//通过获得点击事件的控件id区分执行任务
             case R.id.ll_cancel:
                 cancel();
                 break;
@@ -73,7 +74,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 delete();
                 break;
             case R.id.ll_inverse:
-                inverse();
+                inverse();//反选
                 break;
             case R.id.ll_select_all:
                 selectAll();
@@ -156,24 +157,24 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (isSelectedAll) {
             setStateCheckedMap(true);//将CheckBox的所有选中状态变成选中
             isSelectedAll = false;
-            //取出source——uri
+            //取出source_uri
             List<String> uriList = mSongList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList());
             mCheckedData.addAll(uriList);//把所有的数据添加到选中列表中
         } else {
             setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
             isSelectedAll = true;
         }
-        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();//通知adapter更新
     }
 
     private void setOnListViewItemClickListener() {
         lvData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mutilChooseFlag)
-                    updateCheckBoxStatus(view, position);
+                if (mutilChooseFlag)//判断是否正在多选
+                    updateCheckBoxStatus(view, position);//增加刚单击的选项为勾选
                 else {
-                    ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
+                    ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);//播放刚才点击的音乐
                 }
             }
         });
@@ -191,7 +192,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 mutilChooseFlag = true;
                 mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
                 adapter.setShowCheckBox(true);//CheckBox的那个方框显示
-                updateCheckBoxStatus(view, position);
+                updateCheckBoxStatus(view, position);//更新刚刚长按的为勾选
                 return true;
             }
         });
@@ -243,6 +244,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void refreshList() {
+        //刷新播放列表
         ((MainActivity) getActivity()).getMusicPlayer().refreshPlayList();
         initData();
         adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
@@ -250,6 +252,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
+        //初始化数据，我们的播放列表是MainActivity实例化的MusicPlayer从SharedPreferences里读取的。
         mSongList = ((MainActivity) getActivity()).getMusicPlayer().getPlayList();
         setStateCheckedMap(false);
     }
@@ -266,6 +269,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     public void popMenu(int position, View view) {
         PopupMenu popup = new PopupMenu(getContext(), view);
+        //绑定布局在/res/menu/playlist_item_menu.xml
         popup.getMenuInflater().inflate(R.menu.playlist_item_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override

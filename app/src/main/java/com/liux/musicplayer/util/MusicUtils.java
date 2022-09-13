@@ -86,11 +86,20 @@ public class MusicUtils {
             try {
                 lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]\\]")[1];
             } catch (ArrayIndexOutOfBoundsException e) {
-                return;
+                try {
+                    lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]\\]")[1];
+                } catch (ArrayIndexOutOfBoundsException e2) {
+                    return;
+                }
             }
             if (lineLyric != null) {
-                lyricList.add(lineLyric);
-                startTime.add(line.substring(1, 9));
+                int sameTimeId = startTime.indexOf(line.substring(1, 9));
+                if (sameTimeId == -1) {
+                    lyricList.add(lineLyric);
+                    startTime.add(line.substring(1, 9));
+                } else {//有相同的时间
+                    lyricList.set(sameTimeId, lyricList.get(sameTimeId) + "\n" + lineLyric);
+                }
             }
         }
 

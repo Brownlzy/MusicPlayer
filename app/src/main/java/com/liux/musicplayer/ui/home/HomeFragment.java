@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -51,10 +50,11 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         mView = view;
         //绑定歌词列表
-        mView.findViewById(R.id.albumImageView).setOnClickListener(new View.OnClickListener() {
+        mView.findViewById(R.id.albumImageView).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 ((MainActivity) getActivity()).setIsLyric();
+                return false;
             }
         });
         lyricList = mView.findViewById(R.id.lyricList);

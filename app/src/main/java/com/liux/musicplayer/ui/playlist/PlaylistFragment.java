@@ -98,11 +98,19 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkChild(File childFile) {
-        if (childFile.getName().contains(".mp3") || childFile.getName().contains(".flac")) {
+        if (FileUtils.getFileExtension(childFile).equalsIgnoreCase("mp3")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("flac")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("amr")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("ogg")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("3gp")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("m4a")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("gsm")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("wav")
+        ) {
             //if (childFile.length() / 1024 > 1024) {
             //创建模型类存储值，并添加到集合中。通过集合可做任意操作
-                Log.e("ScannedFiles", childFile.getAbsolutePath());
-                ((MainActivity) getActivity()).getMusicPlayer().addMusic(childFile.getAbsolutePath());
+            Log.e("ScannedFiles", childFile.getAbsolutePath());
+            ((MainActivity) getActivity()).getMusicPlayer().addMusic(childFile.getAbsolutePath());
             //}
         }
     }

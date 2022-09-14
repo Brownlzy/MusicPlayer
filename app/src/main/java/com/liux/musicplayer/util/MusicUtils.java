@@ -32,13 +32,9 @@ public class MusicUtils {
     }
 
     public static class Song {
-        public int id;
-        public Long songId;
-        public int albumId;
         public String title;
         public String artist;
         public String album;
-        public String filename;
         public String source_uri;
         public String lyric_uri;
         public String duration;

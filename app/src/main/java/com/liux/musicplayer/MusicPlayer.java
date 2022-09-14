@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MusicPlayer {
     private final static MediaPlayer mp = new MediaPlayer();
@@ -44,7 +45,7 @@ public class MusicPlayer {
         mContext = context;
         mainActivity = mMainActivity;
         sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        setPlayList();
+        readPlayList();
         setMediaPlayerListener();
     }
 
@@ -125,10 +126,10 @@ public class MusicPlayer {
     }
 
     public void refreshPlayList() {
-        setPlayList();
+        readPlayList();
     }
 
-    private void setPlayList() {
+    private void readPlayList() {
         nowId = Integer.parseInt(sp.getString("nowId", "0"));
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
@@ -147,6 +148,11 @@ public class MusicPlayer {
         if (nowId >= songList.size()) nowId = 0;
         setPlayOrder(Integer.parseInt(sp.getString("playOrder", "0")));
         mainActivity.setPlayOrder(playOrder);
+    }
+
+    public void setPlayList(List<MusicUtils.Song> newSongList) {
+        songList = newSongList;
+        savePlayList();
     }
 
     private void savePlayList() {
@@ -168,7 +174,40 @@ public class MusicPlayer {
 
     //添加音乐
     public int addMusic(String path) {
-
+        if (songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(path)) {
+            return 0;
+        } else {
+            MusicUtils.Song newSong = new MusicUtils.Song();
+            newSong.source_uri = path;
+            MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(mContext, newSong);
+            if (newMetadata.isValid) {
+                newSong.title = newMetadata.title;
+                newSong.artist = newMetadata.artist;
+                newSong.album = newMetadata.album;
+            }
+            if (newSong.album == null) newSong.album = "null";
+            if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
+                if (newSong.title == null)
+                    newSong.title = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
+                if (newSong.artist == null)
+                    newSong.artist = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
+            } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
+                if (newSong.title == null)
+                    newSong.title = FileUtils.getFileNameNoExtension(path).split("-")[1];
+                if (newSong.artist == null)
+                    newSong.artist = FileUtils.getFileNameNoExtension(path).split("-")[0];
+            } else {
+                if (newSong.title == null) newSong.title = FileUtils.getFileNameNoExtension(path);
+                if (newSong.artist == null) newSong.artist = "null";
+            }
+            newSong.lyric_uri = path.replace(FileUtils.getFileExtension(path), "lrc");
+            if (songList.size() == 1 && !FileUtils.isFileExists(songList.get(0).source_uri)) {
+                songList.set(0, newSong);
+            } else {
+                songList.add(newSong);
+            }
+            savePlayList();
+        }
         return 0;
     }
 

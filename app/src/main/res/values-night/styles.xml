@@ -11,8 +11,8 @@
     </style>
 
     <style name="EditBarImageViewStyle">
-        <item name="android:layout_height">28dp</item>
-        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_width">36dp</item>
         <item name="android:background">#000000</item>
         <item name="android:gravity">center_horizontal</item>
     </style>

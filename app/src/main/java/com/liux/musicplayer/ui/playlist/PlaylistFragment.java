@@ -1,7 +1,10 @@
 package com.liux.musicplayer.ui.playlist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -13,20 +16,28 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 import com.liux.musicplayer.util.DisplayUtils;
 import com.liux.musicplayer.util.MusicUtils;
+import com.liux.musicplayer.util.UriTransform;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PlaylistFragment extends Fragment implements View.OnClickListener {
@@ -43,6 +54,58 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
     private boolean multipleChooseFlag = false;
+
+    //用于接受系统文件管理器返回目录的回调
+    ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            int resultCode = result.getResultCode();
+            if (resultCode == -1) {
+                Intent data = result.getData();
+                assert data != null;
+                Uri uri = data.getData();
+                addFolder(uri);
+            }
+        }
+    });
+
+    private void addFolder(Uri uri) {
+        Log.e("AddFolder", uri.toString());
+        Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+        searchFile(UriTransform.getPath(getContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
+        adapter.notifyDataSetChanged();
+    }
+
+    private void searchFile(String filePath) {
+        File file = new File(filePath);
+        List<File> folderList = new ArrayList<File>();
+        if (file.isDirectory()) {
+            if (file.listFiles() != null) {
+                for (File childFile : Objects.requireNonNull(file.listFiles())) {
+                    if (childFile.isDirectory()) {
+                        folderList.add(childFile);
+                    } else {
+                        checkChild(childFile);//筛选结果返回
+                    }
+                }
+            }
+        } else {
+            checkChild(file);
+        }
+        for (File folder : folderList) {
+            searchFile(folder.getPath());
+        }
+    }
+
+    private void checkChild(File childFile) {
+        if (childFile.getName().contains(".mp3") || childFile.getName().contains(".flac")) {
+            //if (childFile.length() / 1024 > 1024) {
+            //创建模型类存储值，并添加到集合中。通过集合可做任意操作
+                Log.e("ScannedFiles", childFile.getAbsolutePath());
+                ((MainActivity) getActivity()).getMusicPlayer().addMusic(childFile.getAbsolutePath());
+            //}
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
@@ -83,7 +146,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.addFolder:
-
+                getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
                 break;
         }
     }
@@ -158,12 +221,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private void beSureDelete() {
         //mSongList.removeAll(mCheckedData);//删除选中数据
         mSongList.removeIf(song -> mCheckedData.contains(song.source_uri));
-        for (int i = 0; i < mSongList.size(); i++) {
-            mSongList.get(i).id = i;
-        }
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();
+        ((MainActivity) getActivity()).getMusicPlayer().setPlayList(mSongList);
         Toast.makeText(getContext(), "删除成功", Toast.LENGTH_SHORT).show();
     }
 
@@ -259,10 +320,18 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void refreshList() {
+        listPosition = lvData.getFirstVisiblePosition();
+        listPositionY = lvData.getChildAt(0).getTop();
+        Log.e("playList", String.valueOf(listPosition));
+        Log.e("playList", String.valueOf(listPositionY));
+
         ((MainActivity) getActivity()).getMusicPlayer().refreshPlayList();
         initData();
         adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
         lvData.setAdapter(adapter);
+
+        if (listPosition != -1)
+            lvData.setSelectionFromTop(listPosition + 1, listPositionY - 14);
     }
 
     private void initData() {

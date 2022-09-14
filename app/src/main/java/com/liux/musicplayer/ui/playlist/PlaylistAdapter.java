@@ -69,9 +69,9 @@ public class PlaylistAdapter extends BaseAdapter {
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
         //设置数据
         holder.mItemTitle.setText(data.get(position).title);
-        holder.mItemId.setText(String.valueOf(data.get(position).id + 1));
+        holder.mItemId.setText(String.valueOf(position + 1));
         holder.mItemSinger.setText(data.get(position).artist +
-                (data.get(position).album.equals("") ? "" : (" - " + data.get(position).album)));
+                (data.get(position).album.equals("null") ? "" : (" - " + data.get(position).album)));
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
         holder.btnMore.setOnClickListener(new View.OnClickListener() {  //设置单击监听器
             @Override

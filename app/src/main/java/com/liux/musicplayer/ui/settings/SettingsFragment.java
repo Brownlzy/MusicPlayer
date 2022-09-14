@@ -120,6 +120,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             //获取Editor对象
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("mainFolder", path);
+            //editor.putString("mainFolder", uri.toString());
             editor.apply();
             MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
             setMainFolder.setSummary(MainFolder.getSummary());

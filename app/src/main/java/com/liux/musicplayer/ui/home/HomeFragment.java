@@ -122,7 +122,6 @@ public class HomeFragment extends Fragment {
                 songInfo.setText(getString(R.string.title_album) + metadata.album + "\n" +
                         getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
                         getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
-                        getString(R.string.title_filename) + song.filename + "\n" +
                         getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
                         getString(R.string.title_path) + song.source_uri + "\n" +
                         getString(R.string.title_lyric) + song.lyric_uri);
@@ -130,7 +129,6 @@ public class HomeFragment extends Fragment {
                 songTitle.setText(song.title);
                 songArtist.setText(song.artist);
                 songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
-                        getString(R.string.title_filename) + song.filename + "\n" +
                         getString(R.string.title_path) + song.source_uri + "\n" +
                         getString(R.string.title_lyric) + song.lyric_uri);
             }

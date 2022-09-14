@@ -104,6 +104,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (FileUtils.getFileExtension(childFile).equalsIgnoreCase("mp3")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("flac")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("amr")
+                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("aac")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("ogg")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("3gp")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("m4a")

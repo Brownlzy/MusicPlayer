@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 
 import com.liux.musicplayer.MainActivity;
@@ -66,12 +67,17 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemTitle = convertView.findViewById(R.id.item_title);
         holder.mItemId = convertView.findViewById(R.id.item_id);
         holder.mItemSinger = convertView.findViewById(R.id.item_singer);
+        holder.hasLyric = convertView.findViewById(R.id.hasLyric);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
         //设置数据
         holder.mItemTitle.setText(data.get(position).title);
         holder.mItemId.setText(String.valueOf(position + 1));
         holder.mItemSinger.setText(data.get(position).artist +
                 (data.get(position).album.equals("null") ? "" : (" - " + data.get(position).album)));
+        if (data.get(position).lyric_uri.equals("null"))
+            holder.hasLyric.setVisibility(View.GONE);
+        else
+            holder.hasLyric.setVisibility(View.VISIBLE);
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
         holder.btnMore.setOnClickListener(new View.OnClickListener() {  //设置单击监听器
             @Override
@@ -88,6 +94,7 @@ public class PlaylistAdapter extends BaseAdapter {
         public TextView mItemSinger;
         public CheckBox checkBox;
         public ImageView btnMore;
+        public ImageView hasLyric;
     }
 
     private void showAndHideCheckBox() {

@@ -141,7 +141,7 @@ public class MusicPlayer {
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         songList = gson.fromJson(playListJson, playListType);
-        if (songList == null) {
+        if (songList == null || songList.size() == 0) {
             playListJson = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                     "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
                     "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]";
@@ -202,7 +202,12 @@ public class MusicPlayer {
                 if (newSong.title == null) newSong.title = FileUtils.getFileNameNoExtension(path);
                 if (newSong.artist == null) newSong.artist = "null";
             }
-            newSong.lyric_uri = path.replace(FileUtils.getFileExtension(path), "lrc");
+            //判断是否存在歌词
+            if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
+                newSong.lyric_uri = path.replace(FileUtils.getFileExtension(path), "lrc");
+            else
+                newSong.lyric_uri = "null";
+
             if (songList.size() == 1 && !FileUtils.isFileExists(songList.get(0).source_uri)) {
                 songList.set(0, newSong);
             } else {

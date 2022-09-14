@@ -13,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -33,7 +35,6 @@ import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
-import com.liux.musicplayer.util.DisplayUtils;
 import com.liux.musicplayer.util.MusicUtils;
 import com.liux.musicplayer.util.UriTransform;
 
@@ -46,9 +47,7 @@ import java.util.stream.Collectors;
 public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private FragmentPlaylistBinding binding;
-
     private ListView lvData;
-    private MaterialCardView mLlEditBar;//控制下方那一行的显示与隐藏
     private PlaylistAdapter adapter;
     private int listPosition = -1;
     private int listPositionY = 0;
@@ -182,7 +181,6 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             cancel();
         } else {
             multipleChooseFlag = true;
-            mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
             adapter.setShowCheckBox(true);//CheckBox的那个方框显示
             adapter.notifyDataSetChanged();//更新ListView
         }
@@ -191,8 +189,13 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
-        listPosition = lvData.getFirstVisiblePosition();
-        listPositionY = lvData.getChildAt(0).getTop();
+        try {
+            listPosition = lvData.getFirstVisiblePosition();
+            listPositionY = lvData.getChildAt(0).getTop();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            listPosition = -1;
+        }
         Log.e("playList", String.valueOf(listPosition));
         Log.e("playList", String.valueOf(listPositionY));
     }
@@ -201,7 +204,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition + 1, listPositionY - 14);
+            lvData.setSelectionFromTop(listPosition, listPositionY);
     }
 
     @Override
@@ -210,9 +213,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         binding = null;
     }
 
-    private void cancel() {
+    public void cancel() {
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
-        mLlEditBar.setVisibility(View.GONE);//隐藏下方布局
         adapter.setShowCheckBox(false);//让CheckBox那个方框隐藏
         adapter.notifyDataSetChanged();//更新ListView
         multipleChooseFlag = false;
@@ -309,7 +311,6 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 multipleChooseFlag = true;
-                mLlEditBar.setVisibility(View.VISIBLE);//显示下方布局
                 adapter.setShowCheckBox(true);//CheckBox的那个方框显示
                 updateCheckBoxStatus(view, position);
                 return true;
@@ -332,22 +333,17 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private void initView(View view) {
         lvData = view.findViewById(R.id.lv);
-        mLlEditBar = view.findViewById(R.id.ll_edit_bar);
-
-        view.findViewById(R.id.ll_cancel).setOnClickListener(this);
-        view.findViewById(R.id.ll_delete).setOnClickListener(this);
-        view.findViewById(R.id.ll_inverse).setOnClickListener(this);
-        view.findViewById(R.id.ll_select_all).setOnClickListener(this);
-        view.findViewById(R.id.addSongs).setOnClickListener(this);
-        view.findViewById(R.id.addFolder).setOnClickListener(this);
-        view.findViewById(R.id.refresh_list).setOnClickListener(this);
-        view.findViewById(R.id.edit_list).setOnClickListener(this);
         lvData.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
 
     private void refreshList() {
-        listPosition = lvData.getFirstVisiblePosition();
-        listPositionY = lvData.getChildAt(0).getTop();
+        try {
+            listPosition = lvData.getFirstVisiblePosition();
+            listPositionY = lvData.getChildAt(0).getTop();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            listPosition = -1;
+        }
         Log.e("playList", String.valueOf(listPosition));
         Log.e("playList", String.valueOf(listPositionY));
 
@@ -357,7 +353,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setAdapter(adapter);
 
         if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition + 1, listPositionY - 14);
+            lvData.setSelectionFromTop(listPosition, listPositionY);
     }
 
     private void initData() {
@@ -397,12 +393,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     public int onBackPressed() {
-        if (mLlEditBar.getVisibility() == View.VISIBLE) {
-            cancel();
-            return 1;
-        } else {
-            return 0;
-        }
+        return 0;
     }
 
     public void setListViewPosition(int listViewPosition) {

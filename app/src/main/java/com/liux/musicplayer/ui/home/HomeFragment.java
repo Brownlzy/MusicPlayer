@@ -9,6 +9,8 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -152,9 +154,13 @@ public class HomeFragment extends Fragment {
     public void setIsLyricLayoutShow(boolean isLyric) {
         if (songLyricLayout != null) {
             if (!isLyric) {
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_hide);
+                songLyricLayout.startAnimation(animation);
                 songLyricLayout.setVisibility(View.INVISIBLE);
             } else {
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_show);
                 songLyricLayout.setVisibility(View.VISIBLE);
+                songLyricLayout.startAnimation(animation);
             }
         }
     }

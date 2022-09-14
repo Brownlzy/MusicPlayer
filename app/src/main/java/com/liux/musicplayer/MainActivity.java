@@ -10,6 +10,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -23,6 +25,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.ui.home.HomeFragment;
@@ -55,9 +58,12 @@ public class MainActivity extends FragmentActivity {
     private TextView playProgressNowText;
     private TextView playProgressAllText;
     private ShapeableImageView shapeableImageView;
+    private MaterialCardView PlaylistHeadBar;
+    private int lastPageId = 0;
     //是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
+    private boolean multipleChooseFlag = false;
 
     private Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -194,7 +200,6 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -268,11 +273,14 @@ public class MainActivity extends FragmentActivity {
 
     public void setPlayOrPause() {
         if (musicPlayer.isPlaying()) {
-            musicPlayer.pause();
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
-            stopProgressBar();
-            stopLyric();
+            setPlayOrPause(false);
         } else {
+            setPlayOrPause(true);
+        }
+    }
+
+    public void setPlayOrPause(boolean isPlay) {
+        if (isPlay) {
             if (musicPlayer.isPrepared()) {
                 musicPlayer.start();
                 PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
@@ -285,15 +293,6 @@ public class MainActivity extends FragmentActivity {
                 stopProgressBar();
                 stopLyric();
             }
-        }
-    }
-
-    public void setPlayOrPause(boolean isPlay) {
-        if (isPlay) {
-            musicPlayer.start();
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
-            startProgressBar();
-            startLyric();
         } else {
             musicPlayer.pause();
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
@@ -320,18 +319,19 @@ public class MainActivity extends FragmentActivity {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
+        } else if (viewPager.getCurrentItem() == 1 && multipleChooseFlag) {
+            findViewById(R.id.ll_edit_bar).setVisibility(View.GONE);
+            playlistFragment.cancel();
+            multipleChooseFlag = !multipleChooseFlag;
         } else {
-            if (viewPager.getCurrentItem() == 1 && playlistFragment.onBackPressed() != 1
-                    || viewPager.getCurrentItem() == 2) {
-                // Otherwise, select the previous step.
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-            }
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
 
     public void initHomeFragment() {
-        //musicPlayer.playThisNow(musicPlayer.getNowId());
-        setPlayOrPause();
+        homeFragment.setMusicInfo(musicPlayer.getPlayList().get(musicPlayer.getNowId()), shapeableImageView);
+        musicPlayer.playThisNow(musicPlayer.getNowId());
+        setPlayOrPause(false);
     }
 
     public void setHomeFragment() {
@@ -380,10 +380,30 @@ public class MainActivity extends FragmentActivity {
         PlayBarOrder = findViewById(R.id.playOrder);
         PlayBarPrev = findViewById(R.id.playPrevious);
         PlayBarNext = findViewById(R.id.playNext);
+        PlaylistHeadBar = findViewById(R.id.playlist_header);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
         homeFragment = new HomeFragment();
         playlistFragment = new PlaylistFragment();
         settingsFragment = new SettingsFragment();
+        findViewById(R.id.ll_cancel).setOnClickListener(playlistFragment);
+        findViewById(R.id.ll_delete).setOnClickListener(playlistFragment);
+        findViewById(R.id.ll_inverse).setOnClickListener(playlistFragment);
+        findViewById(R.id.ll_select_all).setOnClickListener(playlistFragment);
+        findViewById(R.id.addSongs).setOnClickListener(playlistFragment);
+        findViewById(R.id.addFolder).setOnClickListener(playlistFragment);
+        findViewById(R.id.refresh_list).setOnClickListener(playlistFragment);
+        findViewById(R.id.edit_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playlistFragment.onClick(v);
+                if (multipleChooseFlag) {
+                    findViewById(R.id.ll_edit_bar).setVisibility(View.GONE);
+                } else {
+                    findViewById(R.id.ll_edit_bar).setVisibility(View.VISIBLE);
+                }
+                multipleChooseFlag = !multipleChooseFlag;
+            }
+        });
 
         SharedPreferences sp = getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         musicPlayer = new MusicPlayer(MainActivity.this, MainActivity.this);
@@ -502,10 +522,16 @@ public class MainActivity extends FragmentActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 bottomNavigationView.getMenu().getItem(position).setChecked(true);
+                Animation animation;
                 switch (bottomNavigationView.getMenu().getItem(position).getItemId()) {
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
+                        if (lastPageId == 1) {
+                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_move_hide);
+                            PlaylistHeadBar.startAnimation(animation);
+                            PlaylistHeadBar.setVisibility(View.GONE);
+                        }
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);
                         startProgressBar();
@@ -513,6 +539,9 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
+                        animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_move_show);
+                        PlaylistHeadBar.startAnimation(animation);
+                        PlaylistHeadBar.setVisibility(View.VISIBLE);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         stopProgressBar();
@@ -520,12 +549,18 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
+                        if (lastPageId == 1) {
+                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_move_hide);
+                            PlaylistHeadBar.startAnimation(animation);
+                            PlaylistHeadBar.setVisibility(View.GONE);
+                        }
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         stopProgressBar();
                         stopLyric();
                         break;
                 }
+                lastPageId = position;
             }
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -538,8 +573,8 @@ public class MainActivity extends FragmentActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                     default:
-                        Log.e("ViewPager2大小", "width-" + viewPager.getWidth() + ",height-" + viewPager.getHeight() + ";比例：" + (double) viewPager.getHeight() / viewPager.getWidth());
                         TabTitle.setText(R.string.app_name);
+                        PlaylistHeadBar.setVisibility(View.GONE);
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);
                         viewPager.setCurrentItem(0, false);
@@ -548,6 +583,7 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
+                        PlaylistHeadBar.setVisibility(View.VISIBLE);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(1, false);
@@ -556,6 +592,7 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
+                        PlaylistHeadBar.setVisibility(View.GONE);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(2, false);

@@ -59,6 +59,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_weight="1"
                     android:text=""
+                    android:scrollbars="none"
                     android:textSize="12sp" />
 
                 <ImageView

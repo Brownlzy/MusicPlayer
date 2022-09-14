@@ -273,13 +273,18 @@ public class MainActivity extends FragmentActivity {
             stopProgressBar();
             stopLyric();
         } else {
-            if (musicPlayer.isPrepared())
+            if (musicPlayer.isPrepared()) {
                 musicPlayer.start();
-            else
+                PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+                startProgressBar();
+                startLyric();
+            } else {
                 musicPlayer.playThisNow(musicPlayer.getNowId());
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
-            startProgressBar();
-            startLyric();
+                musicPlayer.pause();
+                PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+                stopProgressBar();
+                stopLyric();
+            }
         }
     }
 
@@ -325,7 +330,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void initHomeFragment() {
-        musicPlayer.playThisNow(musicPlayer.getNowId());
+        //musicPlayer.playThisNow(musicPlayer.getNowId());
         setPlayOrPause();
     }
 

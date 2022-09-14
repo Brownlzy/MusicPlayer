@@ -1,7 +1,9 @@
 package com.liux.musicplayer.ui.playlist;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -23,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -154,7 +157,21 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.addFolder:
-                getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+                else {
+                    AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.no_permission)
+                            .setMessage(R.string.no_permission_info)
+                            .setIcon(R.mipmap.ic_launcher)
+                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .create();
+                    alertInfoDialog.show();
+                }
                 break;
         }
     }

@@ -66,4 +66,6 @@
     <string name="title_mimetype">"MimeType : "</string>
     <string name="title_bitrate">"Bitrate : "</string>
     <string name="item_menu_edit">Edit</string>
+    <string name="no_permission">No Permission</string>
+    <string name="no_permission_info">The music player needs storage permission to read music files under the folder and generate playlists. You cannot add music to the playlist until you go to the settings page to allow application and obtain storage permission.</string>
 </resources>

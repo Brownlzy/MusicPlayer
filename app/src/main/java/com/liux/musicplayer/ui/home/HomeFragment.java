@@ -168,21 +168,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        //记住onPause时歌词列表位置以便恢复
-        if (lyricList != null) {
-            listPosition = lyricList.getFirstVisiblePosition();
-            if (lyricList.getChildAt(0) != null)
-                listPositionY = lyricList.getChildAt(0).getTop();
-            Log.e("lyricList", String.valueOf(listPosition));
-            Log.e("lyricList", String.valueOf(listPositionY));
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (listPosition != -1)
-            lyricList.setSelectionFromTop(listPosition, listPositionY);
+        lastLyricId = -1;
     }
 
     //根据当前歌词位置设置歌词高亮居中

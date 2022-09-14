@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.util.MusicUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +38,7 @@ public class MusicPlayer {
     private List<Integer> shuffleOrder;
     private int shuffleId;
     private boolean isLyric = false;
+    private boolean prepared = false;
 
     public MusicPlayer(MainActivity mMainActivity, Context context) {
         songList = new ArrayList<>();
@@ -111,7 +113,6 @@ public class MusicPlayer {
         mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-
             }
         });
         //音频播放完成的监听器
@@ -119,6 +120,7 @@ public class MusicPlayer {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 //把所有的都回归到0
+                prepared = false;
                 mainActivity.resetPlayProgress();
                 playPrevOrNext(true);
             }
@@ -136,7 +138,7 @@ public class MusicPlayer {
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
                         "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]");
         Gson gson = new Gson();
-        java.lang.reflect.Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+        Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         songList = gson.fromJson(playListJson, playListType);
         if (songList == null) {
@@ -157,7 +159,7 @@ public class MusicPlayer {
 
     private void savePlayList() {
         Gson gson = new Gson();
-        java.lang.reflect.Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+        Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         String playListJson = gson.toJson(songList, playListType);
         SharedPreferences sp = mContext.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
@@ -283,7 +285,7 @@ public class MusicPlayer {
                 mainActivity.setPlayOrPause(true);
                 break;
             default:
-            case 1:
+            case -1:
                 mainActivity.setPlayBarTitle(musicId);
                 mainActivity.setHomeFragment();
                 AlertDialog alertInfoDialog = new AlertDialog.Builder(mContext)
@@ -312,7 +314,8 @@ public class MusicPlayer {
             reId = -1;
         } else {
             reId = playThis(Uri.parse(songList.get(nowId).source_uri));
-            mp.start();
+            if (reId == 0 && prepared)
+                mp.start();
         }
         return reId;
     }
@@ -323,8 +326,10 @@ public class MusicPlayer {
                 mp.reset();
                 mp.setDataSource(mContext, musicPath);
                 mp.prepare();
+                prepared = true;
             } catch (IOException e) {
                 e.printStackTrace();
+                mp.reset();
                 return -1;
             }
         } else {
@@ -339,7 +344,8 @@ public class MusicPlayer {
     }
 
     public void start() {
-        mp.start();
+        if (prepared)
+            mp.start();
     }
 
     public void setProgress(int second) {
@@ -347,6 +353,10 @@ public class MusicPlayer {
 
     public boolean isPlaying() {
         return mp.isPlaying();
+    }
+
+    public boolean isPrepared() {
+        return prepared;
     }
 }
 

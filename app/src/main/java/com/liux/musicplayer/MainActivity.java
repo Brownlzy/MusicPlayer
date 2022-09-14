@@ -273,7 +273,10 @@ public class MainActivity extends FragmentActivity {
             stopProgressBar();
             stopLyric();
         } else {
-            musicPlayer.start();
+            if (musicPlayer.isPrepared())
+                musicPlayer.start();
+            else
+                musicPlayer.playThisNow(musicPlayer.getNowId());
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
             startProgressBar();
             startLyric();

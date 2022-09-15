@@ -313,6 +313,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 multipleChooseFlag = true;
                 adapter.setShowCheckBox(true);//CheckBox的那个方框显示
                 updateCheckBoxStatus(view, position);
+                ((MainActivity) getActivity()).showPlaylistEditBar();
                 return true;
             }
         });

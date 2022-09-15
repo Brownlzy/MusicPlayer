@@ -396,12 +396,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 playlistFragment.onClick(v);
-                if (multipleChooseFlag) {
-                    findViewById(R.id.ll_edit_bar).setVisibility(View.GONE);
-                } else {
-                    findViewById(R.id.ll_edit_bar).setVisibility(View.VISIBLE);
-                }
-                multipleChooseFlag = !multipleChooseFlag;
+                showPlaylistEditBar();
             }
         });
 
@@ -447,6 +442,15 @@ public class MainActivity extends FragmentActivity {
                 playlistFragment.setListViewPosition(musicPlayer.getNowId());
             }
         });
+    }
+
+    public void showPlaylistEditBar() {
+        if (multipleChooseFlag) {
+            findViewById(R.id.ll_edit_bar).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.ll_edit_bar).setVisibility(View.VISIBLE);
+        }
+        multipleChooseFlag = !multipleChooseFlag;
     }
 
     public void setIsLyric() {

@@ -58,16 +58,12 @@ public class MainActivity extends FragmentActivity {
     private TextView playProgressNowText;
     private TextView playProgressAllText;
     private ShapeableImageView shapeableImageView;
-    private MaterialCardView PlaylistHeadBar;
     private int lastPageId = 0;
     //是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
-    private boolean multipleChooseFlag = false;
-    private boolean searchFlag = false;
-    private boolean sortLayoutFlag = false;
 
-    private Handler progressHandler = new Handler(Looper.getMainLooper()) {
+    private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 100) {
@@ -133,7 +129,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private Handler LyricHandler = new Handler(Looper.getMainLooper()) {
+    private final Handler LyricHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 100) {
@@ -274,11 +270,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setPlayOrPause() {
-        if (musicPlayer.isPlaying()) {
-            setPlayOrPause(false);
-        } else {
-            setPlayOrPause(true);
-        }
+        setPlayOrPause(!musicPlayer.isPlaying());
     }
 
     public void setPlayOrPause(boolean isPlay) {
@@ -321,10 +313,8 @@ public class MainActivity extends FragmentActivity {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else if (viewPager.getCurrentItem() == 1 && multipleChooseFlag) {
-            findViewById(R.id.ll_editBar).setVisibility(View.GONE);
-            playlistFragment.cancel();
-            multipleChooseFlag = !multipleChooseFlag;
+        } else if (viewPager.getCurrentItem() == 1 && playlistFragment.multipleChooseFlag) {
+            playlistFragment.onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
@@ -382,59 +372,10 @@ public class MainActivity extends FragmentActivity {
         PlayBarOrder = findViewById(R.id.playOrder);
         PlayBarPrev = findViewById(R.id.playPrevious);
         PlayBarNext = findViewById(R.id.playNext);
-        PlaylistHeadBar = findViewById(R.id.playlist_header);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
         homeFragment = new HomeFragment();
         playlistFragment = new PlaylistFragment();
         settingsFragment = new SettingsFragment();
-        findViewById(R.id.ll_cancel).setOnClickListener(playlistFragment);
-        findViewById(R.id.ll_delete).setOnClickListener(playlistFragment);
-        findViewById(R.id.ll_inverse).setOnClickListener(playlistFragment);
-        findViewById(R.id.ll_select_all).setOnClickListener(playlistFragment);
-        findViewById(R.id.addSongs).setOnClickListener(playlistFragment);
-        findViewById(R.id.addFolder).setOnClickListener(playlistFragment);
-        //findViewById(R.id.refresh_list).setOnClickListener(playlistFragment);
-        findViewById(R.id.refresh_list).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (multipleChooseFlag) {
-                    showPlaylistEditBar();
-                    playlistFragment.cancel();
-                }
-                if (sortLayoutFlag) {
-                    findViewById(R.id.lll_addEdit).setVisibility(View.VISIBLE);
-                    findViewById(R.id.lll_sortSearch).setVisibility(View.GONE);
-                } else {
-                    findViewById(R.id.lll_addEdit).setVisibility(View.GONE);
-                    findViewById(R.id.lll_sortSearch).setVisibility(View.VISIBLE);
-                }
-                sortLayoutFlag = !sortLayoutFlag;
-                return false;
-            }
-        });
-        findViewById(R.id.refresh_list).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (multipleChooseFlag) {
-                    showPlaylistEditBar();
-                    playlistFragment.cancel();
-                }
-                playlistFragment.onClick(v);
-            }
-        });
-        findViewById(R.id.edit_list).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playlistFragment.onClick(v);
-                showPlaylistEditBar();
-            }
-        });
-        findViewById(R.id.search_list).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPlaylistSearchBar();
-            }
-        });
 
         SharedPreferences sp = getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         musicPlayer = new MusicPlayer(MainActivity.this, MainActivity.this);
@@ -478,28 +419,6 @@ public class MainActivity extends FragmentActivity {
                 playlistFragment.setListViewPosition(musicPlayer.getNowId());
             }
         });
-    }
-
-    public void showPlaylistEditBar() {
-        if (multipleChooseFlag) {
-            findViewById(R.id.ll_editBar).setVisibility(View.GONE);
-            findViewById(R.id.ll_addBar).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.ll_addBar).setVisibility(View.GONE);
-            findViewById(R.id.ll_editBar).setVisibility(View.VISIBLE);
-        }
-        multipleChooseFlag = !multipleChooseFlag;
-    }
-
-    public void showPlaylistSearchBar() {
-        if (searchFlag) {
-            findViewById(R.id.ll_search).setVisibility(View.GONE);
-            findViewById(R.id.ll_sort).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.ll_sort).setVisibility(View.GONE);
-            findViewById(R.id.ll_search).setVisibility(View.VISIBLE);
-        }
-        searchFlag = !searchFlag;
     }
 
     public void setIsLyric() {
@@ -580,35 +499,38 @@ public class MainActivity extends FragmentActivity {
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
-                        if (lastPageId == 1) {
-                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_move_hide);
-                            PlaylistHeadBar.startAnimation(animation);
-                            PlaylistHeadBar.setVisibility(View.GONE);
-                        }
+                        animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                        musicPlayingLayout.startAnimation(animation);
                         musicPlayingLayout.setVisibility(View.GONE);
+                        animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
                         playProgressLayout.setVisibility(View.VISIBLE);
+                        playProgressLayout.startAnimation(animation);
                         startProgressBar();
                         startLyric();
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
-                        animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_move_show);
-                        PlaylistHeadBar.startAnimation(animation);
-                        PlaylistHeadBar.setVisibility(View.VISIBLE);
-                        musicPlayingLayout.setVisibility(View.VISIBLE);
-                        playProgressLayout.setVisibility(View.GONE);
+                        if (lastPageId == 0) {
+                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
+                            musicPlayingLayout.setVisibility(View.VISIBLE);
+                            musicPlayingLayout.startAnimation(animation);
+                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                            playProgressLayout.startAnimation(animation);
+                            playProgressLayout.setVisibility(View.GONE);
+                        }
                         stopProgressBar();
                         stopLyric();
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
-                        if (lastPageId == 1) {
-                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_move_hide);
-                            PlaylistHeadBar.startAnimation(animation);
-                            PlaylistHeadBar.setVisibility(View.GONE);
+                        if (lastPageId == 0) {
+                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
+                            musicPlayingLayout.setVisibility(View.VISIBLE);
+                            musicPlayingLayout.startAnimation(animation);
+                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                            playProgressLayout.startAnimation(animation);
+                            playProgressLayout.setVisibility(View.GONE);
                         }
-                        musicPlayingLayout.setVisibility(View.VISIBLE);
-                        playProgressLayout.setVisibility(View.GONE);
                         stopProgressBar();
                         stopLyric();
                         break;
@@ -627,7 +549,6 @@ public class MainActivity extends FragmentActivity {
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
-                        PlaylistHeadBar.setVisibility(View.GONE);
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);
                         viewPager.setCurrentItem(0, false);
@@ -636,7 +557,6 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
-                        PlaylistHeadBar.setVisibility(View.VISIBLE);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(1, false);
@@ -645,7 +565,6 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
-                        PlaylistHeadBar.setVisibility(View.GONE);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
                         viewPager.setCurrentItem(2, false);

@@ -28,7 +28,7 @@ public class PlaylistAdapter extends BaseAdapter {
     ViewHolder holder;
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
     private final SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
-    private PlaylistFragment mPlaylistFragment;
+    private final PlaylistFragment mPlaylistFragment;
 
     public PlaylistAdapter(PlaylistFragment playlistFragment, Context context, List<MusicUtils.Song> data, SparseBooleanArray stateCheckedMap) {
         this.data = data;

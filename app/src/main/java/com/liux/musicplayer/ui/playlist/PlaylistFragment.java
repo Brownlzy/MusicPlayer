@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
+import com.liux.musicplayer.util.DisplayUtils;
 import com.liux.musicplayer.util.MusicUtils;
 import com.liux.musicplayer.util.UriTransform;
 
@@ -55,7 +57,19 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
-    private boolean multipleChooseFlag = false;
+
+    public boolean multipleChooseFlag = false;
+    private boolean searchFlag = false;
+    private boolean headerShowFlag = true;
+
+    private int lastVisibleItemPosition = 0;// 标记上次滑动位置，初始化默认为0
+    private boolean scrollFlag = false;// 标记是否滑动
+    private MaterialCardView playlistHeader;
+
+    private LinearLayout addSongLayout;
+    private LinearLayout editSongLayout;
+    private LinearLayout sortSongLayout;
+    private LinearLayout searchSongLayout;
 
     //用于接受系统文件管理器返回目录的回调
     ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -150,6 +164,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             case R.id.edit_list:
                 editList();
                 break;
+            case R.id.search_list:
+                searchList();
+                break;
             case R.id.refresh_list:
                 refreshList();
                 break;
@@ -178,12 +195,27 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private void editList() {
         if (multipleChooseFlag) {
+            editSongLayout.setVisibility(View.GONE);
+            addSongLayout.setVisibility(View.VISIBLE);
             cancel();
         } else {
             multipleChooseFlag = true;
             adapter.setShowCheckBox(true);//CheckBox的那个方框显示
             adapter.notifyDataSetChanged();//更新ListView
+            addSongLayout.setVisibility(View.GONE);
+            editSongLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void searchList() {
+        if (searchFlag) {
+            searchSongLayout.setVisibility(View.GONE);
+            sortSongLayout.setVisibility(View.VISIBLE);
+        } else {
+            sortSongLayout.setVisibility(View.GONE);
+            searchSongLayout.setVisibility(View.VISIBLE);
+        }
+        searchFlag = !searchFlag;
     }
 
     @Override
@@ -204,7 +236,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition, listPositionY);
+            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(getContext(), 44));
     }
 
     @Override
@@ -310,10 +342,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                editList();
                 multipleChooseFlag = true;
                 adapter.setShowCheckBox(true);//CheckBox的那个方框显示
                 updateCheckBoxStatus(view, position);
-                ((MainActivity) getActivity()).showPlaylistEditBar();
+                showPlaylistHeaderBar(true);
                 return true;
             }
         });
@@ -333,11 +366,92 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView(View view) {
+        playlistHeader = view.findViewById(R.id.playlist_header);
+        view.findViewById(R.id.ll_cancel).setOnClickListener(this);
+        view.findViewById(R.id.ll_delete).setOnClickListener(this);
+        view.findViewById(R.id.ll_inverse).setOnClickListener(this);
+        view.findViewById(R.id.ll_select_all).setOnClickListener(this);
+        view.findViewById(R.id.addSongs).setOnClickListener(this);
+        view.findViewById(R.id.addFolder).setOnClickListener(this);
+        view.findViewById(R.id.edit_list).setOnClickListener(this);
+        view.findViewById(R.id.refresh_list).setOnClickListener(this);
+        view.findViewById(R.id.search_list).setOnClickListener(this);
+        addSongLayout = view.findViewById(R.id.ll_addBar);
+        editSongLayout = view.findViewById(R.id.ll_editBar);
+        sortSongLayout = view.findViewById(R.id.ll_sort);
+        searchSongLayout = view.findViewById(R.id.ll_search);
         lvData = view.findViewById(R.id.lv);
         lvData.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        lvData.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                //判断状态
+                switch (scrollState) {
+                    // 当不滚动时
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:// 是当屏幕停止滚动时
+                        scrollFlag = false;
+                        // 判断滚动到底部 、position是从0开始算起的
+                        if (lvData.getLastVisiblePosition() == (lvData.getCount() - 1)) {
+                            //TODO
+                            //Toast.makeText(getContext(), "到底了", Toast.LENGTH_SHORT).show();
+                            showPlaylistHeaderBar(true);
+                        }
+                        // 判断滚动到顶部
+                        if (lvData.getFirstVisiblePosition() == 0) {
+                            //TODO
+                            showPlaylistHeaderBar(true);
+                        }
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:// 滚动时
+                        scrollFlag = true;
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                        // 当用户由于之前划动屏幕并抬起手指，屏幕产生惯性滑动时，即滚动时
+                        scrollFlag = true;
+                        break;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //当滑动时
+                if (scrollFlag) {
+                    if (firstVisibleItem < lastVisibleItemPosition) {
+                        //TODO 上滑
+                        showPlaylistHeaderBar(true);
+                    } else if (firstVisibleItem > lastVisibleItemPosition) {
+                        //TODO 下滑
+                        showPlaylistHeaderBar(false);
+                    } else {
+                        return;
+                    }
+                    lastVisibleItemPosition = firstVisibleItem;//更新位置
+                }
+            }
+        });
+    }
+
+    private void showPlaylistHeaderBar(boolean isShow) {
+        if (isShow) {
+            if (!headerShowFlag) {
+                headerShowFlag = true;
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_moveup_show);
+                playlistHeader.setVisibility(View.VISIBLE);
+                playlistHeader.startAnimation(animation);
+            }
+        } else {
+            if (headerShowFlag) {
+                headerShowFlag = false;
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_moveup_hide);
+                playlistHeader.startAnimation(animation);
+                playlistHeader.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void refreshList() {
+        if (multipleChooseFlag) editList();
+        if (searchFlag) searchList();
         try {
             listPosition = lvData.getFirstVisiblePosition();
             listPositionY = lvData.getChildAt(0).getTop();
@@ -354,7 +468,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setAdapter(adapter);
 
         if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition, listPositionY);
+            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(getContext(), 44));
     }
 
     private void initData() {
@@ -394,11 +508,14 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     public int onBackPressed() {
+        editList();
         return 0;
     }
 
     public void setListViewPosition(int listViewPosition) {
         lvData.setSelectionFromTop(listViewPosition, 0);
+        showPlaylistHeaderBar(true);
+        lastVisibleItemPosition = listViewPosition;
     }
 }
 

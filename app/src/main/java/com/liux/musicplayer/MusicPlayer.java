@@ -26,7 +26,7 @@ public class MusicPlayer {
     private final static MediaPlayer mp = new MediaPlayer();
     private List<MusicUtils.Song> songList;
     private int nowId;
-    private MainActivity mainActivity;
+    private final MainActivity mainActivity;
     //0=顺序播放 1=列表循环 2=单曲循环 3=随机播放
     private int playOrder;
     public static final int LIST_PLAY = 0;
@@ -34,7 +34,7 @@ public class MusicPlayer {
     public static final int REPEAT_ONE = 2;
     public static final int SHUFFLE_PLAY = 3;
     private final Context mContext;
-    private SharedPreferences sp;
+    private final SharedPreferences sp;
     private List<Integer> shuffleOrder;
     private int shuffleId;
     private boolean isLyric = false;
@@ -257,11 +257,7 @@ public class MusicPlayer {
             Collections.shuffle(shuffleOrder);
             shuffleOrder.add(nowId);
             shuffleId = shuffleOrder.size() - 1;
-        } else if (playOrder == REPEAT_ONE) {
-            mp.setLooping(true);
-        } else {
-            mp.setLooping(false);
-        }
+        } else mp.setLooping(playOrder == REPEAT_ONE);
     }
 
     private void savePlayOrder() {
@@ -286,7 +282,6 @@ public class MusicPlayer {
                 //开启进度条跟踪线程
                 mainActivity.startProgressBar();
                 mainActivity.startLyric();
-                ;
                 mainActivity.setPlayOrPause(true);
                 break;
             default:

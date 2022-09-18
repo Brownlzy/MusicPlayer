@@ -40,8 +40,6 @@ public class HomeFragment extends Fragment {
     private RelativeLayout songLyricLayout;
     private View mView;
     private LyricAdapter adapter;
-    private int listPosition = -1;
-    private int listPositionY = 0;
     private boolean isSetLyricPosition = true;
     private final SparseBooleanArray nowLyricMap = new SparseBooleanArray();//用来存放高亮歌词的选中状态，true为选中,false为没有选中
     private int lastLyricId;

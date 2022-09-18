@@ -16,8 +16,8 @@ public class LyricAdapter extends BaseAdapter {
     MusicUtils.Lyric lyricData;
     private final Context mContext;
     ViewHolder holder;
-    private HomeFragment mHomeFragment;
-    private SparseBooleanArray mNowLyricMap;
+    private final HomeFragment mHomeFragment;
+    private final SparseBooleanArray mNowLyricMap;
 
     public LyricAdapter(HomeFragment homeFragment, Context context, MusicUtils.Lyric lyric, SparseBooleanArray nowLyricMap) {
         lyricData = lyric;

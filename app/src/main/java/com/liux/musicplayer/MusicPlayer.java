@@ -176,45 +176,45 @@ public class MusicPlayer {
 
     //添加音乐
     public int addMusic(String path) {
-        if (songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(path)) {
-            return 0;
+        MusicUtils.Song newSong = new MusicUtils.Song();
+        newSong.source_uri = path;
+        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(mContext, newSong);
+        if (newMetadata.isValid) {
+            newSong.title = newMetadata.title;
+            newSong.artist = newMetadata.artist;
+            newSong.album = newMetadata.album;
+        }
+        if (newSong.album == null) newSong.album = "null";
+        if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
+            if (newSong.title == null)
+                newSong.title = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
+            if (newSong.artist == null)
+                newSong.artist = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
+        } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
+            if (newSong.title == null)
+                newSong.title = FileUtils.getFileNameNoExtension(path).split("-")[1];
+            if (newSong.artist == null)
+                newSong.artist = FileUtils.getFileNameNoExtension(path).split("-")[0];
         } else {
-            MusicUtils.Song newSong = new MusicUtils.Song();
-            newSong.source_uri = path;
-            MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(mContext, newSong);
-            if (newMetadata.isValid) {
-                newSong.title = newMetadata.title;
-                newSong.artist = newMetadata.artist;
-                newSong.album = newMetadata.album;
-            }
-            if (newSong.album == null) newSong.album = "null";
-            if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
-                if (newSong.title == null)
-                    newSong.title = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
-                if (newSong.artist == null)
-                    newSong.artist = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
-            } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
-                if (newSong.title == null)
-                    newSong.title = FileUtils.getFileNameNoExtension(path).split("-")[1];
-                if (newSong.artist == null)
-                    newSong.artist = FileUtils.getFileNameNoExtension(path).split("-")[0];
-            } else {
-                if (newSong.title == null) newSong.title = FileUtils.getFileNameNoExtension(path);
-                if (newSong.artist == null) newSong.artist = "null";
-            }
-            //判断是否存在歌词
-            if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
-                newSong.lyric_uri = path.replace(FileUtils.getFileExtension(path), "lrc");
-            else
-                newSong.lyric_uri = "null";
+            if (newSong.title == null) newSong.title = FileUtils.getFileNameNoExtension(path);
+            if (newSong.artist == null) newSong.artist = "null";
+        }
+        //判断是否存在歌词
+        if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
+            newSong.lyric_uri = path.replace(FileUtils.getFileExtension(path), "lrc");
+        else
+            newSong.lyric_uri = "null";
 
-            if (songList.size() == 1 && !FileUtils.isFileExists(songList.get(0).source_uri)) {
+        if (songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
+            songList.set(songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).indexOf(path), newSong);
+        } else {
+            if (songList.size() == 1 && !FileUtils.isFileExists(songList.get(0).source_uri)) {  //播放列表第一位如果是示例数据则将其替换
                 songList.set(0, newSong);
             } else {
                 songList.add(newSong);
             }
-            savePlayList();
         }
+        savePlayList();
         return 0;
     }
 

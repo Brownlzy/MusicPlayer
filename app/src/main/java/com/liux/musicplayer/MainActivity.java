@@ -64,6 +64,8 @@ public class MainActivity extends FragmentActivity {
     private int countActivity = 0;
     private boolean isBackground = false;
     private boolean multipleChooseFlag = false;
+    private boolean searchFlag = false;
+    private boolean sortLayoutFlag = false;
 
     private Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -320,7 +322,7 @@ public class MainActivity extends FragmentActivity {
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
         } else if (viewPager.getCurrentItem() == 1 && multipleChooseFlag) {
-            findViewById(R.id.ll_edit_bar).setVisibility(View.GONE);
+            findViewById(R.id.ll_editBar).setVisibility(View.GONE);
             playlistFragment.cancel();
             multipleChooseFlag = !multipleChooseFlag;
         } else {
@@ -391,12 +393,46 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.ll_select_all).setOnClickListener(playlistFragment);
         findViewById(R.id.addSongs).setOnClickListener(playlistFragment);
         findViewById(R.id.addFolder).setOnClickListener(playlistFragment);
-        findViewById(R.id.refresh_list).setOnClickListener(playlistFragment);
+        //findViewById(R.id.refresh_list).setOnClickListener(playlistFragment);
+        findViewById(R.id.refresh_list).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (multipleChooseFlag) {
+                    showPlaylistEditBar();
+                    playlistFragment.cancel();
+                }
+                if (sortLayoutFlag) {
+                    findViewById(R.id.lll_addEdit).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lll_sortSearch).setVisibility(View.GONE);
+                } else {
+                    findViewById(R.id.lll_addEdit).setVisibility(View.GONE);
+                    findViewById(R.id.lll_sortSearch).setVisibility(View.VISIBLE);
+                }
+                sortLayoutFlag = !sortLayoutFlag;
+                return false;
+            }
+        });
+        findViewById(R.id.refresh_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (multipleChooseFlag) {
+                    showPlaylistEditBar();
+                    playlistFragment.cancel();
+                }
+                playlistFragment.onClick(v);
+            }
+        });
         findViewById(R.id.edit_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playlistFragment.onClick(v);
                 showPlaylistEditBar();
+            }
+        });
+        findViewById(R.id.search_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPlaylistSearchBar();
             }
         });
 
@@ -446,11 +482,24 @@ public class MainActivity extends FragmentActivity {
 
     public void showPlaylistEditBar() {
         if (multipleChooseFlag) {
-            findViewById(R.id.ll_edit_bar).setVisibility(View.GONE);
+            findViewById(R.id.ll_editBar).setVisibility(View.GONE);
+            findViewById(R.id.ll_addBar).setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.ll_edit_bar).setVisibility(View.VISIBLE);
+            findViewById(R.id.ll_addBar).setVisibility(View.GONE);
+            findViewById(R.id.ll_editBar).setVisibility(View.VISIBLE);
         }
         multipleChooseFlag = !multipleChooseFlag;
+    }
+
+    public void showPlaylistSearchBar() {
+        if (searchFlag) {
+            findViewById(R.id.ll_search).setVisibility(View.GONE);
+            findViewById(R.id.ll_sort).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.ll_sort).setVisibility(View.GONE);
+            findViewById(R.id.ll_search).setVisibility(View.VISIBLE);
+        }
+        searchFlag = !searchFlag;
     }
 
     public void setIsLyric() {

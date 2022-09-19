@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     private boolean isSetLyricPosition = true;
     private final SparseBooleanArray nowLyricMap = new SparseBooleanArray();//用来存放高亮歌词的选中状态，true为选中,false为没有选中
     private int lastLyricId;
+    private boolean lastLyricEnabled = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -93,7 +94,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void callMainActivityForInfo() {
-        ((MainActivity) getActivity()).initHomeFragment();
+        ((MainActivity) getActivity()).setHomeFragment();
     }
 
     @Override
@@ -103,7 +104,7 @@ public class HomeFragment extends Fragment {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setMusicInfo(MusicUtils.Song song, ShapeableImageView playBarPic) {
+    public void setMusicInfo(MusicUtils.Song song) {
         if (mView != null) {
             //重新获取一遍防止空指针
             songTitle = mView.findViewById(R.id.home_song_title);
@@ -136,10 +137,8 @@ public class HomeFragment extends Fragment {
             Bitmap bitmap = MusicUtils.getAlbumImage(getContext(), song);
             if (bitmap == null) {   //获取图片失败，使用默认图片
                 albumImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
-                playBarPic.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
             } else {    //成功
                 albumImageView.setImageBitmap(bitmap);
-                playBarPic.setImageBitmap(bitmap);
             }
             //刷新歌词
             lyric = new MusicUtils.Lyric(Uri.parse(song.lyric_uri));    //从歌词文件中读取歌词
@@ -150,7 +149,7 @@ public class HomeFragment extends Fragment {
 
     //显示歌词列表及模糊背景
     public void setIsLyricLayoutShow(boolean isLyric) {
-        if (songLyricLayout != null) {
+        if (songLyricLayout != null && isLyric != lastLyricEnabled) {
             if (!isLyric) {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_hide);
                 songLyricLayout.startAnimation(animation);

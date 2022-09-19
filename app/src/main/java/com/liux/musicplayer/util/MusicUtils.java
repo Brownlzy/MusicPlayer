@@ -151,15 +151,15 @@ public class MusicUtils {
             return bitmap;
         } catch (IllegalArgumentException e) {
             //文件路径错误或无权限
-            Toast.makeText(context, "专辑图片读取失败", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "专辑图片读取失败", Toast.LENGTH_SHORT).show();
             return null;
         } catch (NullPointerException e) {
             //文件本身无专辑图片
-            Toast.makeText(context, "该文件无专辑图片", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "该文件无专辑图片", Toast.LENGTH_SHORT).show();
             return null;
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
             return null;
         }
     }

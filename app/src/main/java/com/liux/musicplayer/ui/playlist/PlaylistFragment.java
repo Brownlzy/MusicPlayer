@@ -1,8 +1,10 @@
 package com.liux.musicplayer.ui.playlist;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +35,8 @@ import androidx.fragment.app.Fragment;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.card.MaterialCardView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
@@ -41,6 +45,7 @@ import com.liux.musicplayer.util.MusicUtils;
 import com.liux.musicplayer.util.UriTransform;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -472,7 +477,16 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
-        mSongList = ((MainActivity) getActivity()).getMusicPlayer().getPlayList();
+        SharedPreferences sp = getActivity().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+        String playListJson = sp.getString("playList",
+                "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
+                        "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
+                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]");
+        Gson gson = new Gson();
+        Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+        }.getType();
+        mSongList = gson.fromJson(playListJson, playListType);
+
         setStateCheckedMap(false);
     }
 

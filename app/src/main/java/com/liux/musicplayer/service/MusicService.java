@@ -1,4 +1,4 @@
-package com.liux.musicplayer;
+package com.liux.musicplayer.service;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -7,17 +7,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -27,6 +30,9 @@ import androidx.core.app.NotificationCompat;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.liux.musicplayer.R;
+import com.liux.musicplayer.receiver.NotificationClickReceiver;
+import com.liux.musicplayer.receiver.RemoteControlReceiver;
 import com.liux.musicplayer.util.MusicUtils;
 
 import java.io.IOException;
@@ -44,6 +50,7 @@ public class MusicService extends Service {
     public static final String CLOSE = "close";
     public static final String LYRIC = "lyric";
     public static final String PROGRESS = "progress";
+    public static final String TAG = "MusicService";
     public static final int NOTIFICATION_ID = 1;
     private static RemoteViews remoteViewsSmall;
     private static RemoteViews remoteViewsLarge;
@@ -69,6 +76,7 @@ public class MusicService extends Service {
     public int nowPageId = 0;
     private String notificationId = "MusicService";
     private String notificationName = "常驻后台通知";
+    private MediaSessionCompat mMediaSession;
 
     public MusicService() {
     }
@@ -85,34 +93,13 @@ public class MusicService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if (musicReceiver != null) {
             //解除动态注册的广播
             unregisterReceiver(musicReceiver);
             closeNotification();
         }
-    }
-
-    private void showNotification() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //创建NotificationChannel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(notificationId, notificationName, NotificationManager.IMPORTANCE_HIGH);
-            notificationManager.createNotificationChannel(channel);
-        }
-        startForeground(2, getNotification());
-    }
-
-    private Notification getNotification() {
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)//通知的图片
-                .setContentTitle("音乐播放器")
-                .setContentText("音乐服务正在后台运行");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId(notificationId);
-        }
-        Notification notification = builder.build();
-        return notification;
+        mMediaSession.release();
+        super.onDestroy();
     }
 
     @Override
@@ -122,7 +109,31 @@ public class MusicService extends Service {
         registerMusicReceiver();
         //showNotification();
         updateNotificationShow(nowId);
+        registerRemoteControlReceiver();
         return START_STICKY;
+    }
+
+    private void registerRemoteControlReceiver() {
+        ComponentName mbr = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
+        mMediaSession = new MediaSessionCompat(this, "mbr", mbr, null);
+        mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mMediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public boolean onMediaButtonEvent(Intent intent) {
+                //在这里就可以接收到（线控、蓝牙耳机的按键事件了）
+
+                //通过intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);获取按下的按键实现自己对应功能
+                Log.e(TAG, String.valueOf(intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)));
+                if (intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT).toString().contains("ACTION_UP"))
+                    PlayOrPause(!isPlaying());
+                //返回true表示不让别的程序继续处理这个广播
+                return true;
+            }
+        });
+        if (!mMediaSession.isActive()) {
+            mMediaSession.setActive(true);
+        }
     }
 
     @Override
@@ -306,6 +317,7 @@ public class MusicService extends Service {
         } else {
             pause();
         }
+        sendMyBroadcast("message", "updatePlayState");
     }
 
     /**
@@ -325,7 +337,7 @@ public class MusicService extends Service {
     private void sendMyBroadcast(String key, String content) {
         Intent intent = new Intent();
         intent.putExtra(key, content);
-        intent.setAction("com.liux.musicplayer.MusicService");
+        intent.setAction("com.liux.musicplayer.service.MusicService");
         sendBroadcast(intent);
     }
 
@@ -333,7 +345,7 @@ public class MusicService extends Service {
         Intent intent = new Intent();
         intent.putExtra(key, content);
         intent.putExtra("argue", argue);
-        intent.setAction("com.liux.musicplayer.MusicService");
+        intent.setAction("com.liux.musicplayer.service.MusicService");
         sendBroadcast(intent);
     }
 
@@ -345,9 +357,9 @@ public class MusicService extends Service {
         return true;
     }
 
-    class MyMusicBinder extends Binder {
+    public class MyMusicBinder extends Binder {
         //返回Service对象
-        MusicService getService() {
+        public MusicService getService() {
             return MusicService.this;
         }
     }

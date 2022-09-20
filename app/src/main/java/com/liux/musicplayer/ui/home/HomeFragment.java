@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +22,9 @@ import androidx.fragment.app.Fragment;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.liux.musicplayer.MainActivity;
-import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentHomeBinding;
+import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.util.MusicUtils;
 
 public class HomeFragment extends Fragment {
@@ -183,7 +182,7 @@ public class HomeFragment extends Fragment {
             if (isSetLyricPosition) {   //检查歌词居中标志位
                 try {
                     //设置歌词居中
-                    lyricList.setSelectionFromTop(lyricPosition, lyricList.getWidth() / 2 - 20);
+                    lyricList.smoothScrollToPositionFromTop(lyricPosition, lyricList.getWidth() / 2 - 20);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }

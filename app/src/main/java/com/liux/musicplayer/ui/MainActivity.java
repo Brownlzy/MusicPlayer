@@ -1,4 +1,4 @@
-package com.liux.musicplayer;
+package com.liux.musicplayer.ui;
 
 import android.app.Activity;
 import android.app.Application;
@@ -36,7 +36,9 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
+import com.liux.musicplayer.service.MusicService;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
@@ -268,7 +270,24 @@ public class MainActivity extends FragmentActivity {
                     break;
                 case "playingError":
                     playingError(bundle.getInt("argue", 0));
+                    break;
+                case "updatePlayState":
+                    updatePlayState();
+                    break;
             }
+        }
+    }
+
+    private void updatePlayState() {
+        if (musicService.isPlaying()) {
+            if (viewPager.getCurrentItem() == 0)
+                startLyric();
+            startProgressBar();
+            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+        } else {
+            stopLyric();
+            stopProgressBar();
+            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
         }
     }
 
@@ -309,7 +328,7 @@ public class MainActivity extends FragmentActivity {
 
         musicReceiver = new MusicReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction("com.liux.musicplayer.MusicService");
+        filter.addAction("com.liux.musicplayer.service.MusicService");
         MainActivity.this.registerReceiver(musicReceiver, filter);
 
         // Bind to LocalService

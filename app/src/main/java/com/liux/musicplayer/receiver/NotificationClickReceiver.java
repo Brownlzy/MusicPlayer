@@ -1,11 +1,11 @@
-package com.liux.musicplayer;
+package com.liux.musicplayer.receiver;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.liux.musicplayer.ui.MainActivity;
 
 public class NotificationClickReceiver extends BroadcastReceiver {
     public static final String TAG = "NotificationClickReceiver";

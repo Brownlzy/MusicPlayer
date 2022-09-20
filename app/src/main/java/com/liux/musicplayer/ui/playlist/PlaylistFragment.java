@@ -37,7 +37,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.liux.musicplayer.MainActivity;
+import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 import com.liux.musicplayer.util.DisplayUtils;

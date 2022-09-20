@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.31.0'
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
+    implementation "androidx.media:media:1.6.0"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

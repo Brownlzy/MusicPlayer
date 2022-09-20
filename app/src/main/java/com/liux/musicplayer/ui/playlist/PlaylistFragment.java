@@ -94,7 +94,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         Log.e("AddFolder", uri.toString());
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
         searchFile(UriTransform.getPath(getContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
-        adapter.notifyDataSetChanged();
+        refreshList();
     }
 
     private void searchFile(String filePath) {
@@ -291,6 +291,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         adapter.notifyDataSetChanged();
         ((MainActivity) getActivity()).getMusicPlayer().setPlayList(mSongList);
         Toast.makeText(getContext(), "删除成功", Toast.LENGTH_SHORT).show();
+        refreshList();
     }
 
     /**
@@ -486,7 +487,12 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         mSongList = gson.fromJson(playListJson, playListType);
-
+        if (mSongList == null || mSongList.size() == 0) {
+            playListJson = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
+                    "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
+                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]";
+            mSongList = gson.fromJson(playListJson, playListType);
+        }
         setStateCheckedMap(false);
     }
 

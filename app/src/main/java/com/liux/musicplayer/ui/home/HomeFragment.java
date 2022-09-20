@@ -159,6 +159,7 @@ public class HomeFragment extends Fragment {
                 songLyricLayout.setVisibility(View.VISIBLE);
                 songLyricLayout.startAnimation(animation);
             }
+            lastLyricEnabled = !lastLyricEnabled;
         }
     }
 

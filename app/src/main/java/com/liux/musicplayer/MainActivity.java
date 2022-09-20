@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +35,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.ui.home.HomeFragment;
@@ -244,8 +242,12 @@ public class MainActivity extends FragmentActivity {
         setPlayBarTitle(musicService.getNowId());
         if (musicService.isPlaying()) {
             nowPlaying(musicService.getNowId());
-        } else {
+        } else if (musicService.isEnabled()) {
             //setHomeFragment();
+            resetPlayProgress();
+            int nowMillionSeconds = musicService.getMediaPlayer().getCurrentPosition();
+            playProgressBar.setProgress(nowMillionSeconds); //实时获取播放音乐的位置并且设置进度条的位置
+            playProgressNowText.setText(nowMillionSeconds / 60000 + ((nowMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + nowMillionSeconds / 1000 % 60);
         }
     }
 
@@ -384,6 +386,8 @@ public class MainActivity extends FragmentActivity {
         unregisterReceiver(musicReceiver);
         unbindService(serviceConnection);
         homeFragment.onDestroy();
+        stopLyric();
+        stopProgressBar();
     }
 
     public void setPlayOrPause() {
@@ -454,7 +458,7 @@ public class MainActivity extends FragmentActivity {
     public void setHomeFragment() {
         if (musicService != null) {
             homeFragment.setMusicInfo(musicService.getPlayList().get(musicService.getNowId()));
-            setIsLyric(musicService.isLyric());
+            setIsLyric(musicService.isAppLyric());
         }
     }
 
@@ -532,18 +536,18 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setIsLyric() {
-        setIsLyric(!musicService.isLyric());
+        setIsLyric(!musicService.isAppLyric());
     }
 
     public void setIsLyric(boolean isLyric) {
         if (!isLyric) {
             homeFragment.setIsLyricLayoutShow(false);
             PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_24));
-            musicService.setLyric(false);
+            musicService.setAppLyric(false);
         } else {
             homeFragment.setIsLyricLayoutShow(true);
             PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_green_24));
-            musicService.setLyric(true);
+            musicService.setAppLyric(true);
         }
     }
 
@@ -624,6 +628,7 @@ public class MainActivity extends FragmentActivity {
                         playProgressLayout.startAnimation(animation);
                         startProgressBar();
                         startLyric();
+                        musicService.setNowPageId(0);
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
@@ -637,6 +642,7 @@ public class MainActivity extends FragmentActivity {
                         }
                         stopProgressBar();
                         stopLyric();
+                        musicService.setNowPageId(1);
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
@@ -650,15 +656,18 @@ public class MainActivity extends FragmentActivity {
                         }
                         stopProgressBar();
                         stopLyric();
+                        musicService.setNowPageId(2);
                         break;
                 }
                 lastPageId = position;
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
             }
         });
+        viewPager.setCurrentItem(musicService.getNowPageId(), false);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -668,25 +677,28 @@ public class MainActivity extends FragmentActivity {
                         TabTitle.setText(R.string.app_name);
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);
-                        viewPager.setCurrentItem(0, false);
+                        viewPager.setCurrentItem(0, true);
                         startProgressBar();
                         startLyric();
+                        musicService.setNowPageId(0);
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
-                        viewPager.setCurrentItem(1, false);
+                        viewPager.setCurrentItem(1, true);
                         stopProgressBar();
                         stopLyric();
+                        musicService.setNowPageId(1);
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
-                        viewPager.setCurrentItem(2, false);
+                        viewPager.setCurrentItem(2, true);
                         stopProgressBar();
                         stopLyric();
+                        musicService.setNowPageId(2);
                         break;
                 }
                 return true;
@@ -723,11 +735,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void startProgressBar() {
-        if (progressThread == null) {
-            progressThread = new ProgressThread();
-            progressThread.start();
-        } else if (progressThread.isPaused()) {
-            progressThread.resumeThread();
+        if (viewPager.getCurrentItem() == 0 && musicService.isPlaying()) {
+            if (progressThread == null) {
+                progressThread = new ProgressThread();
+                progressThread.start();
+            } else if (progressThread.isPaused()) {
+                progressThread.resumeThread();
+            }
         }
     }
     public void stopProgressBar() {
@@ -747,11 +761,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void startLyric() {
-        if (lyricThread == null) {
-            lyricThread = new LyricThread();
-            lyricThread.start();
-        } else if (lyricThread.isPaused()) {
-            lyricThread.resumeThread();
+        if (viewPager.getCurrentItem() == 0 && musicService.isPlaying()) {
+            if (lyricThread == null) {
+                lyricThread = new LyricThread();
+                lyricThread.start();
+            } else if (lyricThread.isPaused()) {
+                lyricThread.resumeThread();
+            }
         }
     }
 

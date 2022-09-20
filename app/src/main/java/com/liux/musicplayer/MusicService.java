@@ -1,14 +1,28 @@
 package com.liux.musicplayer;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
@@ -23,6 +37,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MusicService extends Service {
+    public static final String PLAY = "play";
+    public static final String PAUSE = "pause";
+    public static final String PREV = "prev";
+    public static final String NEXT = "next";
+    public static final String CLOSE = "close";
+    public static final String LYRIC = "lyric";
+    public static final String PROGRESS = "progress";
+    public static final int NOTIFICATION_ID = 1;
+    private static RemoteViews remoteViewsSmall;
+    private static RemoteViews remoteViewsLarge;
+    private MusicReceiver musicReceiver;
+    private Notification notification;
+    private static NotificationManager manager;
     private final static MediaPlayer mp = new MediaPlayer();
     private List<MusicUtils.Song> songList;
     private int nowId;
@@ -35,9 +62,13 @@ public class MusicService extends Service {
     private List<Integer> shuffleOrder;
     private SharedPreferences sp;
     private int shuffleId;
-    private boolean isLyric = false;
+    private boolean isAppLyric = false;
+    private boolean isDesktopLyric = false;
     private boolean prepared = false;
     private boolean isEnabled = false;
+    public int nowPageId = 0;
+    private String notificationId = "MusicService";
+    private String notificationName = "常驻后台通知";
 
     public MusicService() {
     }
@@ -53,10 +84,44 @@ public class MusicService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (startId == 8) {
-            stopSelf();
+    public void onDestroy() {
+        super.onDestroy();
+        if (musicReceiver != null) {
+            //解除动态注册的广播
+            unregisterReceiver(musicReceiver);
+            closeNotification();
         }
+    }
+
+    private void showNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        //创建NotificationChannel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(notificationId, notificationName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+        }
+        startForeground(2, getNotification());
+    }
+
+    private Notification getNotification() {
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)//通知的图片
+                .setContentTitle("音乐播放器")
+                .setContentText("音乐服务正在后台运行");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId(notificationId);
+        }
+        Notification notification = builder.build();
+        return notification;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        initRemoteViews();
+        initNotification();
+        registerMusicReceiver();
+        //showNotification();
+        updateNotificationShow(nowId);
         return START_STICKY;
     }
 
@@ -69,6 +134,192 @@ public class MusicService extends Service {
     @Override
     public void onRebind(Intent intent) {
         //Toast.makeText(this, "重新绑定音乐服务成功", Toast.LENGTH_SHORT).show();
+    }
+
+    private void initNotification() {
+        String channelId = "play_control";
+        String channelName = "播放控制";
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.createNotificationChannel(channel);
+
+        //点击整个通知时发送广播
+        Intent intent = new Intent(getApplicationContext(), NotificationClickReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //初始化通知
+        notification = new NotificationCompat.Builder(this, "play_control")
+                .setContentIntent(pendingIntent)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_music_note_24))
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(remoteViewsSmall)
+                .setCustomBigContentView(remoteViewsLarge)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(false)
+                .setOnlyAlertOnce(true)
+                .setOngoing(true)
+                .build();
+    }
+
+    public void updateNotificationShow(int position) {
+        //播放状态判断
+        if (mp.isPlaying()) {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
+        } else {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
+        }
+        //封面专辑
+        Bitmap bitmap = MusicUtils.getAlbumImage(this, songList.get(position));
+        if (bitmap == null) {
+            remoteViewsSmall.setImageViewResource(R.id.iv_album_cover, R.drawable.ic_baseline_music_note_24);
+            remoteViewsLarge.setImageViewResource(R.id.iv_album_cover, R.drawable.ic_baseline_music_note_24);
+        } else {
+            remoteViewsSmall.setImageViewBitmap(R.id.iv_album_cover, bitmap);
+            remoteViewsLarge.setImageViewBitmap(R.id.iv_album_cover, bitmap);
+        }
+        //歌曲名
+        remoteViewsSmall.setTextViewText(R.id.tv_notification_song_name, songList.get(position).title);
+        remoteViewsLarge.setTextViewText(R.id.tv_notification_song_name, songList.get(position).title);
+        //歌手名
+        remoteViewsSmall.setTextViewText(R.id.tv_notification_singer, songList.get(position).artist +
+                (songList.get(position).album.equals("null") ? "" : (" - " + songList.get(position).album)));
+        remoteViewsLarge.setTextViewText(R.id.tv_notification_singer, songList.get(position).artist +
+                (songList.get(position).album.equals("null") ? "" : (" - " + songList.get(position).album)));
+        //发送通知
+        //manager.notify(NOTIFICATION_ID, notification);
+        startForeground(1, notification);
+    }
+
+    /**
+     * 关闭音乐通知栏
+     */
+    public void closeNotification() {
+        if (mp != null) {
+            if (mp.isPlaying()) {
+                mp.pause();
+            }
+        }
+        //manager.cancel(NOTIFICATION_ID);
+        stopForeground(true);
+    }
+
+    private void initRemoteViews() {
+        remoteViewsSmall = new RemoteViews(this.getPackageName(), R.layout.notification_small);
+        remoteViewsLarge = new RemoteViews(this.getPackageName(), R.layout.notification_large);
+        //通知栏控制器上一首按钮广播操作
+        Intent intentPrev = new Intent(PREV);
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, 0);
+        //为prev控件注册事件
+        remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
+        remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
+
+        //通知栏控制器播放暂停按钮广播操作  //用于接收广播时过滤意图信息
+        Intent intentPlay = new Intent(PLAY);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, 0);
+        //为play控件注册事件
+        remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
+        remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
+
+        //通知栏控制器下一首按钮广播操作
+        Intent intentNext = new Intent(NEXT);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, 0);
+        //为next控件注册事件
+        remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
+        remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
+
+        //通知栏控制器关闭按钮广播操作
+        Intent intentClose = new Intent(CLOSE);
+        PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, 0);
+        //为close控件注册事件
+        remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
+        remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
+
+        //通知栏控制器切换歌词开关操作
+        Intent intentLyric = new Intent(LYRIC);
+        PendingIntent lyricPendingIntent = PendingIntent.getBroadcast(this, 0, intentLyric, 0);
+        //为lyric控件注册事件
+        remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_lyric, lyricPendingIntent);
+        remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_lyric, lyricPendingIntent);
+
+    }
+
+    public class MusicReceiver extends BroadcastReceiver {
+
+        public static final String TAG = "MusicReceiver";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //UI控制
+            UIControl(intent.getAction(), TAG);
+        }
+
+        /**
+         * 页面的UI 控制 ，通过服务来控制页面和通知栏的UI
+         *
+         * @param state 状态码
+         * @param tag
+         */
+        private void UIControl(String state, String tag) {
+            switch (state) {
+                case PLAY:
+                    Log.d(tag, PLAY + " or " + PAUSE);
+                    PlayOrPause(!isPlaying());
+                    break;
+                case PREV:
+                    Log.d(tag, PREV);
+                    playPrevOrNext(false);
+                    break;
+                case NEXT:
+                    Log.d(tag, NEXT);
+                    playPrevOrNext(true);
+                    break;
+                case CLOSE:
+                    Log.d(tag, CLOSE);
+                    break;
+                case LYRIC:
+                    Log.d(tag, LYRIC);
+                    break;
+                default:
+                    break;
+            }
+            updateNotificationShow(getNowId());
+        }
+    }
+
+    public void PlayOrPause(boolean isPlay) {
+        if (isPlay) {
+            if (!isEnabled()) {
+                setEnabled(true);
+                playThisNow(getNowId());
+            } else if (isPrepared()) {
+                start();
+            } else {
+                playThisNow(getNowId());
+                pause();
+            }
+        } else {
+            pause();
+        }
+    }
+
+    /**
+     * 注册动态广播
+     */
+    private void registerMusicReceiver() {
+        musicReceiver = new MusicReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PLAY);
+        intentFilter.addAction(PREV);
+        intentFilter.addAction(NEXT);
+        intentFilter.addAction(CLOSE);
+        intentFilter.addAction(LYRIC);
+        registerReceiver(musicReceiver, intentFilter);
     }
 
     private void sendMyBroadcast(String key, String content) {
@@ -109,12 +360,20 @@ public class MusicService extends Service {
         this.isEnabled = isEnabled;
     }
 
-    public boolean isLyric() {
-        return isLyric;
+    public void setNowPageId(int id) {
+        nowPageId = id;
     }
 
-    public void setLyric(boolean lyric) {
-        isLyric = lyric;
+    public int getNowPageId() {
+        return nowPageId;
+    }
+
+    public boolean isAppLyric() {
+        return isAppLyric;
+    }
+
+    public void setAppLyric(boolean appLyric) {
+        isAppLyric = appLyric;
     }
 
     public void playPrevOrNext(boolean isNext) {
@@ -335,6 +594,7 @@ public class MusicService extends Service {
                 setEnabled(false);
                 break;
         }
+        updateNotificationShow(nowId);
     }
 
     private int playThis(int id) {

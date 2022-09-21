@@ -14,12 +14,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -31,8 +31,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.receiver.NotificationClickReceiver;
 import com.liux.musicplayer.receiver.RemoteControlReceiver;
+import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.util.MusicUtils;
 
 import java.io.IOException;
@@ -98,7 +98,7 @@ public class MusicService extends Service {
         updateNotificationShow(nowId);
         registerRemoteControlReceiver();
     }
-
+    
     private void initializePlayer() {
         if (mp == null) {
             mp = new MediaPlayer();
@@ -166,17 +166,15 @@ public class MusicService extends Service {
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.createNotificationChannel(channel);
 
-        //点击整个通知时发送广播
-        Intent intent = new Intent(getApplicationContext(), NotificationClickReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this, 0, new Intent(this, MainActivity.class), 0);
 
         //初始化通知
         notification = new NotificationCompat.Builder(this, "play_control")
-                .setContentIntent(pendingIntent)
+                .setContentIntent(contentIntent)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_music_note_24))
+                .setSmallIcon(R.drawable.ic_baseline_music_note_24)
+                //.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_music_note_24))
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                 .setCustomContentView(remoteViewsSmall)
                 .setCustomBigContentView(remoteViewsLarge)

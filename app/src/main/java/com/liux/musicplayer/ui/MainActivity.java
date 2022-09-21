@@ -401,12 +401,12 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         unregisterReceiver(musicReceiver);
         unbindService(serviceConnection);
         homeFragment.onDestroy();
         stopLyric();
         stopProgressBar();
+        super.onDestroy();
     }
 
     public void setPlayOrPause() {

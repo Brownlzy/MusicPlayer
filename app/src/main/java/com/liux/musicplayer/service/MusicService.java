@@ -1,5 +1,6 @@
 package com.liux.musicplayer.service;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -26,7 +27,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
-
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -57,7 +57,7 @@ public class MusicService extends Service {
     private MusicReceiver musicReceiver;
     private Notification notification;
     private static NotificationManager manager;
-    private final static MediaPlayer mp = new MediaPlayer();
+    private static MediaPlayer mp;
     private List<MusicUtils.Song> songList;
     private int nowId;
     //0=顺序播放 1=列表循环 2=单曲循环 3=随机播放
@@ -77,6 +77,7 @@ public class MusicService extends Service {
     private String notificationId = "MusicService";
     private String notificationName = "常驻后台通知";
     private MediaSessionCompat mMediaSession;
+    private MediaSessionCompat mediaSession;
 
     public MusicService() {
     }
@@ -87,8 +88,21 @@ public class MusicService extends Service {
         nowId = 0;
         playOrder = 0;
         sp = this.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+        initializePlayer();
         readPlayList();
         setMediaPlayerListener();
+        initRemoteViews();
+        initNotification();
+        registerMusicReceiver();
+        //showNotification();
+        updateNotificationShow(nowId);
+        registerRemoteControlReceiver();
+    }
+
+    private void initializePlayer() {
+        if (mp == null) {
+            mp = new MediaPlayer();
+        }
     }
 
     @Override
@@ -104,13 +118,7 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        initRemoteViews();
-        initNotification();
-        registerMusicReceiver();
-        //showNotification();
-        updateNotificationShow(nowId);
-        registerRemoteControlReceiver();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void registerRemoteControlReceiver() {
@@ -125,8 +133,10 @@ public class MusicService extends Service {
 
                 //通过intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);获取按下的按键实现自己对应功能
                 Log.e(TAG, String.valueOf(intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)));
-                if (intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT).toString().contains("ACTION_UP"))
+                if (intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT).toString().contains("ACTION_UP")) {
                     PlayOrPause(!isPlaying());
+                    updateNotificationShow(getNowId());
+                }
                 //返回true表示不让别的程序继续处理这个广播
                 return true;
             }
@@ -147,6 +157,7 @@ public class MusicService extends Service {
         //Toast.makeText(this, "重新绑定音乐服务成功", Toast.LENGTH_SHORT).show();
     }
 
+    @SuppressLint("NotificationTrampoline")
     private void initNotification() {
         String channelId = "play_control";
         String channelName = "播放控制";
@@ -466,7 +477,7 @@ public class MusicService extends Service {
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
-                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]");
+                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]");
         Gson gson = new Gson();
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
@@ -474,7 +485,7 @@ public class MusicService extends Service {
         if (songList == null || songList.size() == 0) {
             playListJson = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                     "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
-                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\"}]";
+                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
             songList = gson.fromJson(playListJson, playListType);
         }
         if (nowId >= songList.size()) nowId = 0;
@@ -506,6 +517,7 @@ public class MusicService extends Service {
             newSong.title = newMetadata.title;
             newSong.artist = newMetadata.artist;
             newSong.album = newMetadata.album;
+            newSong.duration = newMetadata.duration;
         }
         if (newSong.album == null) newSong.album = "null";
         if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
@@ -646,11 +658,13 @@ public class MusicService extends Service {
 
     public void pause() {
         mp.pause();
+        stopForeground(false);
     }
 
     public void start() {
         if (prepared)
             mp.start();
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     public void setProgress(int second) {

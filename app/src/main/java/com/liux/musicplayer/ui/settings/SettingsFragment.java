@@ -53,6 +53,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private EditTextPreference webPlayList;
     private EditTextPreference MainFolder;
     private Preference About;
+    private Preference Close;
 
     private final static String TAG = "SettingFragment";
     //注册Activity回调
@@ -140,6 +141,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
         About = findPreference("info");
+        Close = findPreference("exit");
+        Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                System.exit(0);
+                return false;
+            }
+        });
         clickGotoAppDetails.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {

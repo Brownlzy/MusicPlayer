@@ -68,6 +68,10 @@
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
+        <Preference
+            app:icon="@drawable/ic_round_close_24"
+            app:key="exit"
+            app:title="@string/exitApp" />
 
     </PreferenceCategory>
 

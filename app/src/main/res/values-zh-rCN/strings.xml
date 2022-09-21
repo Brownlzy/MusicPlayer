@@ -70,4 +70,5 @@
     <string name="no_permission">未获得权限</string>
     <string name="no_permission_info">音乐播放器需要存储权限才能读取文件夹下音乐文件并生成播放列表。在您前往设置页允许申请并获得存储权限前，无法向播放列表中添加音乐。</string>
     <string name="item_btn_more">更多</string>
+    <string name="exitApp">退出音乐播放器</string>
 </resources>

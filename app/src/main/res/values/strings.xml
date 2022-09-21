@@ -69,4 +69,5 @@
     <string name="no_permission">No Permission</string>
     <string name="no_permission_info">The music player needs storage permission to read music files under the folder and generate playlists. You cannot add music to the playlist until you go to the settings page to allow application and obtain storage permission.</string>
     <string name="item_btn_more">More</string>
+    <string name="exitApp">Exit MusicPlayer</string>
 </resources>

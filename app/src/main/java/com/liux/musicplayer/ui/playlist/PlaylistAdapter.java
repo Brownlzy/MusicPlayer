@@ -1,6 +1,7 @@
 package com.liux.musicplayer.ui.playlist;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.util.MusicUtils;
 
@@ -60,6 +62,7 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemTitle = convertView.findViewById(R.id.item_title);
         holder.mItemId = convertView.findViewById(R.id.item_id);
         holder.mItemSinger = convertView.findViewById(R.id.item_singer);
+        holder.mItemDuration = convertView.findViewById(R.id.item_duration);
         holder.hasLyric = convertView.findViewById(R.id.hasLyric);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
         //设置数据
@@ -67,6 +70,10 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemId.setText(String.valueOf(position + 1));
         holder.mItemSinger.setText(data.get(position).artist +
                 (data.get(position).album.equals("null") ? "" : (" - " + data.get(position).album)));
+        if (data.get(position).duration != null)
+            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(Long.parseLong(data.get(position).duration), 4));
+        else
+            holder.mItemDuration.setText("null");
         if (data.get(position).lyric_uri.equals("null"))
             holder.hasLyric.setVisibility(View.GONE);
         else
@@ -85,6 +92,7 @@ public class PlaylistAdapter extends BaseAdapter {
         public TextView mItemTitle;
         public TextView mItemId;
         public TextView mItemSinger;
+        public TextView mItemDuration;
         public CheckBox checkBox;
         public ImageView btnMore;
         public ImageView hasLyric;

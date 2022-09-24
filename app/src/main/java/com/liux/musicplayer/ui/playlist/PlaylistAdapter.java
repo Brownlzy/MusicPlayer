@@ -1,7 +1,6 @@
 package com.liux.musicplayer.ui.playlist;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +9,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ConvertUtils;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.util.MusicUtils;
+import com.liux.musicplayer.utils.MusicUtils;
 
 import java.util.List;
 

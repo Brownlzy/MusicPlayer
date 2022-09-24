@@ -40,9 +40,9 @@ import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
-import com.liux.musicplayer.util.DisplayUtils;
-import com.liux.musicplayer.util.MusicUtils;
-import com.liux.musicplayer.util.UriTransform;
+import com.liux.musicplayer.utils.DisplayUtils;
+import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.UriTransform;
 
 import java.io.File;
 import java.lang.reflect.Type;

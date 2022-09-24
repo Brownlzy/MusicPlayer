@@ -1,9 +1,11 @@
-package com.liux.musicplayer.util;
+package com.liux.musicplayer.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
+
+import com.liux.musicplayer.utils.DisplayUtils;
 
 public class MyScrollView extends ScrollView {
 

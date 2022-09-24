@@ -1,4 +1,4 @@
-package com.liux.musicplayer.util;
+package com.liux.musicplayer.utils;
 
 import android.app.Activity;
 import android.content.Context;

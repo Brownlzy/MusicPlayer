@@ -1,4 +1,4 @@
-package com.liux.musicplayer.util;
+package com.liux.musicplayer.utils;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,7 +8,6 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileUtils;
 

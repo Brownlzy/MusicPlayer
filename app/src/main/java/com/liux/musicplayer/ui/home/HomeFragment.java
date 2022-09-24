@@ -25,7 +25,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.databinding.FragmentHomeBinding;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.util.MusicUtils;
+import com.liux.musicplayer.utils.MusicUtils;
 
 public class HomeFragment extends Fragment {
 

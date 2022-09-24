@@ -14,9 +14,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.media.AudioAttributes;
-import android.media.AudioFocusRequest;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -27,13 +24,14 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.receiver.RemoteControlReceiver;
 import com.liux.musicplayer.ui.MainActivity;
-import com.liux.musicplayer.util.MusicUtils;
+import com.liux.musicplayer.utils.MusicUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

@@ -1,6 +1,6 @@
 package com.liux.musicplayer.ui.settings;
 
-import static com.liux.musicplayer.util.UriTransform.getPath;
+import static com.liux.musicplayer.utils.UriTransform.getPath;
 
 import android.Manifest;
 import android.app.Activity;

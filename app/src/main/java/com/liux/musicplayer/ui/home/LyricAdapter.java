@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.util.MusicUtils;
+import com.liux.musicplayer.utils.MusicUtils;
 
 public class LyricAdapter extends BaseAdapter {
 

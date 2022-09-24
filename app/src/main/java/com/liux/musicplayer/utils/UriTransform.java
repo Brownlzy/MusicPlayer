@@ -1,7 +1,6 @@
-package com.liux.musicplayer.util;
+package com.liux.musicplayer.utils;
 
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,12 +9,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.webkit.MimeTypeMap;
-
-import androidx.annotation.RequiresApi;
-
-import java.io.File;
-import java.io.InputStream;
 
 public class UriTransform {
     @TargetApi(Build.VERSION_CODES.KITKAT)

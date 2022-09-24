@@ -79,7 +79,7 @@
 
         </RelativeLayout>
 
-        <com.liux.musicplayer.util.MyScrollView
+        <com.liux.musicplayer.views.MyScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none">
@@ -165,6 +165,6 @@
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </LinearLayout>
-        </com.liux.musicplayer.util.MyScrollView>
+        </com.liux.musicplayer.views.MyScrollView>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

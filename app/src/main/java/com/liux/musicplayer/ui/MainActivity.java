@@ -42,7 +42,7 @@ import com.liux.musicplayer.service.MusicService;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
-import com.liux.musicplayer.util.MusicUtils;
+import com.liux.musicplayer.utils.MusicUtils;
 
 public class MainActivity extends FragmentActivity {
 

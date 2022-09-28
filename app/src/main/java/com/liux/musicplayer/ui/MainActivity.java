@@ -36,8 +36,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
+import com.liux.musicplayer.interfaces.MusicServiceCallback;
 import com.liux.musicplayer.service.MusicService;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
@@ -76,8 +78,23 @@ public class MainActivity extends FragmentActivity {
     private boolean isBackground = false;
 
     private MusicService musicService;
-    private ServiceConnection serviceConnection;
-    private MusicReceiver musicReceiver;
+    private MusicConnector serviceConnection;
+    private MusicServiceCallback musicServiceCallback = new MusicServiceCallback() {
+        @Override
+        public void nowPlayingThis(int musicID) {
+            nowPlaying(musicID);
+        }
+
+        @Override
+        public void playingErrorThis(int musicID) {
+            playingError(musicID);
+        }
+
+        @Override
+        public void updatePlayStateThis() {
+            updatePlayState();
+        }
+    };
 
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -220,6 +237,7 @@ public class MainActivity extends FragmentActivity {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             musicService = ((MusicService.MyMusicBinder) iBinder).getService();
             Log.e("MusicConnector", "musicService" + musicService);
+            musicService.setMusicServiceCallback(musicServiceCallback);
             initMainActivity();
         }
 
@@ -232,6 +250,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initMainActivity() {
+        musicService.setActivityForeground(true);
         initVariable();
         initViewCompat();
         initViewPager2();
@@ -257,25 +276,6 @@ public class MainActivity extends FragmentActivity {
         lastPageId = 0;
         countActivity = 0;
         isBackground = false;
-    }
-
-    public class MusicReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            String message = bundle.getString("message", "none");
-            switch (message) {
-                case "nowPlaying":
-                    nowPlaying(bundle.getInt("argue", 0));
-                    break;
-                case "playingError":
-                    playingError(bundle.getInt("argue", 0));
-                    break;
-                case "updatePlayState":
-                    updatePlayState();
-                    break;
-            }
-        }
     }
 
     private void updatePlayState() {
@@ -326,11 +326,6 @@ public class MainActivity extends FragmentActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        musicReceiver = new MusicReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.liux.musicplayer.service.MusicService");
-        MainActivity.this.registerReceiver(musicReceiver, filter);
-
         // Bind to LocalService
         serviceConnection = new MusicConnector();
         Intent intent = new Intent();
@@ -349,7 +344,8 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onActivityStarted(Activity activity) {
                 countActivity++;
-                if (countActivity == 1 && isBackground) {
+                Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
+                if (countActivity == 0 && isBackground) {
                     Log.e("MyApplication", "onActivityStarted: 应用进入前台");
                     isBackground = false;
                     //说明应用重新进入了前台
@@ -358,6 +354,7 @@ public class MainActivity extends FragmentActivity {
                         startProgressBar();
                         startLyric();
                     }
+                    musicService.setActivityForeground(true);
                 }
 
             }
@@ -375,15 +372,17 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onActivityStopped(Activity activity) {
                 countActivity--;
-                if (countActivity <= 0 && !isBackground) {
+                Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
+                if (countActivity < 0 && !isBackground) {
                     Log.e("MyApplication", "onActivityStarted: 应用进入后台");
                     isBackground = true;
                     //说明应用进入了后台
                     //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
-                }
-                if (viewPager.getCurrentItem() == 0) {
-                    startProgressBar();
-                    startLyric();
+                    if (viewPager.getCurrentItem() == 0) {
+                        stopProgressBar();
+                        stopLyric();
+                    }
+                    musicService.setActivityForeground(false);
                 }
             }
 
@@ -401,7 +400,6 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(musicReceiver);
         unbindService(serviceConnection);
         homeFragment.onDestroy();
         stopLyric();
@@ -687,7 +685,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
         viewPager.setCurrentItem(musicService.getNowPageId(), false);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {

@@ -8,6 +8,7 @@ import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.browse.MediaBrowser;
 import android.media.session.MediaController;
+import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,10 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 
-import android.media.session.MediaSession;
+import androidx.media.MediaBrowserServiceCompat;
+
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
@@ -36,15 +40,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MusicSession extends MediaBrowserService {
+public class MusicSession extends MediaBrowserServiceCompat {
     private static final String MY_MEDIA_ROOT_ID = "root";
     private static final String MY_EMPTY_MEDIA_ROOT_ID = "empty_root_id";
     private static final String LOG_TAG = "MusicPlayerService";
     private static final String TAG = "MediaPlaybackService";
 
-    private MediaSession mediaSession;
-    private PlaybackState mPlaybackState;
-    private MediaSession mediaSessionConnector;
+    private MediaSessionCompat mediaSession;
+    private PlaybackStateCompat mPlaybackState;
     private MediaPlayer mMediaPlayer;
     private List<MusicUtils.Song> songList;
     private int nowId;
@@ -61,13 +64,13 @@ public class MusicSession extends MediaBrowserService {
     @Override
     public void onCreate() {
         super.onCreate();
-        sp = this.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+        sp = this.getSharedPreferences(getPackageName() + "_preferences", Activity.MODE_PRIVATE);
         // Create a MediaSessionCompat
-        mediaSession = new MediaSession(this, LOG_TAG);
+        mediaSession = new MediaSessionCompat(this, LOG_TAG);
 
         // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
-        PlaybackState.Builder stateBuilder = new PlaybackState.Builder()
-                .setActions(PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PLAY_PAUSE);
+        PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
+                .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE);
         mPlaybackState = stateBuilder.build();
         mediaSession.setPlaybackState(mPlaybackState);
 
@@ -89,8 +92,8 @@ public class MusicSession extends MediaBrowserService {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
             mMediaPlayer.start();
-            mPlaybackState = new PlaybackState.Builder()
-                    .setState(PlaybackState.STATE_PLAYING, 0, 1.0f)
+            mPlaybackState = new PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                     .build();
             mediaSession.setPlaybackState(mPlaybackState);
         }
@@ -102,8 +105,8 @@ public class MusicSession extends MediaBrowserService {
     private MediaPlayer.OnCompletionListener CompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-            mPlaybackState = new PlaybackState.Builder()
-                    .setState(PlaybackState.STATE_NONE, 0, 1.0f)
+            mPlaybackState = new PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f)
                     .build();
             mediaSession.setPlaybackState(mPlaybackState);
             mMediaPlayer.reset();
@@ -118,31 +121,31 @@ public class MusicSession extends MediaBrowserService {
     }
 
     @Override
-    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowser.MediaItem>> result) {
+    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
         result.detach();
-        List<MediaBrowser.MediaItem> mediaItems = new ArrayList<>();
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
         for (MusicUtils.Song item : songList) {
-            MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                    .putString(MediaMetadata.METADATA_KEY_TITLE, item.title)
-                    .putString(MediaMetadata.METADATA_KEY_AUTHOR, item.artist)
-                    .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, item.source_uri)
-                    .putString(MediaMetadata.METADATA_KEY_MEDIA_URI, item.source_uri)
+            MediaMetadataCompat mediaMetadata = new MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, item.title)
+                    .putString(MediaMetadataCompat.METADATA_KEY_AUTHOR, item.artist)
+                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, item.source_uri)
+                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, item.source_uri)
                     .build();
             Log.e("MusicSession", String.valueOf(mediaMetadata));
-            mediaItems.add(new MediaBrowser.MediaItem(mediaMetadata.getDescription(),
-                    MediaBrowser.MediaItem.FLAG_PLAYABLE));
+            mediaItems.add(new MediaBrowserCompat.MediaItem(mediaMetadata.getDescription(),
+                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
         }
         result.sendResult(mediaItems);
     }
 
-    private class MySessionCallback extends MediaSession.Callback {
+    private class MySessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
             Log.e(TAG, "onPlay");
-            if (mPlaybackState.getState() == PlaybackState.STATE_PAUSED) {
+            if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PAUSED) {
                 mMediaPlayer.start();
-                mPlaybackState = new PlaybackState.Builder()
-                        .setState(PlaybackState.STATE_PLAYING, 0, 1.0f)
+                mPlaybackState = new PlaybackStateCompat.Builder()
+                        .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(mPlaybackState);
             }
@@ -154,10 +157,10 @@ public class MusicSession extends MediaBrowserService {
         @Override
         public void onPause() {
             Log.e(TAG, "onPause");
-            if (mPlaybackState.getState() == PlaybackState.STATE_PLAYING) {
+            if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
                 mMediaPlayer.pause();
-                mPlaybackState = new PlaybackState.Builder()
-                        .setState(PlaybackState.STATE_PAUSED, 0, 1.0f)
+                mPlaybackState = new PlaybackStateCompat.Builder()
+                        .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(mPlaybackState);
             }
@@ -174,19 +177,19 @@ public class MusicSession extends MediaBrowserService {
             Log.e(TAG, "onPlayFromUri");
             try {
                 switch (mPlaybackState.getState()) {
-                    case PlaybackState.STATE_PLAYING:
-                    case PlaybackState.STATE_PAUSED:
-                    case PlaybackState.STATE_NONE:
+                    case PlaybackStateCompat.STATE_PLAYING:
+                    case PlaybackStateCompat.STATE_PAUSED:
+                    case PlaybackStateCompat.STATE_NONE:
                         mMediaPlayer.reset();
                         mMediaPlayer.setDataSource(MusicSession.this, uri);
                         mMediaPlayer.prepare();//准备同步
-                        mPlaybackState = new PlaybackState.Builder()
-                                .setState(PlaybackState.STATE_CONNECTING, 0, 1.0f)
+                        mPlaybackState = new PlaybackStateCompat.Builder()
+                                .setState(PlaybackStateCompat.STATE_CONNECTING, 0, 1.0f)
                                 .build();
                         mediaSession.setPlaybackState(mPlaybackState);
                         //我们可以保存当前播放音乐的信息，以便客户端刷新UI
-                        mediaSession.setMetadata(new MediaMetadata.Builder()
-                                .putString(MediaMetadata.METADATA_KEY_TITLE, extras.getString("title"))
+                        mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, extras.getString("title"))
                                 .build()
                         );
                         break;
@@ -201,19 +204,19 @@ public class MusicSession extends MediaBrowserService {
             Log.e(TAG, "onPlayFromSearch");
             try {
                 switch (mPlaybackState.getState()) {
-                    case PlaybackState.STATE_PLAYING:
-                    case PlaybackState.STATE_PAUSED:
-                    case PlaybackState.STATE_NONE:
+                    case PlaybackStateCompat.STATE_PLAYING:
+                    case PlaybackStateCompat.STATE_PAUSED:
+                    case PlaybackStateCompat.STATE_NONE:
                         mMediaPlayer.reset();
                         mMediaPlayer.setDataSource(MusicSession.this, Uri.parse("/sdcard/Music/Ed Sheeran - Galway Girl.flac"));
                         mMediaPlayer.prepare();//准备同步
-                        mPlaybackState = new PlaybackState.Builder()
-                                .setState(PlaybackState.STATE_CONNECTING, 0, 1.0f)
+                        mPlaybackState = new PlaybackStateCompat.Builder()
+                                .setState(PlaybackStateCompat.STATE_CONNECTING, 0, 1.0f)
                                 .build();
                         mediaSession.setPlaybackState(mPlaybackState);
                         //我们可以保存当前播放音乐的信息，以便客户端刷新UI
-                        mediaSession.setMetadata(new MediaMetadata.Builder()
-                                .putString(MediaMetadata.METADATA_KEY_TITLE, extras.getString("title"))
+                        mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, extras.getString("title"))
                                 .build()
                         );
                         break;
@@ -221,6 +224,7 @@ public class MusicSession extends MediaBrowserService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            showNotification();
         }
 
 
@@ -269,4 +273,54 @@ public class MusicSession extends MediaBrowserService {
         spEditor.apply();
     }
 
+    public void showNotification() {
+        // Given a media session and its context (usually the component containing the session)
+        // Create a NotificationCompat.Builder
+
+        // Get the session's metadata
+        MediaControllerCompat controller = mediaSession.getController();
+        MediaMetadataCompat mediaMetadata = controller.getMetadata();
+        MediaDescriptionCompat description = mediaMetadata.getDescription();
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channelId");
+
+        builder
+                // Add the metadata for the currently playing track
+                .setContentTitle(description.getTitle())
+                .setContentText(description.getSubtitle())
+                .setSubText(description.getDescription())
+                .setLargeIcon(description.getIconBitmap())
+
+                // Enable launching the player by clicking the notification
+                .setContentIntent(controller.getSessionActivity())
+
+                // Stop the service when the notification is swiped away
+                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+                        PlaybackStateCompat.ACTION_STOP))
+
+                // Make the transport controls visible on the lockscreen
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+                // Add an app icon and set its accent color
+                // Be careful about the color
+                .setSmallIcon(R.mipmap.ic_launcher)
+                //.setColor(ContextCompat.getColor(context, R.color.primaryDark))
+
+                // Add a pause button
+                .addAction(new NotificationCompat.Action(
+                        R.drawable.ic_round_pause_24, getString(R.string.pauseOrPlay),
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE)))
+
+                // Take advantage of MediaStyle features
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        .setMediaSession(mediaSession.getSessionToken())
+                        .setShowActionsInCompactView(0)
+
+                        // Add a cancel button
+                        .setShowCancelButton(true)
+                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP)));
+
+        // Display the notification and place the service in the foreground
+        startForeground(2, builder.build());
+    }
 }

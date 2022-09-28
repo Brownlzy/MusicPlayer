@@ -278,7 +278,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    //判断是否开启悬浮窗权限   context可以用你的Activity.或者tiis
+    //判断是否开启悬浮窗权限   context可以用你的Activity.或者this
     public static boolean checkFloatPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             AppOpsManager appOpsMgr = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);

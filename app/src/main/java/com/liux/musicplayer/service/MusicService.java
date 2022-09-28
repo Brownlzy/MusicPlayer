@@ -12,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
@@ -29,6 +30,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.interfaces.DeskLyricCallback;
+import com.liux.musicplayer.interfaces.MusicServiceCallback;
 import com.liux.musicplayer.receiver.RemoteControlReceiver;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.MusicUtils;
@@ -75,9 +78,25 @@ public class MusicService extends Service {
     private String notificationId = "MusicService";
     private String notificationName = "常驻后台通知";
     private MediaSessionCompat mMediaSession;
-    private MediaSessionCompat mediaSession;
+    private DesktopLyricServiceConnector desktopLyricServiceConnector;
+    private boolean isActivityForeground = false;
 
-    public MusicService() {
+    public void setActivityForeground(boolean activityForeground) {
+        isActivityForeground = activityForeground;
+        if (isActivityForeground || !isDesktopLyric) hideDesktopLyric(true);
+        else hideDesktopLyric(false);
+    }
+
+    private MusicServiceCallback musicServiceCallback;
+
+    public void setMusicServiceCallback(MusicServiceCallback musicServiceCallback) {
+        this.musicServiceCallback = musicServiceCallback;
+    }
+
+    private DeskLyricCallback deskLyricCallback;
+
+    public void setDeskLyricCallback(DeskLyricCallback deskLyricCallback) {
+        this.deskLyricCallback = deskLyricCallback;
     }
 
     @Override
@@ -96,7 +115,7 @@ public class MusicService extends Service {
         updateNotificationShow(nowId);
         registerRemoteControlReceiver();
     }
-    
+
     private void initializePlayer() {
         if (mp == null) {
             mp = new MediaPlayer();
@@ -108,6 +127,7 @@ public class MusicService extends Service {
         if (musicReceiver != null) {
             //解除动态注册的广播
             unregisterReceiver(musicReceiver);
+            stopService(new Intent(MusicService.this, FloatLyricServices.class));
             closeNotification();
         }
         mMediaSession.release();
@@ -122,8 +142,6 @@ public class MusicService extends Service {
     private void registerRemoteControlReceiver() {
         ComponentName mbr = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
         mMediaSession = new MediaSessionCompat(this, "mbr", mbr, null);
-        mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mMediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public boolean onMediaButtonEvent(Intent intent) {
@@ -165,7 +183,7 @@ public class MusicService extends Service {
         manager.createNotificationChannel(channel);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
-                this, 0, new Intent(this, MainActivity.class), 0);
+                this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         //初始化通知
         notification = new NotificationCompat.Builder(this, "play_control")
@@ -184,14 +202,6 @@ public class MusicService extends Service {
     }
 
     public void updateNotificationShow(int position) {
-        //播放状态判断
-        if (mp.isPlaying()) {
-            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
-            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
-        } else {
-            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
-            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
-        }
         //封面专辑
         Bitmap bitmap = MusicUtils.getAlbumImage(this, songList.get(position));
         if (bitmap == null) {
@@ -209,9 +219,26 @@ public class MusicService extends Service {
                 (songList.get(position).album.equals("null") ? "" : (" - " + songList.get(position).album)));
         remoteViewsLarge.setTextViewText(R.id.tv_notification_singer, songList.get(position).artist +
                 (songList.get(position).album.equals("null") ? "" : (" - " + songList.get(position).album)));
+        //桌面歌词
+        if (isDesktopLyric) {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_lyric, R.drawable.ic_baseline_subtitles_green_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_lyric, R.drawable.ic_baseline_subtitles_green_24);
+        } else {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_lyric, R.drawable.ic_baseline_subtitles_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_lyric, R.drawable.ic_baseline_subtitles_24);
+        }
         //发送通知
-        //manager.notify(NOTIFICATION_ID, notification);
-        startForeground(1, notification);
+        //播放状态判断
+        if (mp.isPlaying()) {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
+            startForeground(NOTIFICATION_ID, notification);
+        } else {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
+            stopForeground(false);
+            manager.notify(NOTIFICATION_ID, notification);
+        }
     }
 
     /**
@@ -267,6 +294,10 @@ public class MusicService extends Service {
 
     }
 
+    public boolean isDesktopLyric() {
+        return isDesktopLyric;
+    }
+
     public class MusicReceiver extends BroadcastReceiver {
 
         public static final String TAG = "MusicReceiver";
@@ -302,12 +333,42 @@ public class MusicService extends Service {
                     break;
                 case LYRIC:
                     Log.d(tag, LYRIC);
+                    showDesktopLyric();
                     break;
                 default:
                     break;
             }
             updateNotificationShow(getNowId());
         }
+    }
+
+    public void showDesktopLyric() {
+        Intent intent = new Intent(MusicService.this, FloatLyricServices.class);
+        if (isDesktopLyric) {
+            stopService(intent);
+            isDesktopLyric = false;
+        } else {
+            if (!isActivityForeground) {
+                startService(intent);
+            }
+            isDesktopLyric = true;
+        }
+        Log.d(TAG, String.valueOf(isDesktopLyric));
+        updateNotificationShow(getNowId());
+    }
+
+    public void hideDesktopLyric(boolean isHide) {
+        Intent intent = new Intent(MusicService.this, FloatLyricServices.class);
+        if (isHide) {
+            stopService(intent);
+        } else {
+            startService(intent);
+        }
+    }
+
+    public void updateDeskLyricPlayInfo() {
+        if (deskLyricCallback != null)
+            deskLyricCallback.updatePlayState(getNowId());
     }
 
     public void PlayOrPause(boolean isPlay) {
@@ -324,7 +385,10 @@ public class MusicService extends Service {
         } else {
             pause();
         }
-        sendMyBroadcast("message", "updatePlayState");
+        if (musicServiceCallback != null)
+            musicServiceCallback.updatePlayStateThis();
+        if (deskLyricCallback != null)
+            deskLyricCallback.updatePlayState();
     }
 
     /**
@@ -341,21 +405,6 @@ public class MusicService extends Service {
         registerReceiver(musicReceiver, intentFilter);
     }
 
-    private void sendMyBroadcast(String key, String content) {
-        Intent intent = new Intent();
-        intent.putExtra(key, content);
-        intent.setAction("com.liux.musicplayer.service.MusicService");
-        sendBroadcast(intent);
-    }
-
-    private void sendMyBroadcast(String key, String content, int argue) {
-        Intent intent = new Intent();
-        intent.putExtra(key, content);
-        intent.putExtra("argue", argue);
-        intent.setAction("com.liux.musicplayer.service.MusicService");
-        sendBroadcast(intent);
-    }
-
     @Override
     public boolean onUnbind(Intent intent) {
         //松绑Service，会触发onDestroy()
@@ -363,6 +412,23 @@ public class MusicService extends Service {
         //stopSelf();
         return true;
     }
+
+    private class DesktopLyricServiceConnector implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // 获取服务的操作对象
+            FloatLyricServices.MyBinder binder = (FloatLyricServices.MyBinder) service;
+            binder.getService();
+            Log.d(TAG, "Connected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    }
+
+    ;
 
     public class MyMusicBinder extends Binder {
         //返回Service对象
@@ -457,7 +523,6 @@ public class MusicService extends Service {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 //把所有的都回归到0
                 prepared = false;
-                sendMyBroadcast("method", "resetPlayProgress");
                 if (isEnabled)
                     playPrevOrNext(true);
             }
@@ -606,11 +671,17 @@ public class MusicService extends Service {
             case 0:
                 if (playOrder == REPEAT_ONE)
                     mp.setLooping(true);
-                sendMyBroadcast("message", "nowPlaying", musicId);
+                if (musicServiceCallback != null)
+                    musicServiceCallback.nowPlayingThis(musicId);
+                if (deskLyricCallback != null)
+                    deskLyricCallback.updatePlayState(musicId);
                 break;
             default:
             case -1:
-                sendMyBroadcast("message", "playingError", musicId);
+                if (musicServiceCallback != null)
+                    musicServiceCallback.playingErrorThis(musicId);
+                if (deskLyricCallback != null)
+                    deskLyricCallback.updatePlayState(musicId);
                 setEnabled(false);
                 break;
         }
@@ -654,13 +725,13 @@ public class MusicService extends Service {
 
     public void pause() {
         mp.pause();
-        stopForeground(false);
+        updateNotificationShow(getNowId());
     }
 
     public void start() {
         if (prepared)
             mp.start();
-        startForeground(NOTIFICATION_ID, notification);
+        updateNotificationShow(getNowId());
     }
 
     public void setProgress(int second) {

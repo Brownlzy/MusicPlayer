@@ -73,4 +73,5 @@
     <string name="exitApp">退出音乐播放器</string>
     <string name="nowPlaying">正在播放：</string>
     <string name="lyricFileIsEmpty">歌词文件为空</string>
+    <string name="deskLyricLock">锁定桌面歌词</string>
 </resources>

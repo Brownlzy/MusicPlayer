@@ -741,6 +741,7 @@ public class MainActivity extends FragmentActivity {
                 case 1:
                     return playlistFragment;
                 case 2:
+                    settingsFragment = new SettingsFragment();
                     return settingsFragment;
             }
         }

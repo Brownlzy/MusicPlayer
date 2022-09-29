@@ -76,7 +76,7 @@ public class StrokeTextView extends AppCompatTextView {
     public void init() {
         TextPaint tp1 = backGroundText.getPaint();
         //设置描边宽度
-        tp1.setStrokeWidth(1);
+        tp1.setStrokeWidth(2);
         //背景描边并填充全部
         tp1.setStyle(Paint.Style.FILL_AND_STROKE);
         //设置描边颜色

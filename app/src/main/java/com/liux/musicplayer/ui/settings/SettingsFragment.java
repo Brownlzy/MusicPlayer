@@ -30,9 +30,11 @@ import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.RegexUtils;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.ui.MainActivity;
 
 import java.io.IOException;
 
@@ -42,11 +44,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     //Preference控件
     private CheckBoxPreference switch_storage_permission;
     private CheckBoxPreference switch_layer_permission;
     private CheckBoxPreference switch_web_playlist;
+    private CheckBoxPreference switch_desk_lyric;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private EditTextPreference dPlayList;
@@ -131,17 +134,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        Context context = getActivity();
+        assert context != null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         //绑定控件
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         switch_web_playlist = findPreference("isUseWebPlayList");
+        switch_desk_lyric = findPreference("isShowLyric");
         MainFolder = findPreference("mainFolder");
         clickGotoAppDetails = findPreference("gotoAppDetails");
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
         About = findPreference("info");
         Close = findPreference("exit");
+        prefs.registerOnSharedPreferenceChangeListener(this); // 注册
+        switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                ((MainActivity) getActivity()).getMusicPlayer().setDesktopLyric((boolean) newValue);
+                return true;
+            }
+        });
         Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -315,5 +330,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             requestOverlayPermissionLauncher.launch(intent);
             return false;
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("isShowLyric"))
+            switch_desk_lyric.setChecked(sharedPreferences.getBoolean("isShowLyric", false));
     }
 }

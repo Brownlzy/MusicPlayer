@@ -71,6 +71,12 @@ public class MusicService extends Service {
     private SharedPreferences sp;
     private int shuffleId;
     private boolean isAppLyric = false;
+
+    public void setDesktopLyric(boolean desktopLyric) {
+        isDesktopLyric = desktopLyric;
+        updateNotificationShow(getNowId());
+    }
+
     private boolean isDesktopLyric = false;
     private boolean prepared = false;
     private boolean isEnabled = false;
@@ -114,6 +120,12 @@ public class MusicService extends Service {
         //showNotification();
         updateNotificationShow(nowId);
         registerRemoteControlReceiver();
+        initDesktopLyric();
+    }
+
+    private void initDesktopLyric() {
+        isDesktopLyric = sp.getBoolean("isShowLyric", false);
+        updateNotificationShow(getNowId());
     }
 
     private void initializePlayer() {
@@ -355,6 +367,9 @@ public class MusicService extends Service {
         }
         Log.d(TAG, String.valueOf(isDesktopLyric));
         updateNotificationShow(getNowId());
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("isShowLyric", isDesktopLyric);
+        editor.apply();
     }
 
     public void hideDesktopLyric(boolean isHide) {

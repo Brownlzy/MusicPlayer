@@ -56,6 +56,7 @@ public class FloatLyricServices extends Service {
     private int nowLyricId;
     private int nowTextSize;
     private int nowColorID;
+    private SharedPreferences sp;
     private DeskLyricCallback deskLyricCallback = new DeskLyricCallback() {
         @Override
         public void updatePlayState(int musicId) {
@@ -166,6 +167,9 @@ public class FloatLyricServices extends Service {
                 | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
         winManager.updateViewLayout(mFloatingLayout, wmParams);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("deskLyricLock", true);
+        editor.apply();
     }
 
     private View.OnClickListener lyricSettingListener = new View.OnClickListener() {
@@ -343,14 +347,12 @@ public class FloatLyricServices extends Service {
     }
 
     private void initLyricSettings() {
-        SharedPreferences sp = this.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         nowTextSize = sp.getInt("deskLyricTextSize", 18);
         nowColorID = sp.getInt("deskLyricColorId", 1);
         LyricSettings();
     }
 
     private void saveLyricSettings() {
-        SharedPreferences sp = this.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("deskLyricTextSize", nowTextSize);
         editor.putInt("deskLyricColorId", nowColorID);
@@ -377,6 +379,7 @@ public class FloatLyricServices extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        sp = this.getSharedPreferences(getPackageName() + "_preferences", Activity.MODE_PRIVATE);
         // Bind to LocalService
         serviceConnection = new MusicConnector();
         Intent intent = new Intent();
@@ -477,8 +480,8 @@ public class FloatLyricServices extends Service {
      * 初始化窗口
      */
     private void initWindow() {
-        SharedPreferences sp = this.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         int y = sp.getInt("deskLyricY", 210);
+        boolean lyricLock = sp.getBoolean("deskLyricLock", false);
         winManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
         //设置好悬浮窗的参数
         wmParams = getMyParams();
@@ -496,6 +499,13 @@ public class FloatLyricServices extends Service {
         // 获取浮动窗口视图所在布局
         mFloatingLayout = inflater.inflate(R.layout.desktop_lyric, null);
         // 添加悬浮窗的视图
+        if (lyricLock) {
+            wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                    | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
+        }
         winManager.addView(mFloatingLayout, wmParams);
     }
 
@@ -530,7 +540,6 @@ public class FloatLyricServices extends Service {
         stopLyricThread();
 
         unbindService(serviceConnection);
-        SharedPreferences sp = this.getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("deskLyricY", wmParams.y);
         editor.apply();

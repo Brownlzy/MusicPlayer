@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/desktopLyricLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -33,7 +34,7 @@
                 android:id="@+id/firstLyric"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="作曲：无"
+                tools:text="作曲：无"
                 android:singleLine="true"
                 android:scrollbars="horizontal"
                 android:textColor="@color/teal_200"
@@ -44,7 +45,7 @@
                 android:id="@+id/secondLyric"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="纯音乐，请欣赏"
+                tools:text="纯音乐，请欣赏"
                 android:singleLine="true"
                 android:scrollbars="horizontal"
                 android:textColor="#ffffffff"
@@ -59,7 +60,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
-            android:gravity="center_vertical">
+            android:gravity="top">
 
             <ImageView
                 android:id="@+id/appIcon"
@@ -83,6 +84,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:textAlignment="center"
                 android:scrollbars="horizontal"
                 android:singleLine="true"
                 android:text="NowPlaying"
@@ -182,10 +184,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/color_red"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:clickable="true"
                 android:background="#F44336"
                 android:src="@drawable/ic_round_check_24"
@@ -193,10 +195,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/color_blue"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:clickable="true"
                 android:background="#03A9F4"
                 android:src="@drawable/ic_round_check_24"
@@ -204,10 +206,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/color_green"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:clickable="true"
                 android:background="#4CAF50"
                 android:src="@drawable/ic_round_check_24"
@@ -215,10 +217,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/color_yellow"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:clickable="true"
                 android:background="#FFC107"
                 android:src="@drawable/ic_round_check_24"
@@ -226,10 +228,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/color_purple"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:clickable="true"
                 android:background="#673AB7"
                 android:src="@drawable/ic_round_check_24"

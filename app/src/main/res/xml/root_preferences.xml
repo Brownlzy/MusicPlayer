@@ -60,6 +60,11 @@
             app:summary="@string/isShowLyric_summary"
             app:dependency="layer_permission" />
 
+        <CheckBoxPreference
+            app:key="deskLyricLock"
+            app:title="@string/deskLyricLock"
+            app:dependency="layer_permission" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/title_about">

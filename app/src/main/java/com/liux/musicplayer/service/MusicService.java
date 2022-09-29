@@ -585,6 +585,13 @@ public class MusicService extends Service {
     }
 
     //添加音乐
+    public void addMusic(List<MusicUtils.Song> songList) {
+        for (MusicUtils.Song song : songList) {
+            addMusic(song.source_uri.replace("/storage/emulated/0", "/sdcard"));
+        }
+    }
+
+    //添加音乐
     public int addMusic(String path) {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;

@@ -63,7 +63,7 @@ public class FloatLyricServices extends Service {
             String title = musicService.getPlayList().get(musicId).title;
             String artist = musicService.getPlayList().get(musicId).artist;
             updatePlayInfo(title
-                    + ((artist.equals("null")) ? "" : "-" + artist));
+                    + ((artist.equals("null")) ? "" : " - " + artist));
             lyric = new MusicUtils.Lyric(Uri.parse(musicService.getPlayList().get(musicId).lyric_uri));    //从歌词文件中读取歌词
             nowLyricId = 0;
             updatePlayState();

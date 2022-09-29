@@ -90,6 +90,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     });
 
+    private void addAllMusic() {
+        List<MusicUtils.Song> songList = MusicUtils.getMusicData(getContext());
+        ((MainActivity) getActivity()).getMusicPlayer().addMusic(songList);
+    }
+
     private void addFolder(Uri uri) {
         Log.e("AddFolder", uri.toString());
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
@@ -176,7 +181,38 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 refreshList();
                 break;
             case R.id.addSongs:
-
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.addAllMusic)
+                            .setMessage(R.string.addAllMusic_info)
+                            .setIcon(R.mipmap.ic_launcher)
+                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    addAllMusic();
+                                    refreshList();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .create();
+                    alertInfoDialog.show();
+                } else {
+                    AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.no_permission)
+                            .setMessage(R.string.no_permission_info)
+                            .setIcon(R.mipmap.ic_launcher)
+                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .create();
+                    alertInfoDialog.show();
+                }
                 break;
             case R.id.addFolder:
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
@@ -475,6 +511,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(getContext(), 44));
+
+        ((MainActivity) getActivity()).getMusicPlayer().setPlayList(mSongList);
     }
 
     private void initData() {

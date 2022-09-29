@@ -73,4 +73,6 @@
     <string name="nowPlaying">"NowPlaying: "</string>
     <string name="lyricFileIsEmpty">Lyric File is Empty</string>
     <string name="deskLyricLock">Lock DeskLyric</string>
+    <string name="addAllMusic">Add ALL Music</string>
+    <string name="addAllMusic_info">This option is to add all audio files in the local media library to the playlist. Some audio files that are not music may be added to the music library. If you know where your music files are stored, use the Add Folder button next to this button to add music in the specified folder.</string>
 </resources>

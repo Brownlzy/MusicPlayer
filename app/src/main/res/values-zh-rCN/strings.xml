@@ -74,4 +74,6 @@
     <string name="nowPlaying">正在播放：</string>
     <string name="lyricFileIsEmpty">歌词文件为空</string>
     <string name="deskLyricLock">锁定桌面歌词</string>
+    <string name="addAllMusic">添加所有音频?</string>
+    <string name="addAllMusic_info">此选项是向播放列表中添加本机媒体库中的所有音频文件，一些不是音乐的音频文件可能会被加入音乐库。如果您已知您的音乐文件存放位置，请使用此按钮旁边的添加文件夹按钮添加指定文件夹下的音乐。</string>
 </resources>

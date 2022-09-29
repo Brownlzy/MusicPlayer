@@ -69,7 +69,7 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemSinger.setText(data.get(position).artist +
                 (data.get(position).album.equals("null") ? "" : (" - " + data.get(position).album)));
         if (data.get(position).duration != null)
-            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(Long.parseLong(data.get(position).duration), 4));
+            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(Long.parseLong(data.get(position).duration)));
         else
             holder.mItemDuration.setText("null");
         if (data.get(position).lyric_uri.equals("null"))

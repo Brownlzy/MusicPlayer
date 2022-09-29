@@ -63,7 +63,7 @@ public class LyricAdapter extends BaseAdapter {
             if (mNowLyricMap.get(position, false))  //被选中则设置高亮颜色
                 holder.lyricText.setTextColor(Color.GREEN);
             else {
-                holder.lyricText.setTextColor(Color.DKGRAY);
+                holder.lyricText.setTextColor(Color.LTGRAY);
             }
         }
         return convertView;

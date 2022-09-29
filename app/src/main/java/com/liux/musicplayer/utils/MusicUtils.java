@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MusicUtils {
     public static class Metadata {
@@ -63,9 +64,10 @@ public class MusicUtils {
                 //分行读取
                 while ((line = buffReader.readLine()) != null) {
                     splitLyricFromLine(line);
+                    //Log.e("Lyric",line);
                 }
                 inStream.close();
-                countDelayTime();
+                getStartMillionTime();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Log.e("MusicUtils", "歌词文件不存在");
@@ -86,20 +88,31 @@ public class MusicUtils {
                 try {
                     lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]\\]")[1];
                 } catch (ArrayIndexOutOfBoundsException e2) {
-                    return;
+                    try {
+                        lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\]")[1];
+                    } catch (ArrayIndexOutOfBoundsException e3) {
+                        try {
+                            lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\\]")[1];
+                        } catch (ArrayIndexOutOfBoundsException e4) {
+                            return;
+                        }
+                    }
                 }
             }
             if (lineLyric != null) {
-                int sameTimeId = startTime.indexOf(line.substring(1, 9));
+                int lyricTextStartIndex = line.indexOf(lineLyric);
+                if (lyricTextStartIndex == -1) lyricTextStartIndex = 0;
+                int sameTimeId = startTime.indexOf(line.substring(0, lyricTextStartIndex));
                 if (sameTimeId == -1) {
                     lyricList.add(lineLyric);
-                    startTime.add(line.substring(1, 9));
+                    startTime.add(line.substring(0, lyricTextStartIndex));
                 } else {//有相同的时间
                     lyricList.set(sameTimeId, lyricList.get(sameTimeId) + "\n" + lineLyric);
                 }
             }
         }
 
+        @Deprecated
         private void countDelayTime() {
             if (lyricList.size() > 1) {
                 String time1 = startTime.get(0);
@@ -111,16 +124,36 @@ public class MusicUtils {
                     delayMillionSeconds.add(formatTime(time2) - formatTime(time1));
                     startMillionTime.add(formatTime(time2));
                 }
+            } else if (lyricList.size() > 0) {
+                startMillionTime.add(formatTime(startTime.get(0)));
             }
             delayMillionSeconds.add((long) -1);
         }
 
+        private void getStartMillionTime() {
+            for (int i = 0; i < startTime.size(); i++) {
+                startMillionTime.add(formatTime(startTime.get(i)));
+            }
+        }
+
         private long formatTime(String stringTime) {
-            //00:00.00
-            long mSeconds;
-            mSeconds = Long.parseLong(stringTime.substring(0, 2)) * 60000 +
-                    Long.parseLong(stringTime.substring(3, 5)) * 1000 +
-                    Long.parseLong(stringTime.substring(6, 8)) * 10;
+            //[00:00.00]
+            long mSeconds = 0;
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]\\]"))
+                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
+                        Long.parseLong(stringTime.substring(4, 6)) * 1000 +
+                        Long.parseLong(stringTime.substring(7, 9)) * 10;
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]\\]"))
+                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
+                        Long.parseLong(stringTime.substring(4, 6)) * 1000 +
+                        Long.parseLong(stringTime.substring(7, 10));
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\]"))
+                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
+                        Long.parseLong(stringTime.substring(4, 6)) * 1000;
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\\]"))
+                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
+                        Long.parseLong(stringTime.substring(4, 6)) * 1000 +
+                        Long.parseLong(stringTime.substring(7, 9)) * 10;
             return mSeconds;
         }
 
@@ -196,10 +229,21 @@ public class MusicUtils {
         return new Metadata();
     }
 
+    public static String millis2FitTimeSpan(long t) {
+        if (t < 60000) {
+            return "0:" + (t % 60000) / 1000;
+        } else if (t < 3600000) {
+            return (t % 3600000) / 60000 + ":" + String.format(Locale.getDefault(), "%02d", ((t % 60000) / 1000));
+        } else {
+            return (t / 3600000) + ":" + String.format(Locale.getDefault(), "%02d", (t % 3600000) / 60000) + ":"
+                    + String.format(Locale.getDefault(), "%02d", (t % 60000) / 1000);
+        }
+    }
+
     public static String millis2FitTimeSpan(long millis, int precision) {
         if (precision <= 0) return null;
         precision = Math.min(precision, 5);
-        String[] units = {"天", "小时", "''", "'", "毫秒"};
+        String[] units = {"天", ":", ":", ".", ""};
         if (millis == 0) return 0 + units[precision - 1];
         StringBuilder sb = new StringBuilder();
         if (millis < 0) {

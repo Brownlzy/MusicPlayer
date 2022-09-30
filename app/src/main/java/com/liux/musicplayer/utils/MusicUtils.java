@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 
 import java.io.BufferedReader;
@@ -28,9 +29,11 @@ public class MusicUtils {
         public String title = "null";
         public String album = "null";
         public String artist = "null";
-        public String duration = "null";
+        public String duration = "0";
         public String mimetype = "null";
-        public String bitrate = "null";
+        public String bitrate = "0";
+        public String sizeByte = "0";
+        public Long sizeLong = 0L;
     }
 
     public static class Song {
@@ -209,6 +212,8 @@ public class MusicUtils {
             md.duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             md.mimetype = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
             md.bitrate = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
+            md.sizeLong = song.size;
+            md.sizeByte = ConvertUtils.byte2FitMemorySize(md.sizeLong);
             mediaMetadataRetriever.release();
             md.isValid = true;
             return md;

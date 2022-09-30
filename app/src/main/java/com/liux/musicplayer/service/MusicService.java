@@ -36,6 +36,7 @@ import com.liux.musicplayer.receiver.RemoteControlReceiver;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.MusicUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -595,6 +596,7 @@ public class MusicService extends Service {
     public int addMusic(String path) {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;
+        newSong.size = new File(newSong.source_uri.replace("file:///storage/emulated/0", "/sdcard")).length();
         MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(this, newSong);
         if (newMetadata.isValid) {
             newSong.title = newMetadata.title;

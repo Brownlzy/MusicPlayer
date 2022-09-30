@@ -119,12 +119,15 @@ public class HomeFragment extends Fragment {
                 songTitle.setText((metadata.title == null) ? song.title : metadata.title);
                 songArtist.setText((metadata.artist == null) ? song.artist : metadata.artist);
                 //songArtist.setText(metadata.artist + (metadata.album.equals("null") ? "" : (" - " + song.album)));
-                songInfo.setText(getString(R.string.title_album) + metadata.album + "\n" +
-                        getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
-                        getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
-                        getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
-                        getString(R.string.title_path) + song.source_uri + "\n" +
-                        getString(R.string.title_lyric) + song.lyric_uri);
+                songInfo.setText(
+                        getString(R.string.title_album) + metadata.album + "\n" +
+                                getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+                                getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+                                getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+                                getString(R.string.file_size) + metadata.sizeByte + "\n" +
+                                getString(R.string.title_path) + song.source_uri + "\n" +
+                                getString(R.string.title_lyric) + song.lyric_uri
+                );
             } else {    //否则使用播放列表的数据
                 songTitle.setText(song.title);
                 songArtist.setText(song.artist);

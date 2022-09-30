@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -33,6 +35,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
@@ -520,7 +523,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         String playListJson = sp.getString("playList",
                 "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                         "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
-                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]");
+                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\",\"size\":0}]");
         Gson gson = new Gson();
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
@@ -528,7 +531,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (mSongList == null || mSongList.size() == 0) {
             playListJson = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                     "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
-                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
+                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\",\"size\":0}]";
             mSongList = gson.fromJson(playListJson, playListType);
         }
         setStateCheckedMap(false);
@@ -555,14 +558,41 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                         ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
                         break;
                     case R.id.item_menu_moreInfo:
-                        Toast.makeText(getContext(), "你点了详情",
-                                Toast.LENGTH_SHORT).show();
+                        showMusicDetails(position);
                         break;
                 }
                 return true;
             }
         });
         popup.show();
+    }
+
+    private void showMusicDetails(int musicId) {
+        MusicUtils.Metadata metadata = MusicUtils.getMetadata(getContext(), mSongList.get(musicId));
+        Bitmap bitmap = MusicUtils.getAlbumImage(getContext(), mSongList.get(musicId));
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                .setTitle(mSongList.get(musicId).title)
+                .setMessage(
+                        getString(R.string.title_artist) + metadata.artist + "\n" +
+                                getString(R.string.title_album) + metadata.album + "\n" +
+                                getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+                                getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+                                getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+                                getString(R.string.file_size) + metadata.sizeByte + "\n" +
+                                getString(R.string.title_path) + mSongList.get(musicId).source_uri + "\n" +
+                                getString(R.string.title_lyric) + mSongList.get(musicId).lyric_uri
+                )
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        if (bitmap == null) {   //获取图片失败，使用默认图片
+            dialog.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+        } else {    //成功
+            dialog.setIcon(new BitmapDrawable(getContext().getResources(), bitmap));
+        }
+        dialog.create().show();
     }
 
     public int onBackPressed() {

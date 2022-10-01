@@ -8,10 +8,10 @@ android {
 
     defaultConfig {
         applicationId "com.liux.musicplayer"
-        minSdkVersion 29
+        minSdkVersion 26
         targetSdkVersion 31
-        versionCode 4
-        versionName "beta.2.1"
+        versionCode 5
+        versionName "beta.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
     implementation "androidx.media:media:1.6.0"
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

@@ -49,13 +49,11 @@ public class MusicUtils {
     public static class Lyric {
         public List<String> lyricList;
         public List<String> startTime;
-        public List<Long> delayMillionSeconds;
         public List<Long> startMillionTime;
 
         public Lyric(Uri lyricUri) {
             lyricList = new ArrayList<>();
             startTime = new ArrayList<>();
-            delayMillionSeconds = new ArrayList<>();
             startMillionTime = new ArrayList<>();
             try {
                 File lyricFile = FileUtils.getFileByPath(lyricUri.toString());
@@ -76,7 +74,6 @@ public class MusicUtils {
                 Log.e("MusicUtils", "歌词文件不存在");
                 lyricList.add("歌词文件不存在");
                 startTime.add("00:00.00");
-                delayMillionSeconds.add((long) -1);
                 startMillionTime.add((long) 0);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -113,24 +110,6 @@ public class MusicUtils {
                     lyricList.set(sameTimeId, lyricList.get(sameTimeId) + "\n" + lineLyric);
                 }
             }
-        }
-
-        @Deprecated
-        private void countDelayTime() {
-            if (lyricList.size() > 1) {
-                String time1 = startTime.get(0);
-                String time2 = startTime.get(1);
-                startMillionTime.add(formatTime(time1));
-                for (int i = 0; i < startTime.size() - 1; i++) {
-                    time1 = time2;
-                    time2 = startTime.get(i + 1);
-                    delayMillionSeconds.add(formatTime(time2) - formatTime(time1));
-                    startMillionTime.add(formatTime(time2));
-                }
-            } else if (lyricList.size() > 0) {
-                startMillionTime.add(formatTime(startTime.get(0)));
-            }
-            delayMillionSeconds.add((long) -1);
         }
 
         private void getStartMillionTime() {

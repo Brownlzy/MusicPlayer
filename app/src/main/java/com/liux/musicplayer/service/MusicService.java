@@ -1,6 +1,5 @@
 package com.liux.musicplayer.service;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,7 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
@@ -50,7 +48,6 @@ public class MusicService extends Service {
     public static final String NEXT = "next";
     public static final String CLOSE = "close";
     public static final String LYRIC = "lyric";
-    public static final String PROGRESS = "progress";
     public static final String TAG = "MusicService";
     public static final int NOTIFICATION_ID = 1;
     public static final int LIST_PLAY = 0;
@@ -63,9 +60,8 @@ public class MusicService extends Service {
     private static RemoteViews remoteViewsLarge;
     private MusicReceiver musicReceiver;
     private Notification notification;
-    private static NotificationManager manager;
 
-    private static MediaPlayer mp;
+    private static MediaPlayer mediaPlayer;
     private boolean prepared = false;
     private boolean enabled = false;
     private List<MusicUtils.Song> songList;
@@ -76,17 +72,15 @@ public class MusicService extends Service {
     private int shuffleId;
     private boolean isAppLyric = false;
 
-
     private boolean isDesktopLyric = false;
     public int nowPageId = 0;
     private MediaSessionCompat mMediaSession;
-    private DesktopLyricServiceConnector desktopLyricServiceConnector;
     private boolean isActivityForeground = false;
     private MusicServiceCallback musicServiceCallback;
     private DeskLyricCallback deskLyricCallback;
 
     public boolean isPlaying() {
-        return mp.isPlaying();
+        return mediaPlayer.isPlaying();
     }
 
     public boolean isPrepared() {
@@ -102,12 +96,12 @@ public class MusicService extends Service {
     }
 
     public int getCurrentPosition() {
-        return mp.getCurrentPosition();
+        return mediaPlayer.getCurrentPosition();
     }
 
     public int getDuration() {
         if (isPrepared())
-            return mp.getDuration();
+            return mediaPlayer.getDuration();
         else
             return Integer.parseInt(songList.get(nowId).duration);
     }
@@ -139,8 +133,7 @@ public class MusicService extends Service {
 
     public void setActivityForeground(boolean activityForeground) {
         isActivityForeground = activityForeground;
-        if (isActivityForeground || !isDesktopLyric) hideDesktopLyric(true);
-        else hideDesktopLyric(false);
+        hideDesktopLyric(isActivityForeground || !isDesktopLyric);
     }
 
     public void setMusicServiceCallback(MusicServiceCallback musicServiceCallback) {
@@ -152,7 +145,7 @@ public class MusicService extends Service {
     }
 
     public void setProgress(int mSec) {
-        mp.seekTo(mSec);
+        mediaPlayer.seekTo(mSec);
     }
 
     public void setEnabled(boolean isEnabled) {
@@ -168,13 +161,13 @@ public class MusicService extends Service {
     }
 
     public void pause() {
-        mp.pause();
+        mediaPlayer.pause();
         updateNotificationShow(getNowId());
     }
 
     public void start() {
         if (prepared)
-            mp.start();
+            mediaPlayer.start();
         updateNotificationShow(getNowId());
     }
 
@@ -204,9 +197,9 @@ public class MusicService extends Service {
         if (musicReceiver != null) {
             //解除动态注册的广播
             unregisterReceiver(musicReceiver);
-            stopService(new Intent(MusicService.this, FloatLyricServices.class));
             closeNotification();
         }
+        stopService(new Intent(MusicService.this, FloatLyricServices.class));
         mMediaSession.release();
         super.onDestroy();
     }
@@ -257,8 +250,8 @@ public class MusicService extends Service {
     }
 
     private void initializePlayer() {
-        if (mp == null) {
-            mp = new MediaPlayer();
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
         }
         setMediaPlayerListener();
     }
@@ -268,7 +261,7 @@ public class MusicService extends Service {
         String channelName = "播放控制";
         int importance = NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.createNotificationChannel(channel);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
@@ -318,7 +311,7 @@ public class MusicService extends Service {
         }
         //发送通知
         //播放状态判断
-        if (mp.isPlaying()) {
+        if (mediaPlayer.isPlaying()) {
             remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
             remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
             startForeground(NOTIFICATION_ID, notification);
@@ -333,9 +326,9 @@ public class MusicService extends Service {
      * 关闭音乐通知栏
      */
     private void closeNotification() {
-        if (mp != null) {
-            if (mp.isPlaying()) {
-                mp.pause();
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
             }
         }
         //manager.cancel(NOTIFICATION_ID);
@@ -499,13 +492,13 @@ public class MusicService extends Service {
 
     private void setMediaPlayerListener() {
         //MediaPlayer准备资源的监听器
-        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
             }
         });
         //音频播放完成的监听器
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 //把所有的都回归到0
@@ -560,7 +553,7 @@ public class MusicService extends Service {
     }
 
     //添加音乐
-    public int addMusic(String path) {
+    public void addMusic(String path) {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;
         newSong.size = new File(newSong.source_uri.replace("file:///storage/emulated/0", "/sdcard")).length();
@@ -602,14 +595,13 @@ public class MusicService extends Service {
             }
         }
         savePlayList();
-        return 0;
     }
 
     public void setPlayOrder(int order) {
         playOrder = order;
         savePlayOrder();
         if (playOrder == SHUFFLE_PLAY) {
-            mp.setLooping(false);
+            mediaPlayer.setLooping(false);
             shuffleOrder = new ArrayList<>();
             for (int i = 0; i < songList.size(); i++) {
                 if (i != nowId)
@@ -618,7 +610,7 @@ public class MusicService extends Service {
             Collections.shuffle(shuffleOrder);
             shuffleOrder.add(nowId);
             shuffleId = shuffleOrder.size() - 1;
-        } else mp.setLooping(playOrder == REPEAT_ONE);
+        } else mediaPlayer.setLooping(playOrder == REPEAT_ONE);
     }
 
     private void savePlayOrder() {
@@ -631,7 +623,7 @@ public class MusicService extends Service {
         switch (playThis(musicId)) {
             case 0:
                 if (playOrder == REPEAT_ONE)
-                    mp.setLooping(true);
+                    mediaPlayer.setLooping(true);
                 if (musicServiceCallback != null)
                     musicServiceCallback.nowPlayingThis(musicId);
                 if (deskLyricCallback != null)
@@ -657,7 +649,7 @@ public class MusicService extends Service {
         } else {
             reId = prepareToPlayThis(Uri.parse(songList.get(nowId).source_uri));
             if (reId == 0 && prepared)
-                mp.start();
+                mediaPlayer.start();
         }
         SharedPreferences.Editor spEditor = prefs.edit();
         spEditor.putString("nowId", String.valueOf(nowId));
@@ -668,13 +660,13 @@ public class MusicService extends Service {
     private int prepareToPlayThis(Uri musicPath) {
         if (FileUtils.isFileExists(musicPath.getPath())) {
             try {
-                mp.reset();
-                mp.setDataSource(this, musicPath);
-                mp.prepare();
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(this, musicPath);
+                mediaPlayer.prepare();
                 prepared = true;
             } catch (IOException e) {
                 e.printStackTrace();
-                mp.reset();
+                mediaPlayer.reset();
                 return -1;
             }
         } else {
@@ -690,34 +682,33 @@ public class MusicService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             //UI控制
-            UIControl(intent.getAction(), TAG);
+            UIControl(intent.getAction());
         }
 
         /**
          * 页面的UI 控制 ，通过服务来控制页面和通知栏的UI
          *
          * @param state 状态码
-         * @param tag
          */
-        private void UIControl(String state, String tag) {
+        private void UIControl(String state) {
             switch (state) {
                 case PLAY:
-                    Log.d(tag, PLAY + " or " + PAUSE);
+                    Log.d(MusicReceiver.TAG, PLAY + " or " + PAUSE);
                     setPlayOrPause(!isPlaying());
                     break;
                 case PREV:
-                    Log.d(tag, PREV);
+                    Log.d(MusicReceiver.TAG, PREV);
                     playPrevOrNext(false);
                     break;
                 case NEXT:
-                    Log.d(tag, NEXT);
+                    Log.d(MusicReceiver.TAG, NEXT);
                     playPrevOrNext(true);
                     break;
                 case CLOSE:
-                    Log.d(tag, CLOSE);
+                    Log.d(MusicReceiver.TAG, CLOSE);
                     break;
                 case LYRIC:
-                    Log.d(tag, LYRIC);
+                    Log.d(MusicReceiver.TAG, LYRIC);
                     showDesktopLyric();
                     break;
                 default:
@@ -731,20 +722,6 @@ public class MusicService extends Service {
         //返回Service对象
         public MusicService getService() {
             return MusicService.this;
-        }
-    }
-
-    private class DesktopLyricServiceConnector implements ServiceConnection {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // 获取服务的操作对象
-            FloatLyricServices.MyBinder binder = (FloatLyricServices.MyBinder) service;
-            binder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
         }
     }
 }

@@ -147,8 +147,8 @@ public class MainActivity extends FragmentActivity {
                     onPause();
                 }
                 try {
-                    if (musicService.getMediaPlayer().isPlaying()) {
-                        int nowMillionSeconds = musicService.getMediaPlayer().getCurrentPosition();
+                    if (musicService.isPlaying()) {
+                        int nowMillionSeconds = musicService.getCurrentPosition();
                         Message msg = new Message();
                         msg.what = 100;  //消息发送的标志
                         msg.obj = nowMillionSeconds; //消息发送的内容如：  Object String 类 int
@@ -213,8 +213,8 @@ public class MainActivity extends FragmentActivity {
                     onPause();
                 }
                 try {
-                    if (musicService.getMediaPlayer().isPlaying()) {
-                        int currentLyricId = homeFragment.lyric.getNowLyric(musicService.getMediaPlayer().getCurrentPosition());
+                    if (musicService.isPlaying()) {
+                        int currentLyricId = homeFragment.lyric.getNowLyric(musicService.getCurrentPosition());
                         if (currentLyricId >= 0) {
                             Message msg = new Message();
                             msg.what = 100;  //消息发送的标志
@@ -262,11 +262,12 @@ public class MainActivity extends FragmentActivity {
         setPlayOrder(musicService.getPlayOrder());
         setPlayBarTitle(musicService.getNowId());
         if (musicService.isPlaying()) {
-            nowPlaying(musicService.getNowId());
+            prepareInfo(musicService.getNowId());
+            updatePlayState();
         } else if (musicService.isEnabled()) {
             //setHomeFragment();
             resetPlayProgress();
-            int nowMillionSeconds = musicService.getMediaPlayer().getCurrentPosition();
+            int nowMillionSeconds = musicService.getCurrentPosition();
             playProgressBar.setProgress(nowMillionSeconds); //实时获取播放音乐的位置并且设置进度条的位置
             playProgressNowText.setText(nowMillionSeconds / 60000 + ((nowMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + nowMillionSeconds / 1000 % 60);
         }
@@ -292,20 +293,20 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void nowPlaying(int musicId) {
+        prepareInfo(musicId);
+        //开启进度条跟踪线程
+        setPlayOrPause(true);
+    }
+
+    private void prepareInfo(int musicId) {
         setPlayBarTitle(musicId);
         setHomeFragment();
         //初始化进度条
         resetPlayProgress();
-        //开启进度条跟踪线程
-        startProgressBar();
-        startLyric();
-        setPlayOrPause(true);
     }
 
     private void playingError(int musicId) {
-        setPlayBarTitle(musicId);
-        setHomeFragment();
-        resetPlayProgress();
+        prepareInfo(musicId);
         AlertDialog alertInfoDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.play_error)
                 .setMessage(R.string.play_err_Info)
@@ -416,12 +417,16 @@ public class MainActivity extends FragmentActivity {
             if (!musicService.isEnabled()) {
                 musicService.setEnabled(true);
                 musicService.playThisNow(musicService.getNowId());
+            } else if (musicService.isPlaying()) {
+                PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+                startProgressBar();
+                startLyric();
             } else if (musicService.isPrepared()) {
                 musicService.start();
                 PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
                 startProgressBar();
                 startLyric();
-            } else {
+            } else {//isEnabled&&！isPrepared
                 musicService.playThisNow(musicService.getNowId());
                 musicService.pause();
                 PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
@@ -436,7 +441,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public MusicService getMusicPlayer() {
+    public MusicService getMusicService() {
         return musicService;
     }
 
@@ -543,13 +548,14 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                musicService.getMediaPlayer().seekTo(seekBar.getProgress());
+                musicService.setProgress(seekBar.getProgress());
                 //松开之后音乐跳转到相应位置
                 playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
                 startProgressBar();
                 startLyric();
             }
         });
+        resetPlayProgress();
     }
 
     public void setIsLyric() {
@@ -694,7 +700,7 @@ public class MainActivity extends FragmentActivity {
                         TabTitle.setText(R.string.app_name);
                         musicPlayingLayout.setVisibility(View.GONE);
                         playProgressLayout.setVisibility(View.VISIBLE);
-                        viewPager.setCurrentItem(0, true);
+                        setViewPagerToId(0);
                         startProgressBar();
                         startLyric();
                         musicService.setNowPageId(0);
@@ -703,7 +709,7 @@ public class MainActivity extends FragmentActivity {
                         TabTitle.setText(R.string.title_playlist);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
-                        viewPager.setCurrentItem(1, true);
+                        setViewPagerToId(1);
                         stopProgressBar();
                         stopLyric();
                         musicService.setNowPageId(1);
@@ -712,7 +718,7 @@ public class MainActivity extends FragmentActivity {
                         TabTitle.setText(R.string.title_settings);
                         musicPlayingLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.setVisibility(View.GONE);
-                        viewPager.setCurrentItem(2, true);
+                        setViewPagerToId(2);
                         stopProgressBar();
                         stopLyric();
                         musicService.setNowPageId(2);
@@ -724,7 +730,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setViewPagerToId(int pageId) {
-        viewPager.setCurrentItem(pageId, false);
+        viewPager.setCurrentItem(pageId, true);
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
@@ -770,12 +776,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void resetPlayProgress() {
-        int maxMillionSeconds = musicService.getMediaPlayer().getDuration();
+        int maxMillionSeconds = musicService.getDuration();
         playProgressBar.setMax(maxMillionSeconds);
         playProgressAllText.setText(maxMillionSeconds / 60000 + (((int) maxMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + maxMillionSeconds / 1000 % 60);
         playProgressNowText.setText("0:00");
         playProgressBar.setProgress(0);
-        setPlayOrPause(false);
+        //setPlayOrPause(false);
     }
 
     public void startLyric() {

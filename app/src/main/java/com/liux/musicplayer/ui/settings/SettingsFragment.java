@@ -138,6 +138,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         assert context != null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
+        findPreference("debug").setVisible(false);
         //绑定控件
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
@@ -150,16 +151,30 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         About = findPreference("info");
         Close = findPreference("exit");
         prefs.registerOnSharedPreferenceChangeListener(this); // 注册
+        if (checkFloatPermission(getContext()))
+            switch_layer_permission.setChecked(true);
+        if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+            switch_storage_permission.setChecked(true);
+        //选择主文件目录
+        MainFolder.setSummary(prefs.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
+        //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        setMainFolder.setSummary(MainFolder.getSummary());
+        initPreferenceListener();
+    }
+
+    private void initPreferenceListener() {
         switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                ((MainActivity) getActivity()).getMusicPlayer().setDesktopLyric((boolean) newValue);
+                ((MainActivity) getActivity()).getMusicService().setDesktopLyric((boolean) newValue);
                 return true;
             }
         });
         Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
+                ((MainActivity) requireActivity()).getMusicService().stopForeground(true);
                 System.exit(0);
                 return false;
             }
@@ -231,23 +246,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 }
             }
         });
-        if (checkFloatPermission(getContext()))
-            switch_layer_permission.setChecked(true);
-        if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
-            switch_storage_permission.setChecked(true);
-        //findPreference("bugfix").setVisible(false);
-/*
-        // 获取SharedPreferences对象
-        SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        // 获取Editor对象
-        SharedPreferences.Editor editor = sp.edit();
-*/
-        //选择主文件目录
-        SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        MainFolder.setSummary(sp.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
-        //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
-        dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
-        setMainFolder.setSummary(MainFolder.getSummary());
         //监听权限开关按钮
         setMainFolder.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -261,7 +259,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
-
         About.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -271,16 +268,29 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         });
     }
 
-
     private void popInfo() {
-        AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+        String versionName = "";
+        try {
+            versionName = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        AlertDialog alertInfoDialog = null;
+        alertInfoDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.appInfo)
+                .setMessage(getString(R.string.appInfo).replace("\\n", "\n")
+                        + versionName)
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                })
+                .setNeutralButton(R.string.title_debug, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        findPreference("debug").setVisible(true);
                     }
                 })
                 .create();

@@ -25,8 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -42,7 +40,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.databinding.FragmentPlaylistBinding;
 import com.liux.musicplayer.utils.DisplayUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UriTransform;
@@ -56,7 +53,6 @@ import java.util.stream.Collectors;
 
 public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
-    private FragmentPlaylistBinding binding;
     private ListView lvData;
     private PlaylistAdapter adapter;
     private int listPosition = -1;
@@ -80,28 +76,25 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private LinearLayout searchSongLayout;
 
     //用于接受系统文件管理器返回目录的回调
-    ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            int resultCode = result.getResultCode();
-            if (resultCode == -1) {
-                Intent data = result.getData();
-                assert data != null;
-                Uri uri = data.getData();
-                addFolder(uri);
-            }
+    ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        int resultCode = result.getResultCode();
+        if (resultCode == -1) {
+            Intent data = result.getData();
+            assert data != null;
+            Uri uri = data.getData();
+            addFolder(uri);
         }
     });
 
     private void addAllMusic() {
-        List<MusicUtils.Song> songList = MusicUtils.getMusicData(getContext());
-        ((MainActivity) getActivity()).getMusicPlayer().addMusic(songList);
+        List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
+        ((MainActivity) requireActivity()).getMusicService().addMusic(songList);
     }
 
     private void addFolder(Uri uri) {
         Log.e("AddFolder", uri.toString());
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
-        searchFile(UriTransform.getPath(getContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
+        searchFile(UriTransform.getPath(requireContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
         refreshList();
     }
 
@@ -137,21 +130,20 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("gsm")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("wav")
         ) {
+            //文件大小限制
             //if (childFile.length() / 1024 > 1024) {
             //创建模型类存储值，并添加到集合中。通过集合可做任意操作
-            Log.e("ScannedFiles", childFile.getAbsolutePath());
-            ((MainActivity) getActivity()).getMusicPlayer().addMusic(childFile.getAbsolutePath());
+            //Log.e("ScannedFiles", childFile.getAbsolutePath());
+            ((MainActivity) getActivity()).getMusicService().addMusic(childFile.getAbsolutePath());
             //}
         }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
-        binding = FragmentPlaylistBinding.inflate(inflater, container, false);
-
         initView(view);
         initData();
-        adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
+        adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
         lvData.setAdapter(adapter);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
@@ -184,8 +176,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 refreshList();
                 break;
             case R.id.addSongs:
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
                             .setTitle(R.string.addAllMusic)
                             .setMessage(R.string.addAllMusic_info)
                             .setIcon(R.mipmap.ic_launcher)
@@ -204,7 +196,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                             .create();
                     alertInfoDialog.show();
                 } else {
-                    AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+                    AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
                             .setTitle(R.string.no_permission)
                             .setMessage(R.string.no_permission_info)
                             .setIcon(R.mipmap.ic_launcher)
@@ -218,10 +210,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.addFolder:
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
                 else {
-                    AlertDialog alertInfoDialog = new AlertDialog.Builder(getContext())
+                    AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
                             .setTitle(R.string.no_permission)
                             .setMessage(R.string.no_permission_info)
                             .setIcon(R.mipmap.ic_launcher)
@@ -280,13 +272,12 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(getContext(), 44));
+            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 
     public void cancel() {
@@ -298,10 +289,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private void delete() {
         if (mCheckedData.size() == 0) {
-            Toast.makeText(getContext(), "您还没有选中任何数据！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "您还没有选中任何数据！", Toast.LENGTH_SHORT).show();
             return;
         }
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.confirmDelete)
                 .setMessage(R.string.deleteInfo)
                 .setIcon(R.mipmap.ic_launcher)
@@ -328,8 +319,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();
-        ((MainActivity) getActivity()).getMusicPlayer().setPlayList(mSongList);
-        Toast.makeText(getContext(), "删除成功", Toast.LENGTH_SHORT).show();
+        ((MainActivity) getActivity()).getMusicService().setPlayList(mSongList);
+        Toast.makeText(requireContext(), "删除成功", Toast.LENGTH_SHORT).show();
         refreshList();
     }
 
@@ -372,7 +363,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 if (multipleChooseFlag)
                     updateCheckBoxStatus(view, position);
                 else {
-                    ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
+                    ((MainActivity) getActivity()).getMusicService().playThisNow(position);
                 }
             }
         });
@@ -437,13 +428,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                         scrollFlag = false;
                         // 判断滚动到底部 、position是从0开始算起的
                         if (lvData.getLastVisiblePosition() == (lvData.getCount() - 1)) {
-                            //TODO
-                            //Toast.makeText(getContext(), "到底了", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "到底了", Toast.LENGTH_SHORT).show();
                             showPlaylistHeaderBar(true);
                         }
                         // 判断滚动到顶部
                         if (lvData.getFirstVisiblePosition() == 0) {
-                            //TODO
                             showPlaylistHeaderBar(true);
                         }
                         break;
@@ -462,10 +451,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 //当滑动时
                 if (scrollFlag) {
                     if (firstVisibleItem < lastVisibleItemPosition) {
-                        //TODO 上滑
+                        // 上滑
                         showPlaylistHeaderBar(true);
                     } else if (firstVisibleItem > lastVisibleItemPosition) {
-                        //TODO 下滑
+                        // 下滑
                         showPlaylistHeaderBar(false);
                     } else {
                         return;
@@ -480,14 +469,14 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (isShow) {
             if (!headerShowFlag) {
                 headerShowFlag = true;
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_moveup_show);
+                Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_show);
                 playlistHeader.setVisibility(View.VISIBLE);
                 playlistHeader.startAnimation(animation);
             }
         } else {
             if (headerShowFlag) {
                 headerShowFlag = false;
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_moveup_hide);
+                Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_hide);
                 playlistHeader.startAnimation(animation);
                 playlistHeader.setVisibility(View.GONE);
             }
@@ -507,31 +496,30 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         Log.e("playList", String.valueOf(listPosition));
         Log.e("playList", String.valueOf(listPositionY));
 
-        ((MainActivity) getActivity()).getMusicPlayer().refreshPlayList();
+        ((MainActivity) getActivity()).getMusicService().refreshPlayList();
         initData();
-        adapter = new PlaylistAdapter(this, getContext(), mSongList, stateCheckedMap);
+        adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
         lvData.setAdapter(adapter);
 
         if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(getContext(), 44));
+            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
 
-        ((MainActivity) getActivity()).getMusicPlayer().setPlayList(mSongList);
+        ((MainActivity) getActivity()).getMusicService().setPlayList(mSongList);
     }
 
     private void initData() {
-        SharedPreferences sp = getActivity().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-        String playListJson = sp.getString("playList",
-                "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
-                        "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
-                        "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\",\"size\":0}]");
+        SharedPreferences sp = getActivity().getSharedPreferences(getActivity().getPackageName() + "_preferences", Activity.MODE_PRIVATE);
+        String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
+                "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
+                "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
+        String playListJson = sp.getString("playList", defaultPlayList);
         Gson gson = new Gson();
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
         mSongList = gson.fromJson(playListJson, playListType);
+        //错误修正，防止播放列表空指针
         if (mSongList == null || mSongList.size() == 0) {
-            playListJson = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
-                    "\"source_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.mp3\"," +
-                    "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/com.liux.musicplayer/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\",\"size\":0}]";
+            playListJson = defaultPlayList;
             mSongList = gson.fromJson(playListJson, playListType);
         }
         setStateCheckedMap(false);
@@ -548,14 +536,14 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     public void popMenu(int position, View view) {
-        PopupMenu popup = new PopupMenu(getContext(), view);
+        PopupMenu popup = new PopupMenu(requireContext(), view);
         popup.getMenuInflater().inflate(R.menu.playlist_item_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.item_menu_play:
-                        ((MainActivity) getActivity()).getMusicPlayer().playThisNow(position);
+                        ((MainActivity) getActivity()).getMusicService().playThisNow(position);
                         break;
                     case R.id.item_menu_moreInfo:
                         showMusicDetails(position);
@@ -568,9 +556,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showMusicDetails(int musicId) {
-        MusicUtils.Metadata metadata = MusicUtils.getMetadata(getContext(), mSongList.get(musicId));
-        Bitmap bitmap = MusicUtils.getAlbumImage(getContext(), mSongList.get(musicId));
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+        MusicUtils.Metadata metadata = MusicUtils.getMetadata(requireContext(), mSongList.get(musicId));
+        Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId));
+        AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(mSongList.get(musicId).title)
                 .setMessage(
                         getString(R.string.title_artist) + metadata.artist + "\n" +
@@ -588,9 +576,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                     }
                 });
         if (bitmap == null) {   //获取图片失败，使用默认图片
-            dialog.setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+            dialog.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
         } else {    //成功
-            dialog.setIcon(new BitmapDrawable(getContext().getResources(), bitmap));
+            dialog.setIcon(new BitmapDrawable(requireContext().getResources(), bitmap));
         }
         dialog.create().show();
     }

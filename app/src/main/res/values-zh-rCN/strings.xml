@@ -27,7 +27,7 @@
     <string name="switch_layer_permission_on">音乐播放器已获得悬浮窗权限</string>
     <string name="isShowLyric">显示桌面歌词</string>
     <string name="isShowLyric_summary">此设置需要悬浮窗权限</string>
-    <string name="appInfo">待完善</string>
+    <string name="appInfo">本软件为南京邮电大学计算机科学与技术2020级2022学年上学期《嵌入式手机终端开发技术》大作业（音乐播放器），由liux团队开发。 \\n项目地址：https://github.com/Brownlzy/MusicPlayer \\n当前版本：</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="delete">删除</string>
@@ -78,4 +78,6 @@
     <string name="addAllMusic_info">此选项是向播放列表中添加本机媒体库中的所有音频文件，一些不是音乐的音频文件可能会被加入音乐库。如果您已知您的音乐文件存放位置，请使用此按钮旁边的添加文件夹按钮添加指定文件夹下的音乐。</string>
     <string name="file_size">文件大小：</string>
     <string name="title_artist">　歌　手 ：</string>
+    <string name="timing">定时播放</string>
+    <string name="timing_summary">设定播放倒计时（单位：分钟）</string>
 </resources>

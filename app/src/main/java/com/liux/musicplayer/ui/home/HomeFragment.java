@@ -31,7 +31,6 @@ public class HomeFragment extends Fragment {
 
     public MusicUtils.Lyric lyric;
     public ListView lyricList;
-    private FragmentHomeBinding binding;
     private TextView songTitle;
     private TextView songArtist;
     private TextView songInfo;
@@ -47,8 +46,14 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
         mView = view;
+        initViewCompat();
+        //创建窗体完成，通知MainActivity来设置显示信息
+        callMainActivityForInfo();
+        return view;
+    }
+
+    private void initViewCompat() {
         //绑定歌词列表
         mView.findViewById(R.id.albumImageView).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -84,12 +89,9 @@ public class HomeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
                 //定位播放进度至点击的歌词处
-                ((MainActivity) getActivity()).getMusicPlayer().getMediaPlayer().seekTo(lyric.startMillionTime.get(position).intValue());
+                ((MainActivity) getActivity()).getMusicService().setProgress(lyric.startMillionTime.get(position).intValue());
             }
         });
-        //创建窗体完成，通知MainActivity来设置显示信息
-        callMainActivityForInfo();
-        return view;
     }
 
     private void callMainActivityForInfo() {
@@ -99,7 +101,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 
     @SuppressLint("SetTextI18n")
@@ -136,16 +137,13 @@ public class HomeFragment extends Fragment {
                         getString(R.string.title_lyric) + song.lyric_uri);
             }
             //读取专辑图片
-            Bitmap bitmap = MusicUtils.getAlbumImage(getContext(), song);
+            Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), song);
             if (bitmap == null) {   //获取图片失败，使用默认图片
-                albumImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_music_note_24));
+                albumImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
             } else {    //成功
                 albumImageView.setImageBitmap(bitmap);
             }
-            //刷新歌词
-            lyric = new MusicUtils.Lyric(Uri.parse(song.lyric_uri));    //从歌词文件中读取歌词
-            adapter = new LyricAdapter(this, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
-            lyricList.setAdapter(adapter);  //将adapter与ListView绑定
+            initLyric(song);
         }
     }
 
@@ -194,7 +192,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void initLyric() {
-
+    public void initLyric(MusicUtils.Song song) {
+        //刷新歌词
+        lyric = new MusicUtils.Lyric(Uri.parse(song.lyric_uri));    //从歌词文件中读取歌词
+        adapter = new LyricAdapter(this, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
+        lyricList.setAdapter(adapter);  //将adapter与ListView绑定
     }
 }

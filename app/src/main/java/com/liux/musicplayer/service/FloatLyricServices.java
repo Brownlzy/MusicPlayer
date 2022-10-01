@@ -125,7 +125,7 @@ public class FloatLyricServices extends Service {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.playPause:
-                    musicService.PlayOrPause(!musicService.isPlaying());
+                    musicService.setPlayOrPause(!musicService.isPlaying());
                     break;
                 case R.id.playNext:
                     musicService.playPrevOrNext(true);
@@ -294,8 +294,8 @@ public class FloatLyricServices extends Service {
                     onPause();
                 }
                 try {
-                    if (musicService.getMediaPlayer().isPlaying()) {
-                        int currentLyricId = lyric.getNowLyric(musicService.getMediaPlayer().getCurrentPosition());
+                    if (musicService.isPlaying()) {
+                        int currentLyricId = lyric.getNowLyric(musicService.getCurrentPosition());
                         if (currentLyricId >= 0) {
                             Message msg = new Message();
                             msg.what = 200;  //消息发送的标志

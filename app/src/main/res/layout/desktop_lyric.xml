@@ -64,8 +64,8 @@
 
             <ImageView
                 android:id="@+id/appIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_baseline_music_note_float_24" />
 
             <TextView
@@ -92,8 +92,8 @@
 
             <ImageView
                 android:id="@+id/close"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:src="@drawable/ic_round_close_float_24" />

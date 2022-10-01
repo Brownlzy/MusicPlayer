@@ -26,7 +26,7 @@
     <string name="switch_layer_permission_on">MusicPlayer has obtained floating window permission</string>
     <string name="isShowLyric">Show Desktop Lyric</string>
     <string name="isShowLyric_summary">This settings need overlay permision</string>
-    <string name="appInfo">ABOUT</string>
+    <string name="appInfo">This software is the major assignment (music player) of the first semester of the 2022 academic year of Nanjing University of Posts and Telecommunications Computer Science and Technology 2020, which is developed by the linux team. \\nProject address: https://github.com/Brownlzy/MusicPlayer \\nCurrent version:</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
@@ -77,4 +77,6 @@
     <string name="addAllMusic_info">This option is to add all audio files in the local media library to the playlist. Some audio files that are not music may be added to the music library. If you know where your music files are stored, use the Add Folder button next to this button to add music in the specified folder.</string>
     <string name="file_size">"File Size: "</string>
     <string name="title_artist">"Artist: "</string>
+    <string name="timing">Timing</string>
+    <string name="timing_summary">Set the playback countdown in minutes</string>
 </resources>

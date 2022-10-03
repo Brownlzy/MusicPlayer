@@ -59,7 +59,7 @@
                     android:text=""
                     android:scrollbars="none"
                     android:textColor="@color/green_500"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <LinearLayout

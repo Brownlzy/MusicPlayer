@@ -17,7 +17,7 @@ public class StrokeTextView extends AppCompatTextView {
     private AlwaysFocusTextView borderText;///用于描边的TextView
     TextPaint tp1; //borderText的Paint
 
-    private int mStrokeColor = Color.BLACK;
+    private int mStrokeColor = Color.DKGRAY;
     private int strokeWidth = 2;
 
     public StrokeTextView(Context context) {
@@ -43,7 +43,6 @@ public class StrokeTextView extends AppCompatTextView {
         borderText.setTextColor(this.mStrokeColor);  //设置描边颜色
         borderText.setGravity(getGravity());
         tp1 = borderText.getPaint();
-        setStroke(Color.DKGRAY, 2);
         tp1.setStrokeWidth(this.strokeWidth); //设置描边宽度
         tp1.setStyle(Paint.Style.FILL_AND_STROKE); //设置画笔样式为描边
         tp1.setStrokeJoin(Paint.Join.ROUND); //连接方式为圆角

@@ -3,8 +3,8 @@
 # min_api: 24
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: 93ff22a
-# pg_map_hash: SHA-256 93ff22a4f90e5a36cf3c1a9b921d9994c8c3d7614d4ad0a15400236ad9c67436
+# pg_map_id: 5f6092e
+# pg_map_hash: SHA-256 5f6092e052a51f4ae7c4e16f4e4826ffa1464ef38227358e337c17415fac7d5a
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -34624,24 +34624,23 @@ com.liux.musicplayer.views.StrokeTextView -> com.liux.musicplayer.views.StrokeTe
     20:27:void <init>(android.content.Context) -> <init>
     20:33:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
     20:39:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
-    42:50:void init() -> init
-    122:122:boolean isFocused() -> isFocused
-    104:106:void onDraw(android.graphics.Canvas) -> onDraw
-    99:101:void onLayout(boolean,int,int,int,int) -> onLayout
-    88:90:void onMeasure(int,int) -> onMeasure
-    110:118:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
-    77:79:void setGravity(int) -> setGravity
-    71:73:void setLayoutParams(android.view.ViewGroup$LayoutParams) -> setLayoutParams
-    60:62:void setLineSpacing(float,float) -> setLineSpacing
-    66:68:void setMaxWidth(int) -> setMaxWidth
-    83:85:void setPadding(int,int,int,int) -> setPadding
-    54:56:void setStroke(int,int) -> setStroke
-    94:96:void setTextSize(int,float) -> setTextSize
+    42:49:void init() -> init
+    121:121:boolean isFocused() -> isFocused
+    103:105:void onDraw(android.graphics.Canvas) -> onDraw
+    98:100:void onLayout(boolean,int,int,int,int) -> onLayout
+    87:89:void onMeasure(int,int) -> onMeasure
+    109:117:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    76:78:void setGravity(int) -> setGravity
+    70:72:void setLayoutParams(android.view.ViewGroup$LayoutParams) -> setLayoutParams
+    59:61:void setLineSpacing(float,float) -> setLineSpacing
+    65:67:void setMaxWidth(int) -> setMaxWidth
+    82:84:void setPadding(int,int,int,int) -> setPadding
+    93:95:void setTextSize(int,float) -> setTextSize
 com.liux.musicplayer.views.StrokeTextView$AlwaysFocusTextView -> com.liux.musicplayer.views.StrokeTextView$AlwaysFocusTextView:
-    128:129:void <init>(android.content.Context) -> <init>
-    132:133:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
-    136:137:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
-    141:141:boolean isFocused() -> isFocused
+    127:128:void <init>(android.content.Context) -> <init>
+    131:132:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
+    135:136:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
+    140:140:boolean isFocused() -> isFocused
 kotlin.ExceptionsKt__ExceptionsKt -> kotlin.ExceptionsKt__ExceptionsKt:
 # {"id":"sourceFile","fileName":"Exceptions.kt"}
     70:72:void addSuppressed(java.lang.Throwable,java.lang.Throwable) -> addSuppressed

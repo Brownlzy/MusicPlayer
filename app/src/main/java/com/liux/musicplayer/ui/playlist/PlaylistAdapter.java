@@ -22,6 +22,7 @@ public class PlaylistAdapter extends BaseAdapter {
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
     private final SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private final PlaylistFragment mPlaylistFragment;
+    private int nowPlay;
 
     public PlaylistAdapter(PlaylistFragment playlistFragment, Context context, List<MusicUtils.Song> data, SparseBooleanArray stateCheckedMap) {
         this.data = data;
@@ -62,6 +63,7 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.mItemSinger = convertView.findViewById(R.id.item_singer);
         holder.mItemDuration = convertView.findViewById(R.id.item_duration);
         holder.hasLyric = convertView.findViewById(R.id.hasLyric);
+        holder.playArrow = convertView.findViewById(R.id.playArrow);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
         //设置数据
         holder.mItemTitle.setText(data.get(position).title);
@@ -76,6 +78,10 @@ public class PlaylistAdapter extends BaseAdapter {
             holder.hasLyric.setVisibility(View.GONE);
         else
             holder.hasLyric.setVisibility(View.VISIBLE);
+        if (position == nowPlay)
+            holder.playArrow.setVisibility(View.VISIBLE);
+        else
+            holder.playArrow.setVisibility(View.GONE);
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
         holder.btnMore.setOnClickListener(new View.OnClickListener() {  //设置单击监听器
             @Override
@@ -94,6 +100,7 @@ public class PlaylistAdapter extends BaseAdapter {
         public CheckBox checkBox;
         public ImageView btnMore;
         public ImageView hasLyric;
+        public ImageView playArrow;
     }
 
     private void showAndHideCheckBox() {
@@ -113,6 +120,10 @@ public class PlaylistAdapter extends BaseAdapter {
 
     public void setShowCheckBox(boolean showCheckBox) {
         isShowCheckBox = showCheckBox;
+    }
+
+    public void setNowPlay(int musicId) {
+        nowPlay = musicId;
     }
 
 }

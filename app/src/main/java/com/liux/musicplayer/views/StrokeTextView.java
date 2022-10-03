@@ -4,84 +4,146 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.liux.musicplayer.R;
 
-/**
- * @Author : XiaoXred
- * @Time : On 2020/10/22 15:59
- * @Description : StrokeTextView  文字内容有描边的TextView
- */
-
 public class StrokeTextView extends AppCompatTextView {
-    private TextView backGroundText = null;//用于描边的TextView
+    private AlwaysFocusTextView borderText;///用于描边的TextView
+    TextPaint tp1; //borderText的Paint
+
+    private int mStrokeColor = Color.BLACK;
+    private int strokeWidth = 2;
 
     public StrokeTextView(Context context) {
-        this(context, null);
+        super(context);
+        borderText = new AlwaysFocusTextView(context);
+        init();
     }
 
-    public StrokeTextView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+    public StrokeTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        borderText = new AlwaysFocusTextView(context, attrs);
+        init();
     }
 
-    public StrokeTextView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        backGroundText = new TextView(context, attrs, defStyle);
+    public StrokeTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        borderText = new AlwaysFocusTextView(context, attrs, defStyleAttr);
+        init();
+    }
+
+    public void init() {
+        borderText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        borderText.setTextColor(this.mStrokeColor);  //设置描边颜色
+        borderText.setGravity(getGravity());
+        tp1 = borderText.getPaint();
+        setStroke(Color.DKGRAY, 2);
+        tp1.setStrokeWidth(this.strokeWidth); //设置描边宽度
+        tp1.setStyle(Paint.Style.FILL_AND_STROKE); //设置画笔样式为描边
+        tp1.setStrokeJoin(Paint.Join.ROUND); //连接方式为圆角
+    }
+
+    //设置描边的颜色和宽度
+    public void setStroke(int color, int strokeWidth) {
+        tp1.setStrokeWidth(strokeWidth);
+        borderText.setTextColor(color);  //设置描边颜色
     }
 
     @Override
+    public void setLineSpacing(float add, float mult) {
+        super.setLineSpacing(add, mult);
+        borderText.setLineSpacing(add, mult);
+    }
+
+    @Override
+    public void setMaxWidth(int maxPixels) {
+        super.setMaxWidth(maxPixels);
+        borderText.setMaxWidth(maxPixels);
+    }
+
     public void setLayoutParams(ViewGroup.LayoutParams params) {
-//同步布局参数
-        backGroundText.setLayoutParams(params);
         super.setLayoutParams(params);
+        borderText.setLayoutParams(params);
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        CharSequence tt = backGroundText.getText();
-        //两个TextView上的文字必须一致
-        if (tt == null || !tt.equals(this.getText())) {
-            backGroundText.setText(getText());
-            this.postInvalidate();
-        }
-        backGroundText.measure(widthMeasureSpec, heightMeasureSpec);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    public void setGravity(int gravity) {
+        super.setGravity(gravity);
+        borderText.setGravity(gravity);
     }
 
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        backGroundText.layout(left, top, right, bottom);
-        super.onLayout(changed, left, top, right, bottom);
+    @Override
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
+        borderText.setPadding(left, top, right, bottom);
+    }
+
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        borderText.measure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
     public void setTextSize(int unit, float size) {
-        backGroundText.setTextSize(unit, size);
         super.setTextSize(unit, size);
+        borderText.setTextSize(unit, size);
     }
 
-    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        borderText.layout(left, top, right, bottom);
+    }
+
     protected void onDraw(Canvas canvas) {
-//其他地方，backGroundText和super的先后顺序影响不会很大，但是此处必须要先绘制backGroundText，
-        init();
-        backGroundText.draw(canvas);
+        borderText.draw(canvas);
         super.onDraw(canvas);
     }
 
-    public void init() {
-        TextPaint tp1 = backGroundText.getPaint();
-        //设置描边宽度
-        tp1.setStrokeWidth(2);
-        //背景描边并填充全部
-        tp1.setStyle(Paint.Style.FILL_AND_STROKE);
-        //设置描边颜色
-        backGroundText.setTextColor(Color.DKGRAY);
-        //将背景的文字对齐方式做同步
-        backGroundText.setGravity(getGravity());
+    @Override
+    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
+        super.onTextChanged(text, start, lengthBefore, lengthAfter);
+        if (borderText != null) {
+            CharSequence tt = borderText.getText();
+            if (tt == null || !tt.equals(this.getText())) {
+                borderText.setText(getText());
+                this.postInvalidate();
+            }
+        }
+    }
+
+    @Override
+    public boolean isFocused() {
+        return true;
+    }
+
+    private static class AlwaysFocusTextView extends AppCompatTextView {
+
+        public AlwaysFocusTextView(Context context) {
+            super(context);
+        }
+
+        public AlwaysFocusTextView(Context context, @Nullable AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        public AlwaysFocusTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
+        }
+
+        @Override
+        public boolean isFocused() {
+            return true;
+        }
     }
 }

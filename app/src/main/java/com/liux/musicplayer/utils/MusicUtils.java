@@ -73,7 +73,7 @@ public class MusicUtils {
                 e.printStackTrace();
                 Log.e("MusicUtils", "歌词文件不存在");
                 lyricList.add("歌词文件不存在");
-                startTime.add("00:00.00");
+                startTime.add("[00:00.00]");
                 startMillionTime.add((long) 0);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,16 +83,16 @@ public class MusicUtils {
         private void splitLyricFromLine(String line) {
             String lineLyric;
             try {
-                lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]\\]")[1];
+                lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]]")[1];
             } catch (ArrayIndexOutOfBoundsException e) {
                 try {
-                    lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]\\]")[1];
+                    lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]]")[1];
                 } catch (ArrayIndexOutOfBoundsException e2) {
                     try {
-                        lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\]")[1];
+                        lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]]")[1];
                     } catch (ArrayIndexOutOfBoundsException e3) {
                         try {
-                            lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\\]")[1];
+                            lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]]")[1];
                         } catch (ArrayIndexOutOfBoundsException e4) {
                             return;
                         }
@@ -121,18 +121,18 @@ public class MusicUtils {
         private long formatTime(String stringTime) {
             //[00:00.00]
             long mSeconds = 0;
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]\\]"))
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]]"))
                 mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
                         Long.parseLong(stringTime.substring(4, 6)) * 1000 +
                         Long.parseLong(stringTime.substring(7, 9)) * 10;
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]\\]"))
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]]"))
                 mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
                         Long.parseLong(stringTime.substring(4, 6)) * 1000 +
                         Long.parseLong(stringTime.substring(7, 10));
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\]"))
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]]"))
                 mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
                         Long.parseLong(stringTime.substring(4, 6)) * 1000;
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\\]"))
+            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]]"))
                 mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
                         Long.parseLong(stringTime.substring(4, 6)) * 1000 +
                         Long.parseLong(stringTime.substring(7, 9)) * 10;
@@ -222,27 +222,6 @@ public class MusicUtils {
             return (t / 3600000) + ":" + String.format(Locale.getDefault(), "%02d", (t % 3600000) / 60000) + ":"
                     + String.format(Locale.getDefault(), "%02d", (t % 60000) / 1000);
         }
-    }
-
-    public static String millis2FitTimeSpan(long millis, int precision) {
-        if (precision <= 0) return null;
-        precision = Math.min(precision, 5);
-        String[] units = {"天", ":", ":", ".", ""};
-        if (millis == 0) return 0 + units[precision - 1];
-        StringBuilder sb = new StringBuilder();
-        if (millis < 0) {
-            sb.append("-");
-            millis = -millis;
-        }
-        int[] unitLen = {86400000, 3600000, 60000, 1000, 1};
-        for (int i = 0; i < precision; i++) {
-            if (millis >= unitLen[i]) {
-                long mode = millis / unitLen[i];
-                millis -= mode * unitLen[i];
-                sb.append(mode).append(units[i]);
-            }
-        }
-        return sb.toString();
     }
 
     /**

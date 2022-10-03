@@ -50,6 +50,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private CheckBoxPreference switch_layer_permission;
     private CheckBoxPreference switch_web_playlist;
     private CheckBoxPreference switch_desk_lyric;
+    private CheckBoxPreference switch_desk_lyric_lock;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private EditTextPreference dPlayList;
@@ -144,6 +145,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_layer_permission = findPreference("layer_permission");
         switch_web_playlist = findPreference("isUseWebPlayList");
         switch_desk_lyric = findPreference("isShowLyric");
+        switch_desk_lyric_lock = findPreference("deskLyricLock");
         MainFolder = findPreference("mainFolder");
         clickGotoAppDetails = findPreference("gotoAppDetails");
         dPlayList = findPreference("playList");
@@ -344,7 +346,22 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("isShowLyric"))
-            switch_desk_lyric.setChecked(sharedPreferences.getBoolean("isShowLyric", false));
+        switch (key) {
+            case "isShowLyric":
+                switch_desk_lyric.setChecked(sharedPreferences.getBoolean("isShowLyric", false));
+                break;
+            case "deskLyricLock":
+                switch_desk_lyric_lock.setChecked(sharedPreferences.getBoolean("deskLyricLock", false));
+                break;
+            case "playList":
+                dPlayList.setText(sharedPreferences.getString("playList", ""));
+                break;
+            case "nowId":
+                ((EditTextPreference) findPreference("nowId")).setText(sharedPreferences.getString("nowId", "0"));
+                break;
+            case "playOrder":
+                ((EditTextPreference) findPreference("playOrder")).setText(sharedPreferences.getString("playOrder", "0"));
+                break;
+        }
     }
 }

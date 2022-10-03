@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.liux.musicplayer.databinding.FragmentHomeBinding;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.utils.MusicUtils;
@@ -95,7 +94,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void callMainActivityForInfo() {
-        ((MainActivity) getActivity()).setHomeFragment();
+        ((MainActivity) getActivity()).setChildFragment();
     }
 
     @Override
@@ -183,7 +182,7 @@ public class HomeFragment extends Fragment {
             if (isSetLyricPosition) {   //检查歌词居中标志位
                 try {
                     //设置歌词居中
-                    lyricList.smoothScrollToPositionFromTop(lyricPosition, lyricList.getWidth() / 2 - 20);
+                    lyricList.smoothScrollToPositionFromTop(lyricPosition, lyricList.getWidth() / 2 - 40);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }

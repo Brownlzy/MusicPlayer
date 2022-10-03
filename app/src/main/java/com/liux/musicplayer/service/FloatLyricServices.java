@@ -23,8 +23,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -43,9 +45,13 @@ public class FloatLyricServices extends Service {
     private WindowManager.LayoutParams wmParams;
     private LayoutInflater inflater;
     private LyricThread lyricThread;
+    private StrokeTextView firstLyric;
+    private StrokeTextView secondLyric;
+    private HorizontalScrollView firstScroll;
+    private HorizontalScrollView secondScroll;
+
     //浮动布局
     private View mFloatingLayout;
-    private LinearLayout desktopLyricLayout;
     private Chronometer chronometer;
     private long rangeTime;
     private boolean isAllShow;
@@ -152,7 +158,7 @@ public class FloatLyricServices extends Service {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     break;
-                case R.id.lyricLayout:
+                case R.id.lyricCover:
                     setAllShow();
                     break;
             }
@@ -234,22 +240,56 @@ public class FloatLyricServices extends Service {
 
     private void updateLyric() {
         if (lyric.lyricList.size() != 0) {
-            String firstLyric = lyric.lyricList.get(nowLyricId);
-            if (firstLyric.contains("\n")) {
-                ((StrokeTextView) (mFloatingLayout.findViewById(R.id.firstLyric))).setText(firstLyric.split("\n")[0]);
-                ((StrokeTextView) (mFloatingLayout.findViewById(R.id.secondLyric))).setText(firstLyric.split("\n")[1]);
+            String s = lyric.lyricList.get(nowLyricId);
+            if (s.contains("\n")) {
+                firstLyric.setText(s.split("\n")[0]);
+                secondLyric.setText(s.split("\n")[1]);
             } else {
-                ((StrokeTextView) (mFloatingLayout.findViewById(R.id.firstLyric))).setText(firstLyric);
+                firstLyric.setText(s);
                 if (lyric.size() > nowLyricId + 1) {
-                    ((StrokeTextView) (mFloatingLayout.findViewById(R.id.secondLyric))).setText(lyric.lyricList.get(nowLyricId + 1));
+                    secondLyric.setText(lyric.lyricList.get(nowLyricId + 1));
                 } else {
-                    ((StrokeTextView) (mFloatingLayout.findViewById(R.id.secondLyric))).setText("The End");
+                    secondLyric.setText("The End");
                 }
             }
         } else {
-            ((StrokeTextView) (mFloatingLayout.findViewById(R.id.firstLyric))).setText(getString(R.string.lyricFileIsEmpty));
-            ((StrokeTextView) (mFloatingLayout.findViewById(R.id.secondLyric))).setText("The End");
+            firstLyric.setText(getString(R.string.lyricFileIsEmpty));
+            secondLyric.setText("The End");
         }
+        firstScroll.scrollTo(0, 0);
+        secondScroll.scrollTo(0, 0);
+        firstScroll.post(new Runnable() {
+            @Override
+            public void run() {
+                int offset = firstLyric.getMeasuredWidth() - firstScroll.getMeasuredWidth();
+                if (offset > 0) {
+                    try {
+                        Thread.sleep(700);
+                        firstScroll.smoothScrollTo(offset, 0);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    firstScroll.scrollTo(0, 0);
+                }
+            }
+        });
+        secondScroll.post(new Runnable() {
+            @Override
+            public void run() {
+                int offset = secondLyric.getMeasuredWidth() - secondScroll.getMeasuredWidth();
+                if (offset > 0) {
+                    try {
+                        Thread.sleep(700);
+                        secondScroll.smoothScrollTo(offset, 0);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    secondScroll.scrollTo(0, 0);
+                }
+            }
+        });
     }
 
     private class LyricThread extends Thread {
@@ -336,6 +376,7 @@ public class FloatLyricServices extends Service {
             initFloating();
             initLyricSettings();
             musicService.updateDeskLyricPlayInfo();
+            updateLyric();
         }
 
         //不成功绑定时调用
@@ -395,12 +436,14 @@ public class FloatLyricServices extends Service {
         isAllShow = true;
         isSettingsBar = false;
         setAllShow();
-        desktopLyricLayout = mFloatingLayout.findViewById(R.id.desktopLyricLayout);
+        firstLyric = mFloatingLayout.findViewById(R.id.firstLyric);
+        secondLyric = mFloatingLayout.findViewById(R.id.secondLyric);
+        firstScroll = mFloatingLayout.findViewById(R.id.firstScroll);
+        secondScroll = mFloatingLayout.findViewById(R.id.secondScroll);
         //悬浮框触摸事件，设置悬浮框可拖动
-        desktopLyricLayout.setOnTouchListener(new FloatingListener());
-        mFloatingLayout.findViewById(R.id.lyricLayout).setOnTouchListener(new FloatingListener());
+        mFloatingLayout.findViewById(R.id.lyricCover).setOnTouchListener(new FloatingListener());
 
-        mFloatingLayout.findViewById(R.id.lyricLayout).setOnClickListener(lyricPlayBarListener);
+        mFloatingLayout.findViewById(R.id.lyricCover).setOnClickListener(lyricPlayBarListener);
         mFloatingLayout.findViewById(R.id.playPause).setOnClickListener(lyricPlayBarListener);
         mFloatingLayout.findViewById(R.id.playPrevious).setOnClickListener(lyricPlayBarListener);
         mFloatingLayout.findViewById(R.id.playNext).setOnClickListener(lyricPlayBarListener);
@@ -536,13 +579,14 @@ public class FloatLyricServices extends Service {
 
     @Override
     public void onDestroy() {
-        winManager.removeView(mFloatingLayout);
+        if (winManager != null) {
+            winManager.removeView(mFloatingLayout);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt("deskLyricY", wmParams.y);
+            editor.apply();
+        }
         stopLyricThread();
-
         unbindService(serviceConnection);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putInt("deskLyricY", wmParams.y);
-        editor.apply();
         super.onDestroy();
     }
 

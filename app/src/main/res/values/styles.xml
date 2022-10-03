@@ -39,6 +39,6 @@
     </style>
 
     <style name="BlurColor">
-        <item name="realtimeOverlayColor">#66FFFFFF</item>
+        <item name="realtimeOverlayColor">#00FFFFFF</item>
     </style>
 </resources>

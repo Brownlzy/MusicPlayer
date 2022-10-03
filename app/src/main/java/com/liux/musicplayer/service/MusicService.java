@@ -29,7 +29,6 @@ import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.interfaces.MusicServiceCallback;
-import com.liux.musicplayer.receiver.RemoteControlReceiver;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.MusicUtils;
 
@@ -140,6 +139,11 @@ public class MusicService extends Service {
         this.musicServiceCallback = musicServiceCallback;
     }
 
+    public void unregisterMusicServiceCallback(MusicServiceCallback musicServiceCallback) {
+        if (this.musicServiceCallback == musicServiceCallback)
+            this.musicServiceCallback = null;
+    }
+
     public void setDeskLyricCallback(DeskLyricCallback deskLyricCallback) {
         this.deskLyricCallback = deskLyricCallback;
     }
@@ -210,7 +214,7 @@ public class MusicService extends Service {
     }
 
     private void registerRemoteControlReceiver() {
-        ComponentName mbr = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
+        ComponentName mbr = new ComponentName(getPackageName(), MusicService.class.getName());
         mMediaSession = new MediaSessionCompat(this, "mbr", mbr, null);
         mMediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
@@ -318,6 +322,7 @@ public class MusicService extends Service {
         } else {
             remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
             remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
+            startForeground(NOTIFICATION_ID, notification);
             stopForeground(false);
         }
     }

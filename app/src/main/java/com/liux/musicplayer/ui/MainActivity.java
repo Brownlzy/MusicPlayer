@@ -2,12 +2,10 @@ package com.liux.musicplayer.ui;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -300,7 +298,8 @@ public class MainActivity extends FragmentActivity {
 
     private void prepareInfo(int musicId) {
         setPlayBarTitle(musicId);
-        setHomeFragment();
+        setChildFragment();
+        playlistFragment.setNowPlaying(musicService.getNowId());
         //初始化进度条
         resetPlayProgress();
     }
@@ -401,6 +400,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onDestroy() {
+        musicService.unregisterMusicServiceCallback(musicServiceCallback);
         unbindService(serviceConnection);
         homeFragment.onDestroy();
         stopLyric();
@@ -472,12 +472,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public void setHomeFragment(HomeFragment newHomeFragment) {
-        this.homeFragment = newHomeFragment;
-        homeFragment.setMusicInfo(musicService.getPlayList().get(musicService.getNowId()));
-    }
-
-    public void setHomeFragment() {
+    public void setChildFragment() {
         if (musicService != null) {
             homeFragment.setMusicInfo(musicService.getPlayList().get(musicService.getNowId()));
             setIsLyric(musicService.isAppLyric());

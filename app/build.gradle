@@ -8,10 +8,10 @@ android {
 
     defaultConfig {
         applicationId "com.liux.musicplayer"
-        minSdkVersion 26
+        minSdkVersion 23
         targetSdkVersion 31
-        versionCode 5
-        versionName "beta.2.2"
+        versionCode 6
+        versionName "beta.2.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -32,6 +32,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -147,7 +148,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setAdapter(adapter);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
-
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        setNowPlaying(Integer.parseInt(prefs.getString("nowId", "0")));
         return view;
     }
 
@@ -264,8 +266,6 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
             listPosition = -1;
         }
-        Log.e("playList", String.valueOf(listPosition));
-        Log.e("playList", String.valueOf(listPositionY));
     }
 
     @Override
@@ -428,7 +428,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                         scrollFlag = false;
                         // 判断滚动到底部 、position是从0开始算起的
                         if (lvData.getLastVisiblePosition() == (lvData.getCount() - 1)) {
-                            Toast.makeText(requireContext(), "到底了", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(requireContext(), "到底了", Toast.LENGTH_SHORT).show();
                             showPlaylistHeaderBar(true);
                         }
                         // 判断滚动到顶部
@@ -505,14 +505,15 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
 
         ((MainActivity) getActivity()).getMusicService().setPlayList(mSongList);
+        setNowPlaying(((MainActivity) getActivity()).getMusicService().getNowId());
     }
 
     private void initData() {
-        SharedPreferences sp = getActivity().getSharedPreferences(getActivity().getPackageName() + "_preferences", Activity.MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
                 "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
-        String playListJson = sp.getString("playList", defaultPlayList);
+        String playListJson = prefs.getString("playList", defaultPlayList);
         Gson gson = new Gson();
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
@@ -592,6 +593,13 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setSelectionFromTop(listViewPosition, 0);
         showPlaylistHeaderBar(true);
         lastVisibleItemPosition = listViewPosition;
+    }
+
+    public void setNowPlaying(int musicId) {
+        if (adapter != null) {
+            adapter.setNowPlay(musicId);
+            adapter.notifyDataSetChanged();
+        }
     }
 }
 

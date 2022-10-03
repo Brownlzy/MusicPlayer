@@ -372,12 +372,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (multipleChooseFlag)
+                if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
-                else if (searchFlag) {
-                    ((MainActivity) getActivity()).getMusicService().playThisNow(mSongList.indexOf(searchList.get(position)));
                 } else {
-                    ((MainActivity) getActivity()).getMusicService().playThisNow(position);
+                    ((MainActivity) getActivity()).getMusicService().playThisNow(positionToMusicId(position));
                 }
             }
         });
@@ -408,9 +406,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         lvData.setItemChecked(position, holder.checkBox.isChecked());//长按ListView时选中按的那一项
         stateCheckedMap.put(position, holder.checkBox.isChecked());//存放CheckBox的选中状态
         if (holder.checkBox.isChecked()) {
-            mCheckedData.add(mSongList.get(position).source_uri);//CheckBox选中时，把这一项的数据加到选中数据列表
+            mCheckedData.add(mSongList.get(positionToMusicId(position)).source_uri);//CheckBox选中时，把这一项的数据加到选中数据列表
         } else {
-            mCheckedData.remove(mSongList.get(position).source_uri);//CheckBox未选中时，把这一项的数据从选中数据列表移除
+            mCheckedData.remove(mSongList.get(positionToMusicId(position)).source_uri);//CheckBox未选中时，把这一项的数据从选中数据列表移除
         }
         adapter.notifyDataSetChanged();
     }
@@ -491,7 +489,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         searchList.clear();
         for (MusicUtils.Song song : mSongList) {
             if (song.title.contains(searchEditText.getText())
-                    || song.artist.contains(searchEditText.getText()))
+                    || song.artist.contains(searchEditText.getText())
+                    || song.album.contains(searchEditText.getText()))
                 searchList.add(song);
         }
         adapter.notifyDataSetChanged();
@@ -576,16 +575,20 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.item_menu_play:
-                        ((MainActivity) getActivity()).getMusicService().playThisNow(position);
+                        ((MainActivity) getActivity()).getMusicService().playThisNow(positionToMusicId(position));
                         break;
                     case R.id.item_menu_moreInfo:
-                        showMusicDetails(position);
+                        showMusicDetails(positionToMusicId(position));
                         break;
                 }
                 return true;
             }
         });
         popup.show();
+    }
+
+    private int positionToMusicId(int position) {
+        return mSongList.indexOf(((MusicUtils.Song) adapter.getItem(position)));
     }
 
     private void showMusicDetails(int musicId) {

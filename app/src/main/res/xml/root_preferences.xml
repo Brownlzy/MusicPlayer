@@ -3,9 +3,6 @@
 
     <PreferenceCategory app:title="@string/title_permission">
 
-        <Preference
-            app:key="gotoAppDetails"
-            app:title="@string/gotoAppDetails" />
         <!--
                 <SwitchPreferenceCompat
                     android:persistent="false"
@@ -33,6 +30,15 @@
 
     <PreferenceCategory app:title="@string/title_playersettings">
 
+        <SeekBarPreference
+            app:key="timing"
+            app:title="@string/timing"
+            app:min="0"
+            android:max="120"
+            app:showSeekBarValue="true"
+            app:summary="@string/timing_summary"
+            app:icon="@drawable/ic_round_timer_24" />
+
         <CheckBoxPreference
             app:key="isShowLyric"
             app:title="@string/isShowLyric"
@@ -45,14 +51,14 @@
             app:title="@string/deskLyricLock"
             app:dependency="layer_permission" />
 
-        <SeekBarPreference
-            app:key="timing"
-            app:title="@string/timing"
-            app:min="0"
-            android:max="120"
-            app:showSeekBarValue="true"
-            app:summary="@string/timing_summary"
-            app:icon="@drawable/ic_round_timer_24" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/experiment">
+
+        <SwitchPreference
+            app:key="isNewAppearance"
+            app:title="@string/newAppearance"
+            app:summary="@string/newAppearance_summary" />
 
     </PreferenceCategory>
 
@@ -62,6 +68,9 @@
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
         <Preference
             app:icon="@drawable/ic_round_exit_to_app_24"
             app:key="exit"

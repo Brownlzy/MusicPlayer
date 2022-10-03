@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -70,6 +72,7 @@ public class MainActivity extends FragmentActivity {
     private TextView playProgressNowText;
     private TextView playProgressAllText;
     private ShapeableImageView shapeableImageView;
+    private ShapeableImageView backImageView;
     private int lastPageId = 0;
     //是否进入后台
     private int countActivity = 0;
@@ -442,7 +445,10 @@ public class MainActivity extends FragmentActivity {
     }
 
     public MusicService getMusicService() {
-        return musicService;
+        if (musicService != null)
+            return musicService;
+        else
+            throw new NullPointerException();
     }
 
     public void setPlayBarTitle(int musicId) {
@@ -450,8 +456,10 @@ public class MainActivity extends FragmentActivity {
         Bitmap bitmap = MusicUtils.getAlbumImage(MainActivity.this, musicService.getPlayList().get(musicId));
         if (bitmap == null) {   //获取图片失败，使用默认图片
             shapeableImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_baseline_music_note_24));
+            backImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_baseline_music_note_24));
         } else {    //成功
             shapeableImageView.setImageBitmap(bitmap);
+            backImageView.setImageBitmap(bitmap);
         }
     }
 
@@ -493,6 +501,11 @@ public class MainActivity extends FragmentActivity {
         PlayBarPrev = findViewById(R.id.playPrevious);
         PlayBarNext = findViewById(R.id.playNext);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
+        backImageView = findViewById(R.id.backImageView);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        backImageView.setVisibility(prefs.getBoolean("isNewAppearance", false)
+                ? View.VISIBLE
+                : View.GONE);
         PlayBarLyric.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -795,4 +808,11 @@ public class MainActivity extends FragmentActivity {
             lyricThread.pauseThread();
     }
 
+    public void setNewAppearance(boolean isTrue) {
+        if (isTrue) {
+            backImageView.setVisibility(View.VISIBLE);
+        } else {
+            backImageView.setVisibility(View.GONE);
+        }
+    }
 }

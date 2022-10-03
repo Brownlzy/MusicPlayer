@@ -32,6 +32,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
+import androidx.preference.SwitchPreference;
 
 import com.blankj.utilcode.util.RegexUtils;
 import com.liux.musicplayer.R;
@@ -52,6 +53,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private CheckBoxPreference switch_web_playlist;
     private CheckBoxPreference switch_desk_lyric;
     private CheckBoxPreference switch_desk_lyric_lock;
+    private SwitchPreference switch_new_appearance;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private EditTextPreference dPlayList;
@@ -143,6 +145,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         findPreference("debug").setVisible(false);
         //绑定控件
+        switch_new_appearance = findPreference("isNewAppearance");
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         switch_web_playlist = findPreference("isUseWebPlayList");
@@ -166,9 +169,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         initPreferenceListener();
+        try {
+            if (!((MainActivity) getActivity()).getMusicService().isTiming())
+                seekBarTiming.setValue(0);
+        } catch (Exception ignored) {
+        }
     }
 
     private void initPreferenceListener() {
+        switch_new_appearance.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                ((MainActivity) getActivity()).setNewAppearance((boolean) newValue);
+                return true;
+            }
+        });
         switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {

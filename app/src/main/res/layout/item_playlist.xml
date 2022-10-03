@@ -58,7 +58,7 @@
                     android:singleLine="true"
                     android:text=""
                     android:scrollbars="none"
-                    android:textColor="@color/green_500"
+                    android:textColor="@color/green_700"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -77,6 +77,8 @@
                     android:layout_weight="1"
                     android:scrollbars="none"
                     android:text=""
+                    android:maxLines="2"
+                    android:ellipsize="end"
                     android:textSize="12sp" />
 
                 <ImageView

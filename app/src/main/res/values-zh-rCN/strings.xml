@@ -80,4 +80,7 @@
     <string name="title_artist">　歌　手 ：</string>
     <string name="timing">定时播放</string>
     <string name="timing_summary">设定播放倒计时（单位：分钟）</string>
+    <string name="experiment">实验室</string>
+    <string name="newAppearance">启用新外观</string>
+    <string name="newAppearance_summary">启用这个选项开启专辑图片背景</string>
 </resources>

@@ -58,18 +58,18 @@ public class LyricAdapter extends BaseAdapter {
         if (mContext.getApplicationContext().getResources().getConfiguration().uiMode == 0x21) {    //深色模式
             if (mNowLyricMap.get(position, false)) {  //被选中则设置高亮颜色
                 holder.lyricText.setTextColor(Color.CYAN);
-                holder.lyricText.setTextSize(SP, 20);
+                holder.lyricText.setTextSize(SP, 16);
             } else {
                 holder.lyricText.setTextColor(Color.WHITE);
-                holder.lyricText.setTextSize(SP, 18);
+                holder.lyricText.setTextSize(SP, 14);
             }
         } else {
             if (mNowLyricMap.get(position, false)) {  //被选中则设置高亮颜色
                 holder.lyricText.setTextColor(Color.GREEN);
-                holder.lyricText.setTextSize(SP, 20);
+                holder.lyricText.setTextSize(SP, 16);
             } else {
                 holder.lyricText.setTextColor(Color.WHITE);
-                holder.lyricText.setTextSize(SP, 18);
+                holder.lyricText.setTextSize(SP, 14);
             }
         }
         return convertView;

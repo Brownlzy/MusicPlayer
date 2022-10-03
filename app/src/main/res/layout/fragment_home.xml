@@ -17,66 +17,72 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/musicPicLinearLayout"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/placeholder2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="25dp"
+                android:adjustViewBounds="true"
+                app:layout_constraintDimensionRatio="1:1"
+                app:shapeAppearance="@style/RoundedStyle"
+                android:src="@drawable/ic_baseline_music_note_24" />
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/albumImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginRight="25dp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/ic_launcher1080"
-                    android:visibility="visible"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:shapeAppearance="@style/RoundedStyle"
-                    app:strokeColor="@color/green_700"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    app:strokeWidth="2dp" />
-
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/placeholder2"
+                android:layout_alignEnd="@+id/placeholder2"
+                android:layout_alignTop="@+id/placeholder2"
+                android:layout_alignBottom="@+id/placeholder2"
+                android:orientation="vertical"
+                app:cardCornerRadius="15dp"
+                app:layout_constraintDimensionRatio="1:1">
 
                 <RelativeLayout
-                    android:id="@+id/songLyricLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/albumImageView"
-                    android:layout_alignTop="@+id/albumImageView"
-                    android:layout_alignEnd="@+id/albumImageView"
-                    android:layout_alignBottom="@+id/albumImageView"
-                    android:layout_marginStart="-10dp"
-                    android:layout_marginTop="-20dp"
-                    android:layout_marginEnd="-10dp"
-                    android:layout_marginBottom="-20dp"
-                    android:orientation="vertical"
-                    android:visibility="invisible">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <com.github.mmin18.widget.RealtimeBlurView
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/albumImageView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:src="@mipmap/ic_launcher"
+                        android:visibility="visible"
                         app:layout_constraintDimensionRatio="1:1"
-                        app:realtimeBlurRadius="10dp"
-                        style="@style/BlurColor" />
+                        app:shapeAppearance="@style/RoundedStyle" />
 
-                    <ListView
-                        android:id="@+id/lyricList"
+                    <RelativeLayout
+                        android:id="@+id/songLyricLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="20dp"
-                        android:divider="@null"
-                        android:scrollbars="none" />
+                        android:visibility="invisible">
+
+                        <com.github.mmin18.widget.RealtimeBlurView
+                            style="@style/BlurColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:realtimeBlurRadius="10dp" />
+
+                        <ListView
+                            android:id="@+id/lyricList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:divider="@null"
+                            android:scrollbars="none" />
+                    </RelativeLayout>
                 </RelativeLayout>
-
-            </RelativeLayout>
-
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
         <com.liux.musicplayer.views.MyScrollView
@@ -92,11 +98,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
                     android:layout_marginLeft="25dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginRight="25dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/placeholder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
@@ -115,17 +122,18 @@
                     app:layout_constraintBottom_toBottomOf="@+id/musicPicLayout">
 
                     <com.google.android.material.card.MaterialCardView
+                        style="@style/DarkCardViewBackgroundColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
                         android:layout_marginRight="25dp"
                         android:layout_marginBottom="20dp"
                         app:cardCornerRadius="15dp"
-                        app:cardElevation="8dp"
+                        app:cardElevation="0dp"
                         app:contentPadding="4dp"
-                        app:rippleColor="@color/teal_200"
+                        app:rippleColor="@color/white"
                         app:strokeColor="@color/teal_200"
-                        app:strokeWidth="2dp">
+                        app:strokeWidth="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -137,14 +145,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="1343242"
-                                android:textSize="32sp" />
+                                android:textSize="24sp" />
 
                             <TextView
                                 android:id="@+id/home_song_artist"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="4324324"
-                                android:textSize="20sp" />
+                                android:textSize="16sp" />
 
                             <TextView
                                 android:id="@+id/home_song_info_title"
@@ -152,7 +160,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
                                 android:text="@string/fileInfo"
-                                android:textSize="16sp" />
+                                android:textSize="14sp" />
 
                             <TextView
                                 android:id="@+id/home_song_info"
@@ -160,7 +168,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="5dp"
                                 android:text=""
-                                android:textSize="16sp" />
+                                android:textSize="14sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>

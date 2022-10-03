@@ -79,4 +79,7 @@
     <string name="title_artist">"Artist: "</string>
     <string name="timing">Timing</string>
     <string name="timing_summary">Set the playback countdown in minutes</string>
+    <string name="experiment">Experiment</string>
+    <string name="newAppearance">New Appearance</string>
+    <string name="newAppearance_summary">Enable this option to turn on album picture background</string>
 </resources>

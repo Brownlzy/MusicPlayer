@@ -41,4 +41,20 @@
     <style name="BlurColor">
         <item name="realtimeOverlayColor">#00FFFFFF</item>
     </style>
+
+    <style name="MainActivityBlurColor">
+        <item name="realtimeOverlayColor">#4DFFFFFF</item>
+    </style>
+
+    <style name="CardViewBackgroundColor">
+        <item name="cardBackgroundColor">#80FFFFFF</item>
+    </style>
+
+    <style name="DarkCardViewBackgroundColor">
+        <item name="cardBackgroundColor">#CCFFFFFF</item>
+    </style>
+
+    <style name="navBackgroundColor">
+        <item name="backgroundColor">#0DFFFFFF</item>
+    </style>
 </resources>

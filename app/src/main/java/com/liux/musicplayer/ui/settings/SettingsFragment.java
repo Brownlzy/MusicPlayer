@@ -31,6 +31,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SeekBarPreference;
 
 import com.blankj.utilcode.util.RegexUtils;
 import com.liux.musicplayer.R;
@@ -58,6 +59,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private EditTextPreference MainFolder;
     private Preference About;
     private Preference Close;
+    private SeekBarPreference seekBarTiming;
 
     private final static String TAG = "SettingFragment";
     //注册Activity回调
@@ -152,6 +154,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         setMainFolder = findPreference("setMainFolder");
         About = findPreference("info");
         Close = findPreference("exit");
+        seekBarTiming = findPreference("timing");
         prefs.registerOnSharedPreferenceChangeListener(this); // 注册
         if (checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
@@ -268,6 +271,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
+        seekBarTiming.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                if ((int) newValue > 0) {
+                    ((MainActivity) getActivity()).getMusicService().startTiming();
+                } else {
+                    ((MainActivity) getActivity()).getMusicService().stopTiming();
+                }
+                return true;
+            }
+        });
     }
 
     private void popInfo() {
@@ -362,6 +376,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "playOrder":
                 ((EditTextPreference) findPreference("playOrder")).setText(sharedPreferences.getString("playOrder", "0"));
                 break;
+            case "timing":
+                seekBarTiming.setValue(sharedPreferences.getInt("timing", 0));
         }
     }
 }

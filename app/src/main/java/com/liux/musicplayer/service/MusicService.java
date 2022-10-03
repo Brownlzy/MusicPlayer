@@ -16,6 +16,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -77,6 +78,7 @@ public class MusicService extends Service {
     private boolean isActivityForeground = false;
     private MusicServiceCallback musicServiceCallback;
     private DeskLyricCallback deskLyricCallback;
+    private TimingThread timingThread;
 
     public boolean isPlaying() {
         return mediaPlayer.isPlaying();
@@ -486,8 +488,11 @@ public class MusicService extends Service {
                 if (isNext) {
                     if (nowId < maxId)
                         nowId += 1;
-                    else
+                    else {
+                        playThisNow(nowId);
+                        setPlayOrPause(false);
                         return;
+                    }
                 } else {
                     if (nowId > 0)
                         nowId -= 1;
@@ -732,5 +737,80 @@ public class MusicService extends Service {
         public MusicService getService() {
             return MusicService.this;
         }
+    }
+
+    private class TimingThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            int timing = 0;
+            do {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
+                try {
+                    timing = prefs.getInt("timing", 0);
+                    Log.e(TAG, "timing" + timing);
+                    if (timing > 0) {
+                        Thread.sleep(60000);
+                        timing--;
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putInt("timing", timing);
+                        editor.apply();
+                    }
+                } catch (InterruptedException | NullPointerException e) {
+                    return;
+                }
+            } while (timing > 0);
+            setPlayOrPause(false);
+        }
+    }
+
+    public void startTiming() {
+        if (timingThread == null) {
+            timingThread = new TimingThread();
+            timingThread.start();
+        } else {
+            timingThread.interrupt();
+            timingThread = new TimingThread();
+            timingThread.start();
+        }
+    }
+
+    public void stopTiming() {
+        if (timingThread != null)
+            timingThread.interrupt();
     }
 }

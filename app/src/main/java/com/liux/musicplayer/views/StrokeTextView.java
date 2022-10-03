@@ -6,17 +6,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
-
-import com.liux.musicplayer.R;
 
 public class StrokeTextView extends AppCompatTextView {
     private AlwaysFocusTextView borderText;///用于描边的TextView

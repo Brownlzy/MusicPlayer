@@ -1,7 +1,6 @@
 package com.liux.musicplayer.ui.playlist;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +12,7 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +21,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -70,11 +72,13 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private int lastVisibleItemPosition = 0;// 标记上次滑动位置，初始化默认为0
     private boolean scrollFlag = false;// 标记是否滑动
     private MaterialCardView playlistHeader;
+    private EditText searchEditText;
 
     private LinearLayout addSongLayout;
     private LinearLayout editSongLayout;
     private LinearLayout sortSongLayout;
     private LinearLayout searchSongLayout;
+    private List<MusicUtils.Song> searchList;
 
     //用于接受系统文件管理器返回目录的回调
     ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -172,7 +176,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 editList();
                 break;
             case R.id.search_list:
-                searchList();
+                searchState();
                 break;
             case R.id.refresh_list:
                 refreshList();
@@ -245,13 +249,21 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void searchList() {
+    private void searchState() {
         if (searchFlag) {
             searchSongLayout.setVisibility(View.GONE);
             sortSongLayout.setVisibility(View.VISIBLE);
+            adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
+            lvData.setAdapter(adapter);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            adapter.setNowPlay(Integer.parseInt(prefs.getString("nowId", "0")));
         } else {
             sortSongLayout.setVisibility(View.GONE);
             searchSongLayout.setVisibility(View.VISIBLE);
+            searchList = new ArrayList<>();
+            adapter = new PlaylistAdapter(this, requireContext(), searchList, stateCheckedMap);
+            lvData.setAdapter(adapter);
+            adapter.setNowPlay(-1);
         }
         searchFlag = !searchFlag;
     }
@@ -362,7 +374,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (multipleChooseFlag)
                     updateCheckBoxStatus(view, position);
-                else {
+                else if (searchFlag) {
+                    ((MainActivity) getActivity()).getMusicService().playThisNow(mSongList.indexOf(searchList.get(position)));
+                } else {
                     ((MainActivity) getActivity()).getMusicService().playThisNow(position);
                 }
             }
@@ -416,6 +430,14 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         editSongLayout = view.findViewById(R.id.ll_editBar);
         sortSongLayout = view.findViewById(R.id.ll_sort);
         searchSongLayout = view.findViewById(R.id.ll_search);
+        searchEditText = view.findViewById(R.id.searchEditText);
+        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                searchFromList();
+                return false;
+            }
+        });
         lvData = view.findViewById(R.id.lv);
         lvData.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         lvData.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -465,6 +487,16 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void searchFromList() {
+        searchList.clear();
+        for (MusicUtils.Song song : mSongList) {
+            if (song.title.contains(searchEditText.getText())
+                    || song.artist.contains(searchEditText.getText()))
+                searchList.add(song);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     private void showPlaylistHeaderBar(boolean isShow) {
         if (isShow) {
             if (!headerShowFlag) {
@@ -485,7 +517,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private void refreshList() {
         if (multipleChooseFlag) editList();
-        if (searchFlag) searchList();
+        if (searchFlag) searchState();
         try {
             listPosition = lvData.getFirstVisiblePosition();
             listPositionY = lvData.getChildAt(0).getTop();
@@ -596,7 +628,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     public void setNowPlaying(int musicId) {
-        if (adapter != null) {
+        if (adapter != null && !searchFlag) {
             adapter.setNowPlay(musicId);
             adapter.notifyDataSetChanged();
         }

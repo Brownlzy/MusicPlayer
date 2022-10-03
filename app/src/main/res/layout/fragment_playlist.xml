@@ -168,8 +168,13 @@
                         android:visibility="gone">
 
                         <EditText
+                            android:id="@+id/searchEditText"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:imeOptions="actionSearch"
+                            android:singleLine="true"
+                            android:inputType="text"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <ImageView

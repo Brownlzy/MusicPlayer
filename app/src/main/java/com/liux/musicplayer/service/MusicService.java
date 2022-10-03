@@ -101,8 +101,12 @@ public class MusicService extends Service {
     public int getDuration() {
         if (isPrepared())
             return mediaPlayer.getDuration();
-        else
-            return Integer.parseInt(songList.get(nowId).duration);
+        else {
+            if (songList.get(nowId).duration != null)
+                return Integer.parseInt(songList.get(nowId).duration);
+            else return 0;
+        }
+
     }
 
     public List<MusicUtils.Song> getPlayList() {

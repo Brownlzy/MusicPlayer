@@ -70,13 +70,13 @@ public class MusicUtils {
                 inStream.close();
                 getStartMillionTime();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 Log.e("MusicUtils", "歌词文件不存在");
                 lyricList.add("歌词文件不存在");
                 startTime.add("[00:00.00]");
                 startMillionTime.add((long) 0);
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
 

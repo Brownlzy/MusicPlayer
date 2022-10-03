@@ -25,8 +25,6 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -61,19 +59,20 @@ public class FloatLyricServices extends Service {
     private MusicUtils.Lyric lyric;
     private int nowLyricId;
     private int nowTextSize;
-    private int nowColorID;
+    private int nowColorId;
+    private String nowTitle = "";
+    private String nowArtist = "";
     private SharedPreferences sp;
     private DeskLyricCallback deskLyricCallback = new DeskLyricCallback() {
         @Override
         public void updatePlayState(int musicId) {
-            String title = musicService.getPlayList().get(musicId).title;
-            String artist = musicService.getPlayList().get(musicId).artist;
-            updatePlayInfo(title
-                    + ((artist.equals("null")) ? "" : " - " + artist));
+            nowTitle = musicService.getPlayList().get(musicId).title;
+            nowArtist = musicService.getPlayList().get(musicId).artist;
+            updatePlayInfo(nowTitle
+                    + ((nowArtist.equals("null")) ? "" : " - " + nowArtist));
             lyric = new MusicUtils.Lyric(Uri.parse(musicService.getPlayList().get(musicId).lyric_uri));    //从歌词文件中读取歌词
-            nowLyricId = 0;
-            updatePlayState();
             updateLyric();
+            updatePlayState();
         }
 
         @Override
@@ -95,7 +94,7 @@ public class FloatLyricServices extends Service {
 
     public void LyricSettings() {
         int color;
-        switch (nowColorID) {
+        switch (nowColorId) {
             case 0:
                 color = 0xFFF44336;
                 break;
@@ -116,11 +115,11 @@ public class FloatLyricServices extends Service {
         ((StrokeTextView) (mFloatingLayout.findViewById(R.id.firstLyric))).setTextColor(color);
         ((StrokeTextView) (mFloatingLayout.findViewById(R.id.firstLyric))).setTextSize(SP, nowTextSize);
         ((StrokeTextView) (mFloatingLayout.findViewById(R.id.secondLyric))).setTextSize(SP, nowTextSize);
-        setColorCheck(nowColorID);
+        setColorCheck(nowColorId);
     }
 
     public void LyricSettings(int textSize, int colorID) {
-        nowColorID = colorID;
+        nowColorId = colorID;
         nowTextSize = textSize;
         LyricSettings();
         saveLyricSettings();
@@ -183,19 +182,19 @@ public class FloatLyricServices extends Service {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.color_red:
-                    nowColorID = 0;
+                    nowColorId = 0;
                     break;
                 case R.id.color_blue:
-                    nowColorID = 1;
+                    nowColorId = 1;
                     break;
                 case R.id.color_green:
-                    nowColorID = 2;
+                    nowColorId = 2;
                     break;
                 case R.id.color_yellow:
-                    nowColorID = 3;
+                    nowColorId = 3;
                     break;
                 case R.id.color_purple:
-                    nowColorID = 4;
+                    nowColorId = 4;
                     break;
                 case R.id.largerText:
                     if (nowTextSize < 24)
@@ -206,8 +205,8 @@ public class FloatLyricServices extends Service {
                         nowTextSize -= 2;
                     break;
             }
-            setColorCheck(nowColorID);
-            LyricSettings(nowTextSize, nowColorID);
+            setColorCheck(nowColorId);
+            LyricSettings(nowTextSize, nowColorId);
         }
     };
 
@@ -239,7 +238,8 @@ public class FloatLyricServices extends Service {
     }
 
     private void updateLyric() {
-        if (lyric.lyricList.size() != 0) {
+        if (nowLyricId >= lyric.lyricList.size()) return;
+        if (lyric.lyricList.size() > 1) {
             String s = lyric.lyricList.get(nowLyricId);
             if (s.contains("\n")) {
                 firstLyric.setText(s.split("\n")[0]);
@@ -252,9 +252,12 @@ public class FloatLyricServices extends Service {
                     secondLyric.setText("The End");
                 }
             }
+        } else if (lyric.lyricList.size() == 1) {
+            firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);
+            secondLyric.setText(lyric.lyricList.get(0));
         } else {
-            firstLyric.setText(getString(R.string.lyricFileIsEmpty));
-            secondLyric.setText("The End");
+            firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);
+            secondLyric.setText(getString(R.string.lyricFileIsEmpty));
         }
         firstScroll.scrollTo(0, 0);
         secondScroll.scrollTo(0, 0);
@@ -376,7 +379,6 @@ public class FloatLyricServices extends Service {
             initFloating();
             initLyricSettings();
             musicService.updateDeskLyricPlayInfo();
-            updateLyric();
         }
 
         //不成功绑定时调用
@@ -389,14 +391,14 @@ public class FloatLyricServices extends Service {
 
     private void initLyricSettings() {
         nowTextSize = sp.getInt("deskLyricTextSize", 18);
-        nowColorID = sp.getInt("deskLyricColorId", 1);
+        nowColorId = sp.getInt("deskLyricColorId", 1);
         LyricSettings();
     }
 
     private void saveLyricSettings() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("deskLyricTextSize", nowTextSize);
-        editor.putInt("deskLyricColorId", nowColorID);
+        editor.putInt("deskLyricColorId", nowColorId);
         editor.putInt("deskLyricY", wmParams.y);
         editor.apply();
     }

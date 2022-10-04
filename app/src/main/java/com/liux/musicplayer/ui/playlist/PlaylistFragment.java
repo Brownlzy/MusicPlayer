@@ -375,7 +375,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
                 } else {
-                    ((MainActivity) getActivity()).getMusicService().playThisNow(positionToMusicId(position));
+                    ((MainActivity) getActivity()).getMusicService().playThisFromList(positionToMusicId(position));
                 }
             }
         });
@@ -540,7 +540,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
                 "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
@@ -553,7 +553,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (mSongList == null || mSongList.size() == 0) {
             playListJson = defaultPlayList;
             mSongList = gson.fromJson(playListJson, playListType);
-        }
+        }*/
+        mSongList = ((MainActivity) requireActivity()).getMusicService().getPlayList();
         setStateCheckedMap(false);
     }
 
@@ -575,7 +576,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.item_menu_play:
-                        ((MainActivity) getActivity()).getMusicService().playThisNow(positionToMusicId(position));
+                        ((MainActivity) getActivity()).getMusicService().playThisFromList(positionToMusicId(position));
                         break;
                     case R.id.item_menu_moreInfo:
                         showMusicDetails(positionToMusicId(position));
@@ -592,8 +593,13 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showMusicDetails(int musicId) {
-        MusicUtils.Metadata metadata = MusicUtils.getMetadata(requireContext(), mSongList.get(musicId));
-        Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId));
+        MusicUtils.Metadata metadata = null;
+        if (((MainActivity) requireActivity()).getMusicService().isWebPlayMode()) {
+            metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
+        } else {
+            metadata = MusicUtils.getMetadata(requireContext(), mSongList.get(musicId).source_uri);
+        }
+        Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId).source_uri);
         AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(mSongList.get(musicId).title)
                 .setMessage(

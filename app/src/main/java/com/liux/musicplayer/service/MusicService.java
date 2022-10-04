@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -25,13 +26,17 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.interfaces.MusicServiceCallback;
 import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.UploadDownloadUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +84,16 @@ public class MusicService extends Service {
     private MusicServiceCallback musicServiceCallback;
     private DeskLyricCallback deskLyricCallback;
     private TimingThread timingThread;
+
+    private LyricUtils lyric = null;
+    private MusicUtils.Metadata metadata = null;
+    private Bitmap albumImage = null;
+
+    public boolean isWebPlayMode() {
+        return webPlayMode;
+    }
+
+    private boolean webPlayMode;
 
     public boolean isPlaying() {
         return mediaPlayer.isPlaying();
@@ -170,12 +185,12 @@ public class MusicService extends Service {
         isAppLyric = appLyric;
     }
 
-    public void pause() {
+    private void pause() {
         mediaPlayer.pause();
         updateNotificationShow(getNowId());
     }
 
-    public void start() {
+    private void start() {
         if (prepared)
             mediaPlayer.start();
         updateNotificationShow(getNowId());
@@ -183,6 +198,8 @@ public class MusicService extends Service {
 
     @Override
     public void onCreate() {
+        lyric = new LyricUtils(this);
+        metadata = new MusicUtils.Metadata();
         initializePlayer();
         initMemberData();
         initRemoteViews();
@@ -198,7 +215,13 @@ public class MusicService extends Service {
         isDesktopLyric = prefs.getBoolean("isShowLyric", false);
         nowId = Integer.parseInt(prefs.getString("nowId", "0"));
         playOrder = Integer.parseInt(prefs.getString("playOrder", "0"));
+        webPlayMode = prefs.getBoolean("isUseWebPlayList", false);
         readPlayList();
+        if (!webPlayMode) {
+            lyric.LoadLyric(songList.get(nowId));
+            albumImage = MusicUtils.getAlbumImage(this, songList.get(nowId).source_uri);
+            metadata = MusicUtils.getMetadata(this, songList.get(nowId).source_uri);
+        }
         setPlayOrder(playOrder);
     }
 
@@ -295,7 +318,7 @@ public class MusicService extends Service {
 
     private void updateNotificationShow(int position) {
         //封面专辑
-        Bitmap bitmap = MusicUtils.getAlbumImage(this, songList.get(position));
+        Bitmap bitmap = albumImage;
         if (bitmap == null) {
             remoteViewsSmall.setImageViewResource(R.id.iv_album_cover, R.drawable.ic_baseline_music_note_24);
             remoteViewsLarge.setImageViewResource(R.id.iv_album_cover, R.drawable.ic_baseline_music_note_24);
@@ -321,15 +344,19 @@ public class MusicService extends Service {
         }
         //发送通知
         //播放状态判断
-        if (mediaPlayer.isPlaying()) {
+        if (isPlaying()) {
             remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
             remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_pause_24);
             startForeground(NOTIFICATION_ID, notification);
-        } else {
+        } else if (isPrepared() || !isEnabled()) {
             remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
             remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_play_arrow_24);
             startForeground(NOTIFICATION_ID, notification);
             stopForeground(false);
+        } else {
+            remoteViewsSmall.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_arrow_downward_24);
+            remoteViewsLarge.setImageViewResource(R.id.btn_notification_play, R.drawable.ic_round_arrow_downward_24);
+            startForeground(NOTIFICATION_ID, notification);
         }
     }
 
@@ -419,23 +446,28 @@ public class MusicService extends Service {
     }
 
     public void setPlayOrPause(boolean isPlay) {
+        if (enabled && !prepared)
+            return;
         if (isPlay) {
             if (!isEnabled()) {
                 setEnabled(true);
                 playThisNow(getNowId());
             } else if (isPrepared()) {
                 start();
+                if (musicServiceCallback != null)
+                    musicServiceCallback.updatePlayStateThis();
+                if (deskLyricCallback != null)
+                    deskLyricCallback.updatePlayState();
             } else {
                 playThisNow(getNowId());
-                pause();
             }
         } else {
             pause();
+            if (musicServiceCallback != null)
+                musicServiceCallback.updatePlayStateThis();
+            if (deskLyricCallback != null)
+                deskLyricCallback.updatePlayState();
         }
-        if (musicServiceCallback != null)
-            musicServiceCallback.updatePlayStateThis();
-        if (deskLyricCallback != null)
-            deskLyricCallback.updatePlayState();
     }
 
     /**
@@ -453,6 +485,8 @@ public class MusicService extends Service {
     }
 
     public void playPrevOrNext(boolean isNext) {
+        Log.e(TAG, "enabled:" + enabled + " prepared:" + prepared);
+        if (enabled && !prepared) return;
         int maxId = getMaxID();
         int nowId = getNowId();
         int order = getPlayOrder();
@@ -509,6 +543,18 @@ public class MusicService extends Service {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
+                prepared = true;
+                mediaPlayer.start();
+                if (musicServiceCallback != null)
+                    musicServiceCallback.nowPlayingThis(getNowId());
+                if (musicServiceCallback != null)
+                    musicServiceCallback.updatePlayStateThis();
+                if (deskLyricCallback != null)
+                    deskLyricCallback.updatePlayState();
+                updateNotificationShow(nowId);
+                SharedPreferences.Editor spEditor = prefs.edit();
+                spEditor.putString("nowId", String.valueOf(nowId));
+                spEditor.apply();
             }
         });
         //音频播放完成的监听器
@@ -516,9 +562,11 @@ public class MusicService extends Service {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 //把所有的都回归到0
-                prepared = false;
-                if (enabled)
-                    playPrevOrNext(true);
+                if (prepared) {
+                    prepared = false;
+                    if (enabled)
+                        playPrevOrNext(true);
+                }
             }
         });
     }
@@ -531,7 +579,11 @@ public class MusicService extends Service {
         String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
                 "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
-        String playListJson = prefs.getString("playList", defaultPlayList);
+        String playListJson;
+        if (!webPlayMode)
+            playListJson = prefs.getString("playList", defaultPlayList);
+        else
+            playListJson = prefs.getString("webPlayList", defaultPlayList);
         Gson gson = new Gson();
         Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
         }.getType();
@@ -550,13 +602,15 @@ public class MusicService extends Service {
     }
 
     private void savePlayList() {
-        Gson gson = new Gson();
-        Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
-        }.getType();
-        String playListJson = gson.toJson(songList, playListType);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("playList", playListJson);
-        editor.apply();
+        if (!webPlayMode) {
+            Gson gson = new Gson();
+            Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+            }.getType();
+            String playListJson = gson.toJson(songList, playListType);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("playList", playListJson);
+            editor.apply();
+        }
     }
 
     //添加音乐
@@ -571,7 +625,7 @@ public class MusicService extends Service {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;
         newSong.size = new File(newSong.source_uri.replace("file:///storage/emulated/0", "/sdcard")).length();
-        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(this, newSong);
+        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(this, newSong.source_uri);
         if (newMetadata.isValid) {
             newSong.title = newMetadata.title;
             newSong.artist = newMetadata.artist;
@@ -633,13 +687,19 @@ public class MusicService extends Service {
         spEditor.apply();
     }
 
-    public void playThisNow(int musicId) {
+    public void playThisFromList(int musicId) {
+        Log.e(TAG, "enabled:" + enabled + " prepared:" + prepared);
+        if (enabled && !prepared) return;
+        else playThisNow(musicId);
+    }
+
+    private void playThisNow(int musicId) {
         switch (playThis(musicId)) {
             case 0:
                 if (playOrder == REPEAT_ONE)
                     mediaPlayer.setLooping(true);
                 if (musicServiceCallback != null)
-                    musicServiceCallback.nowPlayingThis(musicId);
+                    musicServiceCallback.nowLoadingThis(musicId);
                 if (deskLyricCallback != null)
                     deskLyricCallback.updatePlayState(musicId);
                 break;
@@ -656,38 +716,102 @@ public class MusicService extends Service {
     }
 
     private int playThis(int id) {
+        prepared = false;
+        mediaPlayer.reset();
         int reId;
         nowId = id;
         if (nowId > getMaxID()) {
             reId = -1;
         } else {
-            reId = prepareToPlayThis(Uri.parse(songList.get(nowId).source_uri));
-            if (reId == 0 && prepared)
-                mediaPlayer.start();
+            lyric.LoadLyric(songList.get(id));
+            if (FileUtils.isFileExists(songList.get(id).source_uri)) {
+                albumImage = MusicUtils.getAlbumImage(this, songList.get(id).source_uri);
+                metadata = MusicUtils.getMetadata(this, songList.get(id).source_uri);
+                prepare(songList.get(id).source_uri);
+                reId = 0;
+            } else if (songList.get(id).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
+                albumImage = null;
+                metadata = MusicUtils.getMetadataFromSong(songList.get(id));
+                UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(this);
+                uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
+                    @Override
+                    public void onFileDownloadCompleted(ArrayList<String> array) {
+                        if (!array.get(0).equals(songList.get(id).source_uri))
+                            return;
+                        prepare(array.get(1));
+                    }
+
+                    @Override
+                    public void onFileDownloading(ArrayList<String> array) {
+                        if (!array.get(0).equals(songList.get(id).source_uri))
+                            return;
+                        //Log.e("Downloading",array.get(1));
+                    }
+
+                    @Override
+                    public void onFileDownloadError(ArrayList<String> array) {
+                        if (!array.get(0).equals(songList.get(id).source_uri))
+                            return;
+                        if (musicServiceCallback != null)
+                            musicServiceCallback.playingErrorThis(nowId);
+                        if (deskLyricCallback != null)
+                            deskLyricCallback.updatePlayState(nowId);
+                        setEnabled(false);
+                    }
+                });
+                uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".tmp", songList.get(id).source_uri);
+                reId = 0;
+            } else {
+                reId = -1;
+            }
         }
-        SharedPreferences.Editor spEditor = prefs.edit();
-        spEditor.putString("nowId", String.valueOf(nowId));
-        spEditor.apply();
         return reId;
     }
 
-    private int prepareToPlayThis(Uri musicPath) {
-        if (FileUtils.isFileExists(musicPath.getPath())) {
-            try {
-                mediaPlayer.reset();
-                mediaPlayer.setDataSource(this, musicPath);
-                mediaPlayer.prepare();
-                prepared = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                mediaPlayer.reset();
-                return -1;
-            }
-        } else {
-            //Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
-            return -1;
+    private void prepare(String path) {
+        try {
+            Log.e(TAG, path);
+            albumImage = MusicUtils.getAlbumImage(this, path);
+            metadata = MusicUtils.getMetadata(this, path);
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(this, Uri.parse(path));
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mediaPlayer.reset();
+            if (musicServiceCallback != null)
+                musicServiceCallback.playingErrorThis(nowId);
+            if (deskLyricCallback != null)
+                deskLyricCallback.updatePlayState(nowId);
+            setEnabled(false);
         }
+    }
+
+    private int prepareToPlayThis(Uri musicPath) {
+        //if (FileUtils.isFileExists(musicPath.getPath())) {
+
+        //} else {
+        //Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
+        //return -1;
+        //}
         return 0;
+    }
+
+    public LyricUtils getLyric() {
+        return lyric;
+    }
+
+    public void setWebPlayMode(boolean webPlayMode) {
+        this.webPlayMode = webPlayMode;
+        readPlayList();
+    }
+
+    public MusicUtils.Metadata getMetadata() {
+        return metadata;
+    }
+
+    public Bitmap getAlbumImage() {
+        return albumImage;
     }
 
     public class MusicReceiver extends BroadcastReceiver {
@@ -741,6 +865,7 @@ public class MusicService extends Service {
 
     private class TimingThread extends Thread {
         public boolean isTiming = false;
+
         @Override
         public void run() {
             super.run();

@@ -1,9 +1,13 @@
 package com.liux.musicplayer.ui.home;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +29,12 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 
 public class HomeFragment extends Fragment {
 
-    public MusicUtils.Lyric lyric;
+    public LyricUtils lyric;
     public ListView lyricList;
     private TextView songTitle;
     private TextView songArtist;
@@ -38,10 +43,16 @@ public class HomeFragment extends Fragment {
     private RelativeLayout songLyricLayout;
     private View mView;
     private LyricAdapter adapter;
+    private LyricThread lyricThread;
     private boolean isSetLyricPosition = true;
     private final SparseBooleanArray nowLyricMap = new SparseBooleanArray();//用来存放高亮歌词的选中状态，true为选中,false为没有选中
     private int lastLyricId;
     private boolean lastLyricEnabled = false;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -115,7 +126,7 @@ public class HomeFragment extends Fragment {
             lyricList = mView.findViewById(R.id.lyricList);
             lyricList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             //从文件中读取metadata数据
-            MusicUtils.Metadata metadata = MusicUtils.getMetadata(getContext(), song);
+            MusicUtils.Metadata metadata = ((MainActivity) requireActivity()).getMusicService().getMetadata();
             if (metadata.isValid) { //如果metadata有效标志为真则使用metadata的数据
                 songTitle.setText((metadata.title == null) ? song.title : metadata.title);
                 songArtist.setText((metadata.artist == null) ? song.artist : metadata.artist);
@@ -137,7 +148,7 @@ public class HomeFragment extends Fragment {
                         getString(R.string.title_lyric) + song.lyric_uri);
             }
             //读取专辑图片
-            Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), song);
+            Bitmap bitmap = ((MainActivity) requireActivity()).getMusicService().getAlbumImage();
             if (bitmap == null) {   //获取图片失败，使用默认图片
                 albumImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
             } else {    //成功
@@ -166,12 +177,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        stopLyric();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         lastLyricId = -1;
+        if (((MainActivity) getActivity()).getMusicService().isTiming())
+            startLyric();
     }
 
     //根据当前歌词位置设置歌词高亮居中
@@ -179,7 +193,8 @@ public class HomeFragment extends Fragment {
         if (lyricPosition != lastLyricId) { //判断高亮歌词是否需要改变
             nowLyricMap.clear();    //清除之前数据
             nowLyricMap.put(lyricPosition, true);   //设置当前歌词为选中
-            adapter.notifyDataSetChanged(); //通知adapter刷新列表数据
+            if (adapter != null)
+                adapter.notifyDataSetChanged(); //通知adapter刷新列表数据
             if (isSetLyricPosition) {   //检查歌词居中标志位
                 try {
                     //设置歌词居中
@@ -194,8 +209,102 @@ public class HomeFragment extends Fragment {
 
     public void initLyric(MusicUtils.Song song) {
         //刷新歌词
-        lyric = new MusicUtils.Lyric(Uri.parse(song.lyric_uri));    //从歌词文件中读取歌词
-        adapter = new LyricAdapter(this, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
+        lastLyricId = -1;
+        lyric = ((MainActivity) getActivity()).getMusicService().getLyric();    //从歌词文件中读取歌词
+        HomeFragment homeFragment = this;
+        adapter = new LyricAdapter(homeFragment, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
         lyricList.setAdapter(adapter);  //将adapter与ListView绑定
+        adapter.notifyDataSetChanged();
+        lyric.setOnLyricLoadCallback(new LyricUtils.OnLyricLoadCallback() {
+            @Override
+            public void LyricLoadCompleted() {
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
+
+    private class LyricThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            int index = 0;
+            while (true) {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
+                try {
+                    if (((MainActivity) getActivity()).getMusicService().isPlaying() && ((MainActivity) getActivity()).getMusicService().getLyric().isCompleted) {
+                        int currentLyricId = lyric.getNowLyric(((MainActivity) getActivity()).getMusicService().getCurrentPosition());
+                        if (currentLyricId >= 0) {
+                            Message msg = new Message();
+                            msg.what = 100;  //消息发送的标志
+                            msg.obj = currentLyricId; //消息发送的内容如：  Object String 类 int
+                            LyricHandler.sendMessage(msg);
+                        }
+                    }
+                    Thread.sleep(10);
+                } catch (InterruptedException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    public void startLyric() {
+        if (lyricThread == null) {
+            lyricThread = new LyricThread();
+            lyricThread.start();
+        } else if (lyricThread.isPaused()) {
+            lyricThread.resumeThread();
+        }
+    }
+
+    public void stopLyric() {
+        if (lyricThread != null && !lyricThread.isPaused())
+            lyricThread.pauseThread();
+    }
+
+    private final Handler LyricHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 100) {
+                setLyricPosition((int) msg.obj);
+            }
+        }
+    };
+
+
 }

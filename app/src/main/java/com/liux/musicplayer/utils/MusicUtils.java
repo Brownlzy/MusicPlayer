@@ -1,5 +1,7 @@
 package com.liux.musicplayer.utils;
 
+import static com.blankj.utilcode.util.ThreadUtils.runOnUiThread;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,20 +10,31 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.TimeUtils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MusicUtils {
     public static class Metadata {
@@ -37,129 +50,19 @@ public class MusicUtils {
     }
 
     public static class Song {
-        public String title;
-        public String artist;
-        public String album;
-        public String source_uri;
-        public String lyric_uri;
-        public String duration;
-        public Long size;
+        public String title = "null";
+        public String artist = "null";
+        public String album = "null";
+        public String source_uri = "null";
+        public String lyric_uri = "null";
+        public String duration = "0";
+        public Long size = 0L;
     }
 
-    public static class Lyric {
-        public List<String> lyricList;
-        public List<String> startTime;
-        public List<Long> startMillionTime;
-
-        public Lyric(Uri lyricUri) {
-            lyricList = new ArrayList<>();
-            startTime = new ArrayList<>();
-            startMillionTime = new ArrayList<>();
-            try {
-                File lyricFile = FileUtils.getFileByPath(lyricUri.toString());
-                InputStream inStream = null;
-                inStream = new FileInputStream(lyricFile);
-                InputStreamReader inputReader = new InputStreamReader(inStream);
-                BufferedReader buffReader = new BufferedReader(inputReader);
-                String line;
-                //分行读取
-                while ((line = buffReader.readLine()) != null) {
-                    splitLyricFromLine(line);
-                    //Log.e("Lyric",line);
-                }
-                inStream.close();
-                getStartMillionTime();
-            } catch (FileNotFoundException e) {
-                //e.printStackTrace();
-                Log.e("MusicUtils", "歌词文件不存在");
-                lyricList.add("歌词文件不存在");
-                startTime.add("[00:00.00]");
-                startMillionTime.add((long) 0);
-            } catch (IOException e) {
-                //e.printStackTrace();
-            }
-        }
-
-        private void splitLyricFromLine(String line) {
-            String lineLyric;
-            try {
-                lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]]")[1];
-            } catch (ArrayIndexOutOfBoundsException e) {
-                try {
-                    lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]]")[1];
-                } catch (ArrayIndexOutOfBoundsException e2) {
-                    try {
-                        lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]]")[1];
-                    } catch (ArrayIndexOutOfBoundsException e3) {
-                        try {
-                            lineLyric = line.split("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]]")[1];
-                        } catch (ArrayIndexOutOfBoundsException e4) {
-                            return;
-                        }
-                    }
-                }
-            }
-            if (lineLyric != null) {
-                int lyricTextStartIndex = line.indexOf(lineLyric);
-                if (lyricTextStartIndex == -1) lyricTextStartIndex = 0;
-                int sameTimeId = startTime.indexOf(line.substring(0, lyricTextStartIndex));
-                if (sameTimeId == -1) {
-                    lyricList.add(lineLyric);
-                    startTime.add(line.substring(0, lyricTextStartIndex));
-                } else {//有相同的时间
-                    lyricList.set(sameTimeId, lyricList.get(sameTimeId) + "\n" + lineLyric);
-                }
-            }
-        }
-
-        private void getStartMillionTime() {
-            for (int i = 0; i < startTime.size(); i++) {
-                startMillionTime.add(formatTime(startTime.get(i)));
-            }
-        }
-
-        private long formatTime(String stringTime) {
-            //[00:00.00]
-            long mSeconds = 0;
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9]]"))
-                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
-                        Long.parseLong(stringTime.substring(4, 6)) * 1000 +
-                        Long.parseLong(stringTime.substring(7, 9)) * 10;
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]\\.[0-9][0-9][0-9]]"))
-                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
-                        Long.parseLong(stringTime.substring(4, 6)) * 1000 +
-                        Long.parseLong(stringTime.substring(7, 10));
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]]"))
-                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
-                        Long.parseLong(stringTime.substring(4, 6)) * 1000;
-            if (stringTime.matches("\\[[0-9][0-9]:[0-9][0-9]:[0-9][0-9]]"))
-                mSeconds = Long.parseLong(stringTime.substring(1, 3)) * 60000 +
-                        Long.parseLong(stringTime.substring(4, 6)) * 1000 +
-                        Long.parseLong(stringTime.substring(7, 9)) * 10;
-            return mSeconds;
-        }
-
-        public int size() {
-            return lyricList.size();
-        }
-
-        public int getNowLyric(int currentPosition) {
-            if (lyricList.size() > 0) {
-                for (int i = 0; i < lyricList.size(); i++) {
-                    if (startMillionTime.get(i) > currentPosition)
-                        return (i - 1 >= 0) ? i - 1 : i;
-                }
-                return lyricList.size() - 1;
-            } else {
-                return -1;
-            }
-        }
-    }
-
-    public static Bitmap getAlbumImage(Context context, Song song) {
+    public static Bitmap getAlbumImage(Context context, String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            mediaMetadataRetriever.setDataSource(song.source_uri.replace("file:///storage/emulated/0", "/sdcard"));
+            mediaMetadataRetriever.setDataSource(path);
             //获取专辑图片
             byte[] cover = mediaMetadataRetriever.getEmbeddedPicture();
             Bitmap bitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
@@ -180,10 +83,10 @@ public class MusicUtils {
         }
     }
 
-    public static Metadata getMetadata(Context context, MusicUtils.Song song) {
+    public static Metadata getMetadata(Context context, String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            mediaMetadataRetriever.setDataSource(song.source_uri.replace("file:///storage/emulated/0", "/sdcard"));
+            mediaMetadataRetriever.setDataSource(path);
             Metadata md = new Metadata();
             md.title = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             md.album = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
@@ -191,7 +94,7 @@ public class MusicUtils {
             md.duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             md.mimetype = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
             md.bitrate = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
-            md.sizeLong = song.size;
+            md.sizeLong = FileUtils.getLength(path);
             md.sizeByte = ConvertUtils.byte2FitMemorySize(md.sizeLong);
             mediaMetadataRetriever.release();
             md.isValid = true;
@@ -211,6 +114,20 @@ public class MusicUtils {
             //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
         }
         return new Metadata();
+    }
+
+    public static Metadata getMetadataFromSong(Song song) {
+        Metadata md = new Metadata();
+        md.title = song.title;
+        md.album = song.album;
+        md.artist = song.artist;
+        md.duration = song.duration;
+        md.mimetype = "null";
+        md.bitrate = "0";
+        md.sizeLong = 0L;
+        md.sizeByte = ConvertUtils.byte2FitMemorySize(md.sizeLong);
+        md.isValid = true;
+        return md;
     }
 
     public static String millis2FitTimeSpan(long t) {
@@ -269,4 +186,5 @@ public class MusicUtils {
         }
         return list;
     }
+
 }

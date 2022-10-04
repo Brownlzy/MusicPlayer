@@ -82,4 +82,5 @@
     <string name="experiment">Experiment</string>
     <string name="newAppearance">New Appearance</string>
     <string name="newAppearance_summary">Enable this option to turn on album picture background</string>
+    <string name="title_cacheList">Cache List</string>
 </resources>

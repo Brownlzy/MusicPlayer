@@ -6,4 +6,6 @@ public interface MusicServiceCallback {
     void playingErrorThis(int musicID);
 
     void updatePlayStateThis();
+
+    void nowLoadingThis(int musicId);
 }

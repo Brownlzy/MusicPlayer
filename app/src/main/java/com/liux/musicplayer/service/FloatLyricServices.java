@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.views.StrokeTextView;
 
@@ -56,7 +57,7 @@ public class FloatLyricServices extends Service {
     private boolean isSettingsBar;
     private MusicService musicService;
     private MusicConnector serviceConnection;
-    private MusicUtils.Lyric lyric;
+    private LyricUtils lyric;
     private int nowLyricId;
     private int nowTextSize;
     private int nowColorId;
@@ -70,8 +71,8 @@ public class FloatLyricServices extends Service {
             nowArtist = musicService.getPlayList().get(musicId).artist;
             updatePlayInfo(nowTitle
                     + ((nowArtist.equals("null")) ? "" : " - " + nowArtist));
-            lyric = new MusicUtils.Lyric(Uri.parse(musicService.getPlayList().get(musicId).lyric_uri));    //从歌词文件中读取歌词
-            updateLyric();
+            if (lyric.isCompleted)
+                updateLyric();
             updatePlayState();
         }
 
@@ -80,8 +81,11 @@ public class FloatLyricServices extends Service {
             if (musicService.isPlaying()) {
                 ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_float_24));
                 startLyricThread();
-            } else {
+            } else if (musicService.isPrepared()) {
                 ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_float_24));
+                stopLyricThread();
+            } else {
+                ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_float_24));
                 stopLyricThread();
             }
         }
@@ -337,7 +341,7 @@ public class FloatLyricServices extends Service {
                     onPause();
                 }
                 try {
-                    if (musicService.isPlaying()) {
+                    if (musicService.isPlaying() && lyric.isCompleted) {
                         int currentLyricId = lyric.getNowLyric(musicService.getCurrentPosition());
                         if (currentLyricId >= 0) {
                             Message msg = new Message();
@@ -378,6 +382,14 @@ public class FloatLyricServices extends Service {
             //悬浮框点击事件的处理
             initFloating();
             initLyricSettings();
+            lyric = musicService.getLyric();    //从音乐服务中歌词
+            lyric.setOnLyricLoadCallback(new LyricUtils.OnLyricLoadCallback() {
+                @Override
+                public void LyricLoadCompleted() {
+                    nowLyricId = lyric.getNowLyric(musicService.getCurrentPosition());
+                    updateLyric();
+                }
+            });
             musicService.updateDeskLyricPlayInfo();
         }
 

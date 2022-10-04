@@ -60,6 +60,17 @@
             app:title="@string/newAppearance"
             app:summary="@string/newAppearance_summary" />
 
+        <CheckBoxPreference
+            app:key="isUseWebPlayList"
+            app:enabled="true"
+            app:title="@string/isUseWebPlayList"
+            app:summary="@string/isUseWebPlayList_summary" />
+
+        <EditTextPreference
+            app:key="WebPlayListUrl"
+            app:title="@string/WebPlayListUrl"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/title_about">
@@ -86,17 +97,6 @@
             app:icon="@drawable/ic_baseline_folder_24"
             app:key="setMainFolder"
             app:title="@string/mainfolder" />
-
-        <CheckBoxPreference
-            app:key="isUseWebPlayList"
-            app:enabled="false"
-            app:title="@string/isUseWebPlayList"
-            app:summary="@string/isUseWebPlayList_summary" />
-
-        <EditTextPreference
-            app:key="WebPlayListUrl"
-            app:title="@string/WebPlayListUrl"
-            app:useSimpleSummaryProvider="true" />
 
         <CheckBoxPreference
             app:key="isMoveMusic"
@@ -126,6 +126,11 @@
         <EditTextPreference
             app:key="webPlayList"
             app:title="@string/title_webPlayList"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="cacheList"
+            app:title="@string/title_cacheList"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>

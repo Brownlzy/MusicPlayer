@@ -59,6 +59,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private EditTextPreference dPlayList;
     private EditTextPreference webPlayList;
     private EditTextPreference MainFolder;
+    private EditTextPreference cacheList;
     private Preference About;
     private Preference Close;
     private SeekBarPreference seekBarTiming;
@@ -152,9 +153,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_desk_lyric = findPreference("isShowLyric");
         switch_desk_lyric_lock = findPreference("deskLyricLock");
         MainFolder = findPreference("mainFolder");
+        cacheList = findPreference("cacheList");
         clickGotoAppDetails = findPreference("gotoAppDetails");
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
+        webPlayList = findPreference("webPlayList");
         About = findPreference("info");
         Close = findPreference("exit");
         seekBarTiming = findPreference("timing");
@@ -237,31 +240,55 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_web_playlist.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                String url = sp.getString("WebPlayListUrl", "NULL");
-                if (!RegexUtils.isURL(url)) {
-                    Toast.makeText(getContext(), "请先设置正确的URL", Toast.LENGTH_SHORT).show();
-                    return false;
-                } else {
-                    OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .get()//default
-                            .build();
-                    Call call = client.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            Log.d(TAG, "onFailure: ");
-                        }
+                if ((boolean) newValue) {
+                    SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    String url = sp.getString("WebPlayListUrl", "NULL");
+                    if (!RegexUtils.isURL(url)) {
+                        Toast.makeText(getContext(), "请先设置正确的URL", Toast.LENGTH_SHORT).show();
+                        return false;
+                    } else {
+                        OkHttpClient client = new OkHttpClient();
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .get()//default
+                                .build();
+                        Call call = client.newCall(request);
+                        call.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Log.d(TAG, "onFailure: ");
+                                requireActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(requireActivity(), "获取播放列表失败", Toast.LENGTH_SHORT).show();
+                                        switch_web_playlist.setChecked(false);
+                                    }
+                                });
+                            }
 
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            Log.d(TAG, "onResponse: " + response.body().string());
-                        }
-                    });
-                    editor.apply();
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                String result = response.body().string();
+                                int id = response.code();
+                                Log.d(TAG, "onResponse: " + result);
+                                requireActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (id == 200) {
+                                            httpResultHandle(result, 0);
+                                        } else {
+                                            Toast.makeText(requireActivity(), "获取播放列表失败:" + id, Toast.LENGTH_SHORT).show();
+                                            switch_web_playlist.setChecked(false);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        return true;
+                    }
+                } else {
+                    ((MainActivity) getActivity()).getMusicService().setWebPlayMode(false);
                     return true;
                 }
             }
@@ -393,6 +420,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 break;
             case "timing":
                 seekBarTiming.setValue(sharedPreferences.getInt("timing", 0));
+                break;
+            case "cacheList":
+                cacheList.setText(sharedPreferences.getString("cacheList", "[]"));
+                break;
+        }
+    }
+
+    public void httpResultHandle(String result, int funId) {
+        switch (funId) {
+            case 0:
+                webPlayList.setText(result);
+                ((MainActivity) getActivity()).getMusicService().setWebPlayMode(true);
+                break;
+            default:
+                break;
         }
     }
 }

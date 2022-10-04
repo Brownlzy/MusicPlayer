@@ -11,17 +11,18 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 
 public class LyricAdapter extends BaseAdapter {
 
-    MusicUtils.Lyric lyricData;
+    LyricUtils lyricData;
     private final Context mContext;
     ViewHolder holder;
     private final HomeFragment mHomeFragment;
     private final SparseBooleanArray mNowLyricMap;
 
-    public LyricAdapter(HomeFragment homeFragment, Context context, MusicUtils.Lyric lyric, SparseBooleanArray nowLyricMap) {
+    public LyricAdapter(HomeFragment homeFragment, Context context, LyricUtils lyric, SparseBooleanArray nowLyricMap) {
         lyricData = lyric;
         mContext = context;
         mHomeFragment = homeFragment;

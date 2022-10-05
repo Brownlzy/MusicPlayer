@@ -60,7 +60,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private PlaylistAdapter adapter;
     private int listPosition = -1;
     private int listPositionY = 0;
-    private List<MusicUtils.Song> mSongList = new ArrayList<>();//所有数据
+    private List<MusicUtils.Song> mSongList = null;//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
@@ -147,14 +147,15 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         initView(view);
-        initData();
-        adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
-        lvData.setAdapter(adapter);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        setNowPlaying(Integer.parseInt(prefs.getString("nowId", "0")));
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initData();
     }
 
     @Override
@@ -283,6 +284,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
+        initData();
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
     }
@@ -539,7 +541,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         setNowPlaying(((MainActivity) getActivity()).getMusicService().getNowId());
     }
 
-    private void initData() {
+    public void initData() {
         /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getActivity().getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
@@ -554,8 +556,14 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             playListJson = defaultPlayList;
             mSongList = gson.fromJson(playListJson, playListType);
         }*/
-        mSongList = ((MainActivity) requireActivity()).getMusicService().getPlayList();
-        setStateCheckedMap(false);
+        if ((MainActivity) getActivity() != null && ((MainActivity) requireActivity()).getMusicService() != null) {
+            mSongList = ((MainActivity) requireActivity()).getMusicService().getPlayList();
+            setStateCheckedMap(false);
+            adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
+            lvData.setAdapter(adapter);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            setNowPlaying(Integer.parseInt(prefs.getString("nowId", "0")));
+        }
     }
 
     /**

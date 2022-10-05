@@ -50,9 +50,9 @@ public class MusicUtils {
     }
 
     public static class Song {
-        public String title = "null";
-        public String artist = "null";
-        public String album = "null";
+        public String title;
+        public String artist;
+        public String album;
         public String source_uri = "null";
         public String lyric_uri = "null";
         public String duration = "0";
@@ -88,14 +88,14 @@ public class MusicUtils {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             mediaMetadataRetriever.setDataSource(path);
             Metadata md = new Metadata();
+            md.sizeLong = FileUtils.getLength(path);
+            md.sizeByte = ConvertUtils.byte2FitMemorySize(md.sizeLong);
             md.title = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             md.album = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
             md.artist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             md.duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             md.mimetype = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
             md.bitrate = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
-            md.sizeLong = FileUtils.getLength(path);
-            md.sizeByte = ConvertUtils.byte2FitMemorySize(md.sizeLong);
             mediaMetadataRetriever.release();
             md.isValid = true;
             return md;

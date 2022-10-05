@@ -360,13 +360,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
                     }
                 })
-                .setNeutralButton(R.string.title_debug, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.title_debug, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         findPreference("debug").setVisible(true);
                     }
                 })
-                .setNegativeButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         checkUpdate();
@@ -555,7 +555,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private boolean acquireDownload(Context context, String url) {
         Log.i(getClass().toString() + "//acquireDownload()", "Download requested");
         String fileName = url.substring(url.lastIndexOf('/') + 1);
-        File localFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName);
+        File localFile = new File(context.getExternalCacheDir(), fileName);
         if (localFile.exists()) {
             Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), localFile);
             Log.d(getClass().toString() + "//acquireDownload()", "File exists");
@@ -573,7 +573,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             request.setDescription(context.getResources().getString(R.string.notification_downloading_latest_version));
             request.setVisibleInDownloadsUi(true);
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-            File cloudFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName);
+            File cloudFile = new File(context.getExternalCacheDir(), fileName);
             request.setDestinationUri(Uri.fromFile(cloudFile));
             DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             if (downloadManager != null) {

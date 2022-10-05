@@ -5,6 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,11 +14,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -33,12 +37,14 @@ import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.interfaces.MusicServiceCallback;
+import com.liux.musicplayer.receiver.BluetoothStateReceiver;
+import com.liux.musicplayer.receiver.HeadsetPlugReceiver;
+import com.liux.musicplayer.receiver.MediaButtonReceiver;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UploadDownloadUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -46,7 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MusicService extends Service {
+public class MusicService extends Service implements MediaButtonReceiver.IKeyDownListener {
     public static final String PLAY = "play";
     public static final String PAUSE = "pause";
     public static final String PREV = "prev";
@@ -88,6 +94,12 @@ public class MusicService extends Service {
     private LyricUtils lyric = null;
     private MusicUtils.Metadata metadata = null;
     private Bitmap albumImage = null;
+    private MediaButtonReceiver mediaButtonReceiver;
+    private int[] keyTimes = new int[1];
+    private KeyTimeThread keyTimeThread;
+    private BluetoothStateReceiver mBluetoothStateReceiver;
+    private boolean waitForDevice = false;
+    private HeadsetPlugReceiver mHeadsetPlugReceiver;
 
     public boolean isWebPlayMode() {
         return webPlayMode;
@@ -205,11 +217,65 @@ public class MusicService extends Service {
         initRemoteViews();
         initNotification();
         registerMusicReceiver();
-        registerRemoteControlReceiver();
+        //registerRemoteControlReceiver();
+        registerBluetoothReceiver();
+        registerHeadsetPlugReceiver();
         updateNotificationShow(nowId);
     }
 
+    private void registerBluetoothReceiver() {
+        mBluetoothStateReceiver = new BluetoothStateReceiver();
+        mBluetoothStateReceiver.setIBluetoothStateListener(new BluetoothStateReceiver.IBluetoothStateListener() {
+            @Override
+            public void onBluetoothDeviceConnected() {
+                if (waitForDevice) {
+                    setPlayOrPause(true);
+                }
+            }
+
+            @Override
+            public void onBluetoothDeviceDisconnected() {
+                if (isPlaying()) {
+                    waitForDevice = true;
+                    setPlayOrPause(false);
+                }
+            }
+        });
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF");
+        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON");
+        registerReceiver(mBluetoothStateReceiver, intentFilter);
+    }
+
+    private void registerHeadsetPlugReceiver() {
+        mHeadsetPlugReceiver = new HeadsetPlugReceiver();
+        mHeadsetPlugReceiver.setIHeadsetPlugListener(new HeadsetPlugReceiver.IHeadsetPlugListener() {
+            @Override
+            public void onHeadsetPlugged() {
+                if (waitForDevice) {
+                    setPlayOrPause(true);
+                }
+            }
+
+            @Override
+            public void onHeadsetUnplugged() {
+                if (isPlaying()) {
+                    waitForDevice = true;
+                    setPlayOrPause(false);
+                }
+            }
+        });
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.HEADSET_PLUG");
+        registerReceiver(mHeadsetPlugReceiver, intentFilter);
+    }
+
     private void initMemberData() {
+        keyTimes[0] = 0;
+        keyTimeThread = new KeyTimeThread();
         songList = new ArrayList<>();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         isDesktopLyric = prefs.getBoolean("isShowLyric", false);
@@ -233,7 +299,9 @@ public class MusicService extends Service {
             closeNotification();
         }
         stopService(new Intent(MusicService.this, FloatLyricServices.class));
-        mMediaSession.release();
+        //mMediaSession.release();
+        unregisterReceiver(mBluetoothStateReceiver);
+        unregisterReceiver(mHeadsetPlugReceiver);
         super.onDestroy();
     }
 
@@ -285,6 +353,10 @@ public class MusicService extends Service {
     private void initializePlayer() {
         if (mediaPlayer == null) {
             mediaPlayer = new MediaPlayer();
+            mediaPlayer.reset();
+            AudioAttributes.Builder audioAttributesBuilder = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC);
+            mediaPlayer.setAudioAttributes(audioAttributesBuilder.build());
+            mediaButtonReceiver = new MediaButtonReceiver(getApplicationContext(), this);
         }
         setMediaPlayerListener();
     }
@@ -449,6 +521,7 @@ public class MusicService extends Service {
         if (enabled && !prepared)
             return;
         if (isPlay) {
+            waitForDevice = false;
             if (!isEnabled()) {
                 setEnabled(true);
                 playThisNow(getNowId());
@@ -563,9 +636,10 @@ public class MusicService extends Service {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 //把所有的都回归到0
                 if (prepared) {
-                    prepared = false;
                     if (enabled)
                         playPrevOrNext(true);
+                    else
+                        prepared = false;
                 }
             }
         });
@@ -624,7 +698,6 @@ public class MusicService extends Service {
     public void addMusic(String path) {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;
-        newSong.size = new File(newSong.source_uri.replace("file:///storage/emulated/0", "/sdcard")).length();
         MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(this, newSong.source_uri);
         if (newMetadata.isValid) {
             newSong.title = newMetadata.title;
@@ -632,6 +705,7 @@ public class MusicService extends Service {
             newSong.album = newMetadata.album;
             newSong.duration = newMetadata.duration;
         }
+        newSong.size = newMetadata.sizeLong;
         if (newSong.album == null) newSong.album = "null";
         if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
             if (newSong.title == null)
@@ -813,6 +887,67 @@ public class MusicService extends Service {
     public Bitmap getAlbumImage() {
         return albumImage;
     }
+
+    @Override
+    public void onKeyDown(int keyAction) {
+        switch (keyAction) {
+            case MediaButtonReceiver.KeyActions.PLAY_ACTION:
+                Log.d(TAG, "播放...");
+                setPlayOrPause(true);
+                break;
+            case MediaButtonReceiver.KeyActions.PAUSE_ACTION:
+                Log.d(TAG, "暂停...");
+                setPlayOrPause(false);
+                break;
+            case MediaButtonReceiver.KeyActions.PREV_ACTION:
+                Log.d(TAG, "上一首...");
+                playPrevOrNext(false);
+                break;
+            case MediaButtonReceiver.KeyActions.NEXT_ACTION:
+                Log.d(TAG, "下一首...");
+                playPrevOrNext(true);
+                break;
+            case MediaButtonReceiver.KeyActions.KEYCODE_HEADSETHOOK:
+                //Log.e(TAG, "keytimes:" + keyTimes[0]);
+                if (keyTimes[0] != 0)
+                    keyTimeThread.interrupt();
+                keyTimeThread = new KeyTimeThread();
+                keyTimeThread.start();
+                if (keyTimes[0] >= 4)
+                    keyTimes[0] = 0;
+                else
+                    keyTimes[0]++;
+                break;
+        }
+    }
+
+    private class KeyTimeThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(500);
+                Log.e(TAG, "keytimes:" + keyTimes[0]);
+                if (keyTimes[0] == 2)
+                    keyHandler.sendEmptyMessage(1);
+                else if (keyTimes[0] == 4)
+                    keyHandler.sendEmptyMessage(2);
+                keyTimes[0] = 0;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Handler keyHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                setPlayOrPause(!isPlaying());
+            } else if (msg.what == 2) {
+                playPrevOrNext(true);
+            }
+        }
+    };
 
     public class MusicReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";

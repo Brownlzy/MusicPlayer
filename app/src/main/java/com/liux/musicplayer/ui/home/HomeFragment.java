@@ -183,9 +183,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        lastLyricId = -1;
-        if (((MainActivity) getActivity()).getMusicService().isTiming())
-            startLyric();
+        //lastLyricId = -1;
+        startLyric();
     }
 
     //根据当前歌词位置设置歌词高亮居中
@@ -275,12 +274,13 @@ public class HomeFragment extends Fragment {
                         }
                     }
                     Thread.sleep(10);
-                } catch (InterruptedException | NullPointerException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (NullPointerException e) {
+                    stopLyric();
                 }
             }
         }
-
     }
 
     public void startLyric() {

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 public class StrokeTextView extends AppCompatTextView {
-    private AlwaysFocusTextView borderText;///用于描边的TextView
+    private AppCompatTextView borderText;///用于描边的TextView
     TextPaint tp1; //borderText的Paint
 
     private int mStrokeColor = Color.DKGRAY;
@@ -22,24 +22,23 @@ public class StrokeTextView extends AppCompatTextView {
 
     public StrokeTextView(Context context) {
         super(context);
-        borderText = new AlwaysFocusTextView(context);
+        borderText = new AppCompatTextView(context);
         init();
     }
 
     public StrokeTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        borderText = new AlwaysFocusTextView(context, attrs);
+        borderText = new AppCompatTextView(context, attrs);
         init();
     }
 
     public StrokeTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        borderText = new AlwaysFocusTextView(context, attrs, defStyleAttr);
+        borderText = new AppCompatTextView(context, attrs, defStyleAttr);
         init();
     }
 
     public void init() {
-        borderText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         borderText.setTextColor(this.mStrokeColor);  //设置描边颜色
         borderText.setGravity(getGravity());
         tp1 = borderText.getPaint();
@@ -116,28 +115,4 @@ public class StrokeTextView extends AppCompatTextView {
         }
     }
 
-    @Override
-    public boolean isFocused() {
-        return true;
-    }
-
-    private static class AlwaysFocusTextView extends AppCompatTextView {
-
-        public AlwaysFocusTextView(Context context) {
-            super(context);
-        }
-
-        public AlwaysFocusTextView(Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-        }
-
-        public AlwaysFocusTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-        }
-
-        @Override
-        public boolean isFocused() {
-            return true;
-        }
-    }
 }

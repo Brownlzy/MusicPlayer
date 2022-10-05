@@ -182,6 +182,8 @@ public class MainActivity extends FragmentActivity {
             Log.e("MusicConnector", "musicService" + musicService);
             musicService.setMusicServiceCallback(musicServiceCallback);
             initMainActivity();
+            if (viewPager.getCurrentItem() == 1)
+                playlistFragment.initData();
         }
 
         //不成功绑定时调用
@@ -365,7 +367,7 @@ public class MainActivity extends FragmentActivity {
         if (musicService != null)
             return musicService;
         else
-            throw new NullPointerException();
+            return null;
     }
 
     public void setPlayBarTitle(int musicId) {
@@ -668,8 +670,10 @@ public class MainActivity extends FragmentActivity {
             switch (position) {
                 case 0:
                 default:
+                    homeFragment = new HomeFragment();
                     return homeFragment;
                 case 1:
+                    playlistFragment = new PlaylistFragment();
                     return playlistFragment;
                 case 2:
                     settingsFragment = new SettingsFragment();

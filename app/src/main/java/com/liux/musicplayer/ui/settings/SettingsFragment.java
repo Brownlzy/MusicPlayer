@@ -5,15 +5,20 @@ import static com.liux.musicplayer.utils.UriTransform.getPath;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AppOpsManager;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.util.Log;
@@ -26,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -34,11 +40,20 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
+import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.RegexUtils;
+import com.blankj.utilcode.util.TimeUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.UploadDownloadUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -351,8 +366,101 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                         findPreference("debug").setVisible(true);
                     }
                 })
+                .setNegativeButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkUpdate();
+                    }
+                })
                 .create();
         alertInfoDialog.show();
+    }
+
+    private void checkUpdate() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/updateinfo.json")
+                .get()//default
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: ");
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(requireActivity(), "获取更新信息失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                int id = response.code();
+                Log.d(TAG, "onResponse: " + result);
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (id == 200) {
+                            updateHandle(result);
+                        } else {
+                            Toast.makeText(requireActivity(), "获取更新信息失败:" + id, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+
+        });
+    }
+
+    static class UpdateInfo {
+        String lastVersionName;
+        int lastVersionCode;
+        String filename;
+        String size;
+        String changLog;
+    }
+
+    private void updateHandle(String result) {
+        int versionCode = 0;
+        try {
+            versionCode = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        Gson gson = new Gson();
+        UpdateInfo updateInfo = gson.fromJson(result, UpdateInfo.class);
+
+        if (updateInfo == null || versionCode == 0)
+            Toast.makeText(requireActivity(), "获取更新信息失败:" + versionCode, Toast.LENGTH_SHORT).show();
+        else if (updateInfo.lastVersionCode > versionCode) {
+            AlertDialog alertInfoDialog = null;
+            alertInfoDialog = new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.title_update)
+                    .setMessage(getString(R.string.title_lastVersion) + updateInfo.lastVersionName + "\n"
+                            + getString(R.string.title_size) + updateInfo.size + "\n"
+                            + getString(R.string.title_changlog) + "\n"
+                            + updateInfo.changLog.replace("\\n", "\n"))
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(requireActivity(), "安装包下载中", Toast.LENGTH_SHORT).show();
+                            acquireDownload(requireActivity(), "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/" + updateInfo.filename);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .create();
+            alertInfoDialog.show();
+        } else {
+            Toast.makeText(requireActivity(), "当前已是最新版", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //检查权限是否获取成功
@@ -436,5 +544,69 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             default:
                 break;
         }
+    }
+
+    /**
+     * 调用系统下载器下载文件
+     *
+     * @param context ()
+     * @return boolean 是否成功调用系统下载
+     */
+    private boolean acquireDownload(Context context, String url) {
+        Log.i(getClass().toString() + "//acquireDownload()", "Download requested");
+        String fileName = url.substring(url.lastIndexOf('/') + 1);
+        File localFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName);
+        if (localFile.exists()) {
+            Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), localFile);
+            Log.d(getClass().toString() + "//acquireDownload()", "File exists");
+            Log.d(getClass().toString() + "//acquireDownload()", uri.toString());
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(uri, "application/vnd.android.package-archive");
+            context.startActivity(intent);
+            return true;
+        } else {
+            Log.d(getClass().toString() + "//acquireDownload()", "Download file");
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            request.setTitle(context.getResources().getString(R.string.app_name));
+            request.setDescription(context.getResources().getString(R.string.notification_downloading_latest_version));
+            request.setVisibleInDownloadsUi(true);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+            File cloudFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName);
+            request.setDestinationUri(Uri.fromFile(cloudFile));
+            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            if (downloadManager != null) {
+                Long requestID = downloadManager.enqueue(request);
+                context.registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        DownloadManager.Query query = new DownloadManager.Query();
+                        query.setFilterById(requestID);
+                        Cursor cursor = downloadManager.query(query);
+                        if (cursor.moveToFirst()) {
+                            int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                            if (DownloadManager.STATUS_SUCCESSFUL == cursor.getInt(columnIndex)) {
+                                int columnIndexUri = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+                                String downloadFileName = cursor.getString(columnIndexUri);
+                                if (downloadFileName != null) {
+                                    downloadFileName = downloadFileName.substring(downloadFileName.lastIndexOf('/') + 1);
+                                    File downloadFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), downloadFileName);
+                                    Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), downloadFile);
+                                    Log.i(getClass().toString() + "//acquireDownload()", uri.toString());
+                                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                    installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    installIntent.setDataAndType(uri, "application/vnd.android.package-archive");
+                                    context.startActivity(installIntent);
+                                }
+                            }
+                        }
+                    }
+                }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                return true;
+            }
+        }
+        return false;
     }
 }

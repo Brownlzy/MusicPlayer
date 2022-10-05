@@ -84,4 +84,11 @@
     <string name="newAppearance">启用新外观</string>
     <string name="newAppearance_summary">启用这个选项开启专辑图片背景</string>
     <string name="title_cacheList">缓存列表</string>
+    <string name="title_checkUpdate">检查更新</string>
+    <string name="title_update">软件更新</string>
+    <string name="title_lastVersion">最新版本：</string>
+    <string name="title_changlog">更新日志：</string>
+    <string name="update">更新</string>
+    <string name="title_size">安装包大小：</string>
+    <string name="notification_downloading_latest_version">正在下载最新版</string>
 </resources>

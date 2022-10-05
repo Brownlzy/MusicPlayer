@@ -76,12 +76,12 @@
     <PreferenceCategory app:title="@string/title_about">
 
         <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
+        <Preference
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
-        <Preference
-            app:key="gotoAppDetails"
-            app:title="@string/gotoAppDetails" />
         <Preference
             app:icon="@drawable/ic_round_exit_to_app_24"
             app:key="exit"
@@ -92,21 +92,6 @@
     <PreferenceCategory
         app:key="debug"
         app:title="@string/title_debug">
-
-        <Preference
-            app:icon="@drawable/ic_baseline_folder_24"
-            app:key="setMainFolder"
-            app:title="@string/mainfolder" />
-
-        <CheckBoxPreference
-            app:key="isMoveMusic"
-            app:title="@string/isMoveMusic"
-            app:summary="@string/isMoveMusic_summary" />
-
-        <EditTextPreference
-            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
-            app:key="mainFolder"
-            app:title="@string/mainfolder" />
 
         <EditTextPreference
             app:key="nowId"
@@ -132,6 +117,21 @@
             app:key="cacheList"
             app:title="@string/title_cacheList"
             app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:icon="@drawable/ic_baseline_folder_24"
+            app:key="setMainFolder"
+            app:title="@string/mainfolder" />
+
+        <CheckBoxPreference
+            app:key="isMoveMusic"
+            app:title="@string/isMoveMusic"
+            app:summary="@string/isMoveMusic_summary" />
+
+        <EditTextPreference
+            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
+            app:key="mainFolder"
+            app:title="@string/mainfolder" />
 
     </PreferenceCategory>
 

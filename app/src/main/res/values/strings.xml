@@ -83,4 +83,11 @@
     <string name="newAppearance">New Appearance</string>
     <string name="newAppearance_summary">Enable this option to turn on album picture background</string>
     <string name="title_cacheList">Cache List</string>
+    <string name="title_checkUpdate">CheckUpdate</string>
+    <string name="title_update">Software Update</string>
+    <string name="title_lastVersion">"Last Version: "</string>
+    <string name="title_changlog">Chang Log: </string>
+    <string name="update">Update</string>
+    <string name="title_size">"Package Size: "</string>
+    <string name="notification_downloading_latest_version">Downloading Latest Version</string>
 </resources>

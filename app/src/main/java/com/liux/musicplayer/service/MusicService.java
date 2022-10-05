@@ -913,7 +913,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                     keyTimeThread.interrupt();
                 keyTimeThread = new KeyTimeThread();
                 keyTimeThread.start();
-                if (keyTimes[0] >= 4)
+                if (keyTimes[0] >= 6)
                     keyTimes[0] = 0;
                 else
                     keyTimes[0]++;
@@ -925,12 +925,14 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         @Override
         public void run() {
             try {
-                Thread.sleep(500);
-                Log.e(TAG, "keytimes:" + keyTimes[0]);
+                Thread.sleep(400);
+                //Log.e(TAG, "keytimes:" + keyTimes[0]);
                 if (keyTimes[0] == 2)
                     keyHandler.sendEmptyMessage(1);
                 else if (keyTimes[0] == 4)
                     keyHandler.sendEmptyMessage(2);
+                else if (keyTimes[0] == 6)
+                    keyHandler.sendEmptyMessage(3);
                 keyTimes[0] = 0;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -945,6 +947,8 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 setPlayOrPause(!isPlaying());
             } else if (msg.what == 2) {
                 playPrevOrNext(true);
+            } else if (msg.what == 3) {
+                playPrevOrNext(false);
             }
         }
     };

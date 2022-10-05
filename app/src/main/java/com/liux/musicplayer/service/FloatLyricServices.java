@@ -81,7 +81,7 @@ public class FloatLyricServices extends Service {
             if (musicService.isPlaying()) {
                 ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_float_24));
                 startLyricThread();
-            } else if (musicService.isEnabled()) {
+            } else if (!musicService.isPrepared()) {
                 ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_float_24));
                 stopLyricThread();
             } else {

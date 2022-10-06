@@ -43,6 +43,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.utils.CustomDialogUtils;
 import com.liux.musicplayer.utils.DisplayUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UriTransform;
@@ -287,7 +288,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        if (getActivity() != null && isWebPlaylist != ((MainActivity) requireActivity()).getMusicService().isWebPlayMode())
+        if (getActivity() != null
+                && ((MainActivity) requireActivity()).getMusicService() != null
+                && isWebPlaylist != ((MainActivity) requireActivity()).getMusicService().isWebPlayMode())
             initData();
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
@@ -593,6 +596,21 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                         break;
                     case R.id.item_menu_moreInfo:
                         showMusicDetails(positionToMusicId(position));
+                        break;
+                    case R.id.item_menu_edit:
+                        CustomDialogUtils.showSongInfoEditDialog((MainActivity) requireActivity(), mSongList.get(positionToMusicId(position)), false,
+                                new CustomDialogUtils.AlertDialogBtnClickListener() {
+                                    @Override
+                                    public void clickPositive(MusicUtils.Song song) {
+                                        mSongList.set(positionToMusicId(position), song);
+                                        ((MainActivity) requireActivity()).getMusicService().setPlayList(mSongList);
+                                    }
+
+                                    @Override
+                                    public void clickNegative() {
+
+                                    }
+                                });
                         break;
                 }
                 return true;

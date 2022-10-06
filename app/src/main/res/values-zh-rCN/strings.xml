@@ -98,4 +98,5 @@
     <string name="lastCrash">上次崩溃</string>
     <string name="gotoSettings">前往设置页</string>
     <string name="crashMe">崩溃测试</string>
+    <string name="title_name">　标　题：</string>
 </resources>

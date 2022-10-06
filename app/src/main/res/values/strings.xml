@@ -97,4 +97,5 @@
     <string name="lastCrash">Last Crash</string>
     <string name="gotoSettings">Goto Settings</string>
     <string name="crashMe">Crash Test</string>
+    <string name="title_name">"Title: "</string>
 </resources>

@@ -137,12 +137,15 @@
                         app:layout_constraintDimensionRatio="1:1"
                         app:shapeAppearance="@style/CircleStyle" />
 
-                    <TextView
+                    <com.liux.musicplayer.views.AlwaysFocusTextView
                         android:id="@+id/musicPlaying"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:marqueeRepeatLimit="marquee_forever"
                         android:text=""
                         android:textAlignment="center"
                         android:textSize="16sp" />

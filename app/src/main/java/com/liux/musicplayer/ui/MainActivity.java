@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -45,6 +46,7 @@ import com.liux.musicplayer.service.MusicService;
 import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
+import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.MusicUtils;
 
 public class MainActivity extends FragmentActivity {
@@ -270,18 +272,26 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashHandlers crashHandlers = CrashHandlers.getInstance();
+        crashHandlers.init(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
-
+//initMainActivity();
         // Bind to LocalService
         serviceConnection = new MusicConnector();
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, MusicService.class);
         startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        CrashHandlers.checkIfExistsLastCrash(this);
     }
 
     private void initBackgroundCallBack() {

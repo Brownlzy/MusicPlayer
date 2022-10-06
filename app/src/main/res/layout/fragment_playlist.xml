@@ -11,10 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="0dp"
-        android:paddingTop="44dp"
-        android:paddingBottom="54dp"
+        android:clipToPadding="false"
         android:divider="@null"
-        android:clipToPadding="false" />
+        android:paddingTop="44dp" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/playlist_header"

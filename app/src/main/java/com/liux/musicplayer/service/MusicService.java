@@ -1,5 +1,7 @@
 package com.liux.musicplayer.service;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -298,7 +300,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             unregisterReceiver(musicReceiver);
             closeNotification();
         }
-        stopService(new Intent(MusicService.this, FloatLyricServices.class));
+        stopService(new Intent(MusicService.this, FloatLyricService.class));
         //mMediaSession.release();
         unregisterReceiver(mBluetoothStateReceiver);
         unregisterReceiver(mHeadsetPlugReceiver);
@@ -370,7 +372,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         manager.createNotificationChannel(channel);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
-                this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         //初始化通知
         notification = new NotificationCompat.Builder(this, "play_control")
@@ -450,35 +452,35 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         remoteViewsLarge = new RemoteViews(this.getPackageName(), R.layout.notification_large);
         //通知栏控制器上一首按钮广播操作
         Intent intentPrev = new Intent(PREV);
-        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, 0);
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, PendingIntent.FLAG_IMMUTABLE);
         //为prev控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
 
         //通知栏控制器播放暂停按钮广播操作  //用于接收广播时过滤意图信息
         Intent intentPlay = new Intent(PLAY);
-        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, 0);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, PendingIntent.FLAG_IMMUTABLE);
         //为play控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
 
         //通知栏控制器下一首按钮广播操作
         Intent intentNext = new Intent(NEXT);
-        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, 0);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, PendingIntent.FLAG_IMMUTABLE);
         //为next控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
 
         //通知栏控制器关闭按钮广播操作
         Intent intentClose = new Intent(CLOSE);
-        PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, 0);
+        PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, PendingIntent.FLAG_IMMUTABLE);
         //为close控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
 
         //通知栏控制器切换歌词开关操作
         Intent intentLyric = new Intent(LYRIC);
-        PendingIntent lyricPendingIntent = PendingIntent.getBroadcast(this, 0, intentLyric, 0);
+        PendingIntent lyricPendingIntent = PendingIntent.getBroadcast(this, 0, intentLyric, PendingIntent.FLAG_IMMUTABLE);
         //为lyric控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_lyric, lyricPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_lyric, lyricPendingIntent);
@@ -486,7 +488,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     public void showDesktopLyric() {
-        Intent intent = new Intent(MusicService.this, FloatLyricServices.class);
+        Intent intent = new Intent(MusicService.this, FloatLyricService.class);
         if (isDesktopLyric) {
             stopService(intent);
             isDesktopLyric = false;
@@ -504,7 +506,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     public void hideDesktopLyric(boolean isHide) {
-        Intent intent = new Intent(MusicService.this, FloatLyricServices.class);
+        Intent intent = new Intent(MusicService.this, FloatLyricService.class);
         if (isHide) {
             stopService(intent);
         } else {
@@ -596,8 +598,8 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                     if (nowId < maxId)
                         nowId += 1;
                     else {
-                        playThisNow(nowId);
                         setPlayOrPause(false);
+                        setEnabled(false);
                         return;
                     }
                 } else {
@@ -650,7 +652,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     private void readPlayList() {
-        String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"filename\":\"此为测试数据，添加音乐文件后自动删除\"," +
+        String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"memory\":\"此为测试数据，添加音乐文件后自动删除\"," +
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
                 "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
         String playListJson;

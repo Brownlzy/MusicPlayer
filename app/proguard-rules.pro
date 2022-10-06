@@ -178,7 +178,29 @@
 }
 ##---------------End: proguard configuration for Gson  ----------
 #-------------------------------------------------------------------------
+#-------------- okhttp3 start-------------
+# OkHttp3
+# https://github.com/square/okhttp
+# okhttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.squareup.okhttp.* { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
 
+# okhttp 3
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+# Okio
+-dontwarn com.squareup.**
+-dontwarn okio.**
+-keep public class org.codehaus.* { *; }
+-keep public class java.nio.* { *; }
+#----------okhttp end--------------
 #---------------------------------3.与js互相调用的类(如果没有可忽略)------------------------
 
 #-keep class 你的类所在的包.** { *; }

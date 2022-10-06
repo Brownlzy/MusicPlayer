@@ -70,6 +70,18 @@ public class LyricUtils {
         }
     }
 
+    public void LoadLyric(String s) {
+        isCompleted = false;
+        lyricList = new ArrayList<>();
+        startTime = new ArrayList<>();
+        startMillionTime = new ArrayList<>();
+        lyricList.add(s);
+        startTime.add("[00:00.00]");
+        startMillionTime.add((long) 0);
+        sendCompleted();
+        isCompleted = true;
+    }
+
     private void LyricFromFile(String path) {
         try {
             File lyricFile = FileUtils.getFileByPath(path);

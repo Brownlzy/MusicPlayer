@@ -40,6 +40,7 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.TimeUtils;
@@ -47,6 +48,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UploadDownloadUtils;
 
@@ -54,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -68,9 +71,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private CheckBoxPreference switch_web_playlist;
     private CheckBoxPreference switch_desk_lyric;
     private CheckBoxPreference switch_desk_lyric_lock;
-    private SwitchPreference switch_new_appearance;
+    private CheckBoxPreference switch_new_appearance;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
+    private Preference lastErrorLog;
+    private Preference lastCrash;
+    private Preference crashMe;
     private EditTextPreference dPlayList;
     private EditTextPreference webPlayList;
     private EditTextPreference MainFolder;
@@ -170,6 +176,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         MainFolder = findPreference("mainFolder");
         cacheList = findPreference("cacheList");
         clickGotoAppDetails = findPreference("gotoAppDetails");
+        lastCrash = findPreference("lastCrash");
+        lastErrorLog = findPreference("lastErrorLog");
+        crashMe = findPreference("crashMe");
         dPlayList = findPreference("playList");
         setMainFolder = findPreference("setMainFolder");
         webPlayList = findPreference("webPlayList");
@@ -181,6 +190,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
+        //错误日志
+        lastCrash.setSummary(String.valueOf(prefs.getBoolean("lastCrash", false)));
+        lastErrorLog.setSummary(prefs.getString("lastErrorLog", "null"));
         //选择主文件目录
         MainFolder.setSummary(prefs.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
         //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
@@ -195,6 +207,32 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     private void initPreferenceListener() {
+        crashMe.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                //TODO: delete this
+                List<Integer> aBug = new ArrayList<>();
+                aBug.get(2);
+                return false;
+            }
+        });
+        lastErrorLog.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                if (lastErrorLog.getSummary() != null && !lastErrorLog.getSummary().equals("null")) {
+                    if (FileUtils.isFileExists(requireContext().getExternalCacheDir() + "/log/" + lastErrorLog.getSummary()))
+                        CrashHandlers.shareErrorLog((String) lastErrorLog.getSummary(), requireActivity());
+                    else {
+                        Toast.makeText(requireContext(), "日志文件不存在", Toast.LENGTH_SHORT).show();
+                        lastErrorLog.setSummary("null");
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
+                        editor.putString("lastErrorLog", "null");
+                        editor.apply();
+                    }
+                }
+                return false;
+            }
+        });
         switch_new_appearance.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
@@ -532,6 +570,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "cacheList":
                 cacheList.setText(sharedPreferences.getString("cacheList", "[]"));
                 break;
+            case "lastCrash":
+                lastCrash.setSummary(String.valueOf(sharedPreferences.getBoolean("lastCrash", false)));
+                lastErrorLog.setSummary(sharedPreferences.getString("lastErrorLog", "null"));
+                break;
+
         }
     }
 
@@ -555,7 +598,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private boolean acquireDownload(Context context, String url) {
         Log.i(getClass().toString() + "//acquireDownload()", "Download requested");
         String fileName = url.substring(url.lastIndexOf('/') + 1);
-        File localFile = new File(context.getExternalCacheDir(), fileName);
+        File localFile = new File(context.getExternalCacheDir() + "/apk", fileName);
         if (localFile.exists()) {
             Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), localFile);
             Log.d(getClass().toString() + "//acquireDownload()", "File exists");
@@ -573,7 +616,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             request.setDescription(context.getResources().getString(R.string.notification_downloading_latest_version));
             request.setVisibleInDownloadsUi(true);
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-            File cloudFile = new File(context.getExternalCacheDir(), fileName);
+            File cloudFile = new File(context.getExternalCacheDir() + "/apk", fileName);
             request.setDestinationUri(Uri.fromFile(cloudFile));
             DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             if (downloadManager != null) {
@@ -591,7 +634,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                                 String downloadFileName = cursor.getString(columnIndexUri);
                                 if (downloadFileName != null) {
                                     downloadFileName = downloadFileName.substring(downloadFileName.lastIndexOf('/') + 1);
-                                    File downloadFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), downloadFileName);
+                                    File downloadFile = new File(context.getExternalCacheDir() + "/apk", downloadFileName);
                                     Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), downloadFile);
                                     Log.i(getClass().toString() + "//acquireDownload()", uri.toString());
                                     Intent installIntent = new Intent(Intent.ACTION_VIEW);

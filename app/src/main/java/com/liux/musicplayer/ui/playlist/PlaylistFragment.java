@@ -90,6 +90,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             addFolder(uri);
         }
     });
+    private boolean isWebPlaylist;
 
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
@@ -147,6 +148,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         initView(view);
+        View footView = LayoutInflater.from(requireContext()).inflate(R.layout.playlist_footview, container, false);
+        lvData.addFooterView(footView);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
         return view;
@@ -203,37 +206,37 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                             .create();
                     alertInfoDialog.show();
                 } else {
-                    AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.no_permission)
-                            .setMessage(R.string.no_permission_info)
-                            .setIcon(R.mipmap.ic_launcher)
-                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .create();
-                    alertInfoDialog.show();
+                    showNoPermissionDialog();
                 }
                 break;
             case R.id.addFolder:
                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
                 else {
-                    AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.no_permission)
-                            .setMessage(R.string.no_permission_info)
-                            .setIcon(R.mipmap.ic_launcher)
-                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .create();
-                    alertInfoDialog.show();
+                    showNoPermissionDialog();
                 }
                 break;
         }
+    }
+
+    private void showNoPermissionDialog() {
+        AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.no_permission)
+                .setMessage(R.string.no_permission_info)
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setNeutralButton(R.string.gotoSettings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ((MainActivity) requireActivity()).setViewPagerToId(2);
+                    }
+                })
+                .create();
+        alertInfoDialog.show();
     }
 
     private void editList() {
@@ -284,7 +287,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        initData();
+        if (getActivity() != null && isWebPlaylist != ((MainActivity) requireActivity()).getMusicService().isWebPlayMode())
+            initData();
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
     }
@@ -557,6 +561,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             mSongList = gson.fromJson(playListJson, playListType);
         }*/
         if ((MainActivity) getActivity() != null && ((MainActivity) requireActivity()).getMusicService() != null) {
+            isWebPlaylist = ((MainActivity) requireActivity()).getMusicService().isWebPlayMode();
             mSongList = ((MainActivity) requireActivity()).getMusicService().getPlayList();
             setStateCheckedMap(false);
             adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);

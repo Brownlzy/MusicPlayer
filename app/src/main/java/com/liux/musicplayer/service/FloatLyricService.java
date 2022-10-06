@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
-import android.net.Uri;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -33,11 +31,10 @@ import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.LyricUtils;
-import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.views.StrokeTextView;
 
 
-public class FloatLyricServices extends Service {
+public class FloatLyricService extends Service {
 
 
     private WindowManager winManager;
@@ -157,7 +154,7 @@ public class FloatLyricServices extends Service {
                         musicService.showDesktopLyric();
                     break;
                 case R.id.appIcon:
-                    Intent intent = new Intent(FloatLyricServices.this, MainActivity.class);
+                    Intent intent = new Intent(FloatLyricService.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     break;
@@ -415,22 +412,6 @@ public class FloatLyricServices extends Service {
         editor.apply();
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        initWindow();
-        //悬浮框点击事件的处理
-        initFloating();
-        return new MyBinder();
-    }
-
-    public class MyBinder extends Binder {
-
-        public FloatLyricServices getService() {
-            return FloatLyricServices.this;
-        }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -438,7 +419,7 @@ public class FloatLyricServices extends Service {
         // Bind to LocalService
         serviceConnection = new MusicConnector();
         Intent intent = new Intent();
-        intent.setClass(FloatLyricServices.this, MusicService.class);
+        intent.setClass(FloatLyricService.this, MusicService.class);
         //startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -602,6 +583,12 @@ public class FloatLyricServices extends Service {
         stopLyricThread();
         unbindService(serviceConnection);
         super.onDestroy();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private void startLyricThread() {

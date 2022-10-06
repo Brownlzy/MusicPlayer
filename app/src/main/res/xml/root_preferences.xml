@@ -55,7 +55,7 @@
 
     <PreferenceCategory app:title="@string/experiment">
 
-        <SwitchPreference
+        <CheckBoxPreference
             app:key="isNewAppearance"
             app:title="@string/newAppearance"
             app:summary="@string/newAppearance_summary" />
@@ -76,12 +76,12 @@
     <PreferenceCategory app:title="@string/title_about">
 
         <Preference
-            app:key="gotoAppDetails"
-            app:title="@string/gotoAppDetails" />
-        <Preference
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
         <Preference
             app:icon="@drawable/ic_round_exit_to_app_24"
             app:key="exit"
@@ -117,6 +117,22 @@
             app:key="cacheList"
             app:title="@string/title_cacheList"
             app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="crashMe"
+            app:icon="@drawable/ic_round_bug_report_24"
+            app:title="@string/crashMe" />
+
+        <Preference
+            app:key="lastCrash"
+            app:title="@string/lastCrash"
+            app:defaultValue="false" />
+
+        <Preference
+            app:key="lastErrorLog"
+            android:defaultValue="null"
+            app:title="@string/lastErrorLog"
+            app:defaultValue="null" />
 
         <Preference
             app:icon="@drawable/ic_baseline_folder_24"

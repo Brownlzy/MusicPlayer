@@ -33,6 +33,8 @@ public class PlaylistAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        if (data.size() == 1 && data.get(0).memory.equals("此为测试数据，添加音乐文件后自动删除"))
+            return 0;
         return data.size();
     }
 

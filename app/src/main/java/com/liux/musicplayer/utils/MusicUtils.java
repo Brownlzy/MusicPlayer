@@ -53,6 +53,7 @@ public class MusicUtils {
         public String title;
         public String artist;
         public String album;
+        public String memory = "null";
         public String source_uri = "null";
         public String lyric_uri = "null";
         public String duration = "0";

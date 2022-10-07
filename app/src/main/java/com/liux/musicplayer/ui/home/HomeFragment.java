@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ public class HomeFragment extends Fragment {
     private TextView songTitle;
     private TextView songArtist;
     private TextView songInfo;
+    private ImageView PlayBarLyric;
     private ShapeableImageView albumImageView;
     private RelativeLayout songLyricLayout;
     private View mView;
@@ -71,6 +73,13 @@ public class HomeFragment extends Fragment {
             public boolean onLongClick(View v) {
                 ((MainActivity) getActivity()).setIsLyric();
                 return false;
+            }
+        });
+        PlayBarLyric = mView.findViewById(R.id.playLyric);
+        PlayBarLyric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).setIsLyric();
             }
         });
         lyricList = mView.findViewById(R.id.lyricList);
@@ -164,10 +173,12 @@ public class HomeFragment extends Fragment {
             if (!isLyric) {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_hide);
                 songLyricLayout.startAnimation(animation);
+                PlayBarLyric.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_subtitles_24));
                 songLyricLayout.setVisibility(View.INVISIBLE);
             } else {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_show);
                 songLyricLayout.setVisibility(View.VISIBLE);
+                PlayBarLyric.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_subtitles_green_24));
                 songLyricLayout.startAnimation(animation);
             }
             lastLyricEnabled = !lastLyricEnabled;

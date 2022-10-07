@@ -8,4 +8,6 @@ public interface MusicServiceCallback {
     void updatePlayStateThis();
 
     void nowLoadingThis(int musicId);
+
+    void onPlayingListChanged();
 }

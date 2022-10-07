@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">音乐播放器</string>
     <string name="title_home">主页</string>
-    <string name="title_playlist">播放列表</string>
+    <string name="title_allSongList">曲库</string>
     <string name="title_settings">设置</string>
     <string name="check_storage_permission">检查存储权限</string>
     <string name="permission_granted">已取得权限</string>
@@ -99,4 +99,10 @@
     <string name="gotoSettings">前往设置页</string>
     <string name="crashMe">崩溃测试</string>
     <string name="title_name">　标　题：</string>
+    <string name="title_playing_list">正在播放列表</string>
+    <string name="currentPlaying">当前播放</string>
+    <string name="item_menu_next_play">下一个播放</string>
+    <string name="user_unlogin">未登录</string>
+    <string name="title_user">账号</string>
+    <string name="item_menu_delete">删除</string>
 </resources>

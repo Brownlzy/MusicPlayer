@@ -60,6 +60,11 @@ public class MusicUtils {
         public Long size = 0L;
     }
 
+    public static class PlayList{
+        public String name;
+        public List<Song> list=new ArrayList<>();
+    }
+
     public static Bitmap getAlbumImage(Context context, String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();

@@ -39,8 +39,6 @@ import androidx.preference.PreferenceManager;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.card.MaterialCardView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.utils.CustomDialogUtils;
@@ -49,7 +47,6 @@ import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UriTransform;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -92,7 +89,68 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     });
     private boolean isWebPlaylist;
+    private PlaylistAdapter.PopUpMenuListener popUpMenuListener=new PlaylistAdapter.PopUpMenuListener() {
+        @Override
+        public void PopUpMenu(int position, View v) {
+            PopupMenu popup = new PopupMenu(requireContext(), v);
+            popup.getMenuInflater().inflate(R.menu.playlist_item_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.item_menu_play:
+                            ((MainActivity) getActivity()).getMusicService().setPlayingList(mSongList, positionToMusicId(position));
+                            break;
+                        case R.id.item_menu_next_play:
+                            ((MainActivity) getActivity()).getMusicService().setPlayingListNextSong(mSongList.get(positionToMusicId(position)));
+                            break;
+                        case R.id.item_menu_moreInfo:
+                            showMusicDetails(positionToMusicId(position));
+                            break;
+                        case R.id.item_menu_edit:
+                            CustomDialogUtils.showSongInfoEditDialog((MainActivity) requireActivity(), mSongList.get(positionToMusicId(position)), false,
+                                    new CustomDialogUtils.AlertDialogBtnClickListener() {
+                                        @Override
+                                        public void clickPositive(MusicUtils.Song song) {
+                                            mSongList.set(positionToMusicId(position), song);
+                                            ((MainActivity) requireActivity()).getMusicService().setAllSongListAfterAdd(mSongList);
+                                        }
 
+                                        @Override
+                                        public void clickNegative() {
+
+                                        }
+                                    });
+                            break;
+                        case R.id.item_menu_delete:
+                            AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                                    .setTitle(R.string.confirmDelete)
+                                    .setMessage(R.string.deleteInfo)
+                                    .setIcon(R.mipmap.ic_launcher)
+                                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            ((MainActivity) requireActivity()).getMusicService().deleteMusic(positionToMusicId(position));
+                                            adapter.notifyDataSetChanged();
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .create();
+                            dialog.show();
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
+        }
+    };
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
         ((MainActivity) requireActivity()).getMusicService().addMusic(songList);
@@ -258,7 +316,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (searchFlag) {
             searchSongLayout.setVisibility(View.GONE);
             sortSongLayout.setVisibility(View.VISIBLE);
-            adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
+            adapter = new PlaylistAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
             adapter.setNowPlay(Integer.parseInt(prefs.getString("nowId", "0")));
@@ -266,7 +324,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             sortSongLayout.setVisibility(View.GONE);
             searchSongLayout.setVisibility(View.VISIBLE);
             searchList = new ArrayList<>();
-            adapter = new PlaylistAdapter(this, requireContext(), searchList, stateCheckedMap);
+            adapter = new PlaylistAdapter(requireContext(), searchList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
             adapter.setNowPlay(-1);
         }
@@ -340,7 +398,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();
-        ((MainActivity) getActivity()).getMusicService().setPlayList(mSongList);
+        ((MainActivity) getActivity()).getMusicService().setAllSongListAfterDelete(mSongList);
         Toast.makeText(requireContext(), "删除成功", Toast.LENGTH_SHORT).show();
         refreshList();
     }
@@ -384,7 +442,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
                 } else {
-                    ((MainActivity) getActivity()).getMusicService().playThisFromList(positionToMusicId(position));
+                    ((MainActivity) getActivity()).getMusicService().setPlayingList(mSongList, positionToMusicId(position));
                 }
             }
         });
@@ -535,16 +593,14 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
         Log.e("playList", String.valueOf(listPosition));
         Log.e("playList", String.valueOf(listPositionY));
-
-        ((MainActivity) getActivity()).getMusicService().refreshPlayList();
         initData();
-        adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
+        adapter = new PlaylistAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
         lvData.setAdapter(adapter);
 
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
 
-        ((MainActivity) getActivity()).getMusicService().setPlayList(mSongList);
+        ((MainActivity) getActivity()).getMusicService().setAllSongListAfterAdd(mSongList);
         setNowPlaying(((MainActivity) getActivity()).getMusicService().getNowId());
     }
 
@@ -565,9 +621,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }*/
         if ((MainActivity) getActivity() != null && ((MainActivity) requireActivity()).getMusicService() != null) {
             isWebPlaylist = ((MainActivity) requireActivity()).getMusicService().isWebPlayMode();
-            mSongList = ((MainActivity) requireActivity()).getMusicService().getPlayList();
+            mSongList = ((MainActivity) requireActivity()).getMusicService().getAllSongList();
             setStateCheckedMap(false);
-            adapter = new PlaylistAdapter(this, requireContext(), mSongList, stateCheckedMap);
+            adapter = new PlaylistAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
             setNowPlaying(Integer.parseInt(prefs.getString("nowId", "0")));
@@ -582,41 +638,6 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             stateCheckedMap.put(i, isSelectedAll);
             lvData.setItemChecked(i, isSelectedAll);
         }
-    }
-
-    public void popMenu(int position, View view) {
-        PopupMenu popup = new PopupMenu(requireContext(), view);
-        popup.getMenuInflater().inflate(R.menu.playlist_item_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.item_menu_play:
-                        ((MainActivity) getActivity()).getMusicService().playThisFromList(positionToMusicId(position));
-                        break;
-                    case R.id.item_menu_moreInfo:
-                        showMusicDetails(positionToMusicId(position));
-                        break;
-                    case R.id.item_menu_edit:
-                        CustomDialogUtils.showSongInfoEditDialog((MainActivity) requireActivity(), mSongList.get(positionToMusicId(position)), false,
-                                new CustomDialogUtils.AlertDialogBtnClickListener() {
-                                    @Override
-                                    public void clickPositive(MusicUtils.Song song) {
-                                        mSongList.set(positionToMusicId(position), song);
-                                        ((MainActivity) requireActivity()).getMusicService().setPlayList(mSongList);
-                                    }
-
-                                    @Override
-                                    public void clickNegative() {
-
-                                    }
-                                });
-                        break;
-                }
-                return true;
-            }
-        });
-        popup.show();
     }
 
     private int positionToMusicId(int position) {

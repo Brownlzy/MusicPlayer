@@ -9,7 +9,7 @@
     <item
             android:id="@+id/navigation_playlist"
             android:icon="@drawable/ic_baseline_queue_music_24"
-            android:title="@string/title_playlist"/>
+            android:title="@string/title_allSongList"/>
 
     <item
             android:id="@+id/navigation_settings"

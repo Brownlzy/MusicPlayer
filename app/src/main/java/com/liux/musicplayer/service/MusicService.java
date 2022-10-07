@@ -1,7 +1,5 @@
 package com.liux.musicplayer.service;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -77,7 +75,10 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     private static MediaPlayer mediaPlayer;
     private boolean prepared = false;
     private boolean enabled = false;
-    private List<MusicUtils.Song> songList;
+    private List<MusicUtils.PlayList> allPlayList;
+    private List<String> allPlayListName;
+    private List<MusicUtils.Song> allSongList;
+    private List<MusicUtils.Song> playingList;
     private int nowId;
     //0=顺序播放 1=列表循环 2=单曲循环 3=随机播放
     private int playOrder;
@@ -133,15 +134,15 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         if (isPrepared())
             return mediaPlayer.getDuration();
         else {
-            if (songList.get(nowId).duration != null)
-                return Integer.parseInt(songList.get(nowId).duration);
+            if (playingList.get(nowId).duration != null)
+                return Integer.parseInt(playingList.get(nowId).duration);
             else return 0;
         }
 
     }
 
-    public List<MusicUtils.Song> getPlayList() {
-        return songList;
+    public List<MusicUtils.Song> getPlayingList() {
+        return playingList;
     }
 
     public int getNowId() {
@@ -149,7 +150,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     public int getMaxID() {
-        return songList.size() - 1;
+        return playingList.size() - 1;
     }
 
     public int getPlayOrder() {
@@ -278,17 +279,19 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     private void initMemberData() {
         keyTimes[0] = 0;
         keyTimeThread = new KeyTimeThread();
-        songList = new ArrayList<>();
+        allSongList = new ArrayList<>();
+        allPlayList = new ArrayList<>();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         isDesktopLyric = prefs.getBoolean("isShowLyric", false);
         nowId = Integer.parseInt(prefs.getString("nowId", "0"));
         playOrder = Integer.parseInt(prefs.getString("playOrder", "0"));
         webPlayMode = prefs.getBoolean("isUseWebPlayList", false);
-        readPlayList();
+        readAllSongList();
+        readAllPlayList();
         if (!webPlayMode) {
-            lyric.LoadLyric(songList.get(nowId));
-            albumImage = MusicUtils.getAlbumImage(this, songList.get(nowId).source_uri);
-            metadata = MusicUtils.getMetadata(this, songList.get(nowId).source_uri);
+            lyric.LoadLyric(playingList.get(nowId));
+            albumImage = MusicUtils.getAlbumImage(this, playingList.get(nowId).source_uri);
+            metadata = MusicUtils.getMetadata(this, playingList.get(nowId).source_uri);
         }
         setPlayOrder(playOrder);
     }
@@ -401,13 +404,13 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             remoteViewsLarge.setImageViewBitmap(R.id.iv_album_cover, bitmap);
         }
         //歌曲名
-        remoteViewsSmall.setTextViewText(R.id.tv_notification_song_name, songList.get(position).title);
-        remoteViewsLarge.setTextViewText(R.id.tv_notification_song_name, songList.get(position).title);
+        remoteViewsSmall.setTextViewText(R.id.tv_notification_song_name, playingList.get(position).title);
+        remoteViewsLarge.setTextViewText(R.id.tv_notification_song_name, playingList.get(position).title);
         //歌手名
-        remoteViewsSmall.setTextViewText(R.id.tv_notification_singer, songList.get(position).artist +
-                (songList.get(position).album.equals("null") ? "" : (" - " + songList.get(position).album)));
-        remoteViewsLarge.setTextViewText(R.id.tv_notification_singer, songList.get(position).artist +
-                (songList.get(position).album.equals("null") ? "" : (" - " + songList.get(position).album)));
+        remoteViewsSmall.setTextViewText(R.id.tv_notification_singer, playingList.get(position).artist +
+                (playingList.get(position).album.equals("null") ? "" : (" - " + playingList.get(position).album)));
+        remoteViewsLarge.setTextViewText(R.id.tv_notification_singer, playingList.get(position).artist +
+                (playingList.get(position).album.equals("null") ? "" : (" - " + playingList.get(position).album)));
         //桌面歌词
         if (isDesktopLyric) {
             remoteViewsSmall.setImageViewResource(R.id.btn_notification_lyric, R.drawable.ic_baseline_subtitles_green_24);
@@ -562,8 +565,6 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     public void playPrevOrNext(boolean isNext) {
         Log.e(TAG, "enabled:" + enabled + " prepared:" + prepared);
         if (enabled && !prepared) return;
-        int maxId = getMaxID();
-        int nowId = getNowId();
         int order = getPlayOrder();
         switch (order) {
             case SHUFFLE_PLAY:
@@ -585,17 +586,17 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             case REPEAT_ONE:
             case REPEAT_LIST:
                 if (isNext) {
-                    if (nowId < maxId) nowId += 1;
+                    if (nowId < getMaxID()) nowId += 1;
                     else nowId = 0;
                 } else {
                     if (nowId > 0) nowId -= 1;
-                    else nowId = maxId;
+                    else nowId = getMaxID();
                 }
                 break;
             default:
             case LIST_PLAY:
                 if (isNext) {
-                    if (nowId < maxId)
+                    if (nowId < getMaxID())
                         nowId += 1;
                     else {
                         setPlayOrPause(false);
@@ -647,44 +648,90 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         });
     }
 
-    public void refreshPlayList() {
-        readPlayList();
+    private void readAllPlayList() {
+        String defaultAllPlayList = "[]";
+        String allPlayListJson;
+        if (!webPlayMode)
+            allPlayListJson = prefs.getString("allPlayList", defaultAllPlayList);
+        else
+            allPlayListJson = prefs.getString("webAllPlayList", defaultAllPlayList);
+        Gson gson = new Gson();
+        Type allPlayListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+        }.getType();
+        allPlayList = gson.fromJson(allPlayListJson, allPlayListType);
+        //错误修正，防止播放列表空指针
+        if (allPlayList == null || allPlayList.size() == 0) {
+            allPlayListJson = defaultAllPlayList;
+            allPlayList = gson.fromJson(allPlayListJson, allPlayListType);
+        }
     }
-
-    private void readPlayList() {
+    private void readAllSongList() {
         String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"memory\":\"此为测试数据，添加音乐文件后自动删除\"," +
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
                 "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
-        String playListJson;
-        if (!webPlayMode)
-            playListJson = prefs.getString("playList", defaultPlayList);
-        else
-            playListJson = prefs.getString("webPlayList", defaultPlayList);
-        Gson gson = new Gson();
-        Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
-        }.getType();
-        songList = gson.fromJson(playListJson, playListType);
-        //错误修正，防止播放列表空指针
-        if (songList == null || songList.size() == 0) {
-            playListJson = defaultPlayList;
-            songList = gson.fromJson(playListJson, playListType);
+        String songListJson;
+        String playingListJson;
+        if (!webPlayMode) {
+            playingListJson = prefs.getString("playingList", defaultPlayList);
+            songListJson = prefs.getString("allSongList", defaultPlayList);
+        }else {
+            playingListJson = prefs.getString("webPlayingList", defaultPlayList);
+            songListJson = prefs.getString("webAllSongList", defaultPlayList);
         }
-        if (nowId >= songList.size()) nowId = 0;
+        Gson gson = new Gson();
+        Type songListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+        }.getType();
+        allSongList = gson.fromJson(songListJson, songListType);
+        playingList=gson.fromJson(playingListJson, songListType);
+        //错误修正，防止播放列表空指针
+        if (allSongList == null || allSongList.size() == 0) {
+            songListJson = defaultPlayList;
+            allSongList = gson.fromJson(songListJson, songListType);
+        }
+        if (playingList == null || playingList.size() == 0) {
+            songListJson = defaultPlayList;
+            playingList = gson.fromJson(songListJson, songListType);
+        }
+        if (nowId >= playingList.size()) nowId = 0;
     }
 
-    public void setPlayList(List<MusicUtils.Song> newSongList) {
-        songList = newSongList;
-        savePlayList();
+    public void setAllPlayList(List<MusicUtils.PlayList> newAllPlayList) {
+        allPlayList=newAllPlayList;
+        saveAllPlayList();
+    }
+    public void setPlayingList(List<MusicUtils.Song> newPlayingList, int startId) {
+        //深复制
+        playingList.clear();
+        Collections.addAll(playingList,new MusicUtils.Song[newPlayingList.size()]);
+        Collections.copy(playingList,newPlayingList);
+        //playingList=newPlayingList;//浅复制
+        nowId=startId;
+        playThisNow(nowId);
+        saveAllSongList();
     }
 
-    private void savePlayList() {
+    public void saveAllSongList() {
         if (!webPlayMode) {
             Gson gson = new Gson();
-            Type playListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+            Type songListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
             }.getType();
-            String playListJson = gson.toJson(songList, playListType);
+            String songListJson = gson.toJson(allSongList, songListType);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("playList", playListJson);
+            editor.putString("allSongList", songListJson);
+            songListJson=gson.toJson(playingList,songListType);
+            editor.putString("playingList", songListJson);
+            editor.apply();
+        }
+    }
+
+    private void saveAllPlayList() {
+        if (!webPlayMode) {
+            Gson gson = new Gson();
+            Type allPlayListType = new TypeToken<ArrayList<MusicUtils.PlayList>>() {
+            }.getType();
+            String playListJson = gson.toJson(allPlayList, allPlayListType);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("allPlayList", playListJson);
             editor.apply();
         }
     }
@@ -729,17 +776,31 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         else
             newSong.lyric_uri = "null";
 
-        if (songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
-            songList.set(songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).indexOf(path), newSong);
+        if (allSongList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
+            allSongList.set(allSongList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).indexOf(path), newSong);
         } else {
-            if (songList.size() == 1 && !FileUtils.isFileExists(songList.get(0).source_uri)) {  //播放列表第一位如果是示例数据则将其替换
-                songList.set(0, newSong);
+            if (allSongList.size() == 1 && !FileUtils.isFileExists(allSongList.get(0).source_uri)) {  //播放列表第一位如果是示例数据则将其替换
+                allSongList.set(0, newSong);
             } else {
-                songList.add(newSong);
+                allSongList.add(newSong);
             }
         }
-        savePlayList();
+        saveAllSongList();
     }
+
+    public void deleteMusic(int allSongId){
+        for (MusicUtils.PlayList p:allPlayList) {
+            p.list.removeIf(song -> {return song.source_uri.equals(allSongList.get(allSongId).source_uri);});
+        }
+        int myNowId=playingList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).indexOf(allSongList.get(allSongId).source_uri);
+        allSongList.remove(allSongId);
+        if(myNowId>=0)
+            deleteMusicFromPlayingList(myNowId);
+        if(musicServiceCallback!=null)
+            musicServiceCallback.onPlayingListChanged();
+        saveAllPlayList();
+    }
+
 
     public void setPlayOrder(int order) {
         playOrder = order;
@@ -747,7 +808,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         if (playOrder == SHUFFLE_PLAY) {
             mediaPlayer.setLooping(false);
             shuffleOrder = new ArrayList<>();
-            for (int i = 0; i < songList.size(); i++) {
+            for (int i = 0; i < playingList.size(); i++) {
                 if (i != nowId)
                     shuffleOrder.add(i);
             }
@@ -766,67 +827,66 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     public void playThisFromList(int musicId) {
         Log.e(TAG, "enabled:" + enabled + " prepared:" + prepared);
         if (enabled && !prepared) return;
-        else playThisNow(musicId);
+        else {
+            playThisNow(musicId);
+        }
     }
 
     private void playThisNow(int musicId) {
-        switch (playThis(musicId)) {
+        nowId=musicId;
+        switch (playNow()) {
             case 0:
                 if (playOrder == REPEAT_ONE)
                     mediaPlayer.setLooping(true);
                 if (musicServiceCallback != null)
-                    musicServiceCallback.nowLoadingThis(musicId);
+                    musicServiceCallback.nowLoadingThis(nowId);
                 if (deskLyricCallback != null)
-                    deskLyricCallback.updatePlayState(musicId);
+                    deskLyricCallback.updatePlayState(nowId);
                 break;
             default:
             case -1:
                 if (musicServiceCallback != null)
-                    musicServiceCallback.playingErrorThis(musicId);
+                    musicServiceCallback.playingErrorThis(nowId);
                 if (deskLyricCallback != null)
-                    deskLyricCallback.updatePlayState(musicId);
+                    deskLyricCallback.updatePlayState(nowId);
                 setEnabled(false);
                 break;
         }
         updateNotificationShow(nowId);
     }
 
-    private int playThis(int id) {
+    private int playNow() {
         prepared = false;
         mediaPlayer.reset();
         int reId;
-        nowId = id;
-        if (nowId > getMaxID()) {
-            reId = -1;
-        } else {
-            lyric.LoadLyric(songList.get(id));
-            if (FileUtils.isFileExists(songList.get(id).source_uri)) {
-                albumImage = MusicUtils.getAlbumImage(this, songList.get(id).source_uri);
-                metadata = MusicUtils.getMetadata(this, songList.get(id).source_uri);
-                prepare(songList.get(id).source_uri);
+            lyric.LoadLyric(playingList.get(nowId));
+            if (FileUtils.isFileExists(playingList.get(nowId).source_uri)) {
+                albumImage = MusicUtils.getAlbumImage(this, playingList.get(nowId).source_uri);
+                metadata = MusicUtils.getMetadata(this, playingList.get(nowId).source_uri);
+                prepare(playingList.get(nowId).source_uri);
                 reId = 0;
-            } else if (songList.get(id).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
+            } else if (playingList.get(nowId).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
                 albumImage = null;
-                metadata = MusicUtils.getMetadataFromSong(songList.get(id));
+                metadata = MusicUtils.getMetadataFromSong(playingList.get(nowId));
                 UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(this);
                 uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
                     @Override
                     public void onFileDownloadCompleted(ArrayList<String> array) {
-                        if (!array.get(0).equals(songList.get(id).source_uri))
+                        if (!array.get(0).equals(playingList.get(nowId).source_uri))
                             return;
                         prepare(array.get(1));
                     }
 
                     @Override
                     public void onFileDownloading(ArrayList<String> array) {
-                        if (!array.get(0).equals(songList.get(id).source_uri))
+                        if (!array.get(0).equals(playingList.get(nowId).source_uri))
                             return;
                         //Log.e("Downloading",array.get(1));
                     }
 
                     @Override
                     public void onFileDownloadError(ArrayList<String> array) {
-                        if (!array.get(0).equals(songList.get(id).source_uri))
+                        if (!array.get(0).equals(playingList.get(nowId).source_uri))
                             return;
                         if (musicServiceCallback != null)
                             musicServiceCallback.playingErrorThis(nowId);
@@ -835,12 +895,13 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                         setEnabled(false);
                     }
                 });
-                uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".tmp", songList.get(id).source_uri);
+                uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".tmp", playingList.get(nowId).source_uri);
                 reId = 0;
             } else {
+                albumImage = MusicUtils.getAlbumImage(this, "null");
+                metadata = MusicUtils.getMetadata(this, "null");
                 reId = -1;
             }
-        }
         return reId;
     }
 
@@ -879,7 +940,8 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
 
     public void setWebPlayMode(boolean webPlayMode) {
         this.webPlayMode = webPlayMode;
-        readPlayList();
+        readAllSongList();
+        readAllPlayList();
     }
 
     public MusicUtils.Metadata getMetadata() {
@@ -921,6 +983,80 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                     keyTimes[0]++;
                 break;
         }
+    }
+
+    public List<MusicUtils.Song> getAllSongList() {
+        return allSongList;
+    }
+
+    public void setAllSongListAfterDelete(List<MusicUtils.Song> mSongList) {
+        for (MusicUtils.Song deletedSong:allSongList) {
+            if(!mSongList.contains(deletedSong)){
+                for (MusicUtils.PlayList p:allPlayList) {
+                    p.list.remove(deletedSong);
+                }
+            }
+        }
+        saveAllSongList();
+    }
+
+    public void setAllSongListAfterAdd(List<MusicUtils.Song> mSongList) {
+        for (MusicUtils.Song editedSong:mSongList) {
+            if (allSongList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(editedSong.source_uri)&&!allSongList.contains(editedSong)){
+                for (MusicUtils.PlayList p:allPlayList) {
+                    int id=p.list.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).indexOf(editedSong.source_uri);
+                    if(id!=-1){
+                        p.list.set(id,editedSong);
+                    }
+                }
+            }
+        }
+        saveAllSongList();
+    }
+
+    public void deleteMusicFromPlayingList(int position) {
+        if(position<=getMaxID()) {
+            playingList.remove(position);
+            if (position < nowId)
+                nowId--;
+            else if(position==nowId)
+                playThisFromList(nowId);
+        }
+        if(musicServiceCallback!=null)
+            musicServiceCallback.onPlayingListChanged();
+        saveAllSongList();
+    }
+
+    public void setPlayingListNextSong(MusicUtils.Song nextSong) {
+        if(nextSong.source_uri.equals(playingList.get(nowId).source_uri))
+            return;
+        if(playingList.size()==1&&playingList.get(0).memory.equals("此为测试数据，添加音乐文件后自动删除"))
+            playingList.remove(0);
+        playingList.removeIf(song -> {
+                return song.source_uri.equals(nextSong.source_uri);
+            });
+        playingList.add(nowId+1,nextSong);
+        if(musicServiceCallback!=null)
+            musicServiceCallback.onPlayingListChanged();
+        saveAllSongList();
+    }
+
+    public void deletePlayingList() {
+        nowId=0;
+        playingList.clear();
+        String defaultPlayList = "[{\"id\":-1,\"title\":\"这是音乐标题\",\"artist\":\"这是歌手\",\"album\":\"这是专辑名\",\"memory\":\"此为测试数据，添加音乐文件后自动删除\"," +
+                "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
+                "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
+        Gson gson = new Gson();
+        Type songListType = new TypeToken<ArrayList<MusicUtils.Song>>() {
+        }.getType();
+        List<MusicUtils.Song> tmp=gson.fromJson(defaultPlayList, songListType);
+        playingList.add(tmp.get(0));
+        //playThisFromList(0);
+        setPlayOrPause(false);
+        if(musicServiceCallback!=null)
+            musicServiceCallback.onPlayingListChanged();
+        saveAllSongList();
     }
 
     private class KeyTimeThread extends Thread {

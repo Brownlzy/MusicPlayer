@@ -64,8 +64,8 @@ public class FloatLyricService extends Service {
     private DeskLyricCallback deskLyricCallback = new DeskLyricCallback() {
         @Override
         public void updatePlayState(int musicId) {
-            nowTitle = musicService.getPlayList().get(musicId).title;
-            nowArtist = musicService.getPlayList().get(musicId).artist;
+            nowTitle = musicService.getPlayingList().get(musicId).title;
+            nowArtist = musicService.getPlayingList().get(musicId).artist;
             updatePlayInfo(nowTitle
                     + ((nowArtist.equals("null")) ? "" : " - " + nowArtist));
             if (lyric.isCompleted)

@@ -73,6 +73,13 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/title_user">
+        <Preference
+            app:key="user"
+            app:icon="@drawable/ic_round_account_circle_24"
+            app:title="@string/user_unlogin"/>
+
+    </PreferenceCategory>
     <PreferenceCategory app:title="@string/title_about">
 
         <Preference
@@ -104,12 +111,17 @@
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="playList"
-            app:title="@string/title_playlist"
+            app:key="playingList"
+            app:title="@string/title_playing_list"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="webPlayList"
+            app:key="allSongList"
+            app:title="@string/title_allSongList"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="webAllSongList"
             app:title="@string/title_webPlayList"
             app:useSimpleSummaryProvider="true" />
 

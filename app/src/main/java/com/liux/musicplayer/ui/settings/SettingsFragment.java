@@ -18,7 +18,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.util.Log;
@@ -38,23 +37,16 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
-import androidx.preference.SwitchPreference;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.RegexUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.CrashHandlers;
-import com.liux.musicplayer.utils.MusicUtils;
-import com.liux.musicplayer.utils.UploadDownloadUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,8 +69,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private Preference lastErrorLog;
     private Preference lastCrash;
     private Preference crashMe;
-    private EditTextPreference dPlayList;
-    private EditTextPreference webPlayList;
+    private EditTextPreference playingList;
+    private EditTextPreference allSongList;
+    private EditTextPreference webAllSongList;
     private EditTextPreference MainFolder;
     private EditTextPreference cacheList;
     private Preference About;
@@ -179,9 +172,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         lastCrash = findPreference("lastCrash");
         lastErrorLog = findPreference("lastErrorLog");
         crashMe = findPreference("crashMe");
-        dPlayList = findPreference("playList");
+        playingList = findPreference("playingList");
         setMainFolder = findPreference("setMainFolder");
-        webPlayList = findPreference("webPlayList");
+        webAllSongList = findPreference("webAllSongList");
+        allSongList=findPreference("allSongList");
         About = findPreference("info");
         Close = findPreference("exit");
         seekBarTiming = findPreference("timing");
@@ -196,7 +190,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         //选择主文件目录
         MainFolder.setSummary(prefs.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
         //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
-        dPlayList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        playingList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         initPreferenceListener();
         try {
@@ -555,8 +549,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "deskLyricLock":
                 switch_desk_lyric_lock.setChecked(sharedPreferences.getBoolean("deskLyricLock", false));
                 break;
-            case "playList":
-                dPlayList.setText(sharedPreferences.getString("playList", ""));
+            case "playingList":
+                playingList.setText(sharedPreferences.getString("playingList", ""));
+                break;
+            case "webAllSongList":
+                webAllSongList.setText(sharedPreferences.getString("webAllSongList", ""));
+                break;
+            case "allSongList":
+                allSongList.setText(sharedPreferences.getString("allSongList", ""));
                 break;
             case "nowId":
                 ((EditTextPreference) findPreference("nowId")).setText(sharedPreferences.getString("nowId", "0"));
@@ -581,7 +581,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void httpResultHandle(String result, int funId) {
         switch (funId) {
             case 0:
-                webPlayList.setText(result);
+                webAllSongList.setText(result);
                 ((MainActivity) getActivity()).getMusicService().setWebPlayMode(true);
                 break;
             default:

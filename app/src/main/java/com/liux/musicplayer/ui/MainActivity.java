@@ -14,21 +14,23 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.StrictMode;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -47,19 +49,18 @@ import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
 import com.liux.musicplayer.utils.CrashHandlers;
-import com.liux.musicplayer.utils.MusicUtils;
 
 public class MainActivity extends FragmentActivity {
 
     private ActivityMainBinding binding = null;
     private SeekBar playProgressBar;
-    private TextView PlayBarTitle;
+    private TextView playBarTitle;
     private TextView TabTitle;
-    private ImageView PlayBarLyric;
-    private ImageView PlayBarPause;
+    private ImageView playBarPause;
     private ImageView PlayBarOrder;
-    private ImageView PlayBarPrev;
-    private ImageView PlayBarNext;
+    private ImageView playBarPrev;
+    private ImageView playBarNext;
+    private ImageView playBarPlayingList;
     //private MusicPlayer musicPlayer;
     private static final int NUM_PAGES = 3;
     private HomeFragment homeFragment;
@@ -71,11 +72,13 @@ public class MainActivity extends FragmentActivity {
     private ProgressThread progressThread;
     private LinearLayout playProgressLayout;
     private LinearLayout musicPlayingLayout;
+    private RelativeLayout playingListLayout;
+    private ListView playingList;
     private TextView playProgressNowText;
     private TextView playProgressAllText;
     private ShapeableImageView shapeableImageView;
     private ShapeableImageView backImageView;
-    private int lastPageId = 0;
+    private boolean isAlreadyShowPlayBarTitle = false;
     //是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
@@ -102,11 +105,19 @@ public class MainActivity extends FragmentActivity {
         public void nowLoadingThis(int musicId) {
             nowLoading(musicId);
         }
+
+        @Override
+        public void onPlayingListChanged() {
+            adapter.setNowPlay(musicService.getNowId());
+            adapter.notifyDataSetChanged();
+        }
     };
+    private boolean isPlayingListShowing=false;
+    private PlayingListAdapter adapter;
 
     private void nowLoading(int musicId) {
         prepareInfo(musicId);
-        PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_24));
+        playBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_24));
     }
 
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
@@ -208,6 +219,7 @@ public class MainActivity extends FragmentActivity {
     private void setMainActivityData() {
         setPlayOrder(musicService.getPlayOrder());
         setPlayBarTitle(musicService.getNowId());
+        prepareInfo(musicService.getNowId());
         if (musicService.isPlaying()) {
             prepareInfo(musicService.getNowId());
             updatePlayState();
@@ -221,7 +233,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initVariable() {
-        lastPageId = 0;
+        isAlreadyShowPlayBarTitle = false;
         countActivity = 0;
         isBackground = false;
     }
@@ -231,11 +243,11 @@ public class MainActivity extends FragmentActivity {
             if (viewPager.getCurrentItem() == 0)
                 homeFragment.startLyric();
             startProgressBar();
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
+            playBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
         } else {
             homeFragment.stopLyric();
             stopProgressBar();
-            PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+            playBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
         }
     }
 
@@ -248,6 +260,8 @@ public class MainActivity extends FragmentActivity {
     private void prepareInfo(int musicId) {
         setPlayBarTitle(musicId);
         setChildFragment();
+        adapter.setNowPlay(musicId);
+        adapter.notifyDataSetChanged();
         playlistFragment.setNowPlaying(musicService.getNowId());
         //初始化进度条
         resetPlayProgress();
@@ -381,7 +395,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setPlayBarTitle(int musicId) {
-        PlayBarTitle.setText(musicService.getPlayList().get(musicId).title + " - " + musicService.getPlayList().get(musicId).artist);
+        playBarTitle.setText(musicService.getPlayingList().get(musicId).title + " - " + musicService.getPlayingList().get(musicId).artist);
         Bitmap bitmap = musicService.getAlbumImage();
         if (bitmap == null) {   //获取图片失败，使用默认图片
             shapeableImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_baseline_music_note_24));
@@ -411,7 +425,7 @@ public class MainActivity extends FragmentActivity {
 
     public void setChildFragment() {
         if (musicService != null) {
-            homeFragment.setMusicInfo(musicService.getPlayList().get(musicService.getNowId()));
+            homeFragment.setMusicInfo(musicService.getPlayingList().get(musicService.getNowId()));
             setIsLyric(musicService.isAppLyric());
         }
     }
@@ -420,28 +434,47 @@ public class MainActivity extends FragmentActivity {
         playProgressBar = findViewById(R.id.seekBar);
         playProgressLayout = findViewById(R.id.playProgress);
         musicPlayingLayout = findViewById(R.id.musicPlayingLayout);
+        playingListLayout = findViewById(R.id.main_layout_playing_list);
         playProgressNowText = findViewById(R.id.nowProgress);
         playProgressAllText = findViewById(R.id.allProgress);
-        PlayBarTitle = findViewById(R.id.musicPlaying);
+        playBarTitle = findViewById(R.id.musicPlaying);
         TabTitle = findViewById(R.id.tabText);
-        PlayBarLyric = findViewById(R.id.playLyric);
-        PlayBarPause = findViewById(R.id.playPause);
+        playBarPause = findViewById(R.id.playPause);
         PlayBarOrder = findViewById(R.id.playOrder);
-        PlayBarPrev = findViewById(R.id.playPrevious);
-        PlayBarNext = findViewById(R.id.playNext);
+        playBarPrev = findViewById(R.id.playPrevious);
+        playBarNext = findViewById(R.id.playNext);
+        playBarPlayingList =findViewById(R.id.playList);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
         backImageView = findViewById(R.id.backImageView);
+        playingList=findViewById(R.id.main_list_playing);
+        playingList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        View footView = LayoutInflater.from(this).inflate(R.layout.playlist_footview,null);
+        playingList.addFooterView(footView);
+        adapter = new PlayingListAdapter(this, musicService.getPlayingList(), new PlayingListAdapter.RefreshListener() {
+            @Override
+            public void deleteThis(int position) {
+                musicService.deleteMusicFromPlayingList(position);
+            }
+        });
+        playingList.setAdapter(adapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        setOnListViewItemClickListener();
         backImageView.setVisibility(prefs.getBoolean("isNewAppearance", false)
                 ? View.VISIBLE
                 : View.GONE);
-        PlayBarLyric.setOnClickListener(new View.OnClickListener() {
+        playBarPlayingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setIsLyric();
+                showPlayingList();
             }
         });
-        PlayBarPause.setOnClickListener(new View.OnClickListener() {
+        playingListLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPlayingList();
+            }
+        });
+        playBarPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setPlayOrPause();
@@ -453,13 +486,13 @@ public class MainActivity extends FragmentActivity {
                 setPlayOrder();
             }
         });
-        PlayBarPrev.setOnClickListener(new View.OnClickListener() {
+        playBarPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playPrevOrNext(false);
             }
         });
-        PlayBarNext.setOnClickListener(new View.OnClickListener() {
+        playBarNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playPrevOrNext(true);
@@ -468,7 +501,31 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.musicPlayingLayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playlistFragment.setListViewPosition(musicService.getNowId());
+                playingList.smoothScrollToPositionFromTop(musicService.getNowId(),0);
+            }
+        });
+        findViewById(R.id.delete_all_playing_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.confirmDelete)
+                        .setMessage(R.string.deleteInfo)
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                musicService.deletePlayingList();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create();
+                dialog.show();
             }
         });
         //根据音乐的时长设置进度条的最大进度
@@ -494,6 +551,32 @@ public class MainActivity extends FragmentActivity {
         });
         resetPlayProgress();
     }
+    private void setOnListViewItemClickListener() {
+        playingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                musicService.playThisFromList(position);
+            }
+        });
+    }
+
+
+    private void showPlayingList() {
+        if(isPlayingListShowing){
+            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+            playingListLayout.startAnimation(animation);
+            playingListLayout.setVisibility(View.GONE);
+            if(viewPager.getCurrentItem()==0)
+                setPlayBarTitle(false);
+        }else {
+            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
+            playingListLayout.startAnimation(animation);
+            playingListLayout.setVisibility(View.VISIBLE);
+            if(viewPager.getCurrentItem()==0)
+                setPlayBarTitle(true);
+        }
+        isPlayingListShowing=!isPlayingListShowing;
+    }
 
     public void setIsLyric() {
         setIsLyric(!musicService.isAppLyric());
@@ -502,11 +585,9 @@ public class MainActivity extends FragmentActivity {
     public void setIsLyric(boolean isLyric) {
         if (!isLyric) {
             homeFragment.setIsLyricLayoutShow(false);
-            PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_24));
             musicService.setAppLyric(false);
         } else {
             homeFragment.setIsLyricLayoutShow(true);
-            PlayBarLyric.setImageDrawable(getDrawable(R.drawable.ic_baseline_subtitles_green_24));
             musicService.setAppLyric(true);
         }
     }
@@ -580,46 +661,35 @@ public class MainActivity extends FragmentActivity {
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
-                        animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
-                        musicPlayingLayout.startAnimation(animation);
-                        musicPlayingLayout.setVisibility(View.GONE);
-                        animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
-                        playProgressLayout.setVisibility(View.VISIBLE);
-                        playProgressLayout.startAnimation(animation);
+                        if(isPlayingListShowing)
+                            showPlayingList();
+                        else
+                            setPlayBarTitle(false);
                         startProgressBar();
                         homeFragment.startLyric();
                         musicService.setNowPageId(0);
                         break;
                     case R.id.navigation_playlist:
-                        TabTitle.setText(R.string.title_playlist);
-                        if (lastPageId == 0) {
-                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
-                            musicPlayingLayout.setVisibility(View.VISIBLE);
-                            musicPlayingLayout.startAnimation(animation);
-                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
-                            playProgressLayout.startAnimation(animation);
-                            playProgressLayout.setVisibility(View.GONE);
-                        }
+                        TabTitle.setText(R.string.title_allSongList);
+                        if(isPlayingListShowing)
+                            showPlayingList();
+                        else
+                            setPlayBarTitle(true);
                         stopProgressBar();
                         //homeFragment.stopLyric();
                         musicService.setNowPageId(1);
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
-                        if (lastPageId == 0) {
-                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
-                            musicPlayingLayout.setVisibility(View.VISIBLE);
-                            musicPlayingLayout.startAnimation(animation);
-                            animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
-                            playProgressLayout.startAnimation(animation);
-                            playProgressLayout.setVisibility(View.GONE);
-                        }
+                        if(isPlayingListShowing)
+                            showPlayingList();
+                        else
+                            setPlayBarTitle(true);
                         stopProgressBar();
                         //homeFragment.stopLyric();
                         musicService.setNowPageId(2);
                         break;
                 }
-                lastPageId = position;
             }
 
             @Override
@@ -634,36 +704,42 @@ public class MainActivity extends FragmentActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                     default:
-                        TabTitle.setText(R.string.app_name);
-                        musicPlayingLayout.setVisibility(View.GONE);
-                        playProgressLayout.setVisibility(View.VISIBLE);
                         setViewPagerToId(0);
-                        startProgressBar();
-                        homeFragment.startLyric();
-                        musicService.setNowPageId(0);
                         break;
                     case R.id.navigation_playlist:
-                        TabTitle.setText(R.string.title_playlist);
-                        musicPlayingLayout.setVisibility(View.VISIBLE);
-                        playProgressLayout.setVisibility(View.GONE);
                         setViewPagerToId(1);
-                        stopProgressBar();
-                        //homeFragment.stopLyric();
-                        musicService.setNowPageId(1);
                         break;
                     case R.id.navigation_settings:
-                        TabTitle.setText(R.string.title_settings);
-                        musicPlayingLayout.setVisibility(View.VISIBLE);
-                        playProgressLayout.setVisibility(View.GONE);
                         setViewPagerToId(2);
-                        stopProgressBar();
-                        //homeFragment.stopLyric();
-                        musicService.setNowPageId(2);
                         break;
                 }
                 return true;
             }
         });
+    }
+
+    public void setPlayBarTitle(boolean isShow){
+        if(isShow) {
+            if (!isAlreadyShowPlayBarTitle) {
+                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
+                musicPlayingLayout.setVisibility(View.VISIBLE);
+                musicPlayingLayout.startAnimation(animation);
+                animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                playProgressLayout.startAnimation(animation);
+                playProgressLayout.setVisibility(View.GONE);
+                isAlreadyShowPlayBarTitle=true;
+            }
+        }else {
+            if(isAlreadyShowPlayBarTitle) {
+                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                musicPlayingLayout.startAnimation(animation);
+                musicPlayingLayout.setVisibility(View.GONE);
+                animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
+                playProgressLayout.setVisibility(View.VISIBLE);
+                playProgressLayout.startAnimation(animation);
+                isAlreadyShowPlayBarTitle=false;
+            }
+        }
     }
 
     public void setViewPagerToId(int pageId) {

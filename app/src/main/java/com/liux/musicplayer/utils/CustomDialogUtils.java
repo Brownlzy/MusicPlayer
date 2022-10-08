@@ -5,15 +5,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.activities.MainActivity;
 
 public class CustomDialogUtils {
 

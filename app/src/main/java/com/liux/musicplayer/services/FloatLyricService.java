@@ -1,4 +1,4 @@
-package com.liux.musicplayer.service;
+package com.liux.musicplayer.services;
 
 import static androidx.annotation.Dimension.SP;
 
@@ -29,7 +29,7 @@ import androidx.annotation.Nullable;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
-import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.views.StrokeTextView;
 

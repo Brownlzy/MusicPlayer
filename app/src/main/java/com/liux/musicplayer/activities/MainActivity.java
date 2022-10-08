@@ -1,4 +1,4 @@
-package com.liux.musicplayer.ui;
+package com.liux.musicplayer.activities;
 
 import android.app.Activity;
 import android.app.Application;
@@ -34,6 +34,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -42,16 +44,23 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.interfaces.MusicServiceCallback;
-import com.liux.musicplayer.service.MusicService;
-import com.liux.musicplayer.ui.home.HomeFragment;
-import com.liux.musicplayer.ui.playlist.PlaylistFragment;
-import com.liux.musicplayer.ui.settings.SettingsFragment;
+import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.services.MusicService;
+import com.liux.musicplayer.ui.HomeFragment;
+import com.liux.musicplayer.ui.SongListFragment;
+import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.utils.CrashHandlers;
+import com.liux.musicplayer.viewmodels.MyViewModel;
+
+import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
+    public static MainActivity mainActivity;
+    private MyViewModel myViewModel;
     private ActivityMainBinding binding = null;
     private SeekBar playProgressBar;
     private TextView playBarTitle;
@@ -64,7 +73,7 @@ public class MainActivity extends FragmentActivity {
     //private MusicPlayer musicPlayer;
     private static final int NUM_PAGES = 3;
     private HomeFragment homeFragment;
-    private PlaylistFragment playlistFragment;
+    private SongListFragment songListFragment;
     private SettingsFragment settingsFragment;
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNavigationView;
@@ -192,11 +201,12 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             musicService = ((MusicService.MyMusicBinder) iBinder).getService();
+            //myViewModel.setMusicService(musicService);
             Log.e("MusicConnector", "musicService" + musicService);
             musicService.setMusicServiceCallback(musicServiceCallback);
             initMainActivity();
             if (viewPager.getCurrentItem() == 1)
-                playlistFragment.initData();
+                songListFragment.initData();
         }
 
         //不成功绑定时调用
@@ -208,18 +218,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initMainActivity() {
-        musicService.setActivityForeground(true);
+        MyViewModel.setActivityForeground(true);
         initVariable();
         initViewCompat();
         initViewPager2();
         initBackgroundCallBack();
-        setMainActivityData();
+        //setMainActivityData();
     }
 
     private void setMainActivityData() {
         setPlayOrder(musicService.getPlayOrder());
         setPlayBarTitle(musicService.getNowId());
         prepareInfo(musicService.getNowId());
+        viewPager.setCurrentItem(musicService.getNowPageId());
         if (musicService.isPlaying()) {
             prepareInfo(musicService.getNowId());
             updatePlayState();
@@ -262,7 +273,7 @@ public class MainActivity extends FragmentActivity {
         setChildFragment();
         adapter.setNowPlay(musicId);
         adapter.notifyDataSetChanged();
-        playlistFragment.setNowPlaying(musicService.getNowId());
+        songListFragment.setNowPlaying(musicService.getNowId());
         //初始化进度条
         resetPlayProgress();
     }
@@ -289,17 +300,19 @@ public class MainActivity extends FragmentActivity {
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        mainActivity=this;
         setContentView(binding.getRoot());
+        myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
-//initMainActivity();
+initMainActivity();
         // Bind to LocalService
-        serviceConnection = new MusicConnector();
+        /*serviceConnection = new MusicConnector();
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, MusicService.class);
-        startService(intent);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        //startService(intent);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);*/
     }
 
     @Override
@@ -384,7 +397,8 @@ public class MainActivity extends FragmentActivity {
 
     public void setPlayOrPause() {
         //setPlayOrPause(!musicService.isPlaying());
-        musicService.setPlayOrPause(!musicService.isPlaying());
+        //musicService.setPlayOrPause(!musicService.isPlaying());
+        myViewModel.getmMediaController().getTransportControls().play();
     }
 
     public MusicService getMusicService() {
@@ -416,8 +430,8 @@ public class MainActivity extends FragmentActivity {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else if (viewPager.getCurrentItem() == 1 && playlistFragment.multipleChooseFlag) {
-            playlistFragment.onBackPressed();
+        } else if (viewPager.getCurrentItem() == 1 && songListFragment.multipleChooseFlag) {
+            songListFragment.onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
@@ -450,7 +464,18 @@ public class MainActivity extends FragmentActivity {
         playingList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         View footView = LayoutInflater.from(this).inflate(R.layout.playlist_footview,null);
         playingList.addFooterView(footView);
-        adapter = new PlayingListAdapter(this, musicService.getPlayingList(), new PlayingListAdapter.RefreshListener() {
+        myViewModel.getSongsMutableLiveData().observeForever(new Observer<List<Song>>() {
+            @Override
+            public void onChanged(List<Song> songs) {
+                adapter = new PlayingListAdapter(MainActivity.this, myViewModel.getPlayingSongsMutableLiveData().getValue(), new PlayingListAdapter.RefreshListener() {
+                    @Override
+                    public void deleteThis(int position) {
+                        musicService.deleteMusicFromPlayingList(position);
+                    }
+                });
+            }
+        });
+        adapter = new PlayingListAdapter(this, myViewModel.getSongsMutableLiveData().getValue(), new PlayingListAdapter.RefreshListener() {
             @Override
             public void deleteThis(int position) {
                 musicService.deleteMusicFromPlayingList(position);
@@ -549,7 +574,7 @@ public class MainActivity extends FragmentActivity {
                 homeFragment.startLyric();
             }
         });
-        resetPlayProgress();
+        //resetPlayProgress();
     }
     private void setOnListViewItemClickListener() {
         playingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -641,7 +666,7 @@ public class MainActivity extends FragmentActivity {
         viewPager = findViewById(R.id.pager);
         bottomNavigationView = findViewById(R.id.nav_view);
         homeFragment = new HomeFragment();
-        playlistFragment = new PlaylistFragment();
+        songListFragment = new SongListFragment();
         settingsFragment = new SettingsFragment();
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
@@ -665,9 +690,9 @@ public class MainActivity extends FragmentActivity {
                             showPlayingList();
                         else
                             setPlayBarTitle(false);
-                        startProgressBar();
+                        //startProgressBar();
                         homeFragment.startLyric();
-                        musicService.setNowPageId(0);
+                        //musicService.setNowPageId(0);
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_allSongList);
@@ -677,7 +702,7 @@ public class MainActivity extends FragmentActivity {
                             setPlayBarTitle(true);
                         stopProgressBar();
                         //homeFragment.stopLyric();
-                        musicService.setNowPageId(1);
+                        //musicService.setNowPageId(1);
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
@@ -687,7 +712,7 @@ public class MainActivity extends FragmentActivity {
                             setPlayBarTitle(true);
                         stopProgressBar();
                         //homeFragment.stopLyric();
-                        musicService.setNowPageId(2);
+                        //musicService.setNowPageId(2);
                         break;
                 }
             }
@@ -697,7 +722,6 @@ public class MainActivity extends FragmentActivity {
                 super.onPageScrollStateChanged(state);
             }
         });
-        viewPager.setCurrentItem(musicService.getNowPageId(), false);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -759,8 +783,8 @@ public class MainActivity extends FragmentActivity {
                     homeFragment = new HomeFragment();
                     return homeFragment;
                 case 1:
-                    playlistFragment = new PlaylistFragment();
-                    return playlistFragment;
+                    songListFragment = new SongListFragment();
+                    return songListFragment;
                 case 2:
                     settingsFragment = new SettingsFragment();
                     return settingsFragment;

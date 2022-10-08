@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,7 +18,7 @@ import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.TimeUtils;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.activities.MainActivity;
 
 import java.io.File;
 import java.io.FileWriter;

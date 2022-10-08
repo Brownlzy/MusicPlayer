@@ -1,4 +1,4 @@
-package com.liux.musicplayer.ui.settings;
+package com.liux.musicplayer.ui;
 
 import static com.liux.musicplayer.utils.UriTransform.getPath;
 
@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -42,8 +43,9 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.google.gson.Gson;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.utils.CrashHandlers;
+import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,10 +153,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             //Toast.makeText(getActivity(), sp.getString("mainFolder","---"), Toast.LENGTH_LONG).show();
         }
     });
+    private MyViewModel myViewModel;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         Context context = getActivity();
+        myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         assert context != null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         setPreferencesFromResource(R.xml.root_preferences, rootKey);

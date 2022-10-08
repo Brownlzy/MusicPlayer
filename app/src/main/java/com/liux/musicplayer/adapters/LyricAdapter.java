@@ -1,4 +1,4 @@
-package com.liux.musicplayer.ui.home;
+package com.liux.musicplayer.adapters;
 
 import static androidx.annotation.Dimension.SP;
 
@@ -11,8 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.utils.LyricUtils;
-import com.liux.musicplayer.utils.MusicUtils;
 
 public class LyricAdapter extends BaseAdapter {
 

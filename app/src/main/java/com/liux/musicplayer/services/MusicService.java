@@ -1,4 +1,4 @@
-package com.liux.musicplayer.service;
+package com.liux.musicplayer.services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -39,8 +39,8 @@ import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.interfaces.MusicServiceCallback;
 import com.liux.musicplayer.receiver.BluetoothStateReceiver;
 import com.liux.musicplayer.receiver.HeadsetPlugReceiver;
-import com.liux.musicplayer.receiver.MediaButtonReceiver;
-import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.receiver.MediaButton2Receiver;
+import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UploadDownloadUtils;
@@ -52,7 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MusicService extends Service implements MediaButtonReceiver.IKeyDownListener {
+public class MusicService extends Service implements MediaButton2Receiver.IKeyDownListener {
     public static final String PLAY = "play";
     public static final String PAUSE = "pause";
     public static final String PREV = "prev";
@@ -97,7 +97,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     private LyricUtils lyric = null;
     private MusicUtils.Metadata metadata = null;
     private Bitmap albumImage = null;
-    private MediaButtonReceiver mediaButtonReceiver;
+    private MediaButton2Receiver mediaButtonReceiver;
     private int[] keyTimes = new int[1];
     private KeyTimeThread keyTimeThread;
     private BluetoothStateReceiver mBluetoothStateReceiver;
@@ -361,7 +361,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             mediaPlayer.reset();
             AudioAttributes.Builder audioAttributesBuilder = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC);
             mediaPlayer.setAudioAttributes(audioAttributesBuilder.build());
-            mediaButtonReceiver = new MediaButtonReceiver(getApplicationContext(), this);
+            mediaButtonReceiver = new MediaButton2Receiver(getApplicationContext(), this);
         }
         setMediaPlayerListener();
     }
@@ -955,23 +955,23 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     @Override
     public void onKeyDown(int keyAction) {
         switch (keyAction) {
-            case MediaButtonReceiver.KeyActions.PLAY_ACTION:
+            case MediaButton2Receiver.KeyActions.PLAY_ACTION:
                 Log.d(TAG, "播放...");
                 setPlayOrPause(true);
                 break;
-            case MediaButtonReceiver.KeyActions.PAUSE_ACTION:
+            case MediaButton2Receiver.KeyActions.PAUSE_ACTION:
                 Log.d(TAG, "暂停...");
                 setPlayOrPause(false);
                 break;
-            case MediaButtonReceiver.KeyActions.PREV_ACTION:
+            case MediaButton2Receiver.KeyActions.PREV_ACTION:
                 Log.d(TAG, "上一首...");
                 playPrevOrNext(false);
                 break;
-            case MediaButtonReceiver.KeyActions.NEXT_ACTION:
+            case MediaButton2Receiver.KeyActions.NEXT_ACTION:
                 Log.d(TAG, "下一首...");
                 playPrevOrNext(true);
                 break;
-            case MediaButtonReceiver.KeyActions.KEYCODE_HEADSETHOOK:
+            case MediaButton2Receiver.KeyActions.KEYCODE_HEADSETHOOK:
                 //Log.e(TAG, "keytimes:" + keyTimes[0]);
                 if (keyTimes[0] != 0)
                     keyTimeThread.interrupt();

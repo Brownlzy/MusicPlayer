@@ -1,4 +1,4 @@
-package com.liux.musicplayer.ui;
+package com.liux.musicplayer.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,22 +9,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;
 
 import java.util.List;
 
 public class PlayingListAdapter extends BaseAdapter {
 
-    List<MusicUtils.Song> data;
+    List<Song> data;
     private final Context mContext;
     ViewHolder holder;
     private int nowPlay;
     private RefreshListener mRefreshListener;
-    interface RefreshListener{
+    public interface RefreshListener{
         void deleteThis(int position);
     }
 
-    public PlayingListAdapter(MainActivity context, List<MusicUtils.Song> data,RefreshListener refreshListener) {
+    public PlayingListAdapter(MainActivity context, List<Song> data, RefreshListener refreshListener) {
         this.data = data;
         mContext = context;
         mRefreshListener=refreshListener;
@@ -32,8 +34,9 @@ public class PlayingListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (data.size() == 1 && data.get(0).memory.equals("此为测试数据，添加音乐文件后自动删除"))
+        if(data==null)
             return 0;
+        else
         return data.size();
     }
 
@@ -64,18 +67,15 @@ public class PlayingListAdapter extends BaseAdapter {
         holder.playArrow = convertView.findViewById(R.id.playArrow);
         holder.btnDelete=convertView.findViewById(R.id.item_remove_this);
         //设置数据
-        holder.mItemTitle.setText(data.get(position).title);
+        holder.mItemTitle.setText(data.get(position).getSongTitle());
         if(position==nowPlay){
             holder.mItemTitle.setTextColor(Color.CYAN);
         }else {
             holder.mItemTitle.setTextColor(Color.GREEN);
         }
-        holder.mItemSinger.setText(" - "+data.get(position).artist);
-        if (data.get(position).duration != null)
-            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(Long.parseLong(data.get(position).duration)));
-        else
-            holder.mItemDuration.setText("null");
-        if (data.get(position).lyric_uri.equals("null"))
+        holder.mItemSinger.setText(" - "+data.get(position).getArtistName());
+            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getSongDuration()));
+        if (data.get(position).getLyricPath()==null)
             holder.hasLyric.setVisibility(View.GONE);
         else
             holder.hasLyric.setVisibility(View.VISIBLE);

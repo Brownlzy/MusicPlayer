@@ -1,9 +1,8 @@
-package com.liux.musicplayer.ui.home;
+package com.liux.musicplayer.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,14 +23,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.ConvertUtils;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.liux.musicplayer.ui.MainActivity;
+import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.adapters.LyricAdapter;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.viewmodels.MyViewModel;
 
 public class HomeFragment extends Fragment {
 
@@ -50,6 +51,7 @@ public class HomeFragment extends Fragment {
     private final SparseBooleanArray nowLyricMap = new SparseBooleanArray();//用来存放高亮歌词的选中状态，true为选中,false为没有选中
     private int lastLyricId;
     private boolean lastLyricEnabled = false;
+    private MyViewModel myViewModel;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -60,6 +62,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mView = view;
+        myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         initViewCompat();
         //创建窗体完成，通知MainActivity来设置显示信息
         callMainActivityForInfo();
@@ -71,7 +74,7 @@ public class HomeFragment extends Fragment {
         mView.findViewById(R.id.albumImageView).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ((MainActivity) getActivity()).setIsLyric();
+                MainActivity.mainActivity.setIsLyric();
                 return false;
             }
         });
@@ -79,7 +82,7 @@ public class HomeFragment extends Fragment {
         PlayBarLyric.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setIsLyric();
+                MainActivity.mainActivity.setIsLyric();
             }
         });
         lyricList = mView.findViewById(R.id.lyricList);
@@ -109,13 +112,13 @@ public class HomeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
                 //定位播放进度至点击的歌词处
-                ((MainActivity) getActivity()).getMusicService().setProgress(lyric.startMillionTime.get(position).intValue());
+                //myViewModel.getMusicService().setProgress(lyric.startMillionTime.get(position).intValue());
             }
         });
     }
 
     private void callMainActivityForInfo() {
-        ((MainActivity) getActivity()).setChildFragment();
+        MainActivity.mainActivity.setChildFragment();
     }
 
     @Override
@@ -135,7 +138,7 @@ public class HomeFragment extends Fragment {
             lyricList = mView.findViewById(R.id.lyricList);
             lyricList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             //从文件中读取metadata数据
-            MusicUtils.Metadata metadata = ((MainActivity) requireActivity()).getMusicService().getMetadata();
+            MusicUtils.Metadata metadata = MainActivity.mainActivity.getMusicService().getMetadata();
             if (metadata.isValid) { //如果metadata有效标志为真则使用metadata的数据
                 songTitle.setText((metadata.title == null) ? song.title : metadata.title);
                 songArtist.setText((metadata.artist == null) ? song.artist : metadata.artist);
@@ -157,12 +160,12 @@ public class HomeFragment extends Fragment {
                         getString(R.string.title_lyric) + song.lyric_uri);
             }
             //读取专辑图片
-            Bitmap bitmap = ((MainActivity) requireActivity()).getMusicService().getAlbumImage();
-            if (bitmap == null) {   //获取图片失败，使用默认图片
+            //Bitmap bitmap = myViewModel.getMusicService().getAlbumImage();
+            //if (bitmap == null) {   //获取图片失败，使用默认图片
                 albumImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
-            } else {    //成功
-                albumImageView.setImageBitmap(bitmap);
-            }
+            //} else {    //成功
+            //    albumImageView.setImageBitmap(bitmap);
+            //}
             initLyric(song);
         }
     }
@@ -220,7 +223,7 @@ public class HomeFragment extends Fragment {
     public void initLyric(MusicUtils.Song song) {
         //刷新歌词
         lastLyricId = -1;
-        lyric = ((MainActivity) getActivity()).getMusicService().getLyric();    //从歌词文件中读取歌词
+        //lyric = myViewModel.getMusicService().getLyric();    //从歌词文件中读取歌词
         HomeFragment homeFragment = this;
         adapter = new LyricAdapter(homeFragment, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
         lyricList.setAdapter(adapter);  //将adapter与ListView绑定
@@ -273,10 +276,10 @@ public class HomeFragment extends Fragment {
                 // 让线程处于暂停等待状态
                 while (pause) {
                     onPause();
-                }
+                }/*
                 try {
-                    if (((MainActivity) getActivity()).getMusicService().isPlaying() && ((MainActivity) getActivity()).getMusicService().getLyric().isCompleted) {
-                        int currentLyricId = lyric.getNowLyric(((MainActivity) getActivity()).getMusicService().getCurrentPosition());
+                    if (myViewModel.getMusicService().isPlaying() && myViewModel.getMusicService().getLyric().isCompleted) {
+                        int currentLyricId = lyric.getNowLyric((myViewModel.getMusicService().getCurrentPosition()));
                         if (currentLyricId >= 0) {
                             Message msg = new Message();
                             msg.what = 100;  //消息发送的标志
@@ -289,7 +292,7 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 } catch (NullPointerException e) {
                     stopLyric();
-                }
+                }*/
             }
         }
     }

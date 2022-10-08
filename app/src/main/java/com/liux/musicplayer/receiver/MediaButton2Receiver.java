@@ -8,7 +8,7 @@ import android.view.KeyEvent;
 
 import androidx.annotation.NonNull;
 
-public class MediaButtonReceiver extends BroadcastReceiver {
+public class MediaButton2Receiver extends BroadcastReceiver {
     private MediaSession mMediaSession;
 
     public class KeyActions {
@@ -31,7 +31,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public MediaButtonReceiver(Context context, IKeyDownListener mKeyDownListener) {
+    public MediaButton2Receiver(Context context, IKeyDownListener mKeyDownListener) {
         mMediaSession = new MediaSession(context, "MediaButtonReceiver");
         mMediaSession.setCallback(new MediaSession.Callback() {
             @Override

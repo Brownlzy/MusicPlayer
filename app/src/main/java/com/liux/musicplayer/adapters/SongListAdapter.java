@@ -1,4 +1,4 @@
-package com.liux.musicplayer.ui.playlist;
+package com.liux.musicplayer.adapters;
 
 import android.content.Context;
 import android.util.SparseBooleanArray;
@@ -10,13 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;
 
 import java.util.List;
 
-public class PlaylistAdapter extends BaseAdapter {
+public class SongListAdapter extends BaseAdapter {
 
-    List<MusicUtils.Song> data;
+    List<Song> data;
     private final Context mContext;
     ViewHolder holder;
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
@@ -24,11 +25,11 @@ public class PlaylistAdapter extends BaseAdapter {
     private final PopUpMenuListener mPopUpMenuListener;
     private int nowPlay;
 
-    interface PopUpMenuListener{
+    public interface PopUpMenuListener{
         void PopUpMenu(int position,View v);
     }
 
-    public PlaylistAdapter(Context context, List<MusicUtils.Song> data, SparseBooleanArray stateCheckedMap,PopUpMenuListener playlistFragment) {
+    public SongListAdapter(Context context, List<Song> data, SparseBooleanArray stateCheckedMap, PopUpMenuListener playlistFragment) {
         this.data = data;
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;
@@ -37,7 +38,7 @@ public class PlaylistAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (data.size() == 1 && data.get(0).memory.equals("此为测试数据，添加音乐文件后自动删除"))
+        if (data==null)
             return 0;
         return data.size();
     }
@@ -72,15 +73,12 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.playArrow = convertView.findViewById(R.id.playArrow);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
         //设置数据
-        holder.mItemTitle.setText(data.get(position).title);
+        holder.mItemTitle.setText(data.get(position).getSongTitle());
         holder.mItemId.setText(String.valueOf(position + 1));
-        holder.mItemSinger.setText(data.get(position).artist +
-                (data.get(position).album.equals("null") ? "" : (" - " + data.get(position).album)));
-        if (data.get(position).duration != null)
-            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(Long.parseLong(data.get(position).duration)));
-        else
-            holder.mItemDuration.setText("null");
-        if (data.get(position).lyric_uri.equals("null"))
+        holder.mItemSinger.setText(data.get(position).getArtistName() +
+                (data.get(position).getAlbumName().equals("") ? "" : (" - " + data.get(position).getAlbumName())));
+            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getSongDuration()));
+        if (data.get(position).getLyricPath()==null)
             holder.hasLyric.setVisibility(View.GONE);
         else
             holder.hasLyric.setVisibility(View.VISIBLE);

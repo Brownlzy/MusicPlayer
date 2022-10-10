@@ -124,7 +124,7 @@ public class MediaNotificationManager {
         floatLyricPendingIntent= PendingIntent.getBroadcast(mService, 0, floatLyricIntent, PendingIntent.FLAG_IMMUTABLE);
         mHlyricAction =
                 new NotificationCompat.Action(
-                        R.drawable.ic_round_subtitles_green_18,
+                        R.drawable.ic_round_subtitles_off_18,
                         "closeLyric",
                         floatLyricPendingIntent);
 

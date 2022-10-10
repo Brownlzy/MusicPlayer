@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.media.MediaBrowserCompat;
@@ -46,7 +47,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         public static final String TAG = "MusicReceiver";
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG,intent.getAction());
+            Log.e(TAG,"LyricReceiver:"+intent.getAction());
             Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
             switch (intent.getAction()){
                 case "ACTION_DESKTOP_OPEN_LYRIC":
@@ -100,22 +101,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
     public void onCreate() {
         super.onCreate();
         sleepHandler = new Handler();
-        registerLyricReceiver();
-//        countDownTimer = new CountDownTimer(6000,1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                Log.d(Constants.TAG, "onTick: " + millisUntilFinished);
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                Toast.makeText(SimpleMusicService.this, "Closing service", Toast.LENGTH_SHORT).show();
-//                mPlayback.onStop();
-//                onDestroy();
-//            }
-//        };
-//
-//        countDownTimer.start();
 
         mSession = new MediaSessionCompat(getApplicationContext(), SimpleMusicService.class.getSimpleName());
         setSessionToken(mSession.getSessionToken());
@@ -135,6 +120,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //TODO 继承MediaButton
         MediaButtonReceiver.handleIntent(mSession, intent);
         return super.onStartCommand(intent, flags, startId);
     }
@@ -189,7 +175,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             Log.d(TAG, String.format("onAddQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlaylist.add(queueItem);
-            queueItemHashMap.put(description.getMediaId(), queueItem);
+            queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
             mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
             mSession.setQueue(mPlaylist);
         }
@@ -197,15 +183,16 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
             Log.d(TAG, "onRemoveQueueItem: Called SimpleMusicService");
+            Log.d(TAG, String.format("onRemoveQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlaylist.remove(queueItem);
-            queueItemHashMap.remove(description.getMediaId());
+            queueItemHashMap.remove(description.getMediaUri().getPath());
 //            mPlaylist.remove(new MediaSessionCompat.QueueItem(description, description.hashCode()));
             mQueueIndex = (mPlaylist.isEmpty()) ? -1 : mQueueIndex;
             mSession.setQueue(mPlaylist);
         }
 
-
+/*
         @Override
         public void onPrepareFromMediaId(String mediaId, Bundle extras) {
             Log.d(TAG, "onPrepare: Called SimpleMusicService");
@@ -220,6 +207,29 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             if (!mSession.isActive()) {
                 mSession.setActive(true);
             }
+        }*/
+
+        @Override
+        public void onPrepareFromSearch(String query, Bundle extras) {
+            super.onPrepareFromSearch(query, extras);
+        }
+
+        @Override
+        public void onPrepareFromUri(Uri uri, Bundle extras) {
+            super.onPrepareFromUri(uri, extras);
+            Log.d(TAG, "onPrepare: Called SimpleMusicService");
+            if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
+                // Nothing to play.
+                return;
+            }
+
+            mPreparedMedia = MusicLibrary.getMetadata(uri);
+            mSession.setMetadata(mPreparedMedia);
+
+            if (!mSession.isActive()) {
+                mSession.setActive(true);
+            }
+
         }
 
         @Override
@@ -238,8 +248,8 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 return;
             }
 
-            final String mediaId = mPlaylist.get(mQueueIndex).getDescription().getMediaId();
-            mPreparedMedia = MusicLibrary.getMetadata(mediaId);
+            final Uri mediaUri = mPlaylist.get(mQueueIndex).getDescription().getMediaUri();
+            mPreparedMedia = MusicLibrary.getMetadata(mediaUri);
             mSession.setMetadata(mPreparedMedia);
 
             if (!mSession.isActive()) {
@@ -262,7 +272,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
             mPlayback.playFromMedia(mPreparedMedia);
         }
-
+/*
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             Log.d(TAG, "onPlayFromMediaId: Called SimpleMusicService" + mediaId);
@@ -278,6 +288,35 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
             mQueueIndex = mPlaylist.indexOf(queueItemHashMap.get(mediaId));
             mPlayback.playFromMedia(mPreparedMedia);
+        }*/
+
+        @Override
+        public void onPlayFromSearch(String query, Bundle extras) {
+            super.onPlayFromSearch(query, extras);
+        }
+
+        @Override
+        public void onPlayFromUri(Uri uri, Bundle extras) {
+            super.onPlayFromUri(uri, extras);
+            Log.d(TAG, "onPlayFromMediaId: Called SimpleMusicService" + uri);
+            if (!isReadyToPlay()) {
+                // Nothing to play.
+                Log.d(TAG, "not ready to play: ");
+                return;
+            }
+
+//            if (mPreparedMedia == null) {
+            onPrepareFromUri(uri, null);
+//            }
+
+            mQueueIndex = mPlaylist.indexOf(queueItemHashMap.get(uri.getPath()));
+            mPlayback.playFromMedia(mPreparedMedia);
+
+        }
+
+        @Override
+        public void onSkipToQueueItem(long id) {
+            super.onSkipToQueueItem(id);
         }
 
         @Override

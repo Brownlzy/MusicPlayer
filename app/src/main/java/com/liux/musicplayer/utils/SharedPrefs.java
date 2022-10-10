@@ -106,4 +106,8 @@ public class SharedPrefs {
     public static void putCacheList(String strCacheListJson) {
         sharedPreferencesEditor.putString("cacheList",strCacheListJson);
     }
+
+    public static int getNowPlayId() {
+        return Integer.parseInt(sharedPreferences.getString("nowId","0"));
+    }
 }

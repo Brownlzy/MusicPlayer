@@ -291,7 +291,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         if (!webPlayMode) {
             //lyric.LoadLyric(playingList.get(nowId));
             albumImage = MusicUtils.getAlbumImage(this, playingList.get(nowId).source_uri);
-            metadata = MusicUtils.getMetadata(this, playingList.get(nowId).source_uri);
+            metadata = MusicUtils.getMetadata( playingList.get(nowId).source_uri);
         }
         setPlayOrder(playOrder);
     }
@@ -747,7 +747,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
     public void addMusic(String path) {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;
-        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(this, newSong.source_uri);
+        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata( newSong.source_uri);
         if (newMetadata.isValid) {
             newSong.title = newMetadata.title;
             newSong.artist = newMetadata.artist;
@@ -862,7 +862,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
             //lyric.LoadLyric(playingList.get(nowId));
             if (FileUtils.isFileExists(playingList.get(nowId).source_uri)) {
                 albumImage = MusicUtils.getAlbumImage(this, playingList.get(nowId).source_uri);
-                metadata = MusicUtils.getMetadata(this, playingList.get(nowId).source_uri);
+                metadata = MusicUtils.getMetadata( playingList.get(nowId).source_uri);
                 prepare(playingList.get(nowId).source_uri);
                 reId = 0;
             } else if (playingList.get(nowId).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
@@ -899,7 +899,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
                 reId = 0;
             } else {
                 albumImage = MusicUtils.getAlbumImage(this, "null");
-                metadata = MusicUtils.getMetadata(this, "null");
+                metadata = MusicUtils.getMetadata( "null");
                 reId = -1;
             }
         return reId;
@@ -909,7 +909,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         try {
             Log.e(TAG, path);
             albumImage = MusicUtils.getAlbumImage(this, path);
-            metadata = MusicUtils.getMetadata(this, path);
+            metadata = MusicUtils.getMetadata( path);
             mediaPlayer.reset();
             mediaPlayer.setDataSource(this, Uri.parse(path));
             mediaPlayer.prepare();

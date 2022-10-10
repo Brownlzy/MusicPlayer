@@ -4,14 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,13 +16,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaBrowserHelper;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.SimpleMusicService;
-import com.liux.musicplayer.media.SongProvider;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
@@ -41,6 +37,13 @@ public class MyViewModel extends AndroidViewModel {
     private static boolean activityForeground=false;
     private static boolean isDeskTopLyric=false;
     private static boolean isDeskTopLyricLocked=false;
+
+    public void setFragmentLyricState(boolean fragmentLyricState) {
+        this.fragmentLyricState = fragmentLyricState;
+    }
+
+    private boolean fragmentLyricState=false;
+
     public static void setActivityForeground(boolean activityForeground) {
         MyViewModel.activityForeground = activityForeground;
         Intent intent=new Intent(MainActivity.mainActivity,SimpleMusicService.class);
@@ -61,19 +64,23 @@ public class MyViewModel extends AndroidViewModel {
     MutableLiveData<Song> nowPlaying = new MutableLiveData<Song>();
     MutableLiveData<LyricUtils> nowLyric =new MutableLiveData<>();
 
-    public Bitmap getNowAlbum() {
-        return nowAlbum;
+    public Bitmap getNowAlbumArt() {
+        if (nowAlbum == null) {   //获取图片失败，使用默认图片
+            return MusicUtils.getBitmap(MainActivity.mainActivity,R.drawable.ic_baseline_music_note_24);
+        } else {    //成功
+            return nowAlbum;
+        }
     }
 
     Bitmap nowAlbum;
     MutableLiveData<PlaybackStateCompat> playingPlaybackState = new MutableLiveData<PlaybackStateCompat>();
     private MediaBrowserHelper mMediaBrowserHelper;
 
-    public MusicService getMusicService() {
-        return musicService;
-    }
+    //public MusicService getMusicService() {
+    //    return musicService;
+    //}
 
-    private MusicService musicService;
+    //private MusicService musicService;
 
     public MyViewModel(@NonNull Application application) {
         super(application);
@@ -81,9 +88,9 @@ public class MyViewModel extends AndroidViewModel {
         connectToMediaPlaybackService();
     }
 
-    public void setMusicService(MusicService musicService) {
-        this.musicService = musicService;
-    }
+    /*public void setMusicService(MusicService musicService) {
+        //this.musicService = musicService;
+    }*/
     public MutableLiveData<List<MediaBrowserCompat.MediaItem>> getSearchResultsLiveData() {
         return searchResultsLiveData;
     }
@@ -120,12 +127,12 @@ public class MyViewModel extends AndroidViewModel {
     public void refreshSongsList() {
         SharedPrefs.init(getApplication());
         //从媒体库中获取歌单
-        final List<Song> songs = SongProvider.getSongs(SongProvider.makeSongCursor(
-                getApplication(), SongProvider.getSongLoaderSortOrder())
-        );
-        SharedPrefs.saveSongList(songs);
+        //final List<Song> songs = SongProvider.getSongs(SongProvider.makeSongCursor(
+        //        getApplication(), SongProvider.getSongLoaderSortOrder())
+        //);
+        //SharedPrefs.saveSongList(songs);
         songsMutableLiveData.setValue(SharedPrefs.getSongListFromSharedPrefer("[{}]"));
-        playingSongsMutableLiveData.setValue(SharedPrefs.getPlayingListFromSharedPrefer("[{}]"));
+        playingSongsMutableLiveData.setValue(MusicLibrary.getPlayingSongsList());
         //SharedPrefs.saveSongList(songs);
         //final List<Song> songs=SongProvider.getSongsFromSharedPrefer();
 //        songsMutableLiveData.setValue(songs);
@@ -217,6 +224,14 @@ public class MyViewModel extends AndroidViewModel {
         return SharedPrefs.getPlayOrder();
     }
 
+    public boolean getFragmentLyricState() {
+        return fragmentLyricState;
+    }
+
+    public LyricUtils getLyric() {
+        return nowLyric.getValue();
+    }
+
     /**
      * and implement our app specific desires.
      */
@@ -229,6 +244,7 @@ public class MyViewModel extends AndroidViewModel {
         @Override
         protected void onConnected(@NonNull MediaControllerCompat mediaController) {
             Log.e(TAG, "onConnected: Called");
+            MainActivity.mainActivity.initMainActivity();
         }
 
         @Override
@@ -298,11 +314,12 @@ public class MyViewModel extends AndroidViewModel {
             String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
             String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
             String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
+            String LYRIC_URI =mediaMetadata.getBundle().getString("LYRIC_URI","null");
             int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
-            Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID);
-            nowPlaying.setValue(song);
+            Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID,MEDIA_URI,LYRIC_URI);
             nowLyric.setValue(new LyricUtils(song));
             nowAlbum=MusicUtils.getAlbumImage(song.getSongPath());
+            nowPlaying.setValue(song);
         }
 
         public int getIdFromPlayingList(Song song){

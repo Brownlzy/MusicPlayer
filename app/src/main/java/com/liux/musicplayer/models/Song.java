@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Song implements Cloneable {
 
-    static final Song EMPTY_SONG = new Song("", -1, -1, -1, null,null, "", -1, "");
+    static final Song EMPTY_SONG = new Song("", -1, -1, -1, null, null, "", -1, "");
 
     private /*final*/ String mTitle;
     private /*final*/ int mTrackNumber;
@@ -39,11 +39,21 @@ public class Song implements Cloneable {
         this.mId = mId;
     }
 
-    public Song(String mSongPath){
-        this.mPath=mSongPath;
-        MusicUtils.Metadata metadata=getMetadata(mSongPath);
-        this.mTitle=metadata.title;
+    public Song(String mTitle, int mDuration, String mArtistName, String mId, String mPath, String mLyricPath) {
+        this.mTitle = mTitle;
+        this.mDuration = mDuration;
+        this.mArtistName = mArtistName;
+        this.mId = mId;
+        this.mPath = mPath;
+        this.mLyricPath = mLyricPath;
     }
+
+    public Song(String mSongPath) {
+        this.mPath = mSongPath;
+        MusicUtils.Metadata metadata = getMetadata(mSongPath);
+        this.mTitle = metadata.title;
+    }
+
     public static MusicUtils.Metadata getMetadata(String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
@@ -80,13 +90,13 @@ public class Song implements Cloneable {
         mArtistName = artistName;
     }
 
-    public Song(@NonNull final String title, final int trackNumber, final int year, final int duration, final String path,final String lyricPath, final String albumName, final int artistId, final String artistName) {
+    public Song(@NonNull final String title, final int trackNumber, final int year, final int duration, final String path, final String lyricPath, final String albumName, final int artistId, final String artistName) {
         mTitle = title;
         mTrackNumber = trackNumber;
         mYear = year;
         mDuration = duration;
         mPath = path;
-        mLyricPath=lyricPath;
+        mLyricPath = lyricPath;
         mAlbumName = albumName;
         mArtistId = artistId;
         mArtistName = artistName;
@@ -208,5 +218,11 @@ public class Song implements Cloneable {
     }
 
 
+    public void setLyricPath(String newLyricPath) {
+        if (newLyricPath == null)
+            this.mLyricPath = "null";
+        else
+            this.mLyricPath = newLyricPath;
+    }
 }
 

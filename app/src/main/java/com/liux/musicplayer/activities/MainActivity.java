@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,11 +26,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -37,15 +39,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
-import com.liux.musicplayer.interfaces.MusicServiceCallback;
-import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SongListFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
@@ -81,6 +81,7 @@ public class MainActivity extends FragmentActivity {
     private ListView playingList;
     private TextView playProgressNowText;
     private TextView playProgressAllText;
+    private ProgressThread progressThread;
     private ShapeableImageView shapeableImageView;
     private ShapeableImageView backImageView;
     private boolean isAlreadyShowPlayBarTitle = false;
@@ -88,16 +89,17 @@ public class MainActivity extends FragmentActivity {
     private int countActivity = 0;
     private boolean isBackground = false;
 
-    private MusicService musicService;
+    //private MusicService musicService;
     private boolean isPlayingListShowing=false;
     private PlayingListAdapter adapter;
+    private MaterialCardView splashCard;
 
     private void nowLoading(int musicId) {
         prepareInfo(musicId);
         playButton.setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_24));
     }
 
-    private void initMainActivity() {
+    public void initMainActivity() {
         MyViewModel.setActivityForeground(true);
         initVariable();
         initViewCompat();
@@ -109,45 +111,56 @@ public class MainActivity extends FragmentActivity {
 
     private void initObserver() {
         //监视正在播放的歌曲
-        myViewModel.getNowPlaying().observeForever(new Observer<Song>() {
+        myViewModel.getNowPlaying().observe(this,new Observer<Song>() {
             @Override
             public void onChanged(Song song) {
                 setPlayBarTitle(song);
-                setSeekBarMax(song.getSongDuration());
+                Log.e("Main","duration"+song.getSongDuration());
                 setSeekBarDuration(0);
+                setSeekBarMax(song.getSongDuration());
                 setPlayingListView(song);
+                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                splashCard.startAnimation(animation);
+                splashCard.setVisibility(View.GONE);
+                startProgressBar();
             }
         });
         //监视播放进度
-        myViewModel.getCurrentPlayingDuration().observeForever(new Observer<Long>() {
+        myViewModel.getCurrentPlayingDuration().observe(this,new Observer<Long>() {
             @Override
             public void onChanged(Long aLong) {
                 //setSeekBarDuration(Math.toIntExact(aLong));
             }
         });
         //监视播放状态
-        myViewModel.getIsPlaying().observeForever(new Observer<Boolean>() {
+        myViewModel.getIsPlaying().observe(this,new Observer<Boolean>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                setPlayOrPause(aBoolean);
+            public void onChanged(Boolean isPlaying) {
+                setPlayOrPause(isPlaying);
+                if(isPlaying)
+                    startProgressBar();
+                else
+                    stopProgressBar();
             }
         });
         //监视正在播放列表
-        myViewModel.getSongsMutableLiveData().observeForever(new Observer<List<Song>>() {
+        myViewModel.getMediaItemsMutableLiveData().observe(this,new Observer<List<MediaBrowserCompat.MediaItem>>() {
             @Override
-            public void onChanged(List<Song> songs) {
-                adapter = new PlayingListAdapter(MainActivity.this, myViewModel.getPlayingSongsMutableLiveData().getValue(), new PlayingListAdapter.RefreshListener() {
+            public void onChanged(List<MediaBrowserCompat.MediaItem> songs) {
+                adapter = new PlayingListAdapter(MainActivity.this, songs, new PlayingListAdapter.RefreshListener() {
                     @Override
-                    public void deleteThis(int position) {
-                        musicService.deleteMusicFromPlayingList(position);
+                    public void deleteThis(MediaDescriptionCompat description) {
+                        myViewModel.getmMediaController().removeQueueItem(description);
                     }
                 });
+                playingList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
         });
     }
 
     private void setPlayingListView(Song song) {
-        adapter.setNowPlay(song);
+        adapter.setNowPlay(song.getSongPath());
         adapter.notifyDataSetChanged();
     }
 
@@ -160,12 +173,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setSeekBarDuration(int i) {
-        if(i-playProgressBar.getProgress()>1000||i-playProgressBar.getProgress()<-1000)
-            playProgressBar.setProgress(i,false);
+            playProgressBar.setProgress(i, false);
+            playProgressNowText.setText(i / 60000 + ((i / 1000 % 60 < 10) ? ":0" : ":") + i / 1000 % 60);
     }
 
     private void setSeekBarMax(int songDuration) {
         playProgressBar.setMax(songDuration);
+        playProgressAllText.setText(songDuration / 60000 + ((songDuration / 1000 % 60 < 10) ? ":0" : ":") + songDuration / 1000 % 60);
     }
 
     private void initVariable() {
@@ -211,7 +225,7 @@ public class MainActivity extends FragmentActivity {
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
-initMainActivity();
+//initMainActivity();
         // Bind to LocalService
         /*serviceConnection = new MusicConnector();
         Intent intent = new Intent();
@@ -297,33 +311,34 @@ initMainActivity();
     }
 
     public void clickedPlayOrPause() {
+        if(myViewModel==null)return;
         if(Boolean.TRUE.equals(myViewModel.getIsPlaying().getValue()))
             myViewModel.getmMediaController().getTransportControls().pause();
         else
             myViewModel.getmMediaController().getTransportControls().play();
     }
 
-    public MusicService getMusicService() {
-        if (musicService != null)
-            return musicService;
-        else
-            return null;
-    }
+    //public MusicService getMusicService() {
+    //    if (musicService != null)
+    //        return musicService;
+    //    else
+    //        return null;
+    //}
 
     public void setPlayBarTitle(Song song) {
         playBarTitle.setText(song.getSongTitle() + " - " + song.getArtistName());
-        Bitmap bitmap = myViewModel.getNowAlbum();
-        if (bitmap == null) {   //获取图片失败，使用默认图片
-            shapeableImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_baseline_music_note_24));
-            backImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_baseline_music_note_24));
-        } else {    //成功
+        Bitmap bitmap = myViewModel.getNowAlbumArt();
+
             shapeableImageView.setImageBitmap(bitmap);
             backImageView.setImageBitmap(bitmap);
-        }
     }
 
     public void playPrevOrNext(boolean isNext) {
-        musicService.playPrevOrNext(isNext);
+        if(isNext)
+            myViewModel.getmMediaController().getTransportControls().skipToNext();
+        else
+            myViewModel.getmMediaController().getTransportControls().skipToPrevious();
+        stopProgressBar();
     }
 
     @Override
@@ -340,13 +355,14 @@ initMainActivity();
     }
 
     public void setChildFragment() {
-        if (musicService != null) {
-            homeFragment.setMusicInfo(musicService.getPlayingList().get(musicService.getNowId()));
-            setIsLyric(musicService.isAppLyric());
-        }
+        //if (musicService != null) {
+            //homeFragment.setMusicInfo(musicService.getPlayingList().get(musicService.getNowId()));
+            //setIsLyric(musicService.isAppLyric());
+        //}
     }
 
     private void initViewCompat() {
+        splashCard=findViewById(R.id.splash_view);
         playProgressBar = findViewById(R.id.seekBar);
         playProgressLayout = findViewById(R.id.playProgress);
         musicPlayingLayout = findViewById(R.id.musicPlayingLayout);
@@ -366,10 +382,10 @@ initMainActivity();
         playingList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         View footView = LayoutInflater.from(this).inflate(R.layout.playlist_footview,null);
         playingList.addFooterView(footView);
-        adapter = new PlayingListAdapter(this, myViewModel.getSongsMutableLiveData().getValue(), new PlayingListAdapter.RefreshListener() {
+        adapter = new PlayingListAdapter(this, myViewModel.getMediaItemsMutableLiveData().getValue(),  new PlayingListAdapter.RefreshListener() {
             @Override
-            public void deleteThis(int position) {
-                musicService.deleteMusicFromPlayingList(position);
+            public void deleteThis(MediaDescriptionCompat description) {
+                myViewModel.getmMediaController().removeQueueItem(description);
             }
         });
         playingList.setAdapter(adapter);
@@ -399,7 +415,7 @@ initMainActivity();
         PlayBarOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPlayOrder();
+                //setPlayOrder();
             }
         });
         playBarPrev.setOnClickListener(new View.OnClickListener() {
@@ -417,7 +433,7 @@ initMainActivity();
         findViewById(R.id.musicPlayingLayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playingList.smoothScrollToPositionFromTop(musicService.getNowId(),0);
+                //playingList.smoothScrollToPositionFromTop(musicService.getNowId(),0);
             }
         });
         findViewById(R.id.delete_all_playing_list).setOnClickListener(new View.OnClickListener() {
@@ -430,7 +446,7 @@ initMainActivity();
                         .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                musicService.deletePlayingList();
+                                //musicService.deletePlayingList();
                                 dialog.dismiss();
                             }
                         })
@@ -459,7 +475,7 @@ initMainActivity();
             public void onStopTrackingTouch(SeekBar seekBar) {
                 //musicService.setProgress(seekBar.getProgress());
                 //松开之后音乐跳转到相应位置
-                //playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
+                playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
                 //homeFragment.startLyric();
                 myViewModel.getmMediaController().getTransportControls().seekTo(seekBar.getProgress());
             }
@@ -470,7 +486,7 @@ initMainActivity();
         playingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                musicService.playThisFromList(position);
+                //musicService.playThisFromList(position);
             }
         });
     }
@@ -492,11 +508,7 @@ initMainActivity();
         }
         isPlayingListShowing=!isPlayingListShowing;
     }
-
-    public void setIsLyric() {
-        setIsLyric(!musicService.isAppLyric());
-    }
-
+/*
     public void setIsLyric(boolean isLyric) {
         if (!isLyric) {
             homeFragment.setIsLyricLayoutShow(false);
@@ -505,34 +517,34 @@ initMainActivity();
             homeFragment.setIsLyricLayoutShow(true);
             musicService.setAppLyric(true);
         }
-    }
-
+    }*/
+/*
     private void setPlayOrder() {
-        switch (musicService.getPlayOrder()) {
+        switch (myViewModel.getPlayOrder()) {
             case MusicService.LIST_PLAY:
-                musicService.setPlayOrder(MusicService.REPEAT_LIST);
+                //musicService.setPlayOrder(MusicService.REPEAT_LIST);
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_24));
                 Toast.makeText(this, R.string.repeat_list, Toast.LENGTH_SHORT).show();
                 break;
             case MusicService.REPEAT_LIST:
-                musicService.setPlayOrder(MusicService.REPEAT_ONE);
+                //musicService.setPlayOrder(MusicService.REPEAT_ONE);
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_repeat_one_24));
                 Toast.makeText(this, R.string.repeat_one, Toast.LENGTH_SHORT).show();
                 break;
             case MusicService.REPEAT_ONE:
-                musicService.setPlayOrder(MusicService.SHUFFLE_PLAY);
+                //musicService.setPlayOrder(MusicService.SHUFFLE_PLAY);
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
                 Toast.makeText(this, R.string.shuffle_play, Toast.LENGTH_SHORT).show();
                 break;
             default:
             case MusicService.SHUFFLE_PLAY:
-                musicService.setPlayOrder(MusicService.LIST_PLAY);
+                //musicService.setPlayOrder(MusicService.LIST_PLAY);
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_baseline_low_priority_24));
                 Toast.makeText(this, R.string.list_play, Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
-
+    }*/
+/*
     public void setPlayOrder(int playOrder) {
         switch (playOrder) {
             default:
@@ -549,7 +561,7 @@ initMainActivity();
                 PlayBarOrder.setImageDrawable(getDrawable(R.drawable.ic_round_shuffle_24));
                 break;
         }
-    }
+    }*/
 
     private void initViewPager2() {
         // Instantiate a ViewPager2 and a PagerAdapter.
@@ -685,4 +697,85 @@ initMainActivity();
             backImageView.setVisibility(View.GONE);
         }
     }
+
+    public void startProgressBar() {
+        if (viewPager.getCurrentItem() == 0) {
+            if (progressThread == null) {
+                progressThread = new ProgressThread();
+                progressThread.start();
+            } else if (progressThread.isPaused()) {
+                progressThread.resumeThread();
+            }
+        }
+    }
+    public void stopProgressBar() {
+        if (progressThread != null && !progressThread.isPaused())
+            progressThread.pauseThread();
+    }
+
+    private class ProgressThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        @Override
+        public void run() {
+            super.run();
+            int index = 0;
+            while (true) {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
+                try {
+                    Long nowMillionSeconds=0L;
+                    if(myViewModel.getmMediaController().getPlaybackState()!=null)
+                        nowMillionSeconds = myViewModel.getmMediaController().getPlaybackState().getPosition();
+                        Message msg = new Message();
+                        msg.what = 100;  //消息发送的标志
+                        msg.obj = nowMillionSeconds.intValue(); //消息发送的内容如：  Object String 类 int
+                        progressHandler.sendMessage(msg);
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 100) {
+                playProgressBar.setProgress((int) msg.obj); //实时获取播放音乐的位置并且设置进度条的位置
+                playProgressNowText.setText((int) msg.obj / 60000 + (((int) msg.obj / 1000 % 60 < 10) ? ":0" : ":") + (int) msg.obj / 1000 % 60);
+            }
+        }
+    };
+
 }

@@ -104,10 +104,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.item_menu_play:
-                            myViewModel.getMusicService().setPlayingList(mSongList, positionToMusicId(position));
+                            //myViewModel.getMusicService().setPlayingList(mSongList, positionToMusicId(position));
                             break;
                         case R.id.item_menu_next_play:
-                            myViewModel.getMusicService().setPlayingListNextSong(mSongList.get(positionToMusicId(position)));
+                            //myViewModel.getMusicService().setPlayingListNextSong(mSongList.get(positionToMusicId(position)));
                             break;
                         case R.id.item_menu_moreInfo:
                             showMusicDetails(positionToMusicId(position));
@@ -118,7 +118,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                                         @Override
                                         public void clickPositive(MusicUtils.Song song) {
                                             mSongList.set(positionToMusicId(position), song);
-                                            myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
+                                            //myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
                                         }
 
                                         @Override
@@ -135,7 +135,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            myViewModel.getMusicService().deleteMusic(positionToMusicId(position));
+                                            //myViewModel.getMusicService().deleteMusic(positionToMusicId(position));
                                             adapter.notifyDataSetChanged();
                                             dialog.dismiss();
                                         }
@@ -160,7 +160,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
 
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
-        myViewModel.getMusicService().addMusic(songList);
+        //myViewModel.getMusicService().addMusic(songList);
     }
 
     private void addFolder(Uri uri) {
@@ -206,7 +206,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             //if (childFile.length() / 1024 > 1024) {
             //创建模型类存储值，并添加到集合中。通过集合可做任意操作
             //Log.e("ScannedFiles", childFile.getAbsolutePath());
-            myViewModel.getMusicService().addMusic(childFile.getAbsolutePath());
+            //myViewModel.getMusicService().addMusic(childFile.getAbsolutePath());
             //}
         }
     }
@@ -225,7 +225,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        initData();
+        //initData();
     }
 
     @Override
@@ -358,10 +358,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        if (getActivity() != null
-                && myViewModel.getMusicService() != null
-                && isWebPlaylist != myViewModel.getMusicService().isWebPlayMode())
-            initData();
+        if (getActivity() != null)
+                //&& myViewModel.getMusicService() != null
+                //&& isWebPlaylist != myViewModel.getMusicService().isWebPlayMode())
+            //initData();
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
     }
@@ -410,7 +410,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();
-        myViewModel.getMusicService().setAllSongListAfterDelete(mSongList);
+        //myViewModel.getMusicService().setAllSongListAfterDelete(mSongList);
         Toast.makeText(requireContext(), "删除成功", Toast.LENGTH_SHORT).show();
         refreshList();
     }
@@ -454,7 +454,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
                 } else {
-                    myViewModel.getMusicService().setPlayingList(mSongList, positionToMusicId(position));
+                    //myViewModel.getMusicService().setPlayingList(mSongList, positionToMusicId(position));
                 }
             }
         });
@@ -613,17 +613,17 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         }
         Log.e("playList", String.valueOf(listPosition));
         Log.e("playList", String.valueOf(listPositionY));
-        initData();
+        //initData();
         adapter = new SongListAdapter(requireContext(), myViewModel.getSongsMutableLiveData().getValue(), stateCheckedMap,popUpMenuListener);
         lvData.setAdapter(adapter);
 
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
 
-        myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
-        setNowPlaying(myViewModel.getMusicService().getNowId());
+        //myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
+        //setNowPlaying(myViewModel.getMusicService().getNowId());
     }
-
+/*
     public void initData() {
         if (myViewModel!=null && myViewModel.getMusicService() != null) {
             isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
@@ -634,7 +634,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
             setNowPlaying(Integer.parseInt(prefs.getString("nowId", "0")));
         }
-    }
+    }*/
 
     /**
      * 设置所有CheckBox的选中状态
@@ -652,11 +652,11 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
 
     private void showMusicDetails(int musicId) {
         MusicUtils.Metadata metadata = null;
-        if (myViewModel.getMusicService().isWebPlayMode()) {
-            metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
-        } else {
-            metadata = MusicUtils.getMetadata(requireContext(), mSongList.get(musicId).source_uri);
-        }
+        //if (myViewModel.getMusicService().isWebPlayMode()) {
+        ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
+        //} else {
+        //    metadata = MusicUtils.getMetadata(mSongList.get(musicId).source_uri);
+        //}
         Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId).source_uri);
         AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(mSongList.get(musicId).title)

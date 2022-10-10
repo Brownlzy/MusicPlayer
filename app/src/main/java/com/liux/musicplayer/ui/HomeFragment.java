@@ -21,8 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.ConvertUtils;
@@ -30,8 +30,11 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.adapters.LyricAdapter;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.media.MusicLibrary;
+import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 public class HomeFragment extends Fragment {
@@ -64,17 +67,76 @@ public class HomeFragment extends Fragment {
         mView = view;
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         initViewCompat();
-        //创建窗体完成，通知MainActivity来设置显示信息
-        callMainActivityForInfo();
+        initData();
+        initObserver();
         return view;
     }
 
+    private void initData() {
+        initMusicInfo(MusicLibrary.getPlayingSongsList().get(SharedPrefs.getNowPlayId()));
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initMusicInfo(Song song) {
+        MusicUtils.Metadata metadata = MusicUtils.getMetadata(song.getSongPath());
+        if (metadata.isValid) { //如果metadata有效标志为真则使用metadata的数据
+            songTitle.setText((metadata.title == null) ? song.getSongTitle() : metadata.title);
+            songArtist.setText((metadata.artist == null) ? song.getArtistName() : metadata.artist);
+            //songArtist.setText(metadata.artist + (metadata.album.equals("null") ? "" : (" - " + song.album)));
+            songInfo.setText(
+                    getString(R.string.title_album) + metadata.album + "\n" +
+                            getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+                            getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+                            getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+                            getString(R.string.file_size) + metadata.sizeByte + "\n" +
+                            getString(R.string.title_path) + song.getSongPath() + "\n" +
+                            getString(R.string.title_lyric) + song.getLyricPath()
+            );
+        } else {    //否则使用播放列表的数据
+            songTitle.setText(song.getSongTitle());
+            songArtist.setText(song.getArtistName());
+            songInfo.setText(getString(R.string.title_album) + song.getAlbumName() + "\n" +
+                    getString(R.string.title_path) + song.getSongPath() + "\n" +
+                    getString(R.string.title_lyric) + song.getLyricPath());
+        }
+        Bitmap bitmap=MusicUtils.getAlbumImage(song.getSongPath());
+        if (bitmap == null) {   //获取图片失败，使用默认图片
+            albumImageView.setImageResource(R.drawable.ic_baseline_music_note_24);
+        } else {    //成功
+            albumImageView.setImageBitmap(bitmap);
+        }
+    }
+
+    private void initObserver() {
+        myViewModel.getNowPlaying().observe(MainActivity.mainActivity,new Observer<Song>() {
+            @Override
+            public void onChanged(Song song) {
+                setMusicInfo(song);
+            }
+        });
+        myViewModel.getIsPlaying().observe(MainActivity.mainActivity,new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isPlaying) {
+                if(isPlaying)
+                    startLyric();
+                else
+                    stopLyric();
+            }
+        });
+    }
+
     private void initViewCompat() {
+        songTitle = mView.findViewById(R.id.home_song_title);
+        songArtist = mView.findViewById(R.id.home_song_artist);
+        songInfo = mView.findViewById(R.id.home_song_info);
+        albumImageView = mView.findViewById(R.id.albumImageView);
+        songLyricLayout = mView.findViewById(R.id.songLyricLayout);
+        lyricList = mView.findViewById(R.id.lyricList);
         //绑定歌词列表
         mView.findViewById(R.id.albumImageView).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                MainActivity.mainActivity.setIsLyric();
+                setIsLyric();
                 return false;
             }
         });
@@ -82,7 +144,7 @@ public class HomeFragment extends Fragment {
         PlayBarLyric.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.mainActivity.setIsLyric();
+                setIsLyric();
             }
         });
         lyricList = mView.findViewById(R.id.lyricList);
@@ -113,21 +175,21 @@ public class HomeFragment extends Fragment {
                 //Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
                 //定位播放进度至点击的歌词处
                 //myViewModel.getMusicService().setProgress(lyric.startMillionTime.get(position).intValue());
+                myViewModel.getmMediaController().getTransportControls().seekTo(lyric.startMillionTime.get(position));
             }
         });
     }
-
-    private void callMainActivityForInfo() {
-        MainActivity.mainActivity.setChildFragment();
+    public void setIsLyric() {
+        setIsLyricLayoutShow(!lastLyricEnabled);
+        //myViewModel.setFragmentLyricState(!myViewModel.getFragmentLyricState());
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
 
     @SuppressLint("SetTextI18n")
-    public void setMusicInfo(MusicUtils.Song song) {
+    public void setMusicInfo(Song song) {
         if (mView != null) {
             //重新获取一遍防止空指针
             songTitle = mView.findViewById(R.id.home_song_title);
@@ -138,10 +200,10 @@ public class HomeFragment extends Fragment {
             lyricList = mView.findViewById(R.id.lyricList);
             lyricList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             //从文件中读取metadata数据
-            MusicUtils.Metadata metadata = MainActivity.mainActivity.getMusicService().getMetadata();
+            MusicUtils.Metadata metadata = MusicUtils.getMetadata(song.getSongPath());
             if (metadata.isValid) { //如果metadata有效标志为真则使用metadata的数据
-                songTitle.setText((metadata.title == null) ? song.title : metadata.title);
-                songArtist.setText((metadata.artist == null) ? song.artist : metadata.artist);
+                songTitle.setText((metadata.title == null) ? song.getSongTitle() : metadata.title);
+                songArtist.setText((metadata.artist == null) ? song.getArtistName() : metadata.artist);
                 //songArtist.setText(metadata.artist + (metadata.album.equals("null") ? "" : (" - " + song.album)));
                 songInfo.setText(
                         getString(R.string.title_album) + metadata.album + "\n" +
@@ -149,20 +211,20 @@ public class HomeFragment extends Fragment {
                                 getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
                                 getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
                                 getString(R.string.file_size) + metadata.sizeByte + "\n" +
-                                getString(R.string.title_path) + song.source_uri + "\n" +
-                                getString(R.string.title_lyric) + song.lyric_uri
+                                getString(R.string.title_path) + song.getSongPath() + "\n" +
+                                getString(R.string.title_lyric) + song.getLyricPath()
                 );
             } else {    //否则使用播放列表的数据
-                songTitle.setText(song.title);
-                songArtist.setText(song.artist);
-                songInfo.setText(getString(R.string.title_album) + song.album + "\n" +
-                        getString(R.string.title_path) + song.source_uri + "\n" +
-                        getString(R.string.title_lyric) + song.lyric_uri);
+                songTitle.setText(song.getSongTitle());
+                songArtist.setText(song.getArtistName());
+                songInfo.setText(getString(R.string.title_album) + song.getAlbumName() + "\n" +
+                        getString(R.string.title_path) + song.getSongPath() + "\n" +
+                        getString(R.string.title_lyric) + song.getLyricPath());
             }
             //读取专辑图片
             //Bitmap bitmap = myViewModel.getMusicService().getAlbumImage();
             //if (bitmap == null) {   //获取图片失败，使用默认图片
-                albumImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
+            albumImageView.setImageBitmap(myViewModel.getNowAlbumArt());
             //} else {    //成功
             //    albumImageView.setImageBitmap(bitmap);
             //}
@@ -172,13 +234,13 @@ public class HomeFragment extends Fragment {
 
     //显示歌词列表及模糊背景
     public void setIsLyricLayoutShow(boolean isLyric) {
-        if (songLyricLayout != null && isLyric != lastLyricEnabled) {
-            if (!isLyric) {
+        if (songLyricLayout != null) {
+            if (!isLyric&& lastLyricEnabled) {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_hide);
                 songLyricLayout.startAnimation(animation);
                 PlayBarLyric.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_subtitles_24));
                 songLyricLayout.setVisibility(View.INVISIBLE);
-            } else {
+            } else if(!lastLyricEnabled){
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_show);
                 songLyricLayout.setVisibility(View.VISIBLE);
                 PlayBarLyric.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_subtitles_green_24));
@@ -199,6 +261,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         //lastLyricId = -1;
         startLyric();
+        //setIsLyricLayoutShow(lastLyricEnabled);
     }
 
     //根据当前歌词位置设置歌词高亮居中
@@ -220,10 +283,11 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void initLyric(MusicUtils.Song song) {
+    public void initLyric(Song song) {
         //刷新歌词
         lastLyricId = -1;
         //lyric = myViewModel.getMusicService().getLyric();    //从歌词文件中读取歌词
+        lyric=myViewModel.getLyric();
         HomeFragment homeFragment = this;
         adapter = new LyricAdapter(homeFragment, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
         lyricList.setAdapter(adapter);  //将adapter与ListView绑定
@@ -276,10 +340,10 @@ public class HomeFragment extends Fragment {
                 // 让线程处于暂停等待状态
                 while (pause) {
                     onPause();
-                }/*
+                }
                 try {
-                    if (myViewModel.getMusicService().isPlaying() && myViewModel.getMusicService().getLyric().isCompleted) {
-                        int currentLyricId = lyric.getNowLyric((myViewModel.getMusicService().getCurrentPosition()));
+                    if (myViewModel.getLyric().isCompleted) {
+                        int currentLyricId = lyric.getNowLyric((myViewModel.getmMediaController().getPlaybackState().getPosition()));
                         if (currentLyricId >= 0) {
                             Message msg = new Message();
                             msg.what = 100;  //消息发送的标志
@@ -292,7 +356,7 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 } catch (NullPointerException e) {
                     stopLyric();
-                }*/
+                }
             }
         }
     }

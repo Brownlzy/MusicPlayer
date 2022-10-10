@@ -216,7 +216,7 @@ public class LyricUtils {
         return lyricList.size();
     }
 
-    public int getNowLyric(int currentPosition) {
+    public int getNowLyric(long currentPosition) {
         if (lyricList.size() > 0) {
             for (int i = 0; i < lyricList.size(); i++) {
                 if (startMillionTime.get(i) > currentPosition)

@@ -7,7 +7,9 @@ import android.os.Handler;
 import androidx.fragment.app.FragmentActivity;
 
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.services.MusicService;
+import com.liux.musicplayer.media.MusicLibrary;
+import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.utils.SharedPrefs;
 
 public class SplashActivity  extends FragmentActivity {
 
@@ -21,15 +23,16 @@ public class SplashActivity  extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new Handler()
-                .post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent();
-                        intent.setClass(SplashActivity.this, MusicService.class);
-                        //startService(intent);
-                    }
-                });
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                SharedPrefs.init(getApplication());
+                MusicLibrary.init();
+                Intent intent = new Intent();
+                intent.setClass(SplashActivity.this, SimpleMusicService.class);
+                startService(intent);
+            }
+        });
         new Handler()
                 .postDelayed(new Runnable() {
                     @Override

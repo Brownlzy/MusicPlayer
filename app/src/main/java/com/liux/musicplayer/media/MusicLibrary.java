@@ -25,6 +25,7 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.SharedPrefs;
 
@@ -45,20 +46,35 @@ public class MusicLibrary {
     private static final TreeMap<String, Song> PlaylistSongs = new TreeMap<>();
     private static final String TAG = "MusicLibrary";
 
-    public static List<MediaBrowserCompat.MediaItem> getPlayingList(){
+    public static List<MediaBrowserCompat.MediaItem> getPlayingList() {
+        /*buildMediaItems(
+                SharedPrefs.getPlayingListFromSharedPrefer("[{}]"),
+                PlayingList
+        );*/
+        return new ArrayList<>(PlayingList.values());
+    }
+    public static List<Song> getPlayingSongsList(){
         buildMediaItems(
                 SharedPrefs.getPlayingListFromSharedPrefer("[{}]"),
                 PlayingList
         );
-        return new ArrayList<>(PlayingList.values());
+        return new ArrayList<>(PlaylistSongs.values());
     }
 
     private static void buildMediaItems(List<Song> playingListFromSharedPrefer, TreeMap<String, MediaBrowserCompat.MediaItem> playingList) {
         PlaylistSongs.clear();
         for (Song song : playingListFromSharedPrefer) {
-            MusicLibrary.PlaylistSongs.put(song.getmId(), song);
+            Log.e("MusicLibrary",song.getSongPath());
+            MusicLibrary.PlaylistSongs.put(song.getSongPath(), song);
             Log.d(TAG, "buildMediaItems: path" + song.getSongPath());
-            createMediaMetadataCompatToPlaylist(
+            String defaultLyricPath=song.getSongPath().substring(0,song.getSongPath().length()-(FileUtils.getFileExtension(song.getSongPath())).length())+"lrc";
+            if(!FileUtils.isFileExists(song.getLyricPath())) {
+                if (FileUtils.isFileExists(defaultLyricPath))
+                    song.setLyricPath(defaultLyricPath);
+                else
+                    song.setLyricPath("null");
+            }
+                createMediaMetadataCompatToPlaylist(
                     song.getmId(),
                     song.getSongTitle(),
                     song.getArtistName(),
@@ -66,8 +82,7 @@ public class MusicLibrary {
                     song.getSongDuration(),
                     TimeUnit.MILLISECONDS,
                     song.getSongPath(),
-                    song.getLyricPath()
-            );
+                    song.getLyricPath());
         }
 
     }
@@ -87,7 +102,8 @@ public class MusicLibrary {
                 path,
                 new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
                         .setMediaId(mediaId)
-                        .setMediaUri(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(mediaId)))
+                        //.setMediaUri(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(mediaId)))
+                        .setMediaUri(Uri.parse(path))
                         .setTitle(title)
                         .setExtras(extra)
                         .build(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE)
@@ -117,7 +133,7 @@ public class MusicLibrary {
     }
 
     public static MediaMetadataCompat getMetadata(String mediaId) {
-        Song song = songs.get(mediaId);
+        Song song = PlaylistSongs.get(mediaId);
 //        Log.d(Constants.TAG, "getMetadata: song " + song);
        MediaMetadataCompat.Builder  metaDataBuilder = new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getmId())
@@ -125,6 +141,7 @@ public class MusicLibrary {
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST,song.getArtistName())
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE,song.getSongTitle())
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
+                .putString("LYRIC_URI",song.getLyricPath())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
 
 //        MediaMetadataCompat metadataWithoutBitmap = music.get(mediaId);
@@ -148,6 +165,20 @@ public class MusicLibrary {
 //                MediaMetadataCompat.METADATA_KEY_DURATION,
 //                metadataWithoutBitmap.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
 //        builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt);
+        return metaDataBuilder.build();
+    }
+    public static MediaMetadataCompat getMetadata(Uri mediaUri) {
+        Log.e("MusicPlayer",mediaUri.getPath());
+        Song song = PlaylistSongs.get(mediaUri.getPath());
+//        Log.d(Constants.TAG, "getMetadata: song " + song);
+       MediaMetadataCompat.Builder  metaDataBuilder = new MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getmId())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,song.getAlbumName())
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST,song.getArtistName())
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE,song.getSongTitle())
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
+                .putString("LYRIC_URI",song.getLyricPath())
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
         return metaDataBuilder.build();
     }
 
@@ -210,5 +241,12 @@ public class MusicLibrary {
                     song.getSongPath()
             );
         }
+    }
+
+    public static void init() {
+        buildMediaItems(
+                SharedPrefs.getPlayingListFromSharedPrefer("[{}]"),
+                PlayingList
+        );
     }
 }

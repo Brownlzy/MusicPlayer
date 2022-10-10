@@ -8,8 +8,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -106,7 +111,7 @@ public class MusicUtils {
         }
     }
 
-    public static Metadata getMetadata(Context context, String path) {
+    public static Metadata getMetadata( String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             mediaMetadataRetriever.setDataSource(path);
@@ -225,5 +230,19 @@ public class MusicUtils {
             }
         }
         return false;
+    }
+
+    public static Bitmap getBitmap(Context context,int vectorDrawableId) {
+        Bitmap bitmap=null;
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP){
+            Drawable vectorDrawable = context.getDrawable(vectorDrawableId);
+            bitmap = Bitmap.createBitmap(600,600,Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            vectorDrawable.draw(canvas);
+        }else {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), vectorDrawableId);
+        }
+        return bitmap;
     }
 }

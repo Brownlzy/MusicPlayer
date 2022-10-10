@@ -198,8 +198,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         setMainFolder.setSummary(MainFolder.getSummary());
         initPreferenceListener();
         try {
-            if (!((MainActivity) getActivity()).getMusicService().isTiming())
-                seekBarTiming.setValue(0);
+            //if (!((MainActivity) getActivity()).getMusicService().isTiming())
+            //    seekBarTiming.setValue(0);
         } catch (Exception ignored) {
         }
     }
@@ -241,14 +241,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                ((MainActivity) getActivity()).getMusicService().setDesktopLyric((boolean) newValue);
+                //((MainActivity) getActivity()).getMusicService().setDesktopLyric((boolean) newValue);
                 return true;
             }
         });
         Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                ((MainActivity) requireActivity()).getMusicService().stopForeground(true);
+                //((MainActivity) requireActivity()).getMusicService().stopForeground(true);
                 System.exit(0);
                 return false;
             }
@@ -339,7 +339,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                         return true;
                     }
                 } else {
-                    ((MainActivity) getActivity()).getMusicService().setWebPlayMode(false);
+                    //((MainActivity) getActivity()).getMusicService().setWebPlayMode(false);
                     return true;
                 }
             }
@@ -368,9 +368,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if ((int) newValue > 0) {
-                    ((MainActivity) getActivity()).getMusicService().startTiming();
+                    //((MainActivity) getActivity()).getMusicService().startTiming();
                 } else {
-                    ((MainActivity) getActivity()).getMusicService().stopTiming();
+                    //((MainActivity) getActivity()).getMusicService().stopTiming();
                 }
                 return true;
             }
@@ -586,7 +586,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch (funId) {
             case 0:
                 webAllSongList.setText(result);
-                ((MainActivity) getActivity()).getMusicService().setWebPlayMode(true);
+                //((MainActivity) getActivity()).getMusicService().setWebPlayMode(true);
                 break;
             default:
                 break;

@@ -276,7 +276,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
                 | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
                 | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-                | PlaybackStateCompat.ACTION_SEEK_TO
+
                 | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState) {
             case PlaybackStateCompat.STATE_STOPPED:
@@ -291,6 +291,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 actions |= PlaybackStateCompat.ACTION_PLAY
+                        | PlaybackStateCompat.ACTION_SEEK_TO
                         | PlaybackStateCompat.ACTION_STOP;
                 break;
             default:

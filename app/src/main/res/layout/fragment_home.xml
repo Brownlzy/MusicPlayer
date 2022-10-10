@@ -52,7 +52,7 @@
                         android:adjustViewBounds="true"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:src="@mipmap/ic_launcher"
+                        android:src="@drawable/ic_baseline_music_note_24"
                         android:visibility="visible"
                         app:layout_constraintDimensionRatio="1:1"
                         app:shapeAppearance="@style/RoundedStyle" />
@@ -152,14 +152,14 @@
                                         android:id="@+id/home_song_title"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="1343242"
+                                        tools:text="音乐标题"
                                         android:textSize="24sp" />
 
                                     <TextView
                                         android:id="@+id/home_song_artist"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="4324324"
+                                        tools:text="歌手"
                                         android:textSize="16sp" />
 
                                 </LinearLayout>

@@ -2,36 +2,42 @@ package com.liux.musicplayer.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.MediaMetadataCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayingListAdapter extends BaseAdapter {
 
-    List<Song> data;
+    List<MediaBrowserCompat.MediaItem> data;
     private final Context mContext;
     ViewHolder holder;
     private int nowPlay;
     private RefreshListener mRefreshListener;
 
-    public void setNowPlay(Song song) {
-        nowPlay=data.indexOf(song);
+    public void setNowPlay(String path) {
+        nowPlay=data.stream().map(t -> t.getDescription().getMediaUri().getPath()).distinct().collect(Collectors.toList()).indexOf(path);
     }
 
     public interface RefreshListener{
-        void deleteThis(int position);
+        void deleteThis(MediaDescriptionCompat description);
     }
 
-    public PlayingListAdapter(MainActivity context, List<Song> data, RefreshListener refreshListener) {
+    public PlayingListAdapter(MainActivity context, List<MediaBrowserCompat.MediaItem> data, RefreshListener refreshListener) {
         this.data = data;
         mContext = context;
         mRefreshListener=refreshListener;
@@ -72,15 +78,15 @@ public class PlayingListAdapter extends BaseAdapter {
         holder.playArrow = convertView.findViewById(R.id.playArrow);
         holder.btnDelete=convertView.findViewById(R.id.item_remove_this);
         //设置数据
-        holder.mItemTitle.setText(data.get(position).getSongTitle());
+        holder.mItemTitle.setText(data.get(position).getDescription().getTitle());
         if(position==nowPlay){
             holder.mItemTitle.setTextColor(Color.CYAN);
         }else {
             holder.mItemTitle.setTextColor(Color.GREEN);
         }
-        holder.mItemSinger.setText(" - "+data.get(position).getArtistName());
-            holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getSongDuration()));
-        if (data.get(position).getLyricPath()==null)
+        holder.mItemSinger.setText(" - "+ MusicLibrary.getMetadata(data.get(position).getDescription().getMediaUri()).getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+            //holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getDescription()));
+        if (FileUtils.isFileExists(data.get(position).getDescription().getExtras().getString("LYRIC_URI")))
             holder.hasLyric.setVisibility(View.GONE);
         else
             holder.hasLyric.setVisibility(View.VISIBLE);
@@ -91,7 +97,7 @@ public class PlayingListAdapter extends BaseAdapter {
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRefreshListener.deleteThis(position);
+                mRefreshListener.deleteThis(data.get(position).getDescription());
             }
         });
         return convertView;

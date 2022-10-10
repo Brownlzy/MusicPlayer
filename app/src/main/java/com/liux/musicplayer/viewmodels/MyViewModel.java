@@ -3,11 +3,15 @@ package com.liux.musicplayer.viewmodels;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,6 +26,8 @@ import com.liux.musicplayer.media.SimpleMusicService;
 import com.liux.musicplayer.media.SongProvider;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.services.MusicService;
+import com.liux.musicplayer.utils.LyricUtils;
+import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.util.List;
@@ -53,6 +59,13 @@ public class MyViewModel extends AndroidViewModel {
     MutableLiveData<List<MediaBrowserCompat.MediaItem>> mediaItemsMutableLiveData = new MutableLiveData<>();
     MutableLiveData<List<MediaBrowserCompat.MediaItem>> searchResultsLiveData = new MutableLiveData<>();
     MutableLiveData<Song> nowPlaying = new MutableLiveData<Song>();
+    MutableLiveData<LyricUtils> nowLyric =new MutableLiveData<>();
+
+    public Bitmap getNowAlbum() {
+        return nowAlbum;
+    }
+
+    Bitmap nowAlbum;
     MutableLiveData<PlaybackStateCompat> playingPlaybackState = new MutableLiveData<PlaybackStateCompat>();
     private MediaBrowserHelper mMediaBrowserHelper;
 
@@ -200,6 +213,10 @@ public class MyViewModel extends AndroidViewModel {
         return playingSongsMutableLiveData;
     }
 
+    public int getPlayOrder() {
+        return SharedPrefs.getPlayOrder();
+    }
+
     /**
      * and implement our app specific desires.
      */
@@ -244,21 +261,18 @@ public class MyViewModel extends AndroidViewModel {
      */
     private class MediaBrowserListener extends MediaControllerCompat.Callback {
 
-        @Override
+       @Override
         public void onPlaybackStateChanged(PlaybackStateCompat playbackState) {
             super.onPlaybackStateChanged(playbackState);
-//            Log.d(Constants.TAG, "onPlaybackStateChanged: Called inside songsViewModel");
+            Log.d(TAG, "onPlaybackStateChanged: Called inside songsViewModel");
             playingPlaybackState.setValue(playbackState);
 
             if (playbackState != null &&
                     playbackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
                 mIsPlaying.setValue(true);
-                currentPlayingDuration.setValue(playbackState.getPosition());
-//                Log.d(Constants.TAG, "onPlaybackStateChanged: inside songsViewModel position: " + playbackState.getPosition());
             } else {
                 mIsPlaying.setValue(false);
             }
-//            mMediaControlsImage.setPressed(mIsPlaying);
         }
 
         @Override
@@ -283,11 +297,16 @@ public class MyViewModel extends AndroidViewModel {
             String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
             String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
             String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+            String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
             int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
             Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID);
             nowPlaying.setValue(song);
+            nowLyric.setValue(new LyricUtils(song));
+            nowAlbum=MusicUtils.getAlbumImage(song.getSongPath());
+        }
 
-
+        public int getIdFromPlayingList(Song song){
+            return playingSongsMutableLiveData.getValue().indexOf(song);
         }
 
         @Override

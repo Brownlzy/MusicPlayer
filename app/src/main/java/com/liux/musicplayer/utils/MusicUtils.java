@@ -90,6 +90,21 @@ public class MusicUtils {
             return null;
         }
     }
+    public static Bitmap getAlbumImage(String path) {
+        try {
+            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+            mediaMetadataRetriever.setDataSource(path);
+            //获取专辑图片
+            byte[] cover = mediaMetadataRetriever.getEmbeddedPicture();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
+            mediaMetadataRetriever.release();
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
 
     public static Metadata getMetadata(Context context, String path) {
         try {

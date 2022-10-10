@@ -41,14 +41,10 @@ public class UploadDownloadUtils {
     private static final String TAG = UploadDownloadUtils.class.getSimpleName();
     private static UploadDownloadUtils mInstance;
     public final static String DOCUMENT_PATH = Environment.getExternalStorageDirectory() + "/RecorderGuide/";
-    private final Context mContext;
-    public SharedPreferences prefs = null;
     private OnImageLoadListener mOnImageLoadListener;
     private static List<MyCache> cacheList;
 
     public UploadDownloadUtils(Context context) {
-        mContext = context;
-        prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         LoadCacheList();
     }
 
@@ -179,7 +175,7 @@ public class UploadDownloadUtils {
 
     private void LoadCacheList() {
         if (cacheList == null) {
-            String strCacheList = prefs.getString("cacheList", "[]");
+            String strCacheList = SharedPrefs.getCacheList("[]");
             Gson gson = new Gson();
             Type cacheListType = new TypeToken<ArrayList<MyCache>>() {
             }.getType();
@@ -194,9 +190,7 @@ public class UploadDownloadUtils {
         Type cacheListType = new TypeToken<ArrayList<MyCache>>() {
         }.getType();
         String strCacheListJson = gson.toJson(cacheList, cacheListType);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("cacheList", strCacheListJson);
-        editor.apply();
+        SharedPrefs.putCacheList(strCacheListJson);
     }
 
     Handler mHandler = new Handler(Looper.getMainLooper()) {

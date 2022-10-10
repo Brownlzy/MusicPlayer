@@ -80,4 +80,30 @@ public class SharedPrefs {
         gson.toJson(songs,songListType);
         sharedPreferencesEditor.putString("allSongList",gson.toJson(songs,songListType)).apply();
     }
+
+    public static void putIsDeskLyric(boolean b) {
+        sharedPreferencesEditor.putBoolean("isShowLyric",b).apply();
+    }
+    public static boolean getIsDeskLyric() {
+       return sharedPreferences.getBoolean("isShowLyric",false);
+    }
+    public static boolean getIsDeskLyricLock() {
+       return sharedPreferences.getBoolean("deskLyricLock",false);
+    }
+
+    public static void putIsDeskLyricLock(boolean b) {
+        sharedPreferencesEditor.putBoolean("deskLyricLock",b).apply();
+    }
+
+    public static int getPlayOrder() {
+       return Integer.parseInt(sharedPreferences.getString("playOrder","0"));
+    }
+
+    public static String getCacheList(String s) {
+        return sharedPreferences.getString("cacheList",s);
+    }
+
+    public static void putCacheList(String strCacheListJson) {
+        sharedPreferencesEditor.putString("cacheList",strCacheListJson);
+    }
 }

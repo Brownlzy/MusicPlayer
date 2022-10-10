@@ -177,9 +177,9 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
     private void startSleepTimer() {
         if (SharedPrefs.isSleepTimerOn() /*&& shouldRunSleepTimer()*/) {
-            handler.post(sleepTimerRunnable);
+            //handler.post(sleepTimerRunnable);
         } else {
-            handler.removeCallbacks(sleepTimerRunnable);
+            //handler.removeCallbacks(sleepTimerRunnable);
         }
     }
 
@@ -217,7 +217,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setNewState(PlaybackStateCompat.STATE_PLAYING);
-            handler.postDelayed(runnable, DURATION_DELAY);
+            //TODO 这样会导致卡顿
+            //handler.postDelayed(runnable, DURATION_DELAY);
             startSleepTimer();
         }
     }
@@ -229,7 +230,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             mMediaPlayer.pause();
             setNewState(PlaybackStateCompat.STATE_PAUSED);
             handler.removeCallbacks(runnable);
-            sleepHandler.removeCallbacks(sleepTimerRunnable);
+            //sleepHandler.removeCallbacks(sleepTimerRunnable);
         }
     }
 
@@ -275,6 +276,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
                 | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
                 | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                | PlaybackStateCompat.ACTION_SEEK_TO
                 | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState) {
             case PlaybackStateCompat.STATE_STOPPED:

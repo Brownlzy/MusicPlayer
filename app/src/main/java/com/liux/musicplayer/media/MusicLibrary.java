@@ -17,6 +17,8 @@
 package com.liux.musicplayer.media;
 
 import android.content.ContentUris;
+import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -24,6 +26,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,12 +37,64 @@ import java.util.concurrent.TimeUnit;
 
 public class MusicLibrary {
 
-    private static final TreeMap<String, MediaBrowserCompat.MediaItem>
-            music = new TreeMap<>();
+    private static final TreeMap<String, MediaBrowserCompat.MediaItem> music = new TreeMap<>();
+    private static final TreeMap<String, MediaBrowserCompat.MediaItem> PlayingList = new TreeMap<>();
     //    private static final HashMap<String, Integer> albumRes = new HashMap<>();
     private static final HashMap<String, String> musicFileName = new HashMap<>();
     private static final TreeMap<String, Song> songs = new TreeMap<>();
+    private static final TreeMap<String, Song> PlaylistSongs = new TreeMap<>();
     private static final String TAG = "MusicLibrary";
+
+    public static List<MediaBrowserCompat.MediaItem> getPlayingList(){
+        buildMediaItems(
+                SharedPrefs.getPlayingListFromSharedPrefer("[{}]"),
+                PlayingList
+        );
+        return new ArrayList<>(PlayingList.values());
+    }
+
+    private static void buildMediaItems(List<Song> playingListFromSharedPrefer, TreeMap<String, MediaBrowserCompat.MediaItem> playingList) {
+        PlaylistSongs.clear();
+        for (Song song : playingListFromSharedPrefer) {
+            MusicLibrary.PlaylistSongs.put(song.getmId(), song);
+            Log.d(TAG, "buildMediaItems: path" + song.getSongPath());
+            createMediaMetadataCompatToPlaylist(
+                    song.getmId(),
+                    song.getSongTitle(),
+                    song.getArtistName(),
+                    song.getAlbumName(),
+                    song.getSongDuration(),
+                    TimeUnit.MILLISECONDS,
+                    song.getSongPath(),
+                    song.getLyricPath()
+            );
+        }
+
+    }
+    private static void createMediaMetadataCompatToPlaylist(
+            String mediaId,
+            String title,
+            String artist,
+            String album,
+            long duration,
+            TimeUnit durationUnit,
+            String path,
+            String lyric
+    ) {
+        Bundle extra=new Bundle();
+        extra.putString("LYRIC_URI",lyric);
+        PlayingList.put(
+                path,
+                new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
+                        .setMediaId(mediaId)
+                        .setMediaUri(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(mediaId)))
+                        .setTitle(title)
+                        .setExtras(extra)
+                        .build(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE)
+        );
+        musicFileName.put(mediaId, title);
+    }
+
 
     public static String getRoot() {
         return "root";
@@ -69,7 +124,8 @@ public class MusicLibrary {
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,song.getAlbumName())
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST,song.getArtistName())
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE,song.getSongTitle())
-               .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
 
 //        MediaMetadataCompat metadataWithoutBitmap = music.get(mediaId);
 //        Bitmap albumArt = getAlbumBitmap(context, mediaId);
@@ -137,7 +193,7 @@ public class MusicLibrary {
 //                        .build()
         );
 //        albumRes.put(mediaId, albumArtResId);
-        musicFileName.put(mediaId, title);
+        musicFileName.put(mediaId, path);
     }
 
     public static void buildMediaItems(List<Song> songs) {

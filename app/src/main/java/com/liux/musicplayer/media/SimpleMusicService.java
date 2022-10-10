@@ -21,7 +21,9 @@ import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
+import com.liux.musicplayer.services.FloatLyricService;
 import com.liux.musicplayer.utils.MediaNotificationManager;
+import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,18 +40,50 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
     private MediaPlayerAdapter mPlayback;
     private boolean mServiceInStartedState;
     private static final String TAG ="SimpleMusicService";
+    private boolean mainActivityState;
     public LyricReceiver lyricReceiver;
     public class LyricReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG,intent.getAction());
+            Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
             switch (intent.getAction()){
                 case "ACTION_DESKTOP_OPEN_LYRIC":
-
+                    SharedPrefs.putIsDeskLyric(true);
+                    if(mainActivityState) {
+                        intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                        startService(deskLyricIntent);
+                    }
                     break;
                 case "ACTION_DESKTOP_CLOSE_LYRIC":
-
+                    SharedPrefs.putIsDeskLyric(false);
+                    stopService(deskLyricIntent);
+                    break;
+                case "ACTION_ACTIVITY_FOREGROUND":
+                    mainActivityState=true;
+                    stopService(deskLyricIntent);
+                    break;
+                case "ACTION_ACTIVITY_BACKGROUND":
+                    mainActivityState=false;
+                    if(SharedPrefs.getIsDeskLyric()) {
+                        intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                        startService(deskLyricIntent);
+                    }
+                    break;
+                case "ACTION_DESKTOP_LOCK_LYRIC":
+                    SharedPrefs.putIsDeskLyricLock(true);
+                        if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
+                            intent.putExtra("isLock",true);
+                            startService(deskLyricIntent);
+                        }
+                    break;
+                case "ACTION_DESKTOP_UNLOCK_LYRIC":
+                    SharedPrefs.putIsDeskLyricLock(false);
+                    if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
+                        intent.putExtra("isLock",false);
+                        startService(deskLyricIntent);
+                    }
                     break;
             }
         }
@@ -109,6 +143,9 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
     public void onDestroy() {
         mMediaNotificationManager.onDestroy();
         mSession.release();
+        //关闭桌面歌词
+        Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
+        stopService(deskLyricIntent);
         unregisterReceiver(lyricReceiver);
         Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
     }
@@ -127,7 +164,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         Log.d(TAG, "SimpleMusicService onLoadChildren parentId: " + parentId);
         Log.d(TAG, "SimpleMusicService onLoadChildren result: " + result);
 
-        result.sendResult(MusicLibrary.getMediaItems());
+        result.sendResult(MusicLibrary.getPlayingList());
     }
 
     @Override
@@ -374,15 +411,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 mMediaNotificationManager.getNotificationManager()
                         .notify(MediaNotificationManager.NOTIFICATION_ID, notification);
                 stopForeground(false);
-            }
-
-            private void updateNotificationForLyric(PlaybackStateCompat state,boolean isLyric) {
-                stopForeground(false);
-                Notification notification =
-                        mMediaNotificationManager.getNotification(
-                                mPlayback.getCurrentMedia(), state,isLyric, getSessionToken());
-                mMediaNotificationManager.getNotificationManager()
-                        .notify(MediaNotificationManager.NOTIFICATION_ID, notification);
             }
 
             private void moveServiceOutOfStartedState(PlaybackStateCompat state) {

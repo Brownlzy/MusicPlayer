@@ -22,7 +22,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -33,6 +36,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.liux.musicplayer.R;
@@ -148,16 +152,18 @@ public class MediaNotificationManager {
                 buildNotification(state, token, isPlaying, description);
         return builder.build();
     }
-
-    public Notification getNotification(MediaMetadataCompat metadata,
-                                        @NonNull PlaybackStateCompat state,
-                                        boolean isLyric,
-                                        MediaSessionCompat.Token token) {
-        boolean isPlaying = state.getState() == PlaybackStateCompat.STATE_PLAYING;
-        MediaDescriptionCompat description = metadata.getDescription();
-        NotificationCompat.Builder builder =
-                buildNotification(state, token, isPlaying,isLyric, description);
-        return builder.build();
+    private String getAlbumArt(int album_id)    {
+        String mUriAlbums = "content://media/external/audio/albums";
+        String[] projection = new String[] { "album_art" };
+        Cursor cur = mService.getContentResolver().query(Uri.parse(mUriAlbums + "/" + Integer.toString(album_id)),  projection, null, null, null);
+        String album_art = null;
+        if (cur.getCount() > 0 && cur.getColumnCount() > 0)
+        {  cur.moveToNext();
+            album_art = cur.getString(0);
+        }
+        cur.close();
+        cur = null;
+        return album_art;
     }
 
     private NotificationCompat.Builder buildNotification(@NonNull PlaybackStateCompat state,
@@ -182,7 +188,8 @@ public class MediaNotificationManager {
                                         mService,
                                         PlaybackStateCompat.ACTION_STOP)))
                 //.setColor(ContextCompat.getColor(mService, R.color.notification_bg))
-                .setSmallIcon(R.drawable.ic_baseline_music_note_24)
+                .setSmallIcon(R.drawable.ic_baseline_music_note_white_24)
+                .setLargeIcon(MusicUtils.getAlbumImage(mService,description.getMediaUri().getPath()))
                 // Pending intent that is fired when user clicks on notification.
                 .setContentIntent(createContentIntent())
                 // Title - Usually Song name.
@@ -208,64 +215,10 @@ public class MediaNotificationManager {
         if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) != 0) {
             builder.addAction(mNextAction);
         }
+
         builder.addAction(mStopAction);
 
-        builder.addAction(true? mSlyricAction :mHlyricAction);
-
-        return builder;
-    }
-
-    private NotificationCompat.Builder buildNotification(@NonNull PlaybackStateCompat state,
-                                                         MediaSessionCompat.Token token,
-                                                         boolean isPlaying,
-                                                         boolean isLyric,
-                                                         MediaDescriptionCompat description) {
-
-        // Create the (mandatory) notification channel when running on Android Oreo.
-        if (isAndroidOOrHigher()) {
-            createChannel();
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mService, CHANNEL_ID);
-        builder.setStyle(
-                new androidx.media.app.NotificationCompat.MediaStyle()
-                        .setMediaSession(token)
-                        .setShowActionsInCompactView(1, 2, 4)
-                        // For backwards compatibility with Android L and earlier.
-                        .setShowCancelButton(true)
-                        .setCancelButtonIntent(
-                                MediaButtonReceiver.buildMediaButtonPendingIntent(
-                                        mService,
-                                        PlaybackStateCompat.ACTION_STOP)))
-                //.setColor(ContextCompat.getColor(mService, R.color.notification_bg))
-                .setSmallIcon(R.drawable.ic_baseline_music_note_24)
-                // Pending intent that is fired when user clicks on notification.
-                .setContentIntent(createContentIntent())
-                // Title - Usually Song name.
-                .setContentTitle(description.getTitle())
-                // Subtitle - Usually Artist name.
-                .setContentText(description.getSubtitle())
-//                .setLargeIcon(MusicLibrary.getAlbumBitmap(mService, description.getMediaId()))
-                // When notification is deleted (when playback is paused and notification can be
-                // deleted) fire MediaButtonPendingIntent with ACTION_STOP.
-                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-                        mService, PlaybackStateCompat.ACTION_STOP))
-                // Show controls on lock screen even when user hides sensitive content.
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-        // If skip to next action is enabled.
-        if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
-            builder.addAction(mPrevAction);
-        }
-
-        builder.addAction(isPlaying ? mPauseAction : mPlayAction);
-
-        // If skip to prev action is enabled.
-        if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) != 0) {
-            builder.addAction(mNextAction);
-        }
-
-        builder.addAction(isLyric? mSlyricAction :mHlyricAction);
+        builder.addAction(SharedPrefs.getIsDeskLyric()? mSlyricAction :mHlyricAction);
 
         return builder;
     }

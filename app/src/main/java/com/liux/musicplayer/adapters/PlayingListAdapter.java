@@ -22,6 +22,11 @@ public class PlayingListAdapter extends BaseAdapter {
     ViewHolder holder;
     private int nowPlay;
     private RefreshListener mRefreshListener;
+
+    public void setNowPlay(Song song) {
+        nowPlay=data.indexOf(song);
+    }
+
     public interface RefreshListener{
         void deleteThis(int position);
     }
@@ -100,9 +105,8 @@ public class PlayingListAdapter extends BaseAdapter {
         public ImageView hasLyric;
         public ImageView playArrow;
     }
-
-    public void setNowPlay(int musicId) {
-        nowPlay = musicId;
-    }
+public int getNowId(){
+        return nowPlay;
+}
 
 }

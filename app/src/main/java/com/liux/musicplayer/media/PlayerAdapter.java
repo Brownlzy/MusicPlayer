@@ -44,6 +44,7 @@ public abstract class PlayerAdapter {
                 public void onReceive(Context context, Intent intent) {
                     if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
                         if (isPlaying()) {
+                            //TODO
                             pause();
                         }
                     }
@@ -146,7 +147,8 @@ public abstract class PlayerAdapter {
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN:
                     if (mPlayOnAudioFocus && !isPlaying()) {
-                        play();
+                        //TODO
+                        //play();
                     } else if (isPlaying()) {
                         setVolume(MEDIA_VOLUME_DEFAULT);
                     }
@@ -158,7 +160,8 @@ public abstract class PlayerAdapter {
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     if (isPlaying()) {
                         mPlayOnAudioFocus = true;
-                        pause();
+                        //TODO 读取设置选择性暂停
+                        //pause();
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:

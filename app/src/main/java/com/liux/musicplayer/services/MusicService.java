@@ -213,7 +213,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
 
     @Override
     public void onCreate() {
-        lyric = new LyricUtils(this);
+        //lyric = new LyricUtils();
         metadata = new MusicUtils.Metadata();
         initializePlayer();
         initMemberData();
@@ -289,7 +289,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         readAllSongList();
         readAllPlayList();
         if (!webPlayMode) {
-            lyric.LoadLyric(playingList.get(nowId));
+            //lyric.LoadLyric(playingList.get(nowId));
             albumImage = MusicUtils.getAlbumImage(this, playingList.get(nowId).source_uri);
             metadata = MusicUtils.getMetadata(this, playingList.get(nowId).source_uri);
         }
@@ -859,7 +859,7 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         prepared = false;
         mediaPlayer.reset();
         int reId;
-            lyric.LoadLyric(playingList.get(nowId));
+            //lyric.LoadLyric(playingList.get(nowId));
             if (FileUtils.isFileExists(playingList.get(nowId).source_uri)) {
                 albumImage = MusicUtils.getAlbumImage(this, playingList.get(nowId).source_uri);
                 metadata = MusicUtils.getMetadata(this, playingList.get(nowId).source_uri);

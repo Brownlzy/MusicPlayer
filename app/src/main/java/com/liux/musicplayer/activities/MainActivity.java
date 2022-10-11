@@ -45,11 +45,14 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
+import com.liux.musicplayer.media.MusicLibrary;
+import com.liux.musicplayer.media.SimpleMusicService;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SongListFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.utils.CrashHandlers;
+import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.util.List;
@@ -85,6 +88,7 @@ public class MainActivity extends FragmentActivity {
     private ShapeableImageView shapeableImageView;
     private ShapeableImageView backImageView;
     private boolean isAlreadyShowPlayBarTitle = false;
+    private boolean isSplash=true;
     //是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
@@ -93,6 +97,8 @@ public class MainActivity extends FragmentActivity {
     private boolean isPlayingListShowing=false;
     private PlayingListAdapter adapter;
     private MaterialCardView splashCard;
+    private boolean isPlayList=false;
+    private boolean isHome=false;
 
     private void nowLoading(int musicId) {
         prepareInfo(musicId);
@@ -110,6 +116,28 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initObserver() {
+            adapter = new PlayingListAdapter(MainActivity.this, MusicLibrary.getPlayingList(), new PlayingListAdapter.RefreshListener() {
+                @Override
+                public void deleteThis(MediaDescriptionCompat description) {
+                    myViewModel.getmMediaController().removeQueueItem(description);
+                }
+            });
+            playingList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        //监视正在播放列表
+        myViewModel.getMediaItemsMutableLiveData().observe(this,new Observer<List<MediaBrowserCompat.MediaItem>>() {
+            @Override
+            public void onChanged(List<MediaBrowserCompat.MediaItem> songs) {
+                adapter = new PlayingListAdapter(MainActivity.this, songs, new PlayingListAdapter.RefreshListener() {
+                    @Override
+                    public void deleteThis(MediaDescriptionCompat description) {
+                        myViewModel.getmMediaController().removeQueueItem(description);
+                    }
+                });
+                playingList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
+        });
         //监视正在播放的歌曲
         myViewModel.getNowPlaying().observe(this,new Observer<Song>() {
             @Override
@@ -119,9 +147,6 @@ public class MainActivity extends FragmentActivity {
                 setSeekBarDuration(0);
                 setSeekBarMax(song.getSongDuration());
                 setPlayingListView(song);
-                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
-                splashCard.startAnimation(animation);
-                splashCard.setVisibility(View.GONE);
                 startProgressBar();
             }
         });
@@ -143,20 +168,19 @@ public class MainActivity extends FragmentActivity {
                     stopProgressBar();
             }
         });
-        //监视正在播放列表
-        myViewModel.getMediaItemsMutableLiveData().observe(this,new Observer<List<MediaBrowserCompat.MediaItem>>() {
-            @Override
-            public void onChanged(List<MediaBrowserCompat.MediaItem> songs) {
-                adapter = new PlayingListAdapter(MainActivity.this, songs, new PlayingListAdapter.RefreshListener() {
-                    @Override
-                    public void deleteThis(MediaDescriptionCompat description) {
-                        myViewModel.getmMediaController().removeQueueItem(description);
-                    }
-                });
-                playingList.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            }
-        });
+    }
+
+    public void HideSplash(int where){
+        if(where==1)isPlayList=true;
+        if(where==2)isHome=true;
+        if(isSplash&&isHome&&isPlayList) {
+            isSplash=false;
+            //homeFragment.initMusicInfo(myViewModel.getmMediaController().getMetadata());
+            splashCard=findViewById(R.id.splash_view);
+            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+            splashCard.startAnimation(animation);
+            splashCard.setVisibility(View.GONE);
+        }
     }
 
     private void setPlayingListView(Song song) {
@@ -216,12 +240,9 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashHandlers crashHandlers = CrashHandlers.getInstance();
-        crashHandlers.init(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        mainActivity=this;
         setContentView(binding.getRoot());
-        myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
+        mainActivity=this;
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
@@ -237,7 +258,16 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        CrashHandlers.checkIfExistsLastCrash(this);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                CrashHandlers crashHandlers = CrashHandlers.getInstance();
+                crashHandlers.init(MainActivity.this);
+                SharedPrefs.init(getApplication());
+                myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
+                CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
+            }
+        });
     }
 
     private void initBackgroundCallBack() {
@@ -307,7 +337,17 @@ public class MainActivity extends FragmentActivity {
         //homeFragment.onDestroy();
         //homeFragment.stopLyric();
         //stopProgressBar();
+        removeObserver();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void removeObserver() {
+        //myViewModel.getNowPlaying().removeObserver();
     }
 
     public void clickedPlayOrPause() {
@@ -382,6 +422,11 @@ public class MainActivity extends FragmentActivity {
         playingList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         View footView = LayoutInflater.from(this).inflate(R.layout.playlist_footview,null);
         playingList.addFooterView(footView);
+        splashCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
         adapter = new PlayingListAdapter(this, myViewModel.getMediaItemsMutableLiveData().getValue(),  new PlayingListAdapter.RefreshListener() {
             @Override
             public void deleteThis(MediaDescriptionCompat description) {

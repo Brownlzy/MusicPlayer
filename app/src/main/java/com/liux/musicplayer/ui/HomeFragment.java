@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,11 +75,22 @@ public class HomeFragment extends Fragment {
     }
 
     private void initData() {
-        initMusicInfo(MusicLibrary.getPlayingSongsList().get(SharedPrefs.getNowPlayId()));
+        //initMusicInfo(MusicLibrary.getPlayingSongsList().get(SharedPrefs.getNowPlayId()));
     }
 
     @SuppressLint("SetTextI18n")
-    private void initMusicInfo(Song song) {
+    public void initMusicInfo(MediaMetadataCompat mediaMetadata) {
+        if (mediaMetadata == null) {
+            return;
+        }
+        String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
+        String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
+        String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+        String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
+        String LYRIC_URI =mediaMetadata.getBundle().getString("LYRIC_URI","null");
+        int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+        Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID,MEDIA_URI,LYRIC_URI);
+
         MusicUtils.Metadata metadata = MusicUtils.getMetadata(song.getSongPath());
         if (metadata.isValid) { //如果metadata有效标志为真则使用metadata的数据
             songTitle.setText((metadata.title == null) ? song.getSongTitle() : metadata.title);
@@ -229,6 +242,7 @@ public class HomeFragment extends Fragment {
             //    albumImageView.setImageBitmap(bitmap);
             //}
             initLyric(song);
+            MainActivity.mainActivity.HideSplash(2);
         }
     }
 

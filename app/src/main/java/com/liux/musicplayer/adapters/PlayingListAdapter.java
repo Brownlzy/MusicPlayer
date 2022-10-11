@@ -84,7 +84,7 @@ public class PlayingListAdapter extends BaseAdapter {
         }else {
             holder.mItemTitle.setTextColor(Color.GREEN);
         }
-        holder.mItemSinger.setText(" - "+ MusicLibrary.getMetadata(data.get(position).getDescription().getMediaUri()).getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+        holder.mItemSinger.setText(" - "+ String.valueOf(data.get(position).getDescription().getSubtitle()).split(" - ")[0]);
             //holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getDescription()));
         if (FileUtils.isFileExists(data.get(position).getDescription().getExtras().getString("LYRIC_URI")))
             holder.hasLyric.setVisibility(View.GONE);

@@ -61,4 +61,8 @@
     <style name="alertBackFrame">
         <item name="background">@android:drawable/alert_light_frame</item>>
     </style>
+
+    <style name="SplashBackgroundColor">
+        <item name="background">@color/white</item>
+    </style>
 </resources>

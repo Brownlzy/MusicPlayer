@@ -18,6 +18,7 @@ package com.liux.musicplayer.media;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.media.MediaBrowserCompat;
@@ -156,7 +157,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
         try {
             MediaBrowserCompat.MediaItem mediaItem = MusicLibrary.getMediaItemByID(mediaId);
-            mMediaPlayer.setDataSource(mContext.getApplicationContext(), mediaItem.getDescription().getMediaUri());
+            mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(filename));
             //            AssetFileDescriptor assetFileDescriptor = mContext.getAssets().openFd(mFilename);
 //            mMediaPlayer.setDataSource(
 //                    assetFileDescriptor.getFileDescriptor(),
@@ -255,7 +256,6 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         } else {
             reportPosition = mMediaPlayer == null ? 0 : mMediaPlayer.getCurrentPosition();
         }
-
         final PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
         stateBuilder.setActions(getAvailableActions());
         stateBuilder.setState(mState,
@@ -273,10 +273,9 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
      */
     @PlaybackStateCompat.Actions
     private long getAvailableActions() {
-        long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
+        long actions = PlaybackStateCompat.ACTION_PLAY_FROM_URI
                 | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
                 | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-
                 | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState) {
             case PlaybackStateCompat.STATE_STOPPED:

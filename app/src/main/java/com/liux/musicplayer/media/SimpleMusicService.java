@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -19,6 +20,9 @@ import android.view.KeyEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
@@ -32,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class SimpleMusicService extends MediaBrowserServiceCompat {
+public class SimpleMusicService extends MediaBrowserServiceCompat implements LifecycleOwner {
 
     Handler sleepHandler;
     public MediaSessionCallback mCallback;
@@ -40,9 +44,17 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
     private MediaNotificationManager mMediaNotificationManager;
     private MediaPlayerAdapter mPlayback;
     private boolean mServiceInStartedState;
+    private List<MediaBrowserCompat.MediaItem> mPlaylist = new ArrayList<>();
     private static final String TAG ="SimpleMusicService";
     private boolean mainActivityState;
     public LyricReceiver lyricReceiver;
+    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return mLifecycleRegistry;
+    }
+
     public class LyricReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";
         @Override
@@ -50,36 +62,36 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             Log.e(TAG,"LyricReceiver:"+intent.getAction());
             Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
             switch (intent.getAction()){
-                case "ACTION_DESKTOP_OPEN_LYRIC":
+                case "com.liux.musicplayer.OPEN_LYRIC":
                     SharedPrefs.putIsDeskLyric(true);
                     if(mainActivityState) {
                         intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
                     break;
-                case "ACTION_DESKTOP_CLOSE_LYRIC":
+                case "com.liux.musicplayer.CLOSE_LYRIC":
                     SharedPrefs.putIsDeskLyric(false);
                     stopService(deskLyricIntent);
                     break;
-                case "ACTION_ACTIVITY_FOREGROUND":
+                case "com.liux.musicplayer.FOREGROUND":
                     mainActivityState=true;
                     stopService(deskLyricIntent);
                     break;
-                case "ACTION_ACTIVITY_BACKGROUND":
+                case "com.liux.musicplayer.BACKGROUND":
                     mainActivityState=false;
                     if(SharedPrefs.getIsDeskLyric()) {
                         intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
                     break;
-                case "ACTION_DESKTOP_LOCK_LYRIC":
+                case "com.liux.musicplayer.LOCK_LYRIC":
                     SharedPrefs.putIsDeskLyricLock(true);
                         if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                             intent.putExtra("isLock",true);
                             startService(deskLyricIntent);
                         }
                     break;
-                case "ACTION_DESKTOP_UNLOCK_LYRIC":
+                case "com.liux.musicplayer.UNLOCK_LYRIC":
                     SharedPrefs.putIsDeskLyricLock(false);
                     if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                         intent.putExtra("isLock",false);
@@ -87,19 +99,28 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     }
                     break;
             }
+            new MediaPlayerListener().mServiceManager.updateNotificationForLyric(
+                    mSession.getController().getPlaybackState()
+            );
         }
     }
     private void registerLyricReceiver() {
         lyricReceiver = new LyricReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("ACTION_DESKTOP_CLOSE_LYRIC");
-        intentFilter.addAction("ACTION_DESKTOP_OPEN_LYRIC");
+        intentFilter.addAction("com.liux.musicplayer.CLOSE_LYRIC");
+        intentFilter.addAction("com.liux.musicplayer.OPEN_LYRIC");
+        intentFilter.addAction("com.liux.musicplayer.LOCK_LYRIC");
+        intentFilter.addAction("com.liux.musicplayer.UNLOCK_LYRIC");
+        intentFilter.addAction("com.liux.musicplayer.FOREGROUND");
+        intentFilter.addAction("com.liux.musicplayer.BACKGROUND");
         registerReceiver(lyricReceiver, intentFilter);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        registerLyricReceiver();
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
         sleepHandler = new Handler();
 
         mSession = new MediaSessionCompat(getApplicationContext(), SimpleMusicService.class.getSimpleName());
@@ -114,14 +135,26 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         mMediaNotificationManager = new MediaNotificationManager(this);
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
+        mPlaylist=MusicLibrary.getPlayingList();
+    }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        return super.onBind(intent);
+    }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+        return super.onUnbind(intent);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO 继承MediaButton
         MediaButtonReceiver.handleIntent(mSession, intent);
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -130,6 +163,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         mMediaNotificationManager.onDestroy();
         mSession.release();
         //关闭桌面歌词
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
         stopService(deskLyricIntent);
         unregisterReceiver(lyricReceiver);
@@ -150,7 +184,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         Log.d(TAG, "SimpleMusicService onLoadChildren parentId: " + parentId);
         Log.d(TAG, "SimpleMusicService onLoadChildren result: " + result);
 
-        result.sendResult(MusicLibrary.getPlayingList());
+        result.sendResult(mPlaylist);
     }
 
     @Override
@@ -192,8 +226,8 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             mSession.setQueue(mPlaylist);
         }
 
-/*
-        @Override
+
+        /*@Override
         public void onPrepareFromMediaId(String mediaId, Bundle extras) {
             Log.d(TAG, "onPrepare: Called SimpleMusicService");
             if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
@@ -268,12 +302,12 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
             if (mPreparedMedia == null) {
                 onPrepare();
+                Log.e(TAG, String.valueOf(mPreparedMedia));
             }
-
             mPlayback.playFromMedia(mPreparedMedia);
         }
-/*
-        @Override
+
+        /*@Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             Log.d(TAG, "onPlayFromMediaId: Called SimpleMusicService" + mediaId);
             if (!isReadyToPlay()) {
@@ -367,8 +401,22 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onCustomAction(String action, Bundle extras) {
-            super.onCustomAction(action, extras);
             Log.e(TAG,"session+"+action);
+            switch (action){
+                case "REFRESH_PLAYLIST":
+                    Log.e(TAG,"Reconized+"+action);
+                    List<MediaBrowserCompat.MediaItem> newPlayList=MusicLibrary.getPlayingList();
+                    mPlaylist.clear();
+                    queueItemHashMap.clear();
+                    for(MediaBrowserCompat.MediaItem mediaItem:newPlayList) {
+                        MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaItem.getDescription(), mediaItem.getDescription().hashCode());
+                        mPlaylist.add(queueItem);
+                        queueItemHashMap.put(mediaItem.getDescription().getMediaUri().getPath(), queueItem);
+                    }
+                    mQueueIndex = 0;
+                    mSession.setQueue(mPlaylist);
+            }
+            super.onCustomAction(action, extras);
         }
 
         @Override
@@ -450,6 +498,13 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 mMediaNotificationManager.getNotificationManager()
                         .notify(MediaNotificationManager.NOTIFICATION_ID, notification);
                 stopForeground(false);
+            }
+            private void updateNotificationForLyric(PlaybackStateCompat state) {
+                if(state.getState()==PlaybackStateCompat.STATE_PLAYING) {
+                    moveServiceToStartedState(state);
+                }else {
+                    moveServiceOutOfStartedState(state);
+                }
             }
 
             private void moveServiceOutOfStartedState(PlaybackStateCompat state) {

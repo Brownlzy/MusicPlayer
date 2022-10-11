@@ -111,7 +111,7 @@ public class MediaNotificationManager {
                                 mService,
                                 PlaybackStateCompat.ACTION_STOP));
 
-        Intent floatLyricIntent =new Intent("ACTION_DESKTOP_CLOSE_LYRIC");
+        Intent floatLyricIntent =new Intent("com.liux.musicplayer.OPEN_LYRIC");
         PendingIntent floatLyricPendingIntent;
         floatLyricPendingIntent= PendingIntent.getBroadcast(mService, 0, floatLyricIntent,  PendingIntent.FLAG_IMMUTABLE);
         mSlyricAction =
@@ -120,7 +120,7 @@ public class MediaNotificationManager {
                         "openLyric",
                         floatLyricPendingIntent);
 
-        floatLyricIntent =new Intent("ACTION_DESKTOP_CLOSE_LYRIC");
+        floatLyricIntent =new Intent("com.liux.musicplayer.CLOSE_LYRIC");
         floatLyricPendingIntent= PendingIntent.getBroadcast(mService, 0, floatLyricIntent, PendingIntent.FLAG_IMMUTABLE);
         mHlyricAction =
                 new NotificationCompat.Action(
@@ -189,7 +189,7 @@ public class MediaNotificationManager {
                                         PlaybackStateCompat.ACTION_STOP)))
                 //.setColor(ContextCompat.getColor(mService, R.color.notification_bg))
                 .setSmallIcon(R.drawable.ic_baseline_music_note_white_24)
-                .setLargeIcon(MusicUtils.getAlbumImage(mService,description.getMediaUri().getPath()))
+                .setLargeIcon(description.getIconBitmap())
                 // Pending intent that is fired when user clicks on notification.
                 .setContentIntent(createContentIntent())
                 // Title - Usually Song name.
@@ -218,7 +218,7 @@ public class MediaNotificationManager {
 
         builder.addAction(mStopAction);
 
-        builder.addAction(SharedPrefs.getIsDeskLyric()? mSlyricAction :mHlyricAction);
+        builder.addAction(SharedPrefs.getIsDeskLyric()? mHlyricAction :mSlyricAction);
 
         return builder;
     }

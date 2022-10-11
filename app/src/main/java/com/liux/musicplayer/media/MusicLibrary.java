@@ -27,6 +27,7 @@ import android.util.Log;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class MusicLibrary {
     private static void buildMediaItems(List<Song> playingListFromSharedPrefer, TreeMap<String, MediaBrowserCompat.MediaItem> playingList) {
         PlaylistSongs.clear();
         for (Song song : playingListFromSharedPrefer) {
-            Log.e("MusicLibrary",song.getSongPath());
+            //Log.e("MusicLibrary",song.getSongPath());
             MusicLibrary.PlaylistSongs.put(song.getSongPath(), song);
             Log.d(TAG, "buildMediaItems: path" + song.getSongPath());
             String defaultLyricPath=song.getSongPath().substring(0,song.getSongPath().length()-(FileUtils.getFileExtension(song.getSongPath())).length())+"lrc";
@@ -106,9 +107,10 @@ public class MusicLibrary {
                         .setMediaUri(Uri.parse(path))
                         .setTitle(title)
                         .setExtras(extra)
+                        .setSubtitle(artist+" - "+album)
                         .build(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE)
         );
-        musicFileName.put(mediaId, title);
+        musicFileName.put(mediaId, path);
     }
 
 
@@ -178,6 +180,7 @@ public class MusicLibrary {
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE,song.getSongTitle())
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
                 .putString("LYRIC_URI",song.getLyricPath())
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, MusicUtils.getAlbumImage(song.getSongPath()))
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
         return metaDataBuilder.build();
     }

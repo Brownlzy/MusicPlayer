@@ -22,7 +22,7 @@ public class SplashActivity  extends FragmentActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
+        super.onResume();/*
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -31,15 +31,24 @@ public class SplashActivity  extends FragmentActivity {
                 Intent intent = new Intent();
                 intent.setClass(SplashActivity.this, SimpleMusicService.class);
                 startService(intent);
+                overridePendingTransition(0, 0);
             }
-        });
+        });*/
         new Handler()
                 .postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        SharedPrefs.init(getApplication());
+                        MusicLibrary.init();
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
                 }, 100);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 }

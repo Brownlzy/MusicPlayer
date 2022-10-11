@@ -21,6 +21,7 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaBrowserHelper;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.media.SongProvider;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
@@ -84,7 +85,7 @@ public class MyViewModel extends AndroidViewModel {
 
     public MyViewModel(@NonNull Application application) {
         super(application);
-        refreshSongsList();
+        //refreshSongsList();
         connectToMediaPlaybackService();
     }
 
@@ -125,12 +126,11 @@ public class MyViewModel extends AndroidViewModel {
     }
 
     public void refreshSongsList() {
-        SharedPrefs.init(getApplication());
         //从媒体库中获取歌单
-        //final List<Song> songs = SongProvider.getSongs(SongProvider.makeSongCursor(
-        //        getApplication(), SongProvider.getSongLoaderSortOrder())
-        //);
-        //SharedPrefs.saveSongList(songs);
+        final List<Song> songs = SongProvider.getSongs(SongProvider.makeSongCursor(
+                getApplication(), SongProvider.getSongLoaderSortOrder())
+        );
+        SharedPrefs.savePlayingList(songs);
         songsMutableLiveData.setValue(SharedPrefs.getSongListFromSharedPrefer("[{}]"));
         playingSongsMutableLiveData.setValue(MusicLibrary.getPlayingSongsList());
         //SharedPrefs.saveSongList(songs);
@@ -256,14 +256,32 @@ public class MyViewModel extends AndroidViewModel {
 
             final MediaControllerCompat mediaController = getMediaController();
             mediaItemsMutableLiveData.setValue(children);
-            searchResultsLiveData.setValue(children);
+            MediaMetadataCompat mediaMetadata=mediaController.getMetadata();
+            /*if(mediaMetadata!=null) {
+                String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
+                String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
+                String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
+                String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
+                int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+                Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID, MEDIA_URI, LYRIC_URI);
+                nowLyric.setValue(new LyricUtils(song));
+                nowAlbum = MusicUtils.getAlbumImage(song.getSongPath());
+                nowPlaying.setValue(song);
+            }*/
+
+            //searchResultsLiveData.setValue(children);
             // Queue up all media items for this simple sample.
-            for (final MediaBrowserCompat.MediaItem mediaItem : children) {
-                mediaController.addQueueItem(mediaItem.getDescription());
-            }
+            //for (final MediaBrowserCompat.MediaItem mediaItem : children) {
+            //    mediaController.addQueueItem(mediaItem.getDescription());
+            //}
+            //如果当前播放为空，就读取上一次播放列表
+            if(mediaMetadata==null)
+                mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST",null);
 
             // Call prepare now so pressing play just works.
             mediaController.getTransportControls().prepare();
+            MainActivity.mainActivity.HideSplash(1);
         }
     }
 

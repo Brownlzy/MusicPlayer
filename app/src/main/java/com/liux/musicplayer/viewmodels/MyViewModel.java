@@ -31,6 +31,10 @@ import java.util.List;
 
 public class MyViewModel extends AndroidViewModel {
     private static final String TAG = "MyViewModel";
+    private static final int LIST_PLAY = 0;
+    private static final int REPEAT_LIST = 1;
+    private static final int REPEAT_ONE = 2;
+    private static final int SHUFFLE_PLAY = 3;
     private final MutableLiveData<Boolean> mIsPlaying = new MutableLiveData<Boolean>(false);
     private final MutableLiveData<Long> currentPlayingDuration = new MutableLiveData<Long>();
     private final MutableLiveData<Integer> shuffleMode = new MutableLiveData<Integer>();
@@ -39,6 +43,7 @@ public class MyViewModel extends AndroidViewModel {
     private static boolean isDeskTopLyric=false;
     private static boolean isDeskTopLyricLocked=false;
     public boolean isSplash=true;
+    public int playOrder=0;
 
     public void setFragmentLyricState(boolean fragmentLyricState) {
         this.fragmentLyricState = fragmentLyricState;
@@ -88,6 +93,8 @@ public class MyViewModel extends AndroidViewModel {
     public MyViewModel(@NonNull Application application) {
         super(application);
         //refreshSongsList();
+        playOrder=SharedPrefs.getPlayOrder();
+        MainActivity.mainActivity.setPlayOrder(playOrder);
         connectToMediaPlaybackService();
     }
 
@@ -118,7 +125,7 @@ public class MyViewModel extends AndroidViewModel {
         return repeatMode;
     }
 
-    private void connectToMediaPlaybackService() {
+    public void connectToMediaPlaybackService() {
         if (mMediaBrowserHelper == null) {
             mMediaBrowserHelper = new MediaBrowserConnection(getApplication().getApplicationContext());
 
@@ -222,10 +229,6 @@ public class MyViewModel extends AndroidViewModel {
         return playingSongsMutableLiveData;
     }
 
-    public int getPlayOrder() {
-        return SharedPrefs.getPlayOrder();
-    }
-
     public boolean getFragmentLyricState() {
         return fragmentLyricState;
     }
@@ -236,6 +239,75 @@ public class MyViewModel extends AndroidViewModel {
 
     public LiveData<List<MediaSessionCompat.QueueItem>> getQueueItemsMutableLiveData() {
         return queueItemsMutableLiveData;
+    }
+
+    public void initPlayOrder() {
+        switch (SharedPrefs.getPlayOrder()){
+            case LIST_PLAY:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                playOrder=LIST_PLAY;
+                break;
+            case REPEAT_LIST:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                playOrder=REPEAT_LIST;
+                break;
+            case REPEAT_ONE:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                playOrder=REPEAT_ONE;
+                break;
+            case SHUFFLE_PLAY:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                playOrder=SHUFFLE_PLAY;
+                break;
+        }
+        MainActivity.mainActivity.setPlayOrder(playOrder);
+        Log.e(TAG, String.valueOf(getmMediaController().getQueue()));
+    }
+    public void setPlayOrder() {
+        switch (playOrder){
+            case LIST_PLAY:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                playOrder=REPEAT_LIST;
+                break;
+            case REPEAT_LIST:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                playOrder=REPEAT_ONE;
+                break;
+            case REPEAT_ONE:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                playOrder=SHUFFLE_PLAY;
+                break;
+            case SHUFFLE_PLAY:
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
+                mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                playOrder=LIST_PLAY;
+                break;
+        }
+        SharedPrefs.savePlayOrder(playOrder);
+        MainActivity.mainActivity.setPlayOrder(playOrder);
+        Log.e(TAG, String.valueOf(getmMediaController().getQueue()));
+    }
+
+    public void getPlayOrder() {
+        int repeatMode= getmMediaController().getRepeatMode();
+        int shuffleMode =getmMediaController().getShuffleMode();
+        if(repeatMode==PlaybackStateCompat.REPEAT_MODE_ALL&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_NONE)
+                playOrder=REPEAT_LIST;
+        else if(repeatMode==PlaybackStateCompat.REPEAT_MODE_ONE&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_NONE)
+                playOrder=REPEAT_ONE;
+        else if(repeatMode==PlaybackStateCompat.REPEAT_MODE_ALL&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_ALL)
+                playOrder=SHUFFLE_PLAY;
+        else if(repeatMode==PlaybackStateCompat.REPEAT_MODE_NONE&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_NONE)
+                playOrder=LIST_PLAY;
+        MainActivity.mainActivity.setPlayOrder(playOrder);
+        Log.e(TAG, String.valueOf(getmMediaController().getQueue()));
     }
 
     /**
@@ -250,6 +322,7 @@ public class MyViewModel extends AndroidViewModel {
         @Override
         protected void onConnected(@NonNull MediaControllerCompat mediaController) {
             Log.e(TAG, "onConnected: Called");
+
             MainActivity.mainActivity.initMainActivity();
         }
 
@@ -264,7 +337,7 @@ public class MyViewModel extends AndroidViewModel {
             mediaItemsMutableLiveData.setValue(children);
             MediaMetadataCompat mediaMetadata=mediaController.getMetadata();
             if(mediaMetadata==null) {
-                mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
+                //mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
                 Log.e(TAG+"=======", String.valueOf(mediaController.getQueue()));
             }
             /*if(mediaMetadata!=null) {
@@ -288,8 +361,15 @@ public class MyViewModel extends AndroidViewModel {
             //如果当前播放为空，就读取上一次播放列表
             //queueItemsMutableLiveData.setValue(getmMediaController().getQueue());
             // Call prepare now so pressing play just works.
+
             mediaController.getTransportControls().prepare();
             MainActivity.mainActivity.HideSplash(1);
+        }
+
+        @Override
+        protected void onDisconnected() {
+            super.onDisconnected();
+            connectToMediaPlaybackService();
         }
     }
 
@@ -321,6 +401,7 @@ public class MyViewModel extends AndroidViewModel {
         public void onRepeatModeChanged(int repeatMode) {
             Log.d(TAG, "onRepeatModeChanged: Called inside songs viewMoodel");
             MyViewModel.this.repeatMode.setValue(repeatMode);
+
             super.onRepeatModeChanged(repeatMode);
         }
 

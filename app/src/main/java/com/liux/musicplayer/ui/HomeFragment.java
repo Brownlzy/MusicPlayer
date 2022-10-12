@@ -121,13 +121,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void initObserver() {
-        myViewModel.getNowPlaying().observe(MainActivity.mainActivity,new Observer<Song>() {
+        myViewModel.getNowPlaying().observe(getViewLifecycleOwner(),new Observer<Song>() {
             @Override
             public void onChanged(Song song) {
                 setMusicInfo(song);
             }
         });
-        myViewModel.getIsPlaying().observe(MainActivity.mainActivity,new Observer<Boolean>() {
+        myViewModel.getIsPlaying().observe(getViewLifecycleOwner(),new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isPlaying) {
                 if(isPlaying)

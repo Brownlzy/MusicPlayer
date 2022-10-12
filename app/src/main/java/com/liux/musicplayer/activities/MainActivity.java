@@ -1,5 +1,10 @@
 package com.liux.musicplayer.activities;
 
+import static com.liux.musicplayer.services.MusicService.LIST_PLAY;
+import static com.liux.musicplayer.services.MusicService.REPEAT_LIST;
+import static com.liux.musicplayer.services.MusicService.REPEAT_ONE;
+import static com.liux.musicplayer.services.MusicService.SHUFFLE_PLAY;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.DialogInterface;
@@ -182,6 +187,12 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     public void HideSplash(int where){
         if(where==3){
             initMainActivity();
+            myViewModel.getPlayOrder();
+            adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
+            playingList.setAdapter(adapter);
+            adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+            //myViewModel.getQueueItemsMutableLiveData().getValue();
+            //myViewModel.getNowPlaying().getValue();
             splashCard=findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
@@ -190,10 +201,12 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         if(where==1)isPlayList=true;
         if(where==2)isHome=true;
         if(myViewModel.isSplash&&isHome&&isPlayList) {
+            isSplash=false;
             myViewModel.isSplash=false;
             adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
             playingList.setAdapter(adapter);
             adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+            myViewModel.getPlayOrder();
             splashCard=findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
@@ -368,7 +381,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     @Override
     protected void onResume() {
         super.onResume();
-        if(!myViewModel.isSplash)HideSplash(3);
+        //两个状态不同，说明Activity被重绘了
+        if(!myViewModel.isSplash&&isSplash)HideSplash(3);
     }
 
     private void removeObserver() {
@@ -480,7 +494,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         PlayBarOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //setPlayOrder();
+                myViewModel.setPlayOrder();
             }
         });
         playBarPrev.setOnClickListener(new View.OnClickListener() {
@@ -498,7 +512,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         findViewById(R.id.musicPlayingLayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //playingList.smoothScrollToPositionFromTop(musicService.getNowId(),0);
+                playingList.smoothScrollToPositionFromTop(adapter.getNowPlay(),0);
             }
         });
         findViewById(R.id.delete_all_playing_list).setOnClickListener(new View.OnClickListener() {
@@ -547,6 +561,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         });
         //resetPlayProgress();
     }
+
+
     private void setOnListViewItemClickListener() {
         playingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -728,6 +744,23 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         viewPager.setCurrentItem(pageId, true);
     }
 
+    public void setPlayOrder(int playOrder) {
+        PlayBarOrder=findViewById(R.id.playOrder);
+        switch (playOrder){
+            case LIST_PLAY:
+                PlayBarOrder.setImageResource(R.drawable.ic_baseline_low_priority_24);
+                break;
+            case REPEAT_LIST:
+                PlayBarOrder.setImageResource(R.drawable.ic_round_repeat_24);
+                break;
+            case REPEAT_ONE:
+                PlayBarOrder.setImageResource(R.drawable.ic_round_repeat_one_24);
+                break;
+            case SHUFFLE_PLAY:
+                PlayBarOrder.setImageResource(R.drawable.ic_round_shuffle_24);
+        }
+    }
+
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         public ScreenSlidePagerAdapter(FragmentActivity fa) {
             super(fa);
@@ -820,12 +853,14 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                 }
                 try {
                     Long nowMillionSeconds=0L;
-                    if(myViewModel.getmMediaController().getPlaybackState()!=null)
+                    if(myViewModel.getmMediaController().getPlaybackState()!=null) {
                         nowMillionSeconds = myViewModel.getmMediaController().getPlaybackState().getPosition();
+                        //Log.e("TAG", String.valueOf(nowMillionSeconds));
                         Message msg = new Message();
                         msg.what = 100;  //消息发送的标志
                         msg.obj = nowMillionSeconds.intValue(); //消息发送的内容如：  Object String 类 int
                         progressHandler.sendMessage(msg);
+                    }
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

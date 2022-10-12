@@ -1,5 +1,10 @@
 package com.liux.musicplayer.media;
 
+import static com.liux.musicplayer.services.MusicService.LIST_PLAY;
+import static com.liux.musicplayer.services.MusicService.REPEAT_LIST;
+import static com.liux.musicplayer.services.MusicService.REPEAT_ONE;
+import static com.liux.musicplayer.services.MusicService.SHUFFLE_PLAY;
+
 import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -137,6 +142,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
         mPlaylist=MusicLibrary.getPlayingList();
+        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
     }
 
     @Override
@@ -192,6 +198,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
     public void onCustomAction(@NonNull String action, Bundle extras, @NonNull Result<Bundle> result) {
         super.onCustomAction(action, extras, result);
         Log.e(TAG,action);
+
     }
 
     // MediaSession Callback: Transport Controls -> MediaPlayerAdapter
@@ -203,6 +210,8 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
         private MediaMetadataCompat mPreparedMedia;
         private boolean isRandom = false;
         private final boolean isRepeatModeOn = false;
+        private int mRepeatMode;
+        private int mShuffleMode;
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
@@ -311,6 +320,11 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                 Log.e(TAG, String.valueOf(mPreparedMedia));
             }
             mPlayback.playFromMedia(mPreparedMedia);
+            if(mShuffleMode==PlaybackStateCompat.SHUFFLE_MODE_ALL){
+                SharedPrefs.saveNowPlayId(mPlaylistOriginal.indexOf(mPlaylist.get(mQueueIndex)));
+            }else {
+                SharedPrefs.saveNowPlayId(mQueueIndex);
+            }
         }
 
         /*@Override
@@ -383,9 +397,16 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             onPlay();
         }
 
+        public void onSkipToThis() {
+            Log.d(TAG, "onSkipToNext: QueueIndex: " + mQueueIndex);
+            mPreparedMedia = null;
+            onPlay();
+        }
+
 
         @Override
         public void onSetRepeatMode(int repeatMode) {
+            mRepeatMode=repeatMode;
             mSession.setRepeatMode(repeatMode);
             mPlayback.setRepeating(repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE);
             super.onSetRepeatMode(repeatMode);
@@ -394,15 +415,22 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
         @Override
         public void onSetShuffleMode(int shuffleMode) {
             Log.d(TAG, "onSetShuffleMode: Called inside SimpleMusicService");
+            mShuffleMode=shuffleMode;
             isRandom = shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL;
             if (isRandom) {
                 long seed = System.nanoTime();
+                MediaSessionCompat.QueueItem nowItem=mPlaylist.get(mQueueIndex);
                 mPlaylistOriginal.clear();
                 mPlaylistOriginal.addAll(mPlaylist);
                 Collections.shuffle(mPlaylist, new Random(seed));
+                mQueueIndex=mPlaylist.indexOf(nowItem);
             } else {
-                mPlaylist.clear();
-                mPlaylist.addAll(mPlaylistOriginal);
+                if(mPlaylistOriginal.size()!=0) {
+                    MediaSessionCompat.QueueItem nowItem=mPlaylist.get(mQueueIndex);
+                    mPlaylist.clear();
+                    mPlaylist.addAll(mPlaylistOriginal);
+                    mQueueIndex=mPlaylist.indexOf(nowItem);
+                }
             }
             mSession.setShuffleMode(shuffleMode);
             super.onSetShuffleMode(shuffleMode);
@@ -415,6 +443,25 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                 case "REFRESH_PLAYLIST":
                     Log.e(TAG,"Reconized+"+action);
                     List<MediaBrowserCompat.MediaItem> newPlayList=MusicLibrary.getPlayingList();
+                    mQueueIndex=SharedPrefs.getNowPlayId();
+                    switch(SharedPrefs.getPlayOrder()){
+                        case LIST_PLAY:
+                            mRepeatMode=PlaybackStateCompat.REPEAT_MODE_NONE;
+                            mShuffleMode=PlaybackStateCompat.SHUFFLE_MODE_NONE;
+                            break;
+                        case REPEAT_LIST:
+                            mRepeatMode=PlaybackStateCompat.REPEAT_MODE_ALL;
+                            mShuffleMode=PlaybackStateCompat.SHUFFLE_MODE_NONE;
+                            break;
+                        case REPEAT_ONE:
+                            mRepeatMode=PlaybackStateCompat.REPEAT_MODE_ONE;
+                            mShuffleMode=PlaybackStateCompat.SHUFFLE_MODE_NONE;
+                            break;
+                        case SHUFFLE_PLAY:
+                            mRepeatMode=PlaybackStateCompat.REPEAT_MODE_ALL;
+                            mShuffleMode=PlaybackStateCompat.SHUFFLE_MODE_ALL;
+                            break;
+                    }
                     mPlaylist.clear();
                     queueItemHashMap.clear();
                     for(MediaBrowserCompat.MediaItem mediaItem:newPlayList) {
@@ -422,8 +469,9 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                         mPlaylist.add(queueItem);
                         queueItemHashMap.put(mediaItem.getDescription().getMediaUri().getPath(), queueItem);
                     }
-                    mQueueIndex = 0;
                     mSession.setQueue(mPlaylist);
+                    onSetRepeatMode(mRepeatMode);
+                    onSetShuffleMode(mShuffleMode);
             }
             super.onCustomAction(action, extras);
         }

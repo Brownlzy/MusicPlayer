@@ -109,7 +109,12 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                     // Stop allows: stop()
                     setNewState(PlaybackStateCompat.STATE_PAUSED);
                     if (isRepeating) {
-                        playFromMedia(mCurrentMedia);
+                        //musicService.mCallback.onSkipToThis();
+                        //mMediaPlayer.seekTo(0);
+                        //setNewState(PlaybackStateCompat.STATE_PLAYING);
+                        mFilename=null;
+                        playFromMedia(getCurrentMedia());
+                        //musicService.mCallback.onSkipToThis();
                     } else {
 
                         musicService.mCallback.onSkipToNext();
@@ -227,7 +232,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause: Called ");
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer != null
+                && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setNewState(PlaybackStateCompat.STATE_PAUSED);
             handler.removeCallbacks(runnable);
@@ -238,6 +244,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     // This is the main reducer for the player state machine.
     private void setNewState(@PlaybackStateCompat.State int newPlayerState) {
         mState = newPlayerState;
+        Log.e(TAG, String.valueOf(newPlayerState));
 
         // Whether playback goes to completion, or whether it is stopped, the
         // mCurrentMediaPlayedToCompletion is set to true.

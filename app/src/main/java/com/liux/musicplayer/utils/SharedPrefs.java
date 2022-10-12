@@ -104,10 +104,18 @@ public class SharedPrefs {
     }
 
     public static void putCacheList(String strCacheListJson) {
-        sharedPreferencesEditor.putString("cacheList",strCacheListJson);
+        sharedPreferencesEditor.putString("cacheList",strCacheListJson).apply();
     }
 
     public static int getNowPlayId() {
         return Integer.parseInt(sharedPreferences.getString("nowId","0"));
+    }
+
+    public static void savePlayOrder(int playOrder) {
+        sharedPreferencesEditor.putString("playOrder",String.valueOf(playOrder)).apply();
+    }
+
+    public static void saveNowPlayId(int mQueueIndex) {
+        sharedPreferencesEditor.putString("nowId",String.valueOf(mQueueIndex)).apply();
     }
 }

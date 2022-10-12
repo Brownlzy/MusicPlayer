@@ -36,6 +36,10 @@ public class PlayingListAdapter extends BaseAdapter {
         nowPlay=data.stream().map(t -> t.getDescription().getMediaUri().getPath()).distinct().collect(Collectors.toList()).indexOf(path);
     }
 
+    public int getNowPlay() {
+        return nowPlay;
+    }
+
     public interface RefreshListener{
         void deleteThis(MediaDescriptionCompat description);
         void skipToThis(long id);

@@ -38,6 +38,7 @@ public class MyViewModel extends AndroidViewModel {
     private static boolean activityForeground=false;
     private static boolean isDeskTopLyric=false;
     private static boolean isDeskTopLyricLocked=false;
+    public boolean isSplash=true;
 
     public void setFragmentLyricState(boolean fragmentLyricState) {
         this.fragmentLyricState = fragmentLyricState;

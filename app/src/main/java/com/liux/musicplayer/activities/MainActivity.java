@@ -150,8 +150,11 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             public void onChanged(Song song) {
                 setPlayBarTitle(song);
                 Log.e("Main","duration"+song.getSongDuration());
-                setSeekBarDuration(0);
                 setSeekBarMax(song.getSongDuration());
+            if(myViewModel.getmMediaController().getPlaybackState()!=null)
+                setSeekBarDuration(myViewModel.getmMediaController().getPlaybackState().getPosition());
+            else
+                setSeekBarDuration(0L);
                 setPlayingListView(song);
                 startProgressBar();
             }
@@ -177,10 +180,17 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     }
 
     public void HideSplash(int where){
+        if(where==3){
+            initMainActivity();
+            splashCard=findViewById(R.id.splash_view);
+            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+            splashCard.startAnimation(animation);
+            splashCard.setVisibility(View.GONE);
+        }
         if(where==1)isPlayList=true;
         if(where==2)isHome=true;
-        if(isSplash&&isHome&&isPlayList) {
-            isSplash=false;
+        if(myViewModel.isSplash&&isHome&&isPlayList) {
+            myViewModel.isSplash=false;
             adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
             playingList.setAdapter(adapter);
             adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
@@ -204,8 +214,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         }
     }
 
-    private void setSeekBarDuration(int i) {
-            playProgressBar.setProgress(i, false);
+    private void setSeekBarDuration(long i) {
+            playProgressBar.setProgress(Math.toIntExact(i), false);
             playProgressNowText.setText(i / 60000 + ((i / 1000 % 60 < 10) ? ":0" : ":") + i / 1000 % 60);
     }
 
@@ -251,6 +261,12 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mainActivity=this;
+        CrashHandlers crashHandlers = CrashHandlers.getInstance();
+        crashHandlers.init(MainActivity.this);
+        SharedPrefs.init(getApplication());
+        myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
+        CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
+
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
@@ -352,6 +368,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     @Override
     protected void onResume() {
         super.onResume();
+        if(!myViewModel.isSplash)HideSplash(3);
     }
 
     private void removeObserver() {

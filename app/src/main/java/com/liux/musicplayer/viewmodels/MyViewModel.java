@@ -61,6 +61,7 @@ public class MyViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Song>> songsMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<Song>> playingSongsMutableLiveData = new MutableLiveData<>();
     MutableLiveData<List<MediaBrowserCompat.MediaItem>> mediaItemsMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<List<MediaSessionCompat.QueueItem>> queueItemsMutableLiveData = new MutableLiveData<>();
     MutableLiveData<List<MediaBrowserCompat.MediaItem>> searchResultsLiveData = new MutableLiveData<>();
     MutableLiveData<Song> nowPlaying = new MutableLiveData<Song>();
     MutableLiveData<LyricUtils> nowLyric =new MutableLiveData<>();
@@ -232,6 +233,10 @@ public class MyViewModel extends AndroidViewModel {
         return nowLyric.getValue();
     }
 
+    public LiveData<List<MediaSessionCompat.QueueItem>> getQueueItemsMutableLiveData() {
+        return queueItemsMutableLiveData;
+    }
+
     /**
      * and implement our app specific desires.
      */
@@ -257,6 +262,10 @@ public class MyViewModel extends AndroidViewModel {
             final MediaControllerCompat mediaController = getMediaController();
             mediaItemsMutableLiveData.setValue(children);
             MediaMetadataCompat mediaMetadata=mediaController.getMetadata();
+            if(mediaMetadata==null) {
+                mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
+                Log.e(TAG+"=======", String.valueOf(mediaController.getQueue()));
+            }
             /*if(mediaMetadata!=null) {
                 String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
                 String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
@@ -276,9 +285,7 @@ public class MyViewModel extends AndroidViewModel {
             //    mediaController.addQueueItem(mediaItem.getDescription());
             //}
             //如果当前播放为空，就读取上一次播放列表
-            if(mediaMetadata==null)
-                mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST",null);
-
+            //queueItemsMutableLiveData.setValue(getmMediaController().getQueue());
             // Call prepare now so pressing play just works.
             mediaController.getTransportControls().prepare();
             MainActivity.mainActivity.HideSplash(1);
@@ -375,6 +382,7 @@ public class MyViewModel extends AndroidViewModel {
         public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
             Log.d(TAG, "onQueueChanged: Called inside SongsViewModel");
             super.onQueueChanged(queue);
+            queueItemsMutableLiveData.setValue(queue);
         }
     }
 }

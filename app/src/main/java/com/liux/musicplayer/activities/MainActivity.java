@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -114,26 +115,31 @@ public class MainActivity extends FragmentActivity {
         initObserver();
         //setMainActivityData();
     }
+private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapter.RefreshListener() {
+    @Override
+    public void deleteThis(MediaDescriptionCompat description) {
+        myViewModel.getmMediaController().removeQueueItem(description);
+    }
 
+    @Override
+    public void skipToThis(long id) {
+        myViewModel.getmMediaController().getTransportControls().skipToQueueItem(id);
+    }
+};
     private void initObserver() {
-            adapter = new PlayingListAdapter(MainActivity.this, MusicLibrary.getPlayingList(), new PlayingListAdapter.RefreshListener() {
+           /* adapter = new PlayingListAdapter(MainActivity.this, MusicLibrary.getPlayingList(), new PlayingListAdapter.RefreshListener() {
                 @Override
                 public void deleteThis(MediaDescriptionCompat description) {
                     myViewModel.getmMediaController().removeQueueItem(description);
                 }
             });
             playingList.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();*/
         //监视正在播放列表
-        myViewModel.getMediaItemsMutableLiveData().observe(this,new Observer<List<MediaBrowserCompat.MediaItem>>() {
+        myViewModel.getQueueItemsMutableLiveData().observe(this,new Observer<List<MediaSessionCompat.QueueItem>>() {
             @Override
-            public void onChanged(List<MediaBrowserCompat.MediaItem> songs) {
-                adapter = new PlayingListAdapter(MainActivity.this, songs, new PlayingListAdapter.RefreshListener() {
-                    @Override
-                    public void deleteThis(MediaDescriptionCompat description) {
-                        myViewModel.getmMediaController().removeQueueItem(description);
-                    }
-                });
+            public void onChanged(List<MediaSessionCompat.QueueItem> queueItems) {
+                adapter = new PlayingListAdapter(MainActivity.this, queueItems, refreshListener);
                 playingList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
@@ -175,7 +181,9 @@ public class MainActivity extends FragmentActivity {
         if(where==2)isHome=true;
         if(isSplash&&isHome&&isPlayList) {
             isSplash=false;
-            //homeFragment.initMusicInfo(myViewModel.getmMediaController().getMetadata());
+            adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
+            playingList.setAdapter(adapter);
+            adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
             splashCard=findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
@@ -427,12 +435,7 @@ public class MainActivity extends FragmentActivity {
             public void onClick(View v) {
             }
         });
-        adapter = new PlayingListAdapter(this, myViewModel.getMediaItemsMutableLiveData().getValue(),  new PlayingListAdapter.RefreshListener() {
-            @Override
-            public void deleteThis(MediaDescriptionCompat description) {
-                myViewModel.getmMediaController().removeQueueItem(description);
-            }
-        });
+        adapter = new PlayingListAdapter(this, myViewModel.getQueueItemsMutableLiveData().getValue(),  refreshListener);
         playingList.setAdapter(adapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setOnListViewItemClickListener();

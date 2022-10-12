@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: 1ddc963
-# pg_map_hash: SHA-256 1ddc96365e0eb0b925ed5dc1b61b3fae2cfe69169b0952e09d302350e36e11c8
+# pg_map_id: 72cf7bc
+# pg_map_hash: SHA-256 72cf7bce00c21722ca48e98a56dd951fcfd27ff158f7cf67721bb5edd6401127
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -34063,162 +34063,158 @@ com.google.gson.stream.MalformedJsonException -> com.google.gson.stream.Malforme
     33:34:void <init>(java.lang.String,java.lang.Throwable) -> <init>
     37:38:void <init>(java.lang.Throwable) -> <init>
 com.liux.musicplayer.activities.MainActivity -> com.liux.musicplayer.activities.MainActivity:
-    60:816:void <init>() -> <init>
-    174:184:void HideSplash(int) -> HideSplash
-    60:60:com.liux.musicplayer.viewmodels.MyViewModel access$000(com.liux.musicplayer.activities.MainActivity) -> access$000
-    60:60:com.liux.musicplayer.viewmodels.MyViewModel access$002(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.viewmodels.MyViewModel) -> access$002
-    60:60:com.liux.musicplayer.adapters.PlayingListAdapter access$100(com.liux.musicplayer.activities.MainActivity) -> access$100
-    60:60:android.widget.TextView access$1000(com.liux.musicplayer.activities.MainActivity) -> access$1000
-    60:60:com.liux.musicplayer.adapters.PlayingListAdapter access$102(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.adapters.PlayingListAdapter) -> access$102
-    60:60:com.google.android.material.bottomnavigation.BottomNavigationView access$1100(com.liux.musicplayer.activities.MainActivity) -> access$1100
-    60:60:android.widget.TextView access$1200(com.liux.musicplayer.activities.MainActivity) -> access$1200
-    60:60:boolean access$1300(com.liux.musicplayer.activities.MainActivity) -> access$1300
-    60:60:com.liux.musicplayer.ui.HomeFragment access$1400(com.liux.musicplayer.activities.MainActivity) -> access$1400
-    60:60:com.liux.musicplayer.ui.HomeFragment access$1402(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.ui.HomeFragment) -> access$1402
-    60:60:com.liux.musicplayer.ui.SongListFragment access$1500(com.liux.musicplayer.activities.MainActivity) -> access$1500
-    60:60:com.liux.musicplayer.ui.SongListFragment access$1502(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.ui.SongListFragment) -> access$1502
-    60:60:com.liux.musicplayer.ui.SettingsFragment access$1600(com.liux.musicplayer.activities.MainActivity) -> access$1600
-    60:60:com.liux.musicplayer.ui.SettingsFragment access$1602(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.ui.SettingsFragment) -> access$1602
-    60:60:android.os.Handler access$1800(com.liux.musicplayer.activities.MainActivity) -> access$1800
-    60:60:android.widget.SeekBar access$1900(com.liux.musicplayer.activities.MainActivity) -> access$1900
-    60:60:android.widget.ListView access$200(com.liux.musicplayer.activities.MainActivity) -> access$200
-    60:60:void access$300(com.liux.musicplayer.activities.MainActivity,int) -> access$300
-    60:60:void access$400(com.liux.musicplayer.activities.MainActivity,int) -> access$400
-    60:60:void access$500(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.models.Song) -> access$500
-    60:60:void access$600(com.liux.musicplayer.activities.MainActivity,java.lang.Boolean) -> access$600
-    60:60:int access$700(com.liux.musicplayer.activities.MainActivity) -> access$700
-    60:60:int access$708(com.liux.musicplayer.activities.MainActivity) -> access$708
-    60:60:int access$710(com.liux.musicplayer.activities.MainActivity) -> access$710
-    60:60:boolean access$800(com.liux.musicplayer.activities.MainActivity) -> access$800
-    60:60:boolean access$802(com.liux.musicplayer.activities.MainActivity,boolean) -> access$802
-    60:60:void access$900(com.liux.musicplayer.activities.MainActivity) -> access$900
-    354:359:void clickedPlayOrPause() -> clickedPlayOrPause
-    274:331:void initBackgroundCallBack() -> initBackgroundCallBack
-    109:116:void initMainActivity() -> initMainActivity
-    119:171:void initObserver() -> initObserver
-    210:213:void initVariable() -> initVariable
-    405:529:void initViewCompat() -> initViewCompat
-    613:681:void initViewPager2() -> initViewPager2
-    386:395:void onBackPressed() -> onBackPressed
-    242:256:void onCreate(android.os.Bundle) -> onCreate
-    340:342:void onDestroy() -> onDestroy
-    346:347:void onResume() -> onResume
-    260:271:void onStart() -> onStart
-    377:382:void playPrevOrNext(boolean) -> playPrevOrNext
-    351:351:void removeObserver() -> removeObserver
-    739:744:void setNewAppearance(boolean) -> setNewAppearance
-    531:537:void setOnListViewItemClickListener() -> setOnListViewItemClickListener
-    369:374:void setPlayBarTitle(com.liux.musicplayer.models.Song) -> setPlayBarTitle
-    684:705:void setPlayBarTitle(boolean) -> setPlayBarTitle
-    192:197:void setPlayOrPause(java.lang.Boolean) -> setPlayOrPause
-    187:189:void setPlayingListView(com.liux.musicplayer.models.Song) -> setPlayingListView
-    200:202:void setSeekBarDuration(int) -> setSeekBarDuration
-    205:207:void setSeekBarMax(int) -> setSeekBarMax
-    708:709:void setViewPagerToId(int) -> setViewPagerToId
-    541:555:void showPlayingList() -> showPlayingList
-    747:755:void startProgressBar() -> startProgressBar
-    757:759:void stopProgressBar() -> stopProgressBar
+    61:819:void <init>() -> <init>
+    180:192:void HideSplash(int) -> HideSplash
+    61:61:com.liux.musicplayer.viewmodels.MyViewModel access$000(com.liux.musicplayer.activities.MainActivity) -> access$000
+    61:61:com.liux.musicplayer.viewmodels.MyViewModel access$002(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.viewmodels.MyViewModel) -> access$002
+    61:61:com.liux.musicplayer.adapters.PlayingListAdapter access$100(com.liux.musicplayer.activities.MainActivity) -> access$100
+    61:61:void access$1000(com.liux.musicplayer.activities.MainActivity) -> access$1000
+    61:61:com.liux.musicplayer.adapters.PlayingListAdapter access$102(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.adapters.PlayingListAdapter) -> access$102
+    61:61:android.widget.TextView access$1100(com.liux.musicplayer.activities.MainActivity) -> access$1100
+    61:61:com.google.android.material.bottomnavigation.BottomNavigationView access$1200(com.liux.musicplayer.activities.MainActivity) -> access$1200
+    61:61:android.widget.TextView access$1300(com.liux.musicplayer.activities.MainActivity) -> access$1300
+    61:61:boolean access$1400(com.liux.musicplayer.activities.MainActivity) -> access$1400
+    61:61:com.liux.musicplayer.ui.HomeFragment access$1500(com.liux.musicplayer.activities.MainActivity) -> access$1500
+    61:61:com.liux.musicplayer.ui.HomeFragment access$1502(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.ui.HomeFragment) -> access$1502
+    61:61:com.liux.musicplayer.ui.SongListFragment access$1600(com.liux.musicplayer.activities.MainActivity) -> access$1600
+    61:61:com.liux.musicplayer.ui.SongListFragment access$1602(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.ui.SongListFragment) -> access$1602
+    61:61:com.liux.musicplayer.ui.SettingsFragment access$1700(com.liux.musicplayer.activities.MainActivity) -> access$1700
+    61:61:com.liux.musicplayer.ui.SettingsFragment access$1702(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.ui.SettingsFragment) -> access$1702
+    61:61:android.os.Handler access$1900(com.liux.musicplayer.activities.MainActivity) -> access$1900
+    61:61:com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener access$200(com.liux.musicplayer.activities.MainActivity) -> access$200
+    61:61:android.widget.SeekBar access$2000(com.liux.musicplayer.activities.MainActivity) -> access$2000
+    61:61:android.widget.ListView access$300(com.liux.musicplayer.activities.MainActivity) -> access$300
+    61:61:void access$400(com.liux.musicplayer.activities.MainActivity,int) -> access$400
+    61:61:void access$500(com.liux.musicplayer.activities.MainActivity,int) -> access$500
+    61:61:void access$600(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.models.Song) -> access$600
+    61:61:void access$700(com.liux.musicplayer.activities.MainActivity,java.lang.Boolean) -> access$700
+    61:61:int access$800(com.liux.musicplayer.activities.MainActivity) -> access$800
+    61:61:int access$808(com.liux.musicplayer.activities.MainActivity) -> access$808
+    61:61:int access$810(com.liux.musicplayer.activities.MainActivity) -> access$810
+    61:61:boolean access$900(com.liux.musicplayer.activities.MainActivity) -> access$900
+    61:61:boolean access$902(com.liux.musicplayer.activities.MainActivity,boolean) -> access$902
+    362:367:void clickedPlayOrPause() -> clickedPlayOrPause
+    282:339:void initBackgroundCallBack() -> initBackgroundCallBack
+    110:117:void initMainActivity() -> initMainActivity
+    139:177:void initObserver() -> initObserver
+    218:221:void initVariable() -> initVariable
+    413:532:void initViewCompat() -> initViewCompat
+    616:684:void initViewPager2() -> initViewPager2
+    394:403:void onBackPressed() -> onBackPressed
+    250:264:void onCreate(android.os.Bundle) -> onCreate
+    348:350:void onDestroy() -> onDestroy
+    354:355:void onResume() -> onResume
+    268:279:void onStart() -> onStart
+    385:390:void playPrevOrNext(boolean) -> playPrevOrNext
+    359:359:void removeObserver() -> removeObserver
+    742:747:void setNewAppearance(boolean) -> setNewAppearance
+    534:540:void setOnListViewItemClickListener() -> setOnListViewItemClickListener
+    377:382:void setPlayBarTitle(com.liux.musicplayer.models.Song) -> setPlayBarTitle
+    687:708:void setPlayBarTitle(boolean) -> setPlayBarTitle
+    200:205:void setPlayOrPause(java.lang.Boolean) -> setPlayOrPause
+    195:197:void setPlayingListView(com.liux.musicplayer.models.Song) -> setPlayingListView
+    208:210:void setSeekBarDuration(int) -> setSeekBarDuration
+    213:215:void setSeekBarMax(int) -> setSeekBarMax
+    711:712:void setViewPagerToId(int) -> setViewPagerToId
+    544:558:void showPlayingList() -> showPlayingList
+    750:758:void startProgressBar() -> startProgressBar
+    760:762:void stopProgressBar() -> stopProgressBar
 com.liux.musicplayer.activities.MainActivity$1 -> com.liux.musicplayer.activities.MainActivity$1:
-    119:119:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    122:123:void deleteThis(android.support.v4.media.MediaDescriptionCompat) -> deleteThis
+    118:118:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    121:122:void deleteThis(android.support.v4.media.MediaDescriptionCompat) -> deleteThis
+    126:127:void skipToThis(long) -> skipToThis
 com.liux.musicplayer.activities.MainActivity$10 -> com.liux.musicplayer.activities.MainActivity$10:
-    442:442:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    445:446:void onClick(android.view.View) -> onClick
+    451:451:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    454:455:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$11 -> com.liux.musicplayer.activities.MainActivity$11:
-    448:448:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    451:452:void onClick(android.view.View) -> onClick
+    457:457:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    460:461:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$12 -> com.liux.musicplayer.activities.MainActivity$12:
-    454:454:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    457:458:void onClick(android.view.View) -> onClick
+    463:463:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    467:467:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$13 -> com.liux.musicplayer.activities.MainActivity$13:
-    460:460:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    464:464:void onClick(android.view.View) -> onClick
+    469:469:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    472:473:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$14 -> com.liux.musicplayer.activities.MainActivity$14:
-    466:466:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    469:470:void onClick(android.view.View) -> onClick
+    475:475:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    478:479:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$15 -> com.liux.musicplayer.activities.MainActivity$15:
-    472:472:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    475:476:void onClick(android.view.View) -> onClick
+    481:481:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    485:485:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$16 -> com.liux.musicplayer.activities.MainActivity$16:
-    478:478:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    482:482:void onClick(android.view.View) -> onClick
+    487:487:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    490:509:void onClick(android.view.View) -> onClick
+com.liux.musicplayer.activities.MainActivity$16$1 -> com.liux.musicplayer.activities.MainActivity$16$1:
+    501:501:void <init>(com.liux.musicplayer.activities.MainActivity$16) -> <init>
+    504:505:void onClick(android.content.DialogInterface,int) -> onClick
+com.liux.musicplayer.activities.MainActivity$16$2 -> com.liux.musicplayer.activities.MainActivity$16$2:
+    494:494:void <init>(com.liux.musicplayer.activities.MainActivity$16) -> <init>
+    498:499:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.activities.MainActivity$17 -> com.liux.musicplayer.activities.MainActivity$17:
-    484:484:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    487:506:void onClick(android.view.View) -> onClick
-com.liux.musicplayer.activities.MainActivity$17$1 -> com.liux.musicplayer.activities.MainActivity$17$1:
-    498:498:void <init>(com.liux.musicplayer.activities.MainActivity$17) -> <init>
-    501:502:void onClick(android.content.DialogInterface,int) -> onClick
-com.liux.musicplayer.activities.MainActivity$17$2 -> com.liux.musicplayer.activities.MainActivity$17$2:
-    491:491:void <init>(com.liux.musicplayer.activities.MainActivity$17) -> <init>
-    495:496:void onClick(android.content.DialogInterface,int) -> onClick
+    512:512:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    515:515:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    520:520:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    526:529:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
 com.liux.musicplayer.activities.MainActivity$18 -> com.liux.musicplayer.activities.MainActivity$18:
-    509:509:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    512:512:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    517:517:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    523:526:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+    534:534:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    538:538:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.liux.musicplayer.activities.MainActivity$19 -> com.liux.musicplayer.activities.MainActivity$19:
-    531:531:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    535:535:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    624:624:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    663:664:void onPageScrollStateChanged(int) -> onPageScrollStateChanged
+    627:628:void onPageScrolled(int,float,int) -> onPageScrolled
+    632:659:void onPageSelected(int) -> onPageSelected
 com.liux.musicplayer.activities.MainActivity$2 -> com.liux.musicplayer.activities.MainActivity$2:
-    128:128:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    128:128:void onChanged(java.lang.Object) -> onChanged
-    131:139:void onChanged(java.util.List) -> onChanged
-com.liux.musicplayer.activities.MainActivity$2$1 -> com.liux.musicplayer.activities.MainActivity$2$1:
-    131:131:void <init>(com.liux.musicplayer.activities.MainActivity$2) -> <init>
-    134:135:void deleteThis(android.support.v4.media.MediaDescriptionCompat) -> deleteThis
+    139:139:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    139:139:void onChanged(java.lang.Object) -> onChanged
+    142:145:void onChanged(java.util.List) -> onChanged
 com.liux.musicplayer.activities.MainActivity$20 -> com.liux.musicplayer.activities.MainActivity$20:
-    621:621:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    660:661:void onPageScrollStateChanged(int) -> onPageScrollStateChanged
-    624:625:void onPageScrolled(int,float,int) -> onPageScrolled
-    629:656:void onPageSelected(int) -> onPageSelected
+    666:666:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    669:681:boolean onNavigationItemSelected(android.view.MenuItem) -> onNavigationItemSelected
 com.liux.musicplayer.activities.MainActivity$21 -> com.liux.musicplayer.activities.MainActivity$21:
-    663:663:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    666:678:boolean onNavigationItemSelected(android.view.MenuItem) -> onNavigationItemSelected
-com.liux.musicplayer.activities.MainActivity$22 -> com.liux.musicplayer.activities.MainActivity$22:
-    816:816:void <init>(com.liux.musicplayer.activities.MainActivity,android.os.Looper) -> <init>
-    819:823:void handleMessage(android.os.Message) -> handleMessage
+    819:819:void <init>(com.liux.musicplayer.activities.MainActivity,android.os.Looper) -> <init>
+    822:826:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.activities.MainActivity$3 -> com.liux.musicplayer.activities.MainActivity$3:
-    142:142:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    142:142:void onChanged(java.lang.Object) -> onChanged
-    145:151:void onChanged(com.liux.musicplayer.models.Song) -> onChanged
+    148:148:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    148:148:void onChanged(java.lang.Object) -> onChanged
+    151:157:void onChanged(com.liux.musicplayer.models.Song) -> onChanged
 com.liux.musicplayer.activities.MainActivity$4 -> com.liux.musicplayer.activities.MainActivity$4:
-    154:154:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    154:154:void onChanged(java.lang.Object) -> onChanged
-    158:158:void onChanged(java.lang.Long) -> onChanged
+    160:160:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    160:160:void onChanged(java.lang.Object) -> onChanged
+    164:164:void onChanged(java.lang.Long) -> onChanged
 com.liux.musicplayer.activities.MainActivity$5 -> com.liux.musicplayer.activities.MainActivity$5:
-    161:161:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    161:161:void onChanged(java.lang.Object) -> onChanged
-    164:169:void onChanged(java.lang.Boolean) -> onChanged
+    167:167:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    167:167:void onChanged(java.lang.Object) -> onChanged
+    170:175:void onChanged(java.lang.Boolean) -> onChanged
 com.liux.musicplayer.activities.MainActivity$6 -> com.liux.musicplayer.activities.MainActivity$6:
-    261:261:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    264:269:void run() -> run
+    269:269:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    272:277:void run() -> run
 com.liux.musicplayer.activities.MainActivity$7 -> com.liux.musicplayer.activities.MainActivity$7:
-    274:274:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    278:278:void onActivityCreated(android.app.Activity,android.os.Bundle) -> onActivityCreated
-    329:329:void onActivityDestroyed(android.app.Activity) -> onActivityDestroyed
-    304:304:void onActivityPaused(android.app.Activity) -> onActivityPaused
-    299:299:void onActivityResumed(android.app.Activity) -> onActivityResumed
-    324:324:void onActivitySaveInstanceState(android.app.Activity,android.os.Bundle) -> onActivitySaveInstanceState
-    282:294:void onActivityStarted(android.app.Activity) -> onActivityStarted
-    308:319:void onActivityStopped(android.app.Activity) -> onActivityStopped
+    282:282:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    286:286:void onActivityCreated(android.app.Activity,android.os.Bundle) -> onActivityCreated
+    337:337:void onActivityDestroyed(android.app.Activity) -> onActivityDestroyed
+    312:312:void onActivityPaused(android.app.Activity) -> onActivityPaused
+    307:307:void onActivityResumed(android.app.Activity) -> onActivityResumed
+    332:332:void onActivitySaveInstanceState(android.app.Activity,android.os.Bundle) -> onActivitySaveInstanceState
+    290:302:void onActivityStarted(android.app.Activity) -> onActivityStarted
+    316:327:void onActivityStopped(android.app.Activity) -> onActivityStopped
 com.liux.musicplayer.activities.MainActivity$8 -> com.liux.musicplayer.activities.MainActivity$8:
-    425:425:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    428:428:void onClick(android.view.View) -> onClick
+    433:433:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    436:436:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$9 -> com.liux.musicplayer.activities.MainActivity$9:
-    430:430:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    433:434:void deleteThis(android.support.v4.media.MediaDescriptionCompat) -> deleteThis
+    445:445:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    448:449:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$ProgressThread -> com.liux.musicplayer.activities.MainActivity$ProgressThread:
-    761:763:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    761:761:void <init>(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.activities.MainActivity$1) -> <init>
-    771:771:boolean isPaused() -> isPaused
-    784:791:void onPause() -> onPause
-    767:768:void pauseThread() -> pauseThread
-    776:780:void resumeThread() -> resumeThread
-    794:812:void run() -> run
+    764:766:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    764:764:void <init>(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.activities.MainActivity$1) -> <init>
+    774:774:boolean isPaused() -> isPaused
+    787:794:void onPause() -> onPause
+    770:771:void pauseThread() -> pauseThread
+    779:783:void resumeThread() -> resumeThread
+    797:815:void run() -> run
 com.liux.musicplayer.activities.MainActivity$ScreenSlidePagerAdapter -> com.liux.musicplayer.activities.MainActivity$ScreenSlidePagerAdapter:
-    712:714:void <init>(com.liux.musicplayer.activities.MainActivity,androidx.fragment.app.FragmentActivity) -> <init>
-    718:728:androidx.fragment.app.Fragment createFragment(int) -> createFragment
-    734:734:int getItemCount() -> getItemCount
+    715:717:void <init>(com.liux.musicplayer.activities.MainActivity,androidx.fragment.app.FragmentActivity) -> <init>
+    721:731:androidx.fragment.app.Fragment createFragment(int) -> createFragment
+    737:737:int getItemCount() -> getItemCount
 com.liux.musicplayer.activities.SplashActivity -> com.liux.musicplayer.activities.SplashActivity:
     14:14:void <init>() -> <init>
     51:53:void finish() -> finish
@@ -34236,16 +34232,16 @@ com.liux.musicplayer.adapters.LyricAdapter -> com.liux.musicplayer.adapters.Lyri
 com.liux.musicplayer.adapters.LyricAdapter$ViewHolder -> com.liux.musicplayer.adapters.LyricAdapter$ViewHolder:
     79:79:void <init>(com.liux.musicplayer.adapters.LyricAdapter) -> <init>
 com.liux.musicplayer.adapters.PlayingListAdapter -> com.liux.musicplayer.adapters.PlayingListAdapter:
-    java.lang.String $r8$lambda$dVGNa4VZcwYOotCuL-uxZ2qVspU(android.support.v4.media.MediaBrowserCompat$MediaItem) -> $r8$lambda$dVGNa4VZcwYOotCuL-uxZ2qVspU
+    java.lang.String $r8$lambda$JD5o5gpnHZ-N0drwvHfLrpWpF14(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> $r8$lambda$JD5o5gpnHZ-N0drwvHfLrpWpF14
       # {"id":"com.android.tools.r8.synthesized"}
-    40:44:void <init>(com.liux.musicplayer.activities.MainActivity,java.util.List,com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener) -> <init>
-    24:24:com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener access$000(com.liux.musicplayer.adapters.PlayingListAdapter) -> access$000
-    48:51:int getCount() -> getCount
-    56:56:java.lang.Object getItem(int) -> getItem
-    61:61:long getItemId(int) -> getItemId
-    66:103:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-    33:33:java.lang.String lambda$setNowPlay$0(android.support.v4.media.MediaBrowserCompat$MediaItem) -> lambda$setNowPlay$0
-    33:34:void setNowPlay(java.lang.String) -> setNowPlay
+    44:48:void <init>(com.liux.musicplayer.activities.MainActivity,java.util.List,com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener) -> <init>
+    26:26:com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener access$000(com.liux.musicplayer.adapters.PlayingListAdapter) -> access$000
+    52:55:int getCount() -> getCount
+    60:60:java.lang.Object getItem(int) -> getItem
+    65:65:long getItemId(int) -> getItemId
+    70:114:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    36:36:java.lang.String lambda$setNowPlay$0(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> lambda$setNowPlay$0
+    35:37:void setNowPlay(java.lang.String) -> setNowPlay
 com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda0 -> com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
@@ -34257,10 +34253,13 @@ com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda0 -> co
     java.lang.Object com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$0.apply(java.lang.Object) -> apply
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.adapters.PlayingListAdapter$1 -> com.liux.musicplayer.adapters.PlayingListAdapter$1:
-    97:97:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
-    100:101:void onClick(android.view.View) -> onClick
+    102:102:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
+    105:106:void onClick(android.view.View) -> onClick
+com.liux.musicplayer.adapters.PlayingListAdapter$2 -> com.liux.musicplayer.adapters.PlayingListAdapter$2:
+    108:108:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
+    111:112:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.adapters.PlayingListAdapter$ViewHolder -> com.liux.musicplayer.adapters.PlayingListAdapter$ViewHolder:
-    106:106:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter) -> <init>
+    117:117:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter) -> <init>
 com.liux.musicplayer.adapters.SongListAdapter -> com.liux.musicplayer.adapters.SongListAdapter:
     23:37:void <init>(android.content.Context,java.util.List,android.util.SparseBooleanArray,com.liux.musicplayer.adapters.SongListAdapter$PopUpMenuListener) -> <init>
     18:18:com.liux.musicplayer.adapters.SongListAdapter$PopUpMenuListener access$000(com.liux.musicplayer.adapters.SongListAdapter) -> access$000
@@ -34302,8 +34301,8 @@ com.liux.musicplayer.databinding.ItemLyricBinding -> com.liux.musicplayer.databi
     18:18:android.view.View getRoot() -> getRoot
     33:33:android.widget.LinearLayout getRoot() -> getRoot
 com.liux.musicplayer.databinding.ItemPlayingListBinding -> com.liux.musicplayer.databinding.ItemPlayingListBinding:
-    19:19:android.view.View getRoot() -> getRoot
-    61:61:android.widget.LinearLayout getRoot() -> getRoot
+    20:20:android.view.View getRoot() -> getRoot
+    66:66:android.widget.LinearLayout getRoot() -> getRoot
 com.liux.musicplayer.databinding.ItemPlaylistBinding -> com.liux.musicplayer.databinding.ItemPlaylistBinding:
     20:20:android.view.View getRoot() -> getRoot
     66:66:android.widget.LinearLayout getRoot() -> getRoot
@@ -34438,63 +34437,74 @@ com.liux.musicplayer.media.PlayerAdapter$AudioFocusHelper -> com.liux.musicplaye
     147:173:void onAudioFocusChange(int) -> onAudioFocusChange
     135:138:boolean requestAudioFocus() -> requestAudioFocus
 com.liux.musicplayer.media.SimpleMusicService -> com.liux.musicplayer.media.SimpleMusicService:
-    39:51:void <init>() -> <init>
-    39:39:boolean access$000(com.liux.musicplayer.media.SimpleMusicService) -> access$000
-    39:39:boolean access$002(com.liux.musicplayer.media.SimpleMusicService,boolean) -> access$002
-    39:39:android.support.v4.media.session.MediaSessionCompat access$100(com.liux.musicplayer.media.SimpleMusicService) -> access$100
-    39:39:com.liux.musicplayer.media.MediaPlayerAdapter access$400(com.liux.musicplayer.media.SimpleMusicService) -> access$400
-    39:39:com.liux.musicplayer.utils.MediaNotificationManager access$800(com.liux.musicplayer.media.SimpleMusicService) -> access$800
-    39:39:boolean access$900(com.liux.musicplayer.media.SimpleMusicService) -> access$900
-    39:39:boolean access$902(com.liux.musicplayer.media.SimpleMusicService,boolean) -> access$902
-    55:55:androidx.lifecycle.Lifecycle getLifecycle() -> getLifecycle
-    143:144:android.os.IBinder onBind(android.content.Intent) -> onBind
-    121:139:void onCreate() -> onCreate
-    192:194:void onCustomAction(java.lang.String,android.os.Bundle,androidx.media.MediaBrowserServiceCompat$Result) -> onCustomAction
-    163:171:void onDestroy() -> onDestroy
-    176:177:androidx.media.MediaBrowserServiceCompat$BrowserRoot onGetRoot(java.lang.String,int,android.os.Bundle) -> onGetRoot
-    183:188:void onLoadChildren(java.lang.String,androidx.media.MediaBrowserServiceCompat$Result) -> onLoadChildren
-    156:158:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    149:150:boolean onUnbind(android.content.Intent) -> onUnbind
-    108:117:void registerLyricReceiver() -> registerLyricReceiver
+    40:52:void <init>() -> <init>
+    40:40:boolean access$000(com.liux.musicplayer.media.SimpleMusicService) -> access$000
+    40:40:boolean access$002(com.liux.musicplayer.media.SimpleMusicService,boolean) -> access$002
+    40:40:android.support.v4.media.session.MediaSessionCompat access$100(com.liux.musicplayer.media.SimpleMusicService) -> access$100
+    40:40:com.liux.musicplayer.media.MediaPlayerAdapter access$400(com.liux.musicplayer.media.SimpleMusicService) -> access$400
+    40:40:com.liux.musicplayer.utils.MediaNotificationManager access$800(com.liux.musicplayer.media.SimpleMusicService) -> access$800
+    40:40:boolean access$900(com.liux.musicplayer.media.SimpleMusicService) -> access$900
+    40:40:boolean access$902(com.liux.musicplayer.media.SimpleMusicService,boolean) -> access$902
+    56:56:androidx.lifecycle.Lifecycle getLifecycle() -> getLifecycle
+    144:145:android.os.IBinder onBind(android.content.Intent) -> onBind
+    122:140:void onCreate() -> onCreate
+    193:195:void onCustomAction(java.lang.String,android.os.Bundle,androidx.media.MediaBrowserServiceCompat$Result) -> onCustomAction
+    164:172:void onDestroy() -> onDestroy
+    177:178:androidx.media.MediaBrowserServiceCompat$BrowserRoot onGetRoot(java.lang.String,int,android.os.Bundle) -> onGetRoot
+    184:189:void onLoadChildren(java.lang.String,androidx.media.MediaBrowserServiceCompat$Result) -> onLoadChildren
+    157:159:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    150:151:boolean onUnbind(android.content.Intent) -> onUnbind
+    109:118:void registerLyricReceiver() -> registerLyricReceiver
 com.liux.musicplayer.media.SimpleMusicService$LyricReceiver -> com.liux.musicplayer.media.SimpleMusicService$LyricReceiver:
-    58:58:void <init>(com.liux.musicplayer.media.SimpleMusicService) -> <init>
-    62:105:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    59:59:void <init>(com.liux.musicplayer.media.SimpleMusicService) -> <init>
+    63:106:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener -> com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener:
-    446:449:void <init>(com.liux.musicplayer.media.SimpleMusicService) -> <init>
-    441:441:com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager access$200(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener) -> access$200
-    454:454:void onPlaybackCompleted() -> onPlaybackCompleted
-    461:473:void onPlaybackStateChange(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChange
+    455:458:void <init>(com.liux.musicplayer.media.SimpleMusicService) -> <init>
+    450:450:com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager access$200(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener) -> access$200
+    463:463:void onPlaybackCompleted() -> onPlaybackCompleted
+    470:482:void onPlaybackStateChange(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChange
 com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager -> com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager:
-    475:475:void <init>(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener) -> <init>
-    475:475:void access$300(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$300
-    475:475:void access$500(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$500
-    475:475:void access$600(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$600
-    475:475:void access$700(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$700
-    511:514:void moveServiceOutOfStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceOutOfStartedState
-    478:491:void moveServiceToStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceToStartedState
-    503:508:void updateNotificationForLyric(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForLyric
-    494:501:void updateNotificationForPause(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForPause
+    484:484:void <init>(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener) -> <init>
+    484:484:void access$300(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$300
+    484:484:void access$500(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$500
+    484:484:void access$600(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$600
+    484:484:void access$700(com.liux.musicplayer.media.SimpleMusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$700
+    522:525:void moveServiceOutOfStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceOutOfStartedState
+    487:500:void moveServiceToStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceToStartedState
+    512:519:void updateNotificationForLyric(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForLyric
+    503:510:void updateNotificationForPause(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForPause
 com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback -> com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback:
-    197:204:void <init>(com.liux.musicplayer.media.SimpleMusicService) -> <init>
-    435:435:boolean isReadyToPlay() -> isReadyToPlay
-    208:215:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onAddQueueItem
-    404:420:void onCustomAction(java.lang.String,android.os.Bundle) -> onCustomAction
-    271:274:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
-    358:360:void onPause() -> onPause
-    296:308:void onPlay() -> onPlay
-    329:330:void onPlayFromSearch(java.lang.String,android.os.Bundle) -> onPlayFromSearch
-    334:349:void onPlayFromUri(android.net.Uri,android.os.Bundle) -> onPlayFromUri
-    279:292:void onPrepare() -> onPrepare
-    248:249:void onPrepareFromSearch(java.lang.String,android.os.Bundle) -> onPrepareFromSearch
-    253:267:void onPrepareFromUri(android.net.Uri,android.os.Bundle) -> onPrepareFromUri
-    219:227:void onRemoveQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onRemoveQueueItem
-    431:432:void onSeekTo(long) -> onSeekTo
-    380:383:void onSetRepeatMode(int) -> onSetRepeatMode
-    387:400:void onSetShuffleMode(int) -> onSetShuffleMode
-    371:375:void onSkipToNext() -> onSkipToNext
-    424:427:void onSkipToPrevious() -> onSkipToPrevious
-    353:354:void onSkipToQueueItem(long) -> onSkipToQueueItem
-    364:367:void onStop() -> onStop
+    198:205:void <init>(com.liux.musicplayer.media.SimpleMusicService) -> <init>
+    444:444:boolean isReadyToPlay() -> isReadyToPlay
+    209:216:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onAddQueueItem
+    220:221:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat,int) -> onAddQueueItem
+    413:429:void onCustomAction(java.lang.String,android.os.Bundle) -> onCustomAction
+    277:280:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
+    367:369:void onPause() -> onPause
+    302:314:void onPlay() -> onPlay
+    335:336:void onPlayFromSearch(java.lang.String,android.os.Bundle) -> onPlayFromSearch
+    340:355:void onPlayFromUri(android.net.Uri,android.os.Bundle) -> onPlayFromUri
+    285:298:void onPrepare() -> onPrepare
+    254:255:void onPrepareFromSearch(java.lang.String,android.os.Bundle) -> onPrepareFromSearch
+    259:273:void onPrepareFromUri(android.net.Uri,android.os.Bundle) -> onPrepareFromUri
+    225:233:void onRemoveQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onRemoveQueueItem
+    440:441:void onSeekTo(long) -> onSeekTo
+    389:392:void onSetRepeatMode(int) -> onSetRepeatMode
+    396:409:void onSetShuffleMode(int) -> onSetShuffleMode
+    380:384:void onSkipToNext() -> onSkipToNext
+    433:436:void onSkipToPrevious() -> onSkipToPrevious
+    359:363:void onSkipToQueueItem(long) -> onSkipToQueueItem
+    373:376:void onStop() -> onStop
+com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$ExternalSyntheticLambda0 -> com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$ExternalSyntheticLambda0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$InternalSyntheticLambda$0$5415bb7a0991f367451afd335d6ca91c68d6e929d4998c7a804e9601b9402e2d$0 com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$InternalSyntheticLambda$0$5415bb7a0991f367451afd335d6ca91c68d6e929d4998c7a804e9601b9402e2d$0.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$InternalSyntheticLambda$0$5415bb7a0991f367451afd335d6ca91c68d6e929d4998c7a804e9601b9402e2d$0.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$InternalSyntheticLambda$0$5415bb7a0991f367451afd335d6ca91c68d6e929d4998c7a804e9601b9402e2d$0.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.Object com.liux.musicplayer.media.SimpleMusicService$MediaSessionCallback$$InternalSyntheticLambda$0$5415bb7a0991f367451afd335d6ca91c68d6e929d4998c7a804e9601b9402e2d$0.apply(java.lang.Object) -> apply
+      # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.media.SongProvider -> com.liux.musicplayer.media.SongProvider:
     int $r8$lambda$xMX4y-7jj8tYcTjL6RzylOEa01s(com.liux.musicplayer.models.Song,com.liux.musicplayer.models.Song) -> $r8$lambda$xMX4y-7jj8tYcTjL6RzylOEa01s
       # {"id":"com.android.tools.r8.synthesized"}
@@ -35218,35 +35228,35 @@ com.liux.musicplayer.utils.UriTransform -> com.liux.musicplayer.utils.UriTransfo
     127:127:boolean isMediaDocument(android.net.Uri) -> isMediaDocument
 com.liux.musicplayer.viewmodels.MyViewModel -> com.liux.musicplayer.viewmodels.MyViewModel:
     38:40:void <clinit>() -> <clinit>
-    34:90:void <init>(android.app.Application) -> <init>
+    34:91:void <init>(android.app.Application) -> <init>
     32:32:androidx.lifecycle.MutableLiveData access$200(com.liux.musicplayer.viewmodels.MyViewModel) -> access$200
     32:32:androidx.lifecycle.MutableLiveData access$300(com.liux.musicplayer.viewmodels.MyViewModel) -> access$300
     32:32:androidx.lifecycle.MutableLiveData access$500(com.liux.musicplayer.viewmodels.MyViewModel) -> access$500
-    120:126:void connectToMediaPlaybackService() -> connectToMediaPlaybackService
-    100:100:androidx.lifecycle.LiveData getCurrentPlayingDuration() -> getCurrentPlayingDuration
-    204:204:androidx.lifecycle.LiveData getIsPlaying() -> getIsPlaying
-    232:232:com.liux.musicplayer.utils.LyricUtils getLyric() -> getLyric
-    148:148:androidx.lifecycle.LiveData getMediaItemsMutableLiveData() -> getMediaItemsMutableLiveData
-    69:72:android.graphics.Bitmap getNowAlbumArt() -> getNowAlbumArt
-    152:152:androidx.lifecycle.LiveData getNowPlaying() -> getNowPlaying
+    121:127:void connectToMediaPlaybackService() -> connectToMediaPlaybackService
+    101:101:androidx.lifecycle.LiveData getCurrentPlayingDuration() -> getCurrentPlayingDuration
+    205:205:androidx.lifecycle.LiveData getIsPlaying() -> getIsPlaying
+    233:233:com.liux.musicplayer.utils.LyricUtils getLyric() -> getLyric
+    70:73:android.graphics.Bitmap getNowAlbumArt() -> getNowAlbumArt
+    153:153:androidx.lifecycle.LiveData getNowPlaying() -> getNowPlaying
+    237:237:androidx.lifecycle.LiveData getQueueItemsMutableLiveData() -> getQueueItemsMutableLiveData
     58:58:androidx.lifecycle.MutableLiveData getSongsMutableLiveData() -> getSongsMutableLiveData
-    108:108:android.support.v4.media.session.MediaControllerCompat getmMediaController() -> getmMediaController
-    130:140:void refreshSongsList() -> refreshSongsList
+    109:109:android.support.v4.media.session.MediaControllerCompat getmMediaController() -> getmMediaController
+    131:141:void refreshSongsList() -> refreshSongsList
     49:55:void setActivityForeground(boolean) -> setActivityForeground
 com.liux.musicplayer.viewmodels.MyViewModel$MediaBrowserConnection -> com.liux.musicplayer.viewmodels.MyViewModel$MediaBrowserConnection:
-    238:238:void <init>(com.liux.musicplayer.viewmodels.MyViewModel,android.content.Context,com.liux.musicplayer.viewmodels.MyViewModel$1) -> <init>
-    239:241:void <init>(com.liux.musicplayer.viewmodels.MyViewModel,android.content.Context) -> <init>
-    253:285:void onChildrenLoaded(java.lang.String,java.util.List) -> onChildrenLoaded
-    246:248:void onConnected(android.support.v4.media.session.MediaControllerCompat) -> onConnected
+    243:243:void <init>(com.liux.musicplayer.viewmodels.MyViewModel,android.content.Context,com.liux.musicplayer.viewmodels.MyViewModel$1) -> <init>
+    244:246:void <init>(com.liux.musicplayer.viewmodels.MyViewModel,android.content.Context) -> <init>
+    258:292:void onChildrenLoaded(java.lang.String,java.util.List) -> onChildrenLoaded
+    251:253:void onConnected(android.support.v4.media.session.MediaControllerCompat) -> onConnected
 com.liux.musicplayer.viewmodels.MyViewModel$MediaBrowserListener -> com.liux.musicplayer.viewmodels.MyViewModel$MediaBrowserListener:
-    296:296:void <init>(com.liux.musicplayer.viewmodels.MyViewModel) -> <init>
-    296:296:void <init>(com.liux.musicplayer.viewmodels.MyViewModel,com.liux.musicplayer.viewmodels.MyViewModel$1) -> <init>
-    321:341:void onMetadataChanged(android.support.v4.media.MediaMetadataCompat) -> onMetadataChanged
-    300:310:void onPlaybackStateChanged(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChanged
-    376:378:void onQueueChanged(java.util.List) -> onQueueChanged
-    314:317:void onRepeatModeChanged(int) -> onRepeatModeChanged
-    349:350:void onSessionDestroyed() -> onSessionDestroyed
-    354:372:void onShuffleModeChanged(int) -> onShuffleModeChanged
+    303:303:void <init>(com.liux.musicplayer.viewmodels.MyViewModel) -> <init>
+    303:303:void <init>(com.liux.musicplayer.viewmodels.MyViewModel,com.liux.musicplayer.viewmodels.MyViewModel$1) -> <init>
+    328:348:void onMetadataChanged(android.support.v4.media.MediaMetadataCompat) -> onMetadataChanged
+    307:317:void onPlaybackStateChanged(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChanged
+    383:386:void onQueueChanged(java.util.List) -> onQueueChanged
+    321:324:void onRepeatModeChanged(int) -> onRepeatModeChanged
+    356:357:void onSessionDestroyed() -> onSessionDestroyed
+    361:379:void onShuffleModeChanged(int) -> onShuffleModeChanged
 com.liux.musicplayer.viewmodels.PackageViewModel -> com.liux.musicplayer.viewmodels.PackageViewModel:
     8:13:void <init>() -> <init>
 com.liux.musicplayer.views.AlwaysFocusTextView -> com.liux.musicplayer.views.AlwaysFocusTextView:

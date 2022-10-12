@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class SimpleMusicService extends MediaBrowserServiceCompat implements LifecycleOwner {
 
@@ -215,6 +216,11 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
         }
 
         @Override
+        public void onAddQueueItem(MediaDescriptionCompat description, int index) {
+            super.onAddQueueItem(description, index);
+        }
+
+        @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
             Log.d(TAG, "onRemoveQueueItem: Called SimpleMusicService");
             Log.d(TAG, String.format("onRemoveQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
@@ -350,7 +356,10 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
 
         @Override
         public void onSkipToQueueItem(long id) {
-            super.onSkipToQueueItem(id);
+            mQueueIndex = mPlaylist.stream().map(MediaSessionCompat.QueueItem::getQueueId).distinct().collect(Collectors.toList()).indexOf(id);
+            Log.d(TAG, "onSkipToNext: QueueIndex: " + mQueueIndex);
+            mPreparedMedia = null;
+            onPlay();
         }
 
         @Override
@@ -502,6 +511,8 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             private void updateNotificationForLyric(PlaybackStateCompat state) {
                 if(state.getState()==PlaybackStateCompat.STATE_PLAYING) {
                     moveServiceToStartedState(state);
+                }else if(state.getState()==PlaybackStateCompat.STATE_PAUSED){
+                    updateNotificationForPause(state);
                 }else {
                     moveServiceOutOfStartedState(state);
                 }

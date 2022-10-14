@@ -53,11 +53,13 @@ public class MyViewModel extends AndroidViewModel {
 
     public static void setActivityForeground(boolean activityForeground) {
         MyViewModel.activityForeground = activityForeground;
-        Intent intent=new Intent(MainActivity.mainActivity,SimpleMusicService.class);
+        Intent lyricIntent;
         if(activityForeground){
-            //intent.setAction();
-
+            lyricIntent =new Intent("com.liux.musicplayer.FOREGROUND");
+        }else {
+            lyricIntent =new Intent("com.liux.musicplayer.BACKGROUND");
         }
+        MainActivity.mainActivity.sendBroadcast(lyricIntent);
     }
 
     public MutableLiveData<List<Song>> getSongsMutableLiveData() {

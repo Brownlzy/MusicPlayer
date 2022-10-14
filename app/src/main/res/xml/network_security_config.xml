@@ -2,7 +2,7 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="false">
         <!--不允许以下网址使用非安全连接-->
-        <domain includeSubdomains="true">example.com</domain>
+        <domain includeSubdomains="true">brownlzy.github.io</domain>
     </domain-config>
     　<!--默认允许所有网址使用非安全连接-->
     <base-config cleartextTrafficPermitted="true" />

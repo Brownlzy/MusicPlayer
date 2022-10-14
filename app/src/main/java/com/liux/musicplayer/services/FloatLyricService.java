@@ -14,6 +14,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,13 +30,22 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.arch.core.internal.SafeIterableMap;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.media.MediaBrowserHelper;
+import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
+import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.viewmodels.MyViewModel;
 import com.liux.musicplayer.views.StrokeTextView;
+
+import java.util.List;
 
 
 public class FloatLyricService extends Service {
@@ -46,6 +60,8 @@ public class FloatLyricService extends Service {
     private HorizontalScrollView firstScroll;
     private HorizontalScrollView secondScroll;
 
+    private MediaBrowserHelper mMediaBrowserHelper;
+
     //浮动布局
     private View mFloatingLayout;
     private Chronometer chronometer;
@@ -53,8 +69,6 @@ public class FloatLyricService extends Service {
     private boolean isAllShow;
     private boolean isSettingsBar;
     //private MusicService musicService;
-    private MusicConnector serviceConnection;
-    private LyricUtils lyric;
     private int nowLyricId;
     private int nowTextSize;
     private int nowColorId;
@@ -68,7 +82,7 @@ public class FloatLyricService extends Service {
             //nowArtist = musicService.getPlayingList().get(musicId).artist;
             updatePlayInfo(nowTitle
                     + ((nowArtist.equals("null")) ? "" : " - " + nowArtist));
-            if (lyric.isCompleted)
+            if (nowLyric.isCompleted)
                 updateLyric();
             updatePlayState();
         }
@@ -92,6 +106,8 @@ public class FloatLyricService extends Service {
             initLyricSettings();
         }
     };
+private LyricUtils nowLyric=new LyricUtils();
+    private String TAG="FloatLyricService";
 
     public void LyricSettings() {
         int color;
@@ -131,13 +147,17 @@ public class FloatLyricService extends Service {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.playPause:
-                   // musicService.setPlayOrPause(!musicService.isPlaying());
+                    if(mMediaBrowserHelper.getmMediaController().getPlaybackState()!=null
+                            &&mMediaBrowserHelper.getmMediaController().getPlaybackState().getState()==PlaybackStateCompat.STATE_PLAYING)
+                        mMediaBrowserHelper.getTransportControls().pause();
+                    else if(mMediaBrowserHelper.getmMediaController().getPlaybackState()!=null)
+                        mMediaBrowserHelper.getTransportControls().play();
                     break;
                 case R.id.playNext:
-                    //musicService.playPrevOrNext(true);
+                    mMediaBrowserHelper.getTransportControls().skipToNext();
                     break;
                 case R.id.playPrevious:
-                   // musicService.playPrevOrNext(false);
+                    mMediaBrowserHelper.getTransportControls().skipToPrevious();
                     break;
                 case R.id.lyricSettings:
                     if (isSettingsBar)
@@ -150,8 +170,8 @@ public class FloatLyricService extends Service {
                     LockLyric();
                     break;
                 case R.id.close:
-                    //if (musicService != null)
-                    //    musicService.showDesktopLyric();
+                    Intent lyricIntent =new Intent("com.liux.musicplayer.CLOSE_LYRIC");
+                    sendBroadcast(lyricIntent);
                     break;
                 case R.id.appIcon:
                     Intent intent = new Intent(FloatLyricService.this, MainActivity.class);
@@ -167,15 +187,14 @@ public class FloatLyricService extends Service {
 
     private void LockLyric() {
         setAllShow();
+        Intent lyricIntent =new Intent("com.liux.musicplayer.LOCK_LYRIC");
+        sendBroadcast(lyricIntent);
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
         winManager.updateViewLayout(mFloatingLayout, wmParams);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean("deskLyricLock", true);
-        editor.apply();
     }
 
     private View.OnClickListener lyricSettingListener = new View.OnClickListener() {
@@ -239,23 +258,23 @@ public class FloatLyricService extends Service {
     }
 
     private void updateLyric() {
-        if (nowLyricId >= lyric.lyricList.size()) return;
-        if (lyric.lyricList.size() > 1) {
-            String s = lyric.lyricList.get(nowLyricId);
+        if (nowLyricId >= nowLyric.lyricList.size()) return;
+        if (nowLyric.lyricList.size() > 1) {
+            String s = nowLyric.lyricList.get(nowLyricId);
             if (s.contains("\n")) {
                 firstLyric.setText(s.split("\n")[0]);
                 secondLyric.setText(s.split("\n")[1]);
             } else {
                 firstLyric.setText(s);
-                if (lyric.size() > nowLyricId + 1) {
-                    secondLyric.setText(lyric.lyricList.get(nowLyricId + 1));
+                if (nowLyric.size() > nowLyricId + 1) {
+                    secondLyric.setText(nowLyric.lyricList.get(nowLyricId + 1));
                 } else {
                     secondLyric.setText("The End");
                 }
             }
-        } else if (lyric.lyricList.size() == 1) {
+        } else if (nowLyric.lyricList.size() == 1) {
             firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);
-            secondLyric.setText(lyric.lyricList.get(0));
+            secondLyric.setText(nowLyric.lyricList.get(0));
         } else {
             firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);
             secondLyric.setText(getString(R.string.lyricFileIsEmpty));
@@ -338,15 +357,17 @@ public class FloatLyricService extends Service {
                     onPause();
                 }
                 try {
-                    /*if (musicService.isPlaying() && lyric.isCompleted) {
-                        int currentLyricId = lyric.getNowLyric(musicService.getCurrentPosition());
+                    if (mMediaBrowserHelper.getmMediaController().getPlaybackState()!=null
+                            && mMediaBrowserHelper.getmMediaController().getPlaybackState().getState()==PlaybackStateCompat.STATE_PLAYING
+                            && nowLyric.isCompleted) {
+                        int currentLyricId = nowLyric.getNowLyric(mMediaBrowserHelper.getmMediaController().getPlaybackState().getPosition());
                         if (currentLyricId >= 0) {
                             Message msg = new Message();
                             msg.what = 200;  //消息发送的标志
                             msg.obj = currentLyricId; //消息发送的内容如：  Object String 类 int
                             LyricHandler.sendMessage(msg);
                         }
-                    }*/
+                    }
                     Thread.sleep(10);
                 } catch (InterruptedException | NullPointerException e) {
                     e.printStackTrace();
@@ -368,40 +389,110 @@ public class FloatLyricService extends Service {
         }
     };
 
-    private class MusicConnector implements ServiceConnection {
-        //成功绑定时调用 即bindService（）执行成功同时返回非空Ibinder对象
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            //musicService = ((MusicService.MyMusicBinder) iBinder).getService();
-            //Log.e("MusicConnector", "musicService" + musicService);
-            //musicService.setDeskLyricCallback(deskLyricCallback);
-            initWindow();
-            //悬浮框点击事件的处理
-            initFloating();
-            initLyricSettings();
-            //lyric = musicService.getLyric();    //从音乐服务中歌词
-            lyric.setOnLyricLoadCallback(new LyricUtils.OnLyricLoadCallback() {
-                @Override
-                public void LyricLoadCompleted() {
-                    //nowLyricId = lyric.getNowLyric(musicService.getCurrentPosition());
-                    updateLyric();
-                }
-            });
-            //musicService.updateDeskLyricPlayInfo();
+    /**
+     * and implement our app specific desires.
+     */
+    private class MediaBrowserConnection extends MediaBrowserHelper {
+        private MediaBrowserConnection(Context context) {
+            super(context, SimpleMusicService.class);
         }
 
-        //不成功绑定时调用
+
         @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            //musicService = null;
-            Log.i("binding is fail", "binding is fail");
+        protected void onConnected(@NonNull MediaControllerCompat mediaController) {
+            Log.e(TAG, "onConnected: Called");
+        }
+
+        @Override
+        protected void onChildrenLoaded(@NonNull String parentId,
+                                        @NonNull List<MediaBrowserCompat.MediaItem> children) {
+            super.onChildrenLoaded(parentId, children);
+
+            Log.d(TAG, "onChildrenLoaded:  in songsViewModel: MediaItems size" + children.size());
+
+            final MediaControllerCompat mediaController = getMediaController();
+            //String LYRIC_URI =mediaController.getMetadata().getDescription().getExtras().getString("LYRIC_URI");
+            //lyric.LoadLyric(LYRIC_URI);
+        }
+
+        @Override
+        protected void onDisconnected() {
+            super.onDisconnected();
+            connectToMediaPlaybackService();
+        }
+    }
+
+    private void connectToMediaPlaybackService() {
+            if (mMediaBrowserHelper == null) {
+                mMediaBrowserHelper = new MediaBrowserConnection(getApplication().getApplicationContext());
+
+                mMediaBrowserHelper.registerCallback(new MediaBrowserListener());
+                mMediaBrowserHelper.onStart();
+            }
+    }
+
+    /**
+     * Implementation of the {@link MediaControllerCompat.Callback} methods we're interested in.
+     * <p>
+     * Here would also be where one could override
+     * {@code onQueueChanged(List<MediaSessionCompat.QueueItem> queue)} to get informed when items
+     * are added or removed from the queue. We don't do this here in order to keep the UI
+     * simple.
+     */
+    private class MediaBrowserListener extends MediaControllerCompat.Callback {
+
+        @Override
+        public void onPlaybackStateChanged(PlaybackStateCompat playbackState) {
+            super.onPlaybackStateChanged(playbackState);
+            Log.d(TAG, "onPlaybackStateChanged: Called inside songsViewModel");
+            if(playbackState!=null) {
+                if (playbackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_float_24));
+                    startLyricThread();
+                    //} else if (!musicService.isPrepared()) {
+                    //((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_float_24));
+                    //stopLyricThread();
+                } else {
+                    ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_float_24));
+                    stopLyricThread();
+                }
+            }
+        }
+
+        @Override
+        public void onMetadataChanged(MediaMetadataCompat mediaMetadata) {
+            if (mediaMetadata == null) {
+                return;
+            }
+            nowTitle = (String) mediaMetadata.getDescription().getTitle();
+            nowArtist = ((String) mediaMetadata.getDescription().getSubtitle()).split(" - ")[0];
+            String LYRIC_URI =mediaMetadata.getBundle().getString("LYRIC_URI","null");
+            nowLyric.LoadLyric(LYRIC_URI);
+            updatePlayInfo(nowTitle
+                    + ((nowArtist.equals("null")) ? "" : " - " + nowArtist));
+            if (nowLyric.isCompleted)
+                updateLyric();
+        }
+
+        @Override
+        public void onSessionDestroyed() {
+            super.onSessionDestroyed();
         }
     }
 
     private void initLyricSettings() {
         nowTextSize = sp.getInt("deskLyricTextSize", 18);
         nowColorId = sp.getInt("deskLyricColorId", 1);
+        nowLyric.setOnLyricLoadCallback(new LyricUtils.OnLyricLoadCallback() {
+            @Override
+            public void LyricLoadCompleted() {
+                if(mMediaBrowserHelper.getmMediaController().getPlaybackState()!=null)
+                    nowLyricId = nowLyric.getNowLyric(mMediaBrowserHelper.getmMediaController().getPlaybackState().getPosition());
+                updateLyric();
+            }
+        });
         LyricSettings();
+
     }
 
     private void saveLyricSettings() {
@@ -417,11 +508,10 @@ public class FloatLyricService extends Service {
         super.onCreate();
         sp = this.getSharedPreferences(getPackageName() + "_preferences", Activity.MODE_PRIVATE);
         // Bind to LocalService
-        serviceConnection = new MusicConnector();
-        Intent intent = new Intent();
-        //intent.setClass(FloatLyricService.this, MusicService.class);
-        //startService(intent);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        initWindow();
+        initFloating();
+        initLyricSettings();
+        //connectToMediaPlaybackService();
     }
 
     /**
@@ -569,6 +659,7 @@ public class FloatLyricService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        connectToMediaPlaybackService();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -581,7 +672,6 @@ public class FloatLyricService extends Service {
             editor.apply();
         }
         stopLyricThread();
-        unbindService(serviceConnection);
         super.onDestroy();
     }
 

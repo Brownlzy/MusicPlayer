@@ -15,10 +15,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LyricUtils {
+public class LyricUtils implements Serializable {
     public boolean isCompleted = false;
     public List<String> lyricList;
     public List<String> startTime;
@@ -43,6 +44,8 @@ public class LyricUtils {
     public LyricUtils( Song song) {
         LoadLyric(song);
     }
+    public LyricUtils( ) {
+    }
 
     public void LoadLyric(Song song) {
         isCompleted = false;
@@ -52,7 +55,7 @@ public class LyricUtils {
         if (FileUtils.isFileExists(song.getLyricPath()))
             LyricFromFile(song.getLyricPath());
         else if (song.getLyricPath()!=null&&song.getLyricPath().matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*"))
-            LyricFromUrl(song);
+            LyricFromUrl(song.getLyricPath());
         else {
             lyricList.add("歌词文件不存在");
             startTime.add("[00:00.00]");
@@ -61,7 +64,7 @@ public class LyricUtils {
             isCompleted = true;
         }
     }
-
+/*
     public void LoadLyric(String s) {
         isCompleted = false;
         lyricList = new ArrayList<>();
@@ -72,6 +75,23 @@ public class LyricUtils {
         startMillionTime.add((long) 0);
         sendCompleted();
         isCompleted = true;
+    }*/
+    public void LoadLyric(String s) {
+        isCompleted = false;
+        lyricList = new ArrayList<>();
+        startTime = new ArrayList<>();
+        startMillionTime = new ArrayList<>();
+        if (FileUtils.isFileExists(s))
+            LyricFromFile(s);
+        else if (s!=null&&s.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*"))
+            LyricFromUrl(s);
+        else {
+            lyricList.add("歌词文件不存在");
+            startTime.add("[00:00.00]");
+            startMillionTime.add((long) 0);
+            sendCompleted();
+            isCompleted = true;
+        }
     }
 
     private void LyricFromFile(String path) {
@@ -104,20 +124,20 @@ public class LyricUtils {
         isCompleted = true;
     }
 
-    public void LyricFromUrl(Song song) {
+    public void LyricFromUrl(String s) {
         UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(mContext);
         uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
             @Override
             public void onFileDownloadCompleted(ArrayList<String> array) {
                 Log.e("lyric", array.get(0));
-                if (!array.get(0).equals(song.getLyricPath()))
+                if (!array.get(0).equals(s))
                     return;
                 handleUrlResult(array.get(1));
             }
 
             @Override
             public void onFileDownloadError(ArrayList<String> array) {
-                if (!array.get(0).equals(song.getLyricPath()))
+                if (!array.get(0).equals(s))
                     return;
                 lyricList.add("歌词文件加载失败");
                 startTime.add("[00:00.00]");
@@ -125,7 +145,7 @@ public class LyricUtils {
 
             }
         });
-        uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".lrc", song.getLyricPath());
+        uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".lrc", s);
     }
 
     private void handleUrlResult(String resultFilePath) {

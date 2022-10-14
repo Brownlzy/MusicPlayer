@@ -318,14 +318,13 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             public void onActivityStarted(Activity activity) {
                 countActivity++;
                 Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
-                if (countActivity > 0 && isBackground) {
+                if (countActivity >= 0 && isBackground) {
                     Log.e("MyApplication", "onActivityStarted: 应用进入前台");
                     isBackground = false;
                     //说明应用重新进入了前台
                     //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
                     //musicService.setActivityForeground(true);
-                    Intent lyricIntent =new Intent("ACTION_ACTIVITY_FOREGROUND");
-                    sendBroadcast(lyricIntent);
+                    MyViewModel.setActivityForeground(true);
                 }
 
             }
@@ -350,8 +349,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                     //说明应用进入了后台
                     //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
                     //musicService.setActivityForeground(false);
-                    Intent lyricIntent =new Intent("ACTION_ACTIVITY_BACKGROUND");
-                    sendBroadcast(lyricIntent);
+                    MyViewModel.setActivityForeground(false);
                 }
             }
 

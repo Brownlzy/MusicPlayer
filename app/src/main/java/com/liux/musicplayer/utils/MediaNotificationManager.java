@@ -116,7 +116,7 @@ public class MediaNotificationManager {
         floatLyricPendingIntent= PendingIntent.getBroadcast(mService, 0, floatLyricIntent,  PendingIntent.FLAG_IMMUTABLE);
         mSlyricAction =
                 new NotificationCompat.Action(
-                        R.drawable.ic_round_subtitles_18,
+                        R.drawable.ic_round_subtitles_off_18,
                         "openLyric",
                         floatLyricPendingIntent);
 
@@ -124,7 +124,9 @@ public class MediaNotificationManager {
         floatLyricPendingIntent= PendingIntent.getBroadcast(mService, 0, floatLyricIntent, PendingIntent.FLAG_IMMUTABLE);
         mHlyricAction =
                 new NotificationCompat.Action(
-                        R.drawable.ic_round_subtitles_off_18,
+                        SharedPrefs.getIsDeskLyricLock()?
+                                R.drawable.ic_round_lock_18:
+                                R.drawable.ic_round_subtitles_18,
                         "closeLyric",
                         floatLyricPendingIntent);
 
@@ -217,6 +219,15 @@ public class MediaNotificationManager {
         }
 
         builder.addAction(mStopAction);
+        Intent floatLyricIntent = new Intent("com.liux.musicplayer.CLOSE_LYRIC");
+        PendingIntent floatLyricPendingIntent = PendingIntent.getBroadcast(mService, 0, floatLyricIntent, PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Action mHlyricAction =
+                new NotificationCompat.Action(
+                        SharedPrefs.getIsDeskLyricLock()?
+                                R.drawable.ic_round_lock_18:
+                                R.drawable.ic_round_subtitles_18,
+                        "closeLyric",
+                        floatLyricPendingIntent);
 
         builder.addAction(SharedPrefs.getIsDeskLyric()? mHlyricAction :mSlyricAction);
 

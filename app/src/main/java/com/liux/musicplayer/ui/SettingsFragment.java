@@ -241,7 +241,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                //((MainActivity) getActivity()).getMusicService().setDesktopLyric((boolean) newValue);
+                Intent lyricIntent;
+                if((boolean) newValue)
+                    lyricIntent =new Intent("com.liux.musicplayer.OPEN_LYRIC");
+                else
+                    lyricIntent =new Intent("com.liux.musicplayer.CLOSE_LYRIC");
+                getActivity().sendBroadcast(lyricIntent);
+                return true;
+            }
+        });
+        switch_desk_lyric_lock.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                Intent lyricIntent;
+                if((boolean) newValue)
+                    lyricIntent =new Intent("com.liux.musicplayer.LOCK_LYRIC");
+                else
+                    lyricIntent =new Intent("com.liux.musicplayer.UNLOCK_LYRIC");
+                getActivity().sendBroadcast(lyricIntent);
                 return true;
             }
         });

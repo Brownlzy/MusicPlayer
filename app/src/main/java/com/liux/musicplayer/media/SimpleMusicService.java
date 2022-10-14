@@ -32,9 +32,11 @@ import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.liux.musicplayer.services.FloatLyricService;
+import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MediaNotificationManager;
 import com.liux.musicplayer.utils.SharedPrefs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,9 +54,11 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
     private boolean mServiceInStartedState;
     private List<MediaBrowserCompat.MediaItem> mPlaylist = new ArrayList<>();
     private static final String TAG ="SimpleMusicService";
-    private boolean mainActivityState;
+    private boolean mainActivityState=true;
     public LyricReceiver lyricReceiver;
     private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    private LyricUtils lyric=new LyricUtils();
+
     @NonNull
     @Override
     public Lifecycle getLifecycle() {
@@ -70,7 +74,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             switch (intent.getAction()){
                 case "com.liux.musicplayer.OPEN_LYRIC":
                     SharedPrefs.putIsDeskLyric(true);
-                    if(mainActivityState) {
+                    if(!mainActivityState) {
                         intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
@@ -92,22 +96,23 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                     break;
                 case "com.liux.musicplayer.LOCK_LYRIC":
                     SharedPrefs.putIsDeskLyricLock(true);
-                        if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
+                        /*if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                             intent.putExtra("isLock",true);
                             startService(deskLyricIntent);
-                        }
+                        }*/
                     break;
                 case "com.liux.musicplayer.UNLOCK_LYRIC":
                     SharedPrefs.putIsDeskLyricLock(false);
-                    if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
+                    /*if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                         intent.putExtra("isLock",false);
                         startService(deskLyricIntent);
-                    }
+                    }*/
                     break;
             }
-            new MediaPlayerListener().mServiceManager.updateNotificationForLyric(
-                    mSession.getController().getPlaybackState()
-            );
+            if(mSession.getController().getPlaybackState()!=null)
+                new MediaPlayerListener().mServiceManager.updateNotificationForLyric(
+                        mSession.getController().getPlaybackState()
+                );
         }
     }
     private void registerLyricReceiver() {
@@ -198,7 +203,12 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
     public void onCustomAction(@NonNull String action, Bundle extras, @NonNull Result<Bundle> result) {
         super.onCustomAction(action, extras, result);
         Log.e(TAG,action);
-
+        switch (action){
+            case "GET_LYRIC":
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("lyric",lyric);
+                break;
+        }
     }
 
     // MediaSession Callback: Transport Controls -> MediaPlayerAdapter
@@ -299,6 +309,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
 
             final Uri mediaUri = mPlaylist.get(mQueueIndex).getDescription().getMediaUri();
             mPreparedMedia = MusicLibrary.getMetadata(mediaUri);
+            lyric.LoadLyric(mPlaylist.get(mQueueIndex).getDescription().getExtras().getString("LYRIC_URI","null"));
             mSession.setMetadata(mPreparedMedia);
 
             if (!mSession.isActive()) {
@@ -314,7 +325,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                 Log.d(TAG, "not ready to play: ");
                 return;
             }
-
             if (mPreparedMedia == null) {
                 onPrepare();
                 Log.e(TAG, String.valueOf(mPreparedMedia));
@@ -387,6 +397,8 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             onPause();
             mPlayback.stop();
             mSession.setActive(false);
+            Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
+            stopService(deskLyricIntent);
         }
 
         @Override

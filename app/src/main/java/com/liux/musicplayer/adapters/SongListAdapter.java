@@ -76,7 +76,7 @@ public class SongListAdapter extends BaseAdapter {
         holder.mItemTitle.setText(data.get(position).getSongTitle());
         holder.mItemId.setText(String.valueOf(position + 1));
         holder.mItemSinger.setText(data.get(position).getArtistName() +
-                (data.get(position).getAlbumName().equals("") ? "" : (" - " + data.get(position).getAlbumName())));
+                (data.get(position).getAlbumName().equals("null") ? "" : (" - " + data.get(position).getAlbumName())));
             holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getSongDuration()));
         if (data.get(position).getLyricPath()==null)
             holder.hasLyric.setVisibility(View.GONE);

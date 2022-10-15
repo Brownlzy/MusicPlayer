@@ -44,10 +44,12 @@ import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.adapters.SongListAdapter;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.CustomDialogUtils;
 import com.liux.musicplayer.utils.DisplayUtils;
 import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UriTransform;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
@@ -63,7 +65,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     private SongListAdapter adapter;
     private int listPosition = -1;
     private int listPositionY = 0;
-    private List<MusicUtils.Song> mSongList = null;//所有数据
+    private List<Song> mSongList = null;//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
@@ -81,7 +83,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     private LinearLayout editSongLayout;
     private LinearLayout sortSongLayout;
     private LinearLayout searchSongLayout;
-    private List<MusicUtils.Song> searchList;
+    private List<Song> searchList;
 
     //用于接受系统文件管理器返回目录的回调
     ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -116,7 +118,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                             CustomDialogUtils.showSongInfoEditDialog(MainActivity.mainActivity, mSongList.get(positionToMusicId(position)), false,
                                     new CustomDialogUtils.AlertDialogBtnClickListener() {
                                         @Override
-                                        public void clickPositive(MusicUtils.Song song) {
+                                        public void clickPositive(Song song) {
                                             mSongList.set(positionToMusicId(position), song);
                                             //myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
                                         }
@@ -207,6 +209,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             //创建模型类存储值，并添加到集合中。通过集合可做任意操作
             //Log.e("ScannedFiles", childFile.getAbsolutePath());
             //myViewModel.getMusicService().addMusic(childFile.getAbsolutePath());
+            MusicLibrary.addMusicToList(childFile.getAbsolutePath(),"allSongList");
             //}
         }
     }
@@ -219,13 +222,13 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         lvData.addFooterView(footView);
         setOnListViewItemClickListener();
         setOnListViewItemLongClickListener();
+        initData();
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        //initData();
     }
 
     @Override
@@ -406,11 +409,12 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
 
     private void beSureDelete() {
         //mSongList.removeAll(mCheckedData);//删除选中数据
-        mSongList.removeIf(song -> mCheckedData.contains(song.source_uri));
+        mSongList.removeIf(song -> mCheckedData.contains(song.getSongPath()));
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         adapter.notifyDataSetChanged();
         //myViewModel.getMusicService().setAllSongListAfterDelete(mSongList);
+        SharedPrefs.saveSongListByName(mSongList,"allSongList");
         Toast.makeText(requireContext(), "删除成功", Toast.LENGTH_SHORT).show();
         refreshList();
     }
@@ -425,7 +429,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 stateCheckedMap.put(i, false);
             } else {
                 stateCheckedMap.put(i, true);
-                mCheckedData.add(mSongList.get(i).source_uri);
+                mCheckedData.add(mSongList.get(i).getSongPath());
             }
             lvData.setItemChecked(i, stateCheckedMap.get(i));//这个好行可以控制ListView复用的问题，不设置这个会出现点击一个会选中多个
         }
@@ -438,7 +442,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             setStateCheckedMap(true);//将CheckBox的所有选中状态变成选中
             isSelectedAll = false;
             //取出source——uri
-            List<String> uriList = mSongList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList());
+            List<String> uriList = mSongList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList());
             mCheckedData.addAll(uriList);//把所有的数据添加到选中列表中
         } else {
             setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
@@ -485,9 +489,9 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         lvData.setItemChecked(position, holder.checkBox.isChecked());//长按ListView时选中按的那一项
         stateCheckedMap.put(position, holder.checkBox.isChecked());//存放CheckBox的选中状态
         if (holder.checkBox.isChecked()) {
-            mCheckedData.add(mSongList.get(positionToMusicId(position)).source_uri);//CheckBox选中时，把这一项的数据加到选中数据列表
+            mCheckedData.add(mSongList.get(positionToMusicId(position)).getSongPath());//CheckBox选中时，把这一项的数据加到选中数据列表
         } else {
-            mCheckedData.remove(mSongList.get(positionToMusicId(position)).source_uri);//CheckBox未选中时，把这一项的数据从选中数据列表移除
+            mCheckedData.remove(mSongList.get(positionToMusicId(position)).getSongPath());//CheckBox未选中时，把这一项的数据从选中数据列表移除
         }
         adapter.notifyDataSetChanged();
     }
@@ -574,10 +578,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
 
     private void searchFromList() {
         searchList.clear();
-        for (MusicUtils.Song song : mSongList) {
-            if (song.title.contains(searchEditText.getText())
-                    || song.artist.contains(searchEditText.getText())
-                    || song.album.contains(searchEditText.getText()))
+        for (Song song : mSongList) {
+            if (song.getSongTitle().contains(searchEditText.getText())
+                    || song.getArtistName().contains(searchEditText.getText())
+                    || song.getAlbumName().contains(searchEditText.getText()))
                 searchList.add(song);
         }
         adapter.notifyDataSetChanged();
@@ -613,28 +617,24 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         }
         Log.e("playList", String.valueOf(listPosition));
         Log.e("playList", String.valueOf(listPositionY));
-        //initData();
-        adapter = new SongListAdapter(requireContext(), myViewModel.getSongsMutableLiveData().getValue(), stateCheckedMap,popUpMenuListener);
-        lvData.setAdapter(adapter);
-
+        initData();
         if (listPosition != -1)
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
 
         //myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
         //setNowPlaying(myViewModel.getMusicService().getNowId());
     }
-/*
+
     public void initData() {
-        if (myViewModel!=null && myViewModel.getMusicService() != null) {
-            isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
-            mSongList = myViewModel.getMusicService().getAllSongList();
+        //if (myViewModel!=null && myViewModel.getMusicService() != null) {
+            //isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
+            mSongList = SharedPrefs.getSongListByName("allSongList");
             setStateCheckedMap(false);
-            adapter = new SongListAdapter(requireContext(), myViewModel.getSongsMutableLiveData().getValue(), stateCheckedMap,popUpMenuListener);
+            adapter = new SongListAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            setNowPlaying(Integer.parseInt(prefs.getString("nowId", "0")));
-        }
-    }*/
+            //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        //}
+    }
 
     /**
      * 设置所有CheckBox的选中状态
@@ -647,7 +647,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     }
 
     private int positionToMusicId(int position) {
-        return mSongList.indexOf(((MusicUtils.Song) adapter.getItem(position)));
+        return mSongList.indexOf(((Song) adapter.getItem(position)));
     }
 
     private void showMusicDetails(int musicId) {
@@ -655,11 +655,11 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         //if (myViewModel.getMusicService().isWebPlayMode()) {
         ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
         //} else {
-        //    metadata = MusicUtils.getMetadata(mSongList.get(musicId).source_uri);
+            metadata = MusicUtils.getMetadata(mSongList.get(musicId).getSongPath());
         //}
-        Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId).source_uri);
+        Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId).getSongPath());
         AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
-                .setTitle(mSongList.get(musicId).title)
+                .setTitle(mSongList.get(musicId).getSongTitle())
                 .setMessage(
                         getString(R.string.title_artist) + metadata.artist + "\n" +
                                 getString(R.string.title_album) + metadata.album + "\n" +
@@ -667,8 +667,8 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                                 getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
                                 getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
                                 getString(R.string.file_size) + metadata.sizeByte + "\n" +
-                                getString(R.string.title_path) + mSongList.get(musicId).source_uri + "\n" +
-                                getString(R.string.title_lyric) + mSongList.get(musicId).lyric_uri
+                                getString(R.string.title_path) + mSongList.get(musicId).getSongPath() + "\n" +
+                                getString(R.string.title_lyric) + mSongList.get(musicId).getLyricPath()
                 )
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override

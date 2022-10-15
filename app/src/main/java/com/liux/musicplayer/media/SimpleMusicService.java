@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class SimpleMusicService extends MediaBrowserServiceCompat implements LifecycleOwner {
+public class SimpleMusicService extends MediaBrowserServiceCompat {
 
     Handler sleepHandler;
     public MediaSessionCallback mCallback;
@@ -56,14 +56,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
     private static final String TAG ="SimpleMusicService";
     private boolean mainActivityState=true;
     public LyricReceiver lyricReceiver;
-    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
     private LyricUtils lyric=new LyricUtils();
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return mLifecycleRegistry;
-    }
 
     public class LyricReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";
@@ -74,7 +67,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             switch (intent.getAction()){
                 case "com.liux.musicplayer.OPEN_LYRIC":
                     SharedPrefs.putIsDeskLyric(true);
-                    if(!mainActivityState) {
+                    if(!mainActivityState&&mSession.isActive()) {
                         intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
@@ -89,7 +82,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                     break;
                 case "com.liux.musicplayer.BACKGROUND":
                     mainActivityState=false;
-                    if(SharedPrefs.getIsDeskLyric()) {
+                    if(SharedPrefs.getIsDeskLyric()&&mSession.isActive()) {
                         intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
@@ -131,7 +124,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
     public void onCreate() {
         super.onCreate();
         registerLyricReceiver();
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
         sleepHandler = new Handler();
 
         mSession = new MediaSessionCompat(getApplicationContext(), SimpleMusicService.class.getSimpleName());
@@ -151,22 +143,9 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-        return super.onBind(intent);
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
-        return super.onUnbind(intent);
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO 继承MediaButton
         MediaButtonReceiver.handleIntent(mSession, intent);
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -175,7 +154,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
         mMediaNotificationManager.onDestroy();
         mSession.release();
         //关闭桌面歌词
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
         stopService(deskLyricIntent);
         unregisterReceiver(lyricReceiver);
@@ -243,11 +221,24 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
             Log.d(TAG, "onRemoveQueueItem: Called SimpleMusicService");
             Log.d(TAG, String.format("onRemoveQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
-            MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            mPlaylist.remove(queueItem);
-            queueItemHashMap.remove(description.getMediaUri().getPath());
+            int toDeleteId= mPlaylist.stream().map(t -> t.getDescription().getMediaUri()).distinct().collect(Collectors.toList()).indexOf(description.getMediaUri());
+            if(toDeleteId!=-1) {
+                mPlaylist.removeIf(t -> {
+                    return t.getDescription().getMediaUri().equals(description.getMediaUri());
+                });
+                mPlaylistOriginal.removeIf(t -> {
+                    return t.getDescription().getMediaUri().equals(description.getMediaUri());
+                });
+                queueItemHashMap.remove(description.getMediaUri().getPath());
 //            mPlaylist.remove(new MediaSessionCompat.QueueItem(description, description.hashCode()));
-            mQueueIndex = (mPlaylist.isEmpty()) ? -1 : mQueueIndex;
+                if(mQueueIndex==toDeleteId){
+                    onStop();
+                    mPreparedMedia=null;
+                    onPrepare();
+                }else if(mQueueIndex>toDeleteId){
+                    mQueueIndex--;
+                }
+            }
             mSession.setQueue(mPlaylist);
         }
 
@@ -329,12 +320,26 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                 onPrepare();
                 Log.e(TAG, String.valueOf(mPreparedMedia));
             }
-            mPlayback.playFromMedia(mPreparedMedia);
+            if (!mSession.isActive()) {
+                mSession.setActive(true);
+            }
+            try {
+                mPlayback.playFromMedia(mPreparedMedia);
+            }catch (Exception e){
+                onPlayError(e);
+                onStop();
+            }
             if(mShuffleMode==PlaybackStateCompat.SHUFFLE_MODE_ALL){
                 SharedPrefs.saveNowPlayId(mPlaylistOriginal.indexOf(mPlaylist.get(mQueueIndex)));
             }else {
                 SharedPrefs.saveNowPlayId(mQueueIndex);
             }
+        }
+
+        private void onPlayError(Exception e) {
+            Bundle bundle=new Bundle();
+            bundle.putString("ERR_MSG",e.toString());
+            mSession.sendSessionEvent("PLAY_ERROR",bundle);
         }
 
         /*@Override
@@ -397,6 +402,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             onPause();
             mPlayback.stop();
             mSession.setActive(false);
+            //关闭桌面歌词
             Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
             stopService(deskLyricIntent);
         }
@@ -408,13 +414,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
             mPreparedMedia = null;
             onPlay();
         }
-
-        public void onSkipToThis() {
-            Log.d(TAG, "onSkipToNext: QueueIndex: " + mQueueIndex);
-            mPreparedMedia = null;
-            onPlay();
-        }
-
 
         @Override
         public void onSetRepeatMode(int repeatMode) {
@@ -445,6 +444,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat implements Lif
                 }
             }
             mSession.setShuffleMode(shuffleMode);
+            mSession.setQueue(mPlaylist);
             super.onSetShuffleMode(shuffleMode);
         }
 

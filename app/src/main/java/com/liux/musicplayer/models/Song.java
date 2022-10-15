@@ -14,22 +14,23 @@ import java.util.concurrent.TimeUnit;
 
 public class Song implements Cloneable {
 
-    static final Song EMPTY_SONG = new Song("", -1, -1, -1, null, null, "", -1, "");
+    static final Song EMPTY_SONG = new Song("", -1, -1, -1, null, null, "null", -1, "null");
 
-    private /*final*/ String mTitle;
-    private /*final*/ int mTrackNumber;
-    private /*final*/ int mDuration;
-    private /*final*/ String mPath;
-    private /*final*/ String mLyricPath;
-    private /*final*/ String mAlbumName;
-    private /*final*/ int mArtistId;
-    private /*final*/ String mArtistName;
-    private /*final*/ int mYear;
+    private String mTitle;
+    private int mTrackNumber;
+    private int mDuration;
+    private String mPath;
+    private String mLyricPath;
+    private String mAlbumName;
+    private int mArtistId;
+    private String mArtistName;
+    private int mYear;
+    private long mSize;
     private String mId;
 
     public Song() {
-        setmTitle("");
-        setmArtistName("");
+        setmTitle("null");
+        setmArtistName("null");
     }
 
     public Song(String mTitle, int mDuration, String mArtistName, String mId) {
@@ -52,6 +53,35 @@ public class Song implements Cloneable {
         this.mPath = mSongPath;
         MusicUtils.Metadata metadata = getMetadata(mSongPath);
         this.mTitle = metadata.title;
+    }
+
+    public Song(String path, String title, String artist, String album, String duration, Long sizeLong) {
+        this.mPath=path;
+        this.mTitle=title;
+        this.mArtistName=artist;
+        this.mAlbumName=album;
+        this.mDuration= Integer.parseInt(duration);
+        this.mSize=sizeLong;
+        if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
+            if (mTitle == null)
+                mTitle = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
+            if (mArtistName == null)
+                mArtistName = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
+        } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
+            if (mTitle == null)
+                mTitle = FileUtils.getFileNameNoExtension(path).split("-")[1];
+            if (mArtistName == null)
+                mArtistName = FileUtils.getFileNameNoExtension(path).split("-")[0];
+        } else {
+            if (mTitle == null) mTitle = FileUtils.getFileNameNoExtension(path);
+            if (mArtistName == null) mArtistName = "null";
+        }
+        if(mAlbumName==null) mAlbumName="null";
+        //判断是否存在歌词
+        if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
+            mLyricPath = path.replace(FileUtils.getFileExtension(path), "lrc");
+        else
+            mLyricPath = "null";
     }
 
     public static MusicUtils.Metadata getMetadata(String path) {
@@ -143,14 +173,17 @@ public class Song implements Cloneable {
     }
 
     public void setmTitle(String mTitle) {
+
         this.mTitle = mTitle;
     }
 
     public void setmAlbumName(String mAlbumName) {
+        if(mAlbumName!=null)
         this.mAlbumName = mAlbumName;
     }
 
     public void setmArtistName(String mArtistName) {
+        if(mArtistName!=null)
         this.mArtistName = mArtistName;
     }
 
@@ -223,6 +256,17 @@ public class Song implements Cloneable {
             this.mLyricPath = "null";
         else
             this.mLyricPath = newLyricPath;
+    }
+
+    public void setPath(String path) {
+        this.mPath=path;
+    }
+
+    public void setDuration(long duration) {
+    }
+
+    public void setSize(Long sizeLong) {
+        this.mSize=sizeLong;
     }
 }
 

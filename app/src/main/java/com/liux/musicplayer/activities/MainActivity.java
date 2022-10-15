@@ -132,21 +132,27 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     }
 };
     private void initObserver() {
-           /* adapter = new PlayingListAdapter(MainActivity.this, MusicLibrary.getPlayingList(), new PlayingListAdapter.RefreshListener() {
-                @Override
-                public void deleteThis(MediaDescriptionCompat description) {
-                    myViewModel.getmMediaController().removeQueueItem(description);
-                }
-            });
-            playingList.setAdapter(adapter);
-            adapter.notifyDataSetChanged();*/
         //监视正在播放列表
         myViewModel.getQueueItemsMutableLiveData().observe(this,new Observer<List<MediaSessionCompat.QueueItem>>() {
             @Override
             public void onChanged(List<MediaSessionCompat.QueueItem> queueItems) {
+                int listPosition;
+                int listPositionY;
+                try {
+                    listPosition = playingList.getFirstVisiblePosition();
+                    listPositionY = playingList.getChildAt(0).getTop();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    listPosition = -1;
+                    listPositionY=0;
+                }
                 adapter = new PlayingListAdapter(MainActivity.this, queueItems, refreshListener);
                 playingList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
+                adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+                if (listPosition != -1)
+                    playingList.setSelectionFromTop(listPosition, listPositionY);
+
             }
         });
         //监视正在播放的歌曲
@@ -251,22 +257,21 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         //初始化进度条
         //resetPlayProgress();
     }
-/*
-    private void playingError(int musicId) {
-        prepareInfo(musicId);
+
+    public void playingError(String errMsg) {
         AlertDialog alertInfoDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.play_error)
-                .setMessage(getString(R.string.play_err_Info))
+                .setMessage(getString(R.string.play_err_Info)+"\n"+errMsg)
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        updatePlayState();
+
                     }
                 })
                 .create();
         alertInfoDialog.show();
-    }*/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -464,7 +469,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             public void onClick(View v) {
             }
         });
-        adapter = new PlayingListAdapter(this, myViewModel.getQueueItemsMutableLiveData().getValue(),  refreshListener);
+        adapter = new PlayingListAdapter(this, null,  refreshListener);
         playingList.setAdapter(adapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setOnListViewItemClickListener();

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -465,8 +466,19 @@ public class MyViewModel extends AndroidViewModel {
         @Override
         public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
             Log.d(TAG, "onQueueChanged: Called inside SongsViewModel");
-            super.onQueueChanged(queue);
             queueItemsMutableLiveData.setValue(queue);
         }
+
+        @Override
+        public void onSessionEvent(String event, Bundle extras) {
+            Log.d(TAG, "onSessionEvent: Called inside SongsViewModel");
+            switch (event){
+                case "PLAY_ERROR":
+                MainActivity.mainActivity.playingError(extras.getString("ERR_MSG","null"));
+                break;
+            }
+            super.onSessionEvent(event, extras);
+        }
+
     }
 }

@@ -118,4 +118,24 @@ public class SharedPrefs {
     public static void saveNowPlayId(int mQueueIndex) {
         sharedPreferencesEditor.putString("nowId",String.valueOf(mQueueIndex)).apply();
     }
+
+    public static List<Song> getSongListByName(String listName) {
+        String songListJson;
+        songListJson = sharedPreferences.getString(listName,"");
+        Gson gson = new Gson();
+        Type songListType = new TypeToken<ArrayList<Song>>() {
+        }.getType();
+        List<Song> aList=gson.fromJson(songListJson, songListType);
+        if(aList!=null)
+            return aList;
+        else
+            return new ArrayList<>();
+    }
+
+    public static void saveSongListByName(List<Song> theList, String listName) {
+        Gson gson = new Gson();
+        Type songListType = new TypeToken<ArrayList<Song>>() {
+        }.getType();
+        sharedPreferencesEditor.putString(listName,gson.toJson(theList,songListType)).apply();
+    }
 }

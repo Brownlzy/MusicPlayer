@@ -18,6 +18,7 @@ package com.liux.musicplayer.media;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -276,6 +277,36 @@ public class MediaBrowserHelper {
         }
 
         @Override
+        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
+            performOnAllCallbacks(new CallbackCommand() {
+                @Override
+                public void perform(@NonNull Callback callback) {
+                    callback.onQueueChanged(queue);
+                }
+            });
+        }
+
+        @Override
+        public void onQueueTitleChanged(CharSequence title) {
+            performOnAllCallbacks(new CallbackCommand() {
+                @Override
+                public void perform(@NonNull Callback callback) {
+                    callback.onQueueTitleChanged(title);
+                }
+            });
+        }
+
+        @Override
+        public void onExtrasChanged(Bundle extras) {
+            performOnAllCallbacks(new CallbackCommand() {
+                @Override
+                public void perform(@NonNull Callback callback) {
+                    callback.onExtrasChanged(extras);
+                }
+            });
+        }
+
+        @Override
         public void onPlaybackStateChanged(@Nullable final PlaybackStateCompat state) {
             performOnAllCallbacks(new CallbackCommand() {
                 @Override
@@ -315,6 +346,16 @@ public class MediaBrowserHelper {
             onPlaybackStateChanged(null);
 
             MediaBrowserHelper.this.onDisconnected();
+        }
+
+        @Override
+        public void onSessionEvent(String event, Bundle extras) {
+            performOnAllCallbacks(new CallbackCommand() {
+                @Override
+                public void perform(@NonNull Callback callback) {
+                    callback.onSessionEvent(event,extras);
+                }
+            });
         }
     }
 }

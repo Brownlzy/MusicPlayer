@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 public class MusicLibrary {
@@ -251,5 +252,22 @@ public class MusicLibrary {
                 SharedPrefs.getPlayingListFromSharedPrefer("[{}]"),
                 PlayingList
         );
+    }
+
+    //添加音乐
+    public static void addMusicToList(String path,String listName) {
+        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(path);
+        Song newSong = new Song(path,newMetadata.title,newMetadata.artist,newMetadata.album,newMetadata.duration,newMetadata.sizeLong);
+        List<Song> theList=SharedPrefs.getSongListByName(listName);
+        if (theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
+            theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
+        } else {
+            if (theList.size() == 1 && !FileUtils.isFileExists(theList.get(0).getSongPath())) {  //播放列表第一位如果是示例数据则将其替换
+                theList.set(0, newSong);
+            } else {
+                theList.add(newSong);
+            }
+        }
+        SharedPrefs.saveSongListByName(theList,listName);
     }
 }

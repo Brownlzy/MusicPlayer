@@ -168,11 +168,6 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 //                    assetFileDescriptor.getFileDescriptor(),
 //                    assetFileDescriptor.getStartOffset(),
 //                    assetFileDescriptor.getLength());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to open file: " + mFilename, e);
-        }
-
-        try {
             mMediaPlayer.prepare();
         } catch (Exception e) {
             throw new RuntimeException("Failed to open file: " + mFilename, e);

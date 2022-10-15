@@ -12,11 +12,12 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.models.Song;
 
 public class CustomDialogUtils {
 
     private static AlertDialog dialog;
-    private static MusicUtils.Song content;
+    private static Song content;
 
     /**
      * @param activity                    Context
@@ -24,7 +25,7 @@ public class CustomDialogUtils {
      * @param alertDialogBtnClickListener 点击监听
      */
 
-    public static void showSongInfoEditDialog(MainActivity activity, MusicUtils.Song song, boolean cancelableTouchOut, final AlertDialogBtnClickListener alertDialogBtnClickListener) {
+    public static void showSongInfoEditDialog(MainActivity activity, Song song, boolean cancelableTouchOut, final AlertDialogBtnClickListener alertDialogBtnClickListener) {
         content = song;
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_song_info_edit, null);
         LinearLayout frame = (LinearLayout) view.findViewById(R.id.edit_info);
@@ -35,11 +36,11 @@ public class CustomDialogUtils {
         EditText frameEditTextLyric = (EditText) view.findViewById(R.id.newLyric);
         TextView frameConfirm = (TextView) view.findViewById(R.id.dialog_button_confirm);
         TextView frameCancel = (TextView) view.findViewById(R.id.dialog_button_cancel);
-        frameEditTextTitle.setText(song.title);
-        frameEditTextArtist.setText(song.artist);
-        frameEditTextAlbum.setText(song.album);
-        frameEditTextPath.setText(song.source_uri);
-        frameEditTextLyric.setText(song.lyric_uri);
+        frameEditTextTitle.setText(song.getSongTitle());
+        frameEditTextArtist.setText(song.getArtistName());
+        frameEditTextAlbum.setText(song.getAlbumName());
+        frameEditTextPath.setText(song.getSongPath());
+        frameEditTextLyric.setText(song.getLyricPath());
 
         if (activity.getApplicationContext().getResources().getConfiguration().uiMode == 0x21) {
             frame.setBackgroundResource(R.drawable.popup_full_dark);
@@ -55,7 +56,7 @@ public class CustomDialogUtils {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content.title = s.toString().trim();
+                content.setmTitle( s.toString().trim());
             }
 
             @Override
@@ -71,7 +72,7 @@ public class CustomDialogUtils {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content.artist = s.toString().trim();
+                content.setmArtistName( s.toString().trim());
             }
 
             @Override
@@ -87,7 +88,7 @@ public class CustomDialogUtils {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content.album = s.toString().trim();
+                content.setmAlbumName(s.toString().trim());
             }
 
             @Override
@@ -103,7 +104,7 @@ public class CustomDialogUtils {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content.lyric_uri = s.toString().trim();
+                content.setLyricPath(s.toString().trim());
             }
 
             @Override
@@ -138,7 +139,7 @@ public class CustomDialogUtils {
     }
 
     public interface AlertDialogBtnClickListener {
-        void clickPositive(MusicUtils.Song song);
+        void clickPositive(Song song);
 
         void clickNegative();
     }

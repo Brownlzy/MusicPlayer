@@ -147,10 +147,9 @@ private LyricUtils nowLyric=new LyricUtils();
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.playPause:
-                    if(mMediaBrowserHelper.getmMediaController().getPlaybackState()!=null
-                            &&mMediaBrowserHelper.getmMediaController().getPlaybackState().getState()==PlaybackStateCompat.STATE_PLAYING)
+                    if(mMediaBrowserHelper.getmMediaController().getPlaybackState().getState()==PlaybackStateCompat.STATE_PLAYING)
                         mMediaBrowserHelper.getTransportControls().pause();
-                    else if(mMediaBrowserHelper.getmMediaController().getPlaybackState()!=null)
+                    else
                         mMediaBrowserHelper.getTransportControls().play();
                     break;
                 case R.id.playNext:

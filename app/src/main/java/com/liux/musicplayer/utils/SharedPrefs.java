@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.media.session.MediaSessionCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,14 +56,14 @@ public class SharedPrefs {
         }.getType();
         return gson.fromJson(songListJson, songListType);
     }
-
+/*
     public static void savePlayingList(List<Song> songs) {
         Gson gson = new Gson();
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         gson.toJson(songs,songListType);
         sharedPreferencesEditor.putString("playingList",gson.toJson(songs,songListType)).apply();
-    }
+    }*/
 
     public static List<Song> getSongListFromSharedPrefer(String defaultPlayList) {
         String songListJson;
@@ -108,7 +109,7 @@ public class SharedPrefs {
     }
 
     public static int getNowPlayId() {
-        return Integer.parseInt(sharedPreferences.getString("nowId","0"));
+        return Integer.parseInt(sharedPreferences.getString("nowId","-1"));
     }
 
     public static void savePlayOrder(int playOrder) {
@@ -137,5 +138,12 @@ public class SharedPrefs {
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         sharedPreferencesEditor.putString(listName,gson.toJson(theList,songListType)).apply();
+    }
+
+    public static CharSequence getQueueTitle() {
+        return sharedPreferences.getString("QueueTitle","playingList");
+    }
+    public static void saveQueueTitle(String queueTitle) {
+        sharedPreferencesEditor.putString("QueueTitle",queueTitle).apply();
     }
 }

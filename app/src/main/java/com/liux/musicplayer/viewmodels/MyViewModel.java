@@ -142,13 +142,12 @@ public class MyViewModel extends AndroidViewModel {
         final List<Song> songs = SongProvider.getSongs(SongProvider.makeSongCursor(
                 getApplication(), SongProvider.getSongLoaderSortOrder())
         );
-        SharedPrefs.savePlayingList(songs);
+        //SharedPrefs.savePlayingList(songs);
         songsMutableLiveData.setValue(SharedPrefs.getSongListFromSharedPrefer("[{}]"));
         playingSongsMutableLiveData.setValue(MusicLibrary.getPlayingSongsList());
         //SharedPrefs.saveSongList(songs);
         //final List<Song> songs=SongProvider.getSongsFromSharedPrefer();
 //        songsMutableLiveData.setValue(songs);
-        MusicLibrary.buildMediaItems(songsMutableLiveData.getValue());
     }
 
     public void forceConnect() {
@@ -343,18 +342,6 @@ public class MyViewModel extends AndroidViewModel {
                 //mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
                 Log.e(TAG+"=======", String.valueOf(mediaController.getQueue()));
             }
-            /*if(mediaMetadata!=null) {
-                String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
-                String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
-                String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
-                String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
-                String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
-                int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
-                Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID, MEDIA_URI, LYRIC_URI);
-                nowLyric.setValue(new LyricUtils(song));
-                nowAlbum = MusicUtils.getAlbumImage(song.getSongPath());
-                nowPlaying.setValue(song);
-            }*/
 
             //searchResultsLiveData.setValue(children);
             // Queue up all media items for this simple sample.
@@ -411,25 +398,26 @@ public class MyViewModel extends AndroidViewModel {
         @Override
         public void onMetadataChanged(MediaMetadataCompat mediaMetadata) {
             if (mediaMetadata == null) {
-                return;
+                nowLyric.setValue(new LyricUtils("null"));
+                nowAlbum = MusicUtils.getAlbumImage("null");
+                nowPlaying.setValue(
+                        new Song("这是文件路径", "歌曲名称", "歌手", "专辑名", "0", 0L)
+                );
+
+            }else {
+                Log.d(TAG, "onMetadataChanged: called inside songsViewModel");
+                Log.d(TAG, "onMetadataChanged: Title " + mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+                String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
+                String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
+                String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
+                String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
+                int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+                Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID, MEDIA_URI, LYRIC_URI);
+                nowLyric.setValue(new LyricUtils(song));
+                nowAlbum = MusicUtils.getAlbumImage(song.getSongPath());
+                nowPlaying.setValue(song);
             }
-            Log.d(TAG, "onMetadataChanged: called inside songsViewModel");
-            Log.d(TAG, "onMetadataChanged: Title " + mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-
-//            for (String s : mediaMetadata.getBundle().keySet()) {
-//                Log.d(Constants.TAG, String.format("%s: %s", s, mediaMetadata.getString(s)));
-//            }
-
-            String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
-            String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
-            String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
-            String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
-            String LYRIC_URI =mediaMetadata.getBundle().getString("LYRIC_URI","null");
-            int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
-            Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID,MEDIA_URI,LYRIC_URI);
-            nowLyric.setValue(new LyricUtils(song));
-            nowAlbum=MusicUtils.getAlbumImage(song.getSongPath());
-            nowPlaying.setValue(song);
         }
 
         public int getIdFromPlayingList(Song song){

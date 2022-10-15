@@ -159,6 +159,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         }
     };
     private MyViewModel myViewModel;
+    private String nowSongListName;
 
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
@@ -287,7 +288,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.sortWay:
-                myViewModel.refreshSongsList();
+                //myViewModel.refreshSongsList();
                 adapter.notifyDataSetChanged();
                 break;
         }
@@ -331,7 +332,8 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         if (searchFlag) {
             searchSongLayout.setVisibility(View.GONE);
             sortSongLayout.setVisibility(View.VISIBLE);
-            adapter = new SongListAdapter(requireContext(), myViewModel.getSongsMutableLiveData().getValue(), stateCheckedMap,popUpMenuListener);
+            searchEditText.setText("");
+            adapter = new SongListAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
             adapter.setNowPlay(Integer.parseInt(prefs.getString("nowId", "0")));
@@ -339,7 +341,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             sortSongLayout.setVisibility(View.GONE);
             searchSongLayout.setVisibility(View.VISIBLE);
             searchList = new ArrayList<>();
-            //adapter = new SongListAdapter(requireContext(),, stateCheckedMap,popUpMenuListener);
+            adapter = new SongListAdapter(requireContext(),searchList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
             adapter.setNowPlay(-1);
         }
@@ -458,7 +460,23 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
                 } else {
-                    //myViewModel.getMusicService().setPlayingList(mSongList, positionToMusicId(position));
+                    /*Log.e("SongPlaylistFragment", (String) myViewModel.getmMediaController().getQueueTitle());
+                    if(myViewModel.getmMediaController().getQueueTitle().equals(nowSongListName)){
+                        Log.e("SongPlaylistFragment","equals(nowSongListName)");
+                        //myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
+                        int qid=myViewModel.getmMediaController().getQueue().stream()
+                                .map(t -> t.getDescription().getMediaUri().getPath()).distinct().collect(Collectors.toList())
+                                .indexOf(mSongList.get(positionToMusicId(position)).getSongPath());
+                        myViewModel.getmMediaController().getTransportControls().skipToQueueItem(myViewModel.getmMediaController().getQueue().get(qid).getQueueId());
+                    }else{
+                        Log.e("SongPlaylistFragment","newPlaylist");
+                        Bundle bundle = new Bundle();
+                        //bundle.putLong("QueueId",MusicLibrary.getPlayingList().get(positionToMusicId(position)).getDescription().hashCode());
+                        bundle.putString("QueueTitle", nowSongListName);
+                        bundle.putString("Path", mSongList.get(positionToMusicId(position)).getSongPath());
+                        myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
+                    }*/
+                    myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
                 }
             }
         });
@@ -628,7 +646,8 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     public void initData() {
         //if (myViewModel!=null && myViewModel.getMusicService() != null) {
             //isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
-            mSongList = SharedPrefs.getSongListByName("allSongList");
+            mSongList = MusicLibrary.getSongListByName("allSongList");
+            nowSongListName="allSongList";
             setStateCheckedMap(false);
             adapter = new SongListAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);

@@ -89,9 +89,9 @@ public class PlayingListAdapter extends BaseAdapter {
         //设置数据
         holder.mItemTitle.setText(data.get(position).getDescription().getTitle());
         if(position==nowPlay){
-            holder.mItemTitle.setTextColor(Color.CYAN);
+            holder.mItemTitle.setTextColor(mContext.getColor(R.color.teal_200));
         }else {
-            holder.mItemTitle.setTextColor(Color.GREEN);
+            holder.mItemTitle.setTextColor(mContext.getColor(R.color.green_700));
         }
         holder.mItemSinger.setText(" - "+ String.valueOf(data.get(position).getDescription().getSubtitle()).split(" - ")[0]);
             //holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getDescription()));

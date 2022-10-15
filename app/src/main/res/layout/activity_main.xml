@@ -71,6 +71,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
+        app:cardBackgroundColor="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_alignParentTop="true"
@@ -81,9 +82,14 @@
         app:cardElevation="0dp"
         app:contentPadding="0dp"
         android:clickable="true"
-        app:rippleColor="@color/white"
+        app:rippleColor="@android:color/transparent"
         app:strokeColor="@color/green_700"
         app:strokeWidth="0.5dp">
+        <com.github.mmin18.widget.RealtimeBlurView
+            style="@style/BlurColor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:realtimeBlurRadius="50dp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -117,11 +123,12 @@
                     android:clickable="true"
                     android:src="@drawable/ic_baseline_delete_24"/>
             </LinearLayout>
+
             <ListView
                 android:id="@+id/main_list_playing"
-                android:divider="@null"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:divider="@null" />
 
         </LinearLayout>
 

@@ -139,30 +139,34 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical">
+
                                 <LinearLayout
-                                    android:layout_weight="1"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="1"
                                     android:orientation="vertical">
+
                                     <TextView
                                         android:id="@+id/home_song_title"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        tools:text="音乐标题"
-                                        android:textSize="24sp" />
+                                        android:textSize="24sp"
+                                        tools:text="音乐标题" />
 
                                     <TextView
                                         android:id="@+id/home_song_artist"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        tools:text="歌手"
-                                        android:textSize="16sp" />
+                                        android:textSize="16sp"
+                                        tools:text="歌手" />
 
                                 </LinearLayout>
+
                                 <ImageView
                                     android:id="@+id/playLyric"
                                     android:layout_width="40dp"

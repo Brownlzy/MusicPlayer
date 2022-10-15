@@ -13,7 +13,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -25,9 +24,6 @@ import android.view.KeyEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
@@ -36,7 +32,6 @@ import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MediaNotificationManager;
 import com.liux.musicplayer.utils.SharedPrefs;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -138,7 +133,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         mMediaNotificationManager = new MediaNotificationManager(this);
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
-        mPlaylist=MusicLibrary.getPlayingList();
+        mPlaylist=MusicLibrary.getPlayingMediaItemList();
         mCallback.onCustomAction("REFRESH_PLAYLIST",null);
     }
 
@@ -206,7 +201,12 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             Log.d(TAG, "onAddQueueItem: Called SimpleMusicService");
             Log.d(TAG, String.format("onAddQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+            mPlaylist.removeIf(t->{return t.getQueueId()==description.hashCode();});
+            mPlaylistOriginal.removeIf(t->{return t.getQueueId()==description.hashCode();});
+            queueItemHashMap.remove(description.getMediaUri().getPath());
             mPlaylist.add(queueItem);
+            if(mPlaylistOriginal.size()!=0)
+                mPlaylistOriginal.add(queueItem);
             queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
             mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
             mSession.setQueue(mPlaylist);
@@ -214,7 +214,26 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description, int index) {
-            super.onAddQueueItem(description, index);
+            mPlaylist.removeIf(t->{return t.getQueueId()==description.hashCode();});
+            mPlaylistOriginal.removeIf(t->{return t.getQueueId()==description.hashCode();});
+            queueItemHashMap.remove(description.getMediaUri().getPath());
+            MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+            queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
+            if(index==-2){
+                mPlaylist.add(++mQueueIndex,queueItem);
+                mSession.setQueue(mPlaylist);
+                mPreparedMedia=null;
+                onPlay();
+                return;
+            }else if(index==-1){
+                mPlaylist.add(mQueueIndex+1,queueItem);
+            }else {
+                mPlaylist.add(index,queueItem);
+            }
+            if(mPlaylistOriginal.size()!=0)
+                mPlaylistOriginal.add(queueItem);
+            mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
+            mSession.setQueue(mPlaylist);
         }
 
         @Override
@@ -238,6 +257,9 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 }else if(mQueueIndex>toDeleteId){
                     mQueueIndex--;
                 }
+            }
+            if(mQueueIndex>=mPlaylist.size()){
+                mQueueIndex=mPlaylist.size()-1;
             }
             mSession.setQueue(mPlaylist);
         }
@@ -293,9 +315,12 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         @Override
         public void onPrepare() {
             Log.d(TAG, "onPrepare: Called SimpleMusicService");
-            if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
+            if (mPlaylist.isEmpty()) {
+                mSession.setMetadata(null);
                 // Nothing to play.
                 return;
+            }else if(mQueueIndex>=mPlaylist.size()){
+                mQueueIndex=mPlaylist.size()-1;
             }
 
             final Uri mediaUri = mPlaylist.get(mQueueIndex).getDescription().getMediaUri();
@@ -319,9 +344,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             if (mPreparedMedia == null) {
                 onPrepare();
                 Log.e(TAG, String.valueOf(mPreparedMedia));
-            }
-            if (!mSession.isActive()) {
-                mSession.setActive(true);
             }
             try {
                 mPlayback.playFromMedia(mPreparedMedia);
@@ -402,6 +424,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             onPause();
             mPlayback.stop();
             mSession.setActive(false);
+            mPreparedMedia=null;
             //关闭桌面歌词
             Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
             stopService(deskLyricIntent);
@@ -454,7 +477,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             switch (action){
                 case "REFRESH_PLAYLIST":
                     Log.e(TAG,"Reconized+"+action);
-                    List<MediaBrowserCompat.MediaItem> newPlayList=MusicLibrary.getPlayingList();
+                    List<MediaDescriptionCompat> newPlayList=MusicLibrary.getPlayingList();
                     mQueueIndex=SharedPrefs.getNowPlayId();
                     switch(SharedPrefs.getPlayOrder()){
                         case LIST_PLAY:
@@ -476,14 +499,40 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     }
                     mPlaylist.clear();
                     queueItemHashMap.clear();
-                    for(MediaBrowserCompat.MediaItem mediaItem:newPlayList) {
-                        MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaItem.getDescription(), mediaItem.getDescription().hashCode());
+                    for(MediaDescriptionCompat description:newPlayList) {
+                        MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
                         mPlaylist.add(queueItem);
-                        queueItemHashMap.put(mediaItem.getDescription().getMediaUri().getPath(), queueItem);
+                        queueItemHashMap.put(queueItem.getDescription().getMediaUri().getPath(), queueItem);
+                    }
+                    if(mQueueIndex>=mPlaylist.size()){
+                        mQueueIndex=mPlaylist.size()-1;
                     }
                     mSession.setQueue(mPlaylist);
+                    mSession.setQueueTitle(SharedPrefs.getQueueTitle());
                     onSetRepeatMode(mRepeatMode);
                     onSetShuffleMode(mShuffleMode);
+                    break;
+                case "NEW_PLAYLIST":
+                    List<MediaDescriptionCompat> PlayList=MusicLibrary.getNewPlayingList(extras.getString("QueueTitle","playingList"));
+                    mPlaylist.clear();
+                    queueItemHashMap.clear();
+                    for(MediaDescriptionCompat description:PlayList) {
+                        MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+                        mPlaylist.add(queueItem);
+                        queueItemHashMap.put(queueItem.getDescription().getMediaUri().getPath(), queueItem);
+                    }
+                    mSession.setQueue(mPlaylist);
+                    mSession.setQueueTitle(extras.getString("QueueTitle","playingList"));
+                    MusicLibrary.savePlayingList(mPlaylist);
+                    SharedPrefs.saveQueueTitle(extras.getString("QueueTitle","playingList"));
+                    onSetRepeatMode(mRepeatMode);
+                    onSetShuffleMode(mShuffleMode);
+                    //mQueueIndex=mPlaylist.stream().map(t -> t.getQueueId()).distinct().collect(Collectors.toList()).indexOf(extras.getLong("QueueId"));
+                    onSkipToQueueItem(
+                            mPlaylist.get(
+                                    mPlaylist.stream().map(t -> t.getDescription().getMediaUri().getPath()).distinct().collect(Collectors.toList()).indexOf(extras.getString("Path"))
+                            ).getQueueId());
+                    break;
             }
             super.onCustomAction(action, extras);
         }

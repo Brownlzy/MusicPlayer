@@ -63,17 +63,17 @@ public class Song implements Cloneable {
         this.mDuration= Integer.parseInt(duration);
         this.mSize=sizeLong;
         if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
-            if (mTitle == null)
+            if (mTitle == null||mTitle.equals("null"))
                 mTitle = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
             if (mArtistName == null)
                 mArtistName = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
         } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
-            if (mTitle == null)
+            if (mTitle == null||mTitle.equals("null"))
                 mTitle = FileUtils.getFileNameNoExtension(path).split("-")[1];
             if (mArtistName == null)
                 mArtistName = FileUtils.getFileNameNoExtension(path).split("-")[0];
         } else {
-            if (mTitle == null) mTitle = FileUtils.getFileNameNoExtension(path);
+            if (mTitle == null||mTitle.equals("null")) mTitle = FileUtils.getFileNameNoExtension(path);
             if (mArtistName == null) mArtistName = "null";
         }
         if(mAlbumName==null) mAlbumName="null";
@@ -82,6 +82,17 @@ public class Song implements Cloneable {
             mLyricPath = path.replace(FileUtils.getFileExtension(path), "lrc");
         else
             mLyricPath = "null";
+    }
+
+    public Song(String path, String title, String s, String s1, String string) {
+        MusicUtils.Metadata metadata=getMetadata(path);
+        this.mPath=path;
+        this.mTitle=title;
+        this.mArtistName=s;
+        this.mAlbumName=s1;
+        this.mLyricPath=string;
+        this.mDuration= Integer.parseInt(metadata.duration);
+        this.mSize=metadata.sizeLong;
     }
 
     public static MusicUtils.Metadata getMetadata(String path) {
@@ -228,7 +239,8 @@ public class Song implements Cloneable {
     }
 
     public String getmId() {
-        return mId;
+        //return mId;
+        return mPath;
     }
 
     public void setmId(String mId) {

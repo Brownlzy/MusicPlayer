@@ -44,6 +44,9 @@ public class LyricUtils implements Serializable {
     public LyricUtils( Song song) {
         LoadLyric(song);
     }
+    public LyricUtils( String path) {
+        LoadLyric(path);
+    }
     public LyricUtils( ) {
     }
 

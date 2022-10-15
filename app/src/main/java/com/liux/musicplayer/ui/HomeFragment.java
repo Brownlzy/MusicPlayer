@@ -136,6 +136,7 @@ public class HomeFragment extends Fragment {
                     stopLyric();
             }
         });
+        Log.e("HomeFragment","intedObserved");
     }
 
     private void initViewCompat() {

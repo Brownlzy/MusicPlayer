@@ -129,8 +129,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     @Override
     public void playFromMedia(MediaMetadataCompat metadata) {
         mCurrentMedia = metadata;
-        final String mediaId = metadata.getDescription().getMediaId();
-        playFile(MusicLibrary.getMusicFilename(mediaId), mediaId);
+        playFile(metadata.getDescription().getMediaUri().getPath());
     }
 
     @Override
@@ -138,7 +137,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         return mCurrentMedia;
     }
 
-    private void playFile(String filename, String mediaId) {
+    private void playFile(String filename) {
         boolean mediaChanged = (mFilename == null || !filename.equals(mFilename));
         if (mCurrentMediaPlayedToCompletion) {
             // Last audio file was played to completion, the resourceId hasn't changed, but the
@@ -161,7 +160,6 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         initializeMediaPlayer();
 
         try {
-            MediaBrowserCompat.MediaItem mediaItem = MusicLibrary.getMediaItemByID(mediaId);
             mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(filename));
             //            AssetFileDescriptor assetFileDescriptor = mContext.getAssets().openFd(mFilename);
 //            mMediaPlayer.setDataSource(
@@ -231,7 +229,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                 && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setNewState(PlaybackStateCompat.STATE_PAUSED);
-            handler.removeCallbacks(runnable);
+            //handler.removeCallbacks(runnable);
             //sleepHandler.removeCallbacks(sleepTimerRunnable);
         }
     }

@@ -149,6 +149,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                 adapter = new PlayingListAdapter(MainActivity.this, queueItems, refreshListener);
                 playingList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
+                if(myViewModel.getmMediaController().getMetadata()!=null)
                 adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
                 if (listPosition != -1)
                     playingList.setSelectionFromTop(listPosition, listPositionY);
@@ -211,7 +212,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             myViewModel.isSplash=false;
             adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
             playingList.setAdapter(adapter);
-            adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+            if(myViewModel.getmMediaController().getMetadata()!=null)
+                adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
             myViewModel.getPlayOrder();
             splashCard=findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
@@ -303,11 +305,6 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                CrashHandlers crashHandlers = CrashHandlers.getInstance();
-                crashHandlers.init(MainActivity.this);
-                SharedPrefs.init(getApplication());
-                myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
-                CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
             }
         });
     }

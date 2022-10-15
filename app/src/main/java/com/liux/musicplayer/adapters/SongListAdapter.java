@@ -75,6 +75,9 @@ public class SongListAdapter extends BaseAdapter {
         //设置数据
         holder.mItemTitle.setText(data.get(position).getSongTitle());
         holder.mItemId.setText(String.valueOf(position + 1));
+        if(data.get(position).getAlbumName()==null){
+            holder.mItemSinger.setText(data.get(position).getArtistName() );
+        }else
         holder.mItemSinger.setText(data.get(position).getArtistName() +
                 (data.get(position).getAlbumName().equals("null") ? "" : (" - " + data.get(position).getAlbumName())));
             holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getSongDuration()));

@@ -112,7 +112,7 @@ public class PlayingListAdapter extends BaseAdapter {
         holder.mChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRefreshListener.skipToThis(data.get(position).getQueueId());
+                mRefreshListener.skipToThis(position);
             }
         });
         return convertView;

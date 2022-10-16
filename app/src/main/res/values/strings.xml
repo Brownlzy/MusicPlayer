@@ -104,5 +104,5 @@
     <string name="item_menu_delete">Delete</string>
     <string name="title_user">User</string>
     <string name="user_unlogin">Unlogin</string>
-    <string name="totalCount">total %s songs</string>
+    <string name="totalCount">total %d songs</string>
 </resources>

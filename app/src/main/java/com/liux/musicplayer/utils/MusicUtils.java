@@ -189,7 +189,7 @@ public class MusicUtils {
                 //专辑名
                 song.album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
                 //歌曲路径
-                song.source_uri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                song.source_uri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)).replace("/storage/emulated/0","/sdcard");
                 //歌曲时长
                 song.duration = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
                 //歌曲大小

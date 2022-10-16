@@ -71,6 +71,7 @@ public class MainActivity extends FragmentActivity {
     private SeekBar playProgressBar;
     private TextView playBarTitle;
     private TextView TabTitle;
+    private TextView TotalCount;
     private ImageView playButton;
     private ImageView PlayBarOrder;
     private ImageView playBarPrev;
@@ -94,17 +95,17 @@ public class MainActivity extends FragmentActivity {
     private ShapeableImageView shapeableImageView;
     private ShapeableImageView backImageView;
     private boolean isAlreadyShowPlayBarTitle = false;
-    private boolean isSplash=true;
+    private boolean isSplash = true;
     //是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
 
     //private MusicService musicService;
-    private boolean isPlayingListShowing=false;
+    private boolean isPlayingListShowing = false;
     private PlayingListAdapter adapter;
     private MaterialCardView splashCard;
-    private boolean isPlayList=false;
-    private boolean isHome=false;
+    private boolean isPlayList = false;
+    private boolean isHome = false;
 
     private void nowLoading(int musicId) {
         prepareInfo(musicId);
@@ -120,20 +121,22 @@ public class MainActivity extends FragmentActivity {
         initObserver();
         //setMainActivityData();
     }
-private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapter.RefreshListener() {
-    @Override
-    public void deleteThis(MediaDescriptionCompat description) {
-        myViewModel.getmMediaController().removeQueueItem(description);
-    }
 
-    @Override
-    public void skipToThis(long id) {
-        myViewModel.getmMediaController().getTransportControls().skipToQueueItem(id);
-    }
-};
+    private PlayingListAdapter.RefreshListener refreshListener = new PlayingListAdapter.RefreshListener() {
+        @Override
+        public void deleteThis(MediaDescriptionCompat description) {
+            myViewModel.getmMediaController().removeQueueItem(description);
+        }
+
+        @Override
+        public void skipToThis(long id) {
+            myViewModel.getmMediaController().getTransportControls().skipToQueueItem(id);
+        }
+    };
+
     private void initObserver() {
         //监视正在播放列表
-        myViewModel.getQueueItemsMutableLiveData().observe(this,new Observer<List<MediaSessionCompat.QueueItem>>() {
+        myViewModel.getQueueItemsMutableLiveData().observe(this, new Observer<List<MediaSessionCompat.QueueItem>>() {
             @Override
             public void onChanged(List<MediaSessionCompat.QueueItem> queueItems) {
                 int listPosition;
@@ -144,46 +147,46 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                     listPosition = -1;
-                    listPositionY=0;
+                    listPositionY = 0;
                 }
+                TotalCount.setText(getString(R.string.totalCount).replace("%d",String.valueOf(queueItems.size())));
                 adapter = new PlayingListAdapter(MainActivity.this, queueItems, refreshListener);
                 playingList.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                if(myViewModel.getmMediaController().getMetadata()!=null)
-                adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+                if (myViewModel.getmMediaController().getMetadata() != null)
+                    adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
                 if (listPosition != -1)
                     playingList.setSelectionFromTop(listPosition, listPositionY);
 
             }
         });
         //监视正在播放的歌曲
-        myViewModel.getNowPlaying().observe(this,new Observer<Song>() {
+        myViewModel.getNowPlaying().observe(this, new Observer<Song>() {
             @Override
             public void onChanged(Song song) {
                 setPlayBarTitle(song);
-                Log.e("Main","duration"+song.getSongDuration());
+                Log.e("Main", "duration" + song.getSongDuration());
                 setSeekBarMax(song.getSongDuration());
-            if(myViewModel.getmMediaController().getPlaybackState()!=null)
-                setSeekBarDuration(myViewModel.getmMediaController().getPlaybackState().getPosition());
-            else
-                setSeekBarDuration(0L);
+                if (myViewModel.getmMediaController().getPlaybackState() != null)
+                    setSeekBarDuration(myViewModel.getmMediaController().getPlaybackState().getPosition());
+                else
+                    setSeekBarDuration(0L);
                 setPlayingListView(song);
                 startProgressBar();
             }
         });
         //监视播放进度
-        myViewModel.getCurrentPlayingDuration().observe(this,new Observer<Long>() {
+        myViewModel.getCurrentPlayingDuration().observe(this, new Observer<Long>() {
             @Override
             public void onChanged(Long aLong) {
                 //setSeekBarDuration(Math.toIntExact(aLong));
             }
         });
         //监视播放状态
-        myViewModel.getIsPlaying().observe(this,new Observer<Boolean>() {
+        myViewModel.getIsPlaying().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isPlaying) {
                 setPlayOrPause(isPlaying);
-                if(isPlaying)
+                if (isPlaying)
                     startProgressBar();
                 else
                     stopProgressBar();
@@ -191,32 +194,34 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         });
     }
 
-    public void HideSplash(int where){
-        if(where==3){
+    public void HideSplash(int where) {
+        if (where == 3) {
             initMainActivity();
             myViewModel.getPlayOrder();
-            adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
+            TotalCount.setText(getString(R.string.totalCount).replace("%d",String.valueOf(myViewModel.getmMediaController().getQueue().size())));
+            adapter = new PlayingListAdapter(this, myViewModel.getmMediaController().getQueue(), refreshListener);
             playingList.setAdapter(adapter);
             adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
             viewPager.setCurrentItem(myViewModel.getViewPagerId());
             //myViewModel.getQueueItemsMutableLiveData().getValue();
             //myViewModel.getNowPlaying().getValue();
-            splashCard=findViewById(R.id.splash_view);
+            splashCard = findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
             splashCard.setVisibility(View.GONE);
         }
-        if(where==1)isPlayList=true;
-        if(where==2)isHome=true;
-        if(myViewModel.isSplash&&isHome&&isPlayList) {
-            isSplash=false;
-            myViewModel.isSplash=false;
-            adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
+        if (where == 1) isPlayList = true;
+        if (where == 2) isHome = true;
+        if (myViewModel.isSplash && isHome && isPlayList) {
+            isSplash = false;
+            myViewModel.isSplash = false;
+            TotalCount.setText(getString(R.string.totalCount).replace("%d",String.valueOf(myViewModel.getmMediaController().getQueue().size())));
+            adapter = new PlayingListAdapter(this, myViewModel.getmMediaController().getQueue(), refreshListener);
             playingList.setAdapter(adapter);
-            if(myViewModel.getmMediaController().getMetadata()!=null)
+            if (myViewModel.getmMediaController().getMetadata() != null)
                 adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
             myViewModel.getPlayOrder();
-            splashCard=findViewById(R.id.splash_view);
+            splashCard = findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
             splashCard.setVisibility(View.GONE);
@@ -229,16 +234,16 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     }
 
     private void setPlayOrPause(Boolean isPlaying) {
-        if(isPlaying){
+        if (isPlaying) {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
-        }else{
+        } else {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
         }
     }
 
     private void setSeekBarDuration(long i) {
-            playProgressBar.setProgress(Math.toIntExact(i), false);
-            playProgressNowText.setText(i / 60000 + ((i / 1000 % 60 < 10) ? ":0" : ":") + i / 1000 % 60);
+        playProgressBar.setProgress(Math.toIntExact(i), false);
+        playProgressNowText.setText(i / 60000 + ((i / 1000 % 60 < 10) ? ":0" : ":") + i / 1000 % 60);
     }
 
     private void setSeekBarMax(int songDuration) {
@@ -264,7 +269,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     public void playingError(String errMsg) {
         AlertDialog alertInfoDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.play_error)
-                .setMessage(getString(R.string.play_err_Info)+"\n"+errMsg)
+                .setMessage(getString(R.string.play_err_Info) + "\n" + errMsg)
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
@@ -281,7 +286,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mainActivity=this;
+        mainActivity = this;
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(MainActivity.this);
         SharedPrefs.init(getApplication());
@@ -383,7 +388,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     protected void onResume() {
         super.onResume();
         //两个状态不同，说明Activity被重绘了
-        if(!myViewModel.isSplash&&isSplash)HideSplash(3);
+        if (!myViewModel.isSplash && isSplash) HideSplash(3);
     }
 
     private void removeObserver() {
@@ -391,8 +396,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     }
 
     public void clickedPlayOrPause() {
-        if(myViewModel==null)return;
-        if(Boolean.TRUE.equals(myViewModel.getIsPlaying().getValue()))
+        if (myViewModel == null) return;
+        if (Boolean.TRUE.equals(myViewModel.getIsPlaying().getValue()))
             myViewModel.getmMediaController().getTransportControls().pause();
         else
             myViewModel.getmMediaController().getTransportControls().play();
@@ -409,12 +414,12 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         playBarTitle.setText(song.getSongTitle() + " - " + song.getArtistName());
         Bitmap bitmap = myViewModel.getNowAlbumArt();
 
-            shapeableImageView.setImageBitmap(bitmap);
-            backImageView.setImageBitmap(bitmap);
+        shapeableImageView.setImageBitmap(bitmap);
+        backImageView.setImageBitmap(bitmap);
     }
 
     public void playPrevOrNext(boolean isNext) {
-        if(isNext)
+        if (isNext)
             myViewModel.getmMediaController().getTransportControls().skipToNext();
         else
             myViewModel.getmMediaController().getTransportControls().skipToPrevious();
@@ -436,13 +441,13 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
 
     public void setChildFragment() {
         //if (musicService != null) {
-            //homeFragment.setMusicInfo(musicService.getPlayingList().get(musicService.getNowId()));
-            //setIsLyric(musicService.isAppLyric());
+        //homeFragment.setMusicInfo(musicService.getPlayingList().get(musicService.getNowId()));
+        //setIsLyric(musicService.isAppLyric());
         //}
     }
 
     private void initViewCompat() {
-        splashCard=findViewById(R.id.splash_view);
+        splashCard = findViewById(R.id.splash_view);
         playProgressBar = findViewById(R.id.seekBar);
         playProgressLayout = findViewById(R.id.playProgress);
         musicPlayingLayout = findViewById(R.id.musicPlayingLayout);
@@ -451,23 +456,24 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         playProgressAllText = findViewById(R.id.allProgress);
         playBarTitle = findViewById(R.id.musicPlaying);
         TabTitle = findViewById(R.id.tabText);
+        TotalCount=findViewById(R.id.totalCount);
         playButton = findViewById(R.id.playPause);
         PlayBarOrder = findViewById(R.id.playOrder);
         playBarPrev = findViewById(R.id.playPrevious);
         playBarNext = findViewById(R.id.playNext);
-        playBarPlayingList =findViewById(R.id.playList);
+        playBarPlayingList = findViewById(R.id.playList);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
         backImageView = findViewById(R.id.backImageView);
-        playingList=findViewById(R.id.main_list_playing);
+        playingList = findViewById(R.id.main_list_playing);
         playingList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        View footView = LayoutInflater.from(this).inflate(R.layout.playlist_footview,null);
+        View footView = LayoutInflater.from(this).inflate(R.layout.playlist_footview, null);
         playingList.addFooterView(footView);
         splashCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
-        adapter = new PlayingListAdapter(this, null,  refreshListener);
+        adapter = new PlayingListAdapter(this, null, refreshListener);
         playingList.setAdapter(adapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setOnListViewItemClickListener();
@@ -513,7 +519,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         findViewById(R.id.musicPlayingLayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playingList.smoothScrollToPositionFromTop(adapter.getNowPlay(),0);
+                playingList.smoothScrollToPositionFromTop(adapter.getNowPlay(), 0);
             }
         });
         findViewById(R.id.delete_all_playing_list).setOnClickListener(new View.OnClickListener() {
@@ -526,7 +532,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                         .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                myViewModel.getmMediaController().getTransportControls().sendCustomAction("CLEAR_PLAYLIST",null);
+                                myViewModel.getmMediaController().getTransportControls().sendCustomAction("CLEAR_PLAYLIST", null);
                                 dialog.dismiss();
                             }
                         })
@@ -575,20 +581,20 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
 
 
     private void showPlayingList() {
-        if(isPlayingListShowing){
+        if (isPlayingListShowing) {
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             playingListLayout.startAnimation(animation);
             playingListLayout.setVisibility(View.GONE);
-            if(viewPager.getCurrentItem()==0)
+            if (viewPager.getCurrentItem() == 0)
                 setPlayBarTitle(false);
-        }else {
+        } else {
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
             playingListLayout.startAnimation(animation);
             playingListLayout.setVisibility(View.VISIBLE);
-            if(viewPager.getCurrentItem()==0)
+            if (viewPager.getCurrentItem() == 0)
                 setPlayBarTitle(true);
         }
-        isPlayingListShowing=!isPlayingListShowing;
+        isPlayingListShowing = !isPlayingListShowing;
     }
 /*
     public void setIsLyric(boolean isLyric) {
@@ -670,21 +676,21 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                     case R.id.navigation_home:
                     default:
                         TabTitle.setText(R.string.app_name);
-                        if(isPlayingListShowing)
+                        if (isPlayingListShowing)
                             showPlayingList();
                         else
                             setPlayBarTitle(false);
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_allSongList);
-                        if(isPlayingListShowing)
+                        if (isPlayingListShowing)
                             showPlayingList();
                         else
                             setPlayBarTitle(true);
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
-                        if(isPlayingListShowing)
+                        if (isPlayingListShowing)
                             showPlayingList();
                         else
                             setPlayBarTitle(true);
@@ -717,8 +723,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
         });
     }
 
-    public void setPlayBarTitle(boolean isShow){
-        if(isShow) {
+    public void setPlayBarTitle(boolean isShow) {
+        if (isShow) {
             if (!isAlreadyShowPlayBarTitle) {
                 Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
                 musicPlayingLayout.setVisibility(View.VISIBLE);
@@ -726,17 +732,17 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                 animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
                 playProgressLayout.startAnimation(animation);
                 playProgressLayout.setVisibility(View.GONE);
-                isAlreadyShowPlayBarTitle=true;
+                isAlreadyShowPlayBarTitle = true;
             }
-        }else {
-            if(isAlreadyShowPlayBarTitle) {
+        } else {
+            if (isAlreadyShowPlayBarTitle) {
                 Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
                 musicPlayingLayout.startAnimation(animation);
                 musicPlayingLayout.setVisibility(View.GONE);
                 animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
                 playProgressLayout.setVisibility(View.VISIBLE);
                 playProgressLayout.startAnimation(animation);
-                isAlreadyShowPlayBarTitle=false;
+                isAlreadyShowPlayBarTitle = false;
             }
         }
     }
@@ -747,8 +753,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
     }
 
     public void setPlayOrder(int playOrder) {
-        PlayBarOrder=findViewById(R.id.playOrder);
-        switch (playOrder){
+        PlayBarOrder = findViewById(R.id.playOrder);
+        switch (playOrder) {
             case LIST_PLAY:
                 PlayBarOrder.setImageResource(R.drawable.ic_baseline_low_priority_24);
                 break;
@@ -808,6 +814,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             }
         }
     }
+
     public void stopProgressBar() {
         if (progressThread != null && !progressThread.isPaused())
             progressThread.pauseThread();
@@ -844,6 +851,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                 }
             }
         }
+
         @Override
         public void run() {
             super.run();
@@ -854,8 +862,8 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                     onPause();
                 }
                 try {
-                    Long nowMillionSeconds=0L;
-                    if(myViewModel.getmMediaController().getPlaybackState()!=null) {
+                    Long nowMillionSeconds = 0L;
+                    if (myViewModel.getmMediaController().getPlaybackState() != null) {
                         nowMillionSeconds = myViewModel.getmMediaController().getPlaybackState().getPosition();
                         //Log.e("TAG", String.valueOf(nowMillionSeconds));
                         Message msg = new Message();
@@ -870,6 +878,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             }
         }
     }
+
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {

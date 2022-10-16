@@ -104,20 +104,15 @@
                     android:layout_height="50dp"
                     android:textSize="16dp"
                     android:gravity="center_vertical"
-                    tools:text="@string/currentPlaying"/>
+                    android:text="@string/currentPlaying"/>
                 <TextView
+                    android:id="@+id/totalCount"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:textSize="12dp"
                     android:gravity="center_vertical"
                     tools:text="@string/totalCount"/>
-                <TextView
-                    android:id="@+id/main_playing_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="12dp"
-                    android:gravity="center_vertical"/>
                 <View
                     android:layout_weight="1"
                     android:layout_width="0dp"

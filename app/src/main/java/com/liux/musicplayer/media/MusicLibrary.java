@@ -42,13 +42,13 @@ public class MusicLibrary {
 
     private static final TreeMap<String, MediaBrowserCompat.MediaItem> music = new TreeMap<>();
     private static final TreeMap<String, MediaBrowserCompat.MediaItem> PlayingMediaItemList = new TreeMap<>();
-    private static final List<Song> PlayingListOfSong =new ArrayList<>();
-    private static final List<MediaDescriptionCompat> PlayingListOfDiscription=new ArrayList<>();
+    private static final List<Song> PlayingListOfSong = new ArrayList<>();
+    private static final List<MediaDescriptionCompat> PlayingListOfDiscription = new ArrayList<>();
     //    private static final HashMap<String, Integer> albumRes = new HashMap<>();
     private static final TreeMap<String, Song> songs = new TreeMap<>();
     private static final TreeMap<String, Song> allListSongsTreeMap = new TreeMap<>();
     private static final String TAG = "MusicLibrary";
-    private static final HashMap<String,List<Song>> SongLists=new HashMap<>();
+    private static final HashMap<String, List<Song>> SongLists = new HashMap<>();
 
     public static List<MediaBrowserCompat.MediaItem> getPlayingMediaItemList() {
         /*buildMediaItems(
@@ -57,7 +57,8 @@ public class MusicLibrary {
         );*/
         return new ArrayList<>(PlayingMediaItemList.values());
     }
-    public static List<Song> getPlayingSongsList(){
+
+    public static List<Song> getPlayingSongsList() {
         buildMediaItems(
                 SharedPrefs.getPlayingListFromSharedPrefer("[{}]"),
                 PlayingMediaItemList
@@ -72,14 +73,14 @@ public class MusicLibrary {
             //Log.e("MusicLibrary",song.getSongPath());
             MusicLibrary.allListSongsTreeMap.put(song.getSongPath(), song);
             Log.d(TAG, "buildMediaItems: path" + song.getSongPath());
-            String defaultLyricPath=song.getSongPath().substring(0,song.getSongPath().length()-(FileUtils.getFileExtension(song.getSongPath())).length())+"lrc";
-            if(!FileUtils.isFileExists(song.getLyricPath())) {
+            String defaultLyricPath = song.getSongPath().substring(0, song.getSongPath().length() - (FileUtils.getFileExtension(song.getSongPath())).length()) + "lrc";
+            if (!FileUtils.isFileExists(song.getLyricPath())) {
                 if (FileUtils.isFileExists(defaultLyricPath))
                     song.setLyricPath(defaultLyricPath);
                 else
                     song.setLyricPath("null");
             }
-                createMediaMetadataCompatToPlaylist(
+            createMediaMetadataCompatToPlaylist(
                     song.getmId(),
                     song.getSongTitle(),
                     song.getArtistName(),
@@ -91,6 +92,7 @@ public class MusicLibrary {
         }
 
     }
+
     private static void createMediaMetadataCompatToPlaylist(
             String mediaId,
             String title,
@@ -101,8 +103,8 @@ public class MusicLibrary {
             String path,
             String lyric
     ) {
-        Bundle extra=new Bundle();
-        extra.putString("LYRIC_URI",lyric);
+        Bundle extra = new Bundle();
+        extra.putString("LYRIC_URI", lyric);
         PlayingMediaItemList.put(
                 path,
                 new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
@@ -111,21 +113,22 @@ public class MusicLibrary {
                         .setMediaUri(Uri.parse(path))
                         .setTitle(title)
                         .setExtras(extra)
-                        .setSubtitle(artist+" - "+album)
+                        .setSubtitle(artist + " - " + album)
                         .build(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE)
         );
     }
+
     public static MediaMetadataCompat getMetadata(Uri mediaUri) {
-        Log.e("MusicPlayer",mediaUri.getPath());
+        Log.e("MusicPlayer", mediaUri.getPath());
         Song song = allListSongsTreeMap.get(mediaUri.getPath());
 //        Log.d(Constants.TAG, "getMetadata: song " + song);
-       MediaMetadataCompat.Builder  metaDataBuilder = new MediaMetadataCompat.Builder()
+        MediaMetadataCompat.Builder metaDataBuilder = new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getmId())
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,song.getAlbumName())
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST,song.getArtistName())
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE,song.getSongTitle())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.getAlbumName())
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.getArtistName())
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getSongTitle())
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
-                .putString("LYRIC_URI",song.getLyricPath())
+                .putString("LYRIC_URI", song.getLyricPath())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, MusicUtils.getAlbumImage(song.getSongPath()))
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
         return metaDataBuilder.build();
@@ -137,11 +140,12 @@ public class MusicLibrary {
                 PlayingMediaItemList
         );*/
     }
+
     //添加音乐
-    public static void addMusicToList(String path,String listName) {
+    public static void addMusicToList(String path, String listName) {
         MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(path);
-        Song newSong = new Song(path,newMetadata.title,newMetadata.artist,newMetadata.album,newMetadata.duration,newMetadata.sizeLong);
-        List<Song> theList=SharedPrefs.getSongListByName(listName);
+        Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong);
+        List<Song> theList = SharedPrefs.getSongListByName(listName);
         if (theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
             theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
         } else {
@@ -151,13 +155,14 @@ public class MusicLibrary {
                 theList.add(newSong);
             }
         }
-        SharedPrefs.saveSongListByName(theList,listName);
+        SharedPrefs.saveSongListByName(theList, listName);
         SongLists.remove(listName);
     }
+
     //添加音乐
-    public static void addMusicListToList(List<String> pathList,String listName) {
+    public static void addMusicListToList(List<String> pathList, String listName) {
         List<Song> theList = SharedPrefs.getSongListByName(listName);
-        for(String path:pathList) {
+        for (String path : pathList) {
             MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(path);
             Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong);
             if (theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
@@ -170,72 +175,67 @@ public class MusicLibrary {
                 }
             }
         }
-        SharedPrefs.saveSongListByName(theList,listName);
+        SharedPrefs.saveSongListByName(theList, listName);
         SongLists.remove(listName);
     }
 
-    public static List<Song> getSongListByName(String name){
-        if(SongLists.containsKey(name))
+    public static List<Song> getSongListByName(String name) {
+        if (SongLists.containsKey(name))
             return SongLists.get(name);
         else {
-            List<Song> newSongList=SharedPrefs.getSongListByName(name);
-            SongLists.put(name,newSongList);
-            for (Song song:newSongList){
-                allListSongsTreeMap.put(song.getSongPath(),song);
+            List<Song> newSongList = SharedPrefs.getSongListByName(name);
+            SongLists.put(name, newSongList);
+            for (Song song : newSongList) {
+                allListSongsTreeMap.put(song.getSongPath(), song);
             }
             return newSongList;
         }
     }
 
-    public static List<MediaDescriptionCompat>getNewPlayingList(String name){
+    public static List<MediaDescriptionCompat> getNewPlayingList(String name) {
+        PlayingListOfDiscription.clear();
         PlayingListOfSong.clear();
         PlayingListOfSong.addAll(SharedPrefs.getSongListByName(name));
-            for (Song song:PlayingListOfSong) {
-                PlayingListOfDiscription.add(getMediaItemDescription(song));
-                allListSongsTreeMap.put(song.getSongPath(),song);
-            }
-            return PlayingListOfDiscription;
+        for (Song song : PlayingListOfSong) {
+            PlayingListOfDiscription.add(getMediaItemDescription(song));
+            allListSongsTreeMap.put(song.getSongPath(), song);
+        }
+        return PlayingListOfDiscription;
     }
 
     public static MediaDescriptionCompat getMediaItemDescription(Song song) {
-        Bundle extra=new Bundle();
-        extra.putString("LYRIC_URI",song.getLyricPath());
+        Bundle extra = new Bundle();
+        extra.putString("LYRIC_URI", song.getLyricPath());
         return new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
                 .setMediaId(song.getSongPath())
                 .setMediaUri(Uri.parse(song.getSongPath()))
                 .setTitle(song.getSongTitle())
                 .setExtras(extra)
-                .setSubtitle(song.getArtistName()+" - "+song.getAlbumName())
+                .setSubtitle(song.getArtistName() + " - " + song.getAlbumName())
                 .build(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE).getDescription();
     }
 
-    public static List<MediaDescriptionCompat>getPlayingList(){
-        if(PlayingListOfSong.isEmpty()){
+    public static List<MediaDescriptionCompat> getPlayingList() {
+        if (PlayingListOfSong.isEmpty()) {
             PlayingListOfSong.addAll(SharedPrefs.getSongListByName("playingList"));
         }
-        for (Song song:PlayingListOfSong) {
+        for (Song song : PlayingListOfSong) {
             PlayingListOfDiscription.add(getMediaItemDescription(song));
-            allListSongsTreeMap.put(song.getSongPath(),song);
+            allListSongsTreeMap.put(song.getSongPath(), song);
         }
         return PlayingListOfDiscription;
     }
 
     public static void savePlayingList(List<MediaSessionCompat.QueueItem> mPlaylist) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                PlayingListOfSong.clear();
-                for (MediaSessionCompat.QueueItem queueItem:mPlaylist) {
-                    Song song=new Song(queueItem.getDescription().getMediaUri().getPath(),
-                            String.valueOf(queueItem.getDescription().getTitle()),
-                            String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[0],
-                            String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[1],
-                            queueItem.getDescription().getExtras().getString("LYRIC_URI","null"));
-                    PlayingListOfSong.add(song);
-                }
-                SharedPrefs.saveSongListByName(PlayingListOfSong,"playingList");
-            }
-        });
-
+        PlayingListOfSong.clear();
+        for (MediaSessionCompat.QueueItem queueItem : mPlaylist) {
+            Song song = new Song(queueItem.getDescription().getMediaUri().getPath(),
+                    String.valueOf(queueItem.getDescription().getTitle()),
+                    String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[0],
+                    String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[1],
+                    queueItem.getDescription().getExtras().getString("LYRIC_URI", "null"));
+            PlayingListOfSong.add(song);
+        }
+        SharedPrefs.saveSongListByName(PlayingListOfSong, "playingList");
     }
 }

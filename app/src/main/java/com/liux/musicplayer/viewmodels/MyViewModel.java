@@ -40,25 +40,39 @@ public class MyViewModel extends AndroidViewModel {
     private final MutableLiveData<Long> currentPlayingDuration = new MutableLiveData<Long>();
     private final MutableLiveData<Integer> shuffleMode = new MutableLiveData<Integer>();
     private final MutableLiveData<Integer> repeatMode = new MutableLiveData<Integer>();
-    private static boolean activityForeground=false;
-    private static boolean isDeskTopLyric=false;
-    private static boolean isDeskTopLyricLocked=false;
-    public boolean isSplash=true;
-    public int playOrder=0;
+    private static boolean activityForeground = false;
+    private static boolean isDeskTopLyric = false;
+    private static boolean isDeskTopLyricLocked = false;
+    public boolean isSplash = true;
+    public int playOrder = 0;
+    public int viewPagerId=0;
+    private final MutableLiveData<List<Song>> songsMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Song>> playingSongsMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<List<MediaBrowserCompat.MediaItem>> mediaItemsMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<List<MediaSessionCompat.QueueItem>> queueItemsMutableLiveData = new MutableLiveData<>();
+    MutableLiveData<List<MediaBrowserCompat.MediaItem>> searchResultsLiveData = new MutableLiveData<>();
+    MutableLiveData<Song> nowPlaying = new MutableLiveData<Song>();
+    MutableLiveData<LyricUtils> nowLyric = new MutableLiveData<>();
+    private int listPosition=-1;
+    private int listPositionY=0;
+
+    public void setViewPagerId(int viewPagerId) {
+        this.viewPagerId = viewPagerId;
+    }
 
     public void setFragmentLyricState(boolean fragmentLyricState) {
         this.fragmentLyricState = fragmentLyricState;
     }
 
-    private boolean fragmentLyricState=false;
+    private boolean fragmentLyricState = false;
 
     public static void setActivityForeground(boolean activityForeground) {
         MyViewModel.activityForeground = activityForeground;
         Intent lyricIntent;
-        if(activityForeground){
-            lyricIntent =new Intent("com.liux.musicplayer.FOREGROUND");
-        }else {
-            lyricIntent =new Intent("com.liux.musicplayer.BACKGROUND");
+        if (activityForeground) {
+            lyricIntent = new Intent("com.liux.musicplayer.FOREGROUND");
+        } else {
+            lyricIntent = new Intent("com.liux.musicplayer.BACKGROUND");
         }
         MainActivity.mainActivity.sendBroadcast(lyricIntent);
     }
@@ -67,17 +81,10 @@ public class MyViewModel extends AndroidViewModel {
         return songsMutableLiveData;
     }
 
-    private final MutableLiveData<List<Song>> songsMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<Song>> playingSongsMutableLiveData = new MutableLiveData<>();
-    MutableLiveData<List<MediaBrowserCompat.MediaItem>> mediaItemsMutableLiveData = new MutableLiveData<>();
-    MutableLiveData<List<MediaSessionCompat.QueueItem>> queueItemsMutableLiveData = new MutableLiveData<>();
-    MutableLiveData<List<MediaBrowserCompat.MediaItem>> searchResultsLiveData = new MutableLiveData<>();
-    MutableLiveData<Song> nowPlaying = new MutableLiveData<Song>();
-    MutableLiveData<LyricUtils> nowLyric =new MutableLiveData<>();
 
     public Bitmap getNowAlbumArt() {
         if (nowAlbum == null) {   //获取图片失败，使用默认图片
-            return MusicUtils.getBitmap(MainActivity.mainActivity,R.drawable.ic_baseline_music_note_24);
+            return MusicUtils.getBitmap(MainActivity.mainActivity, R.drawable.ic_baseline_music_note_24);
         } else {    //成功
             return nowAlbum;
         }
@@ -96,7 +103,7 @@ public class MyViewModel extends AndroidViewModel {
     public MyViewModel(@NonNull Application application) {
         super(application);
         //refreshSongsList();
-        playOrder=SharedPrefs.getPlayOrder();
+        playOrder = SharedPrefs.getPlayOrder();
         MainActivity.mainActivity.setPlayOrder(playOrder);
         connectToMediaPlaybackService();
     }
@@ -244,52 +251,53 @@ public class MyViewModel extends AndroidViewModel {
     }
 
     public void initPlayOrder() {
-        switch (SharedPrefs.getPlayOrder()){
+        switch (SharedPrefs.getPlayOrder()) {
             case LIST_PLAY:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-                playOrder=LIST_PLAY;
+                playOrder = LIST_PLAY;
                 break;
             case REPEAT_LIST:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-                playOrder=REPEAT_LIST;
+                playOrder = REPEAT_LIST;
                 break;
             case REPEAT_ONE:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-                playOrder=REPEAT_ONE;
+                playOrder = REPEAT_ONE;
                 break;
             case SHUFFLE_PLAY:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
-                playOrder=SHUFFLE_PLAY;
+                playOrder = SHUFFLE_PLAY;
                 break;
         }
         MainActivity.mainActivity.setPlayOrder(playOrder);
         Log.e(TAG, String.valueOf(getmMediaController().getQueue()));
     }
+
     public void setPlayOrder() {
-        switch (playOrder){
+        switch (playOrder) {
             case LIST_PLAY:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-                playOrder=REPEAT_LIST;
+                playOrder = REPEAT_LIST;
                 break;
             case REPEAT_LIST:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-                playOrder=REPEAT_ONE;
+                playOrder = REPEAT_ONE;
                 break;
             case REPEAT_ONE:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
-                playOrder=SHUFFLE_PLAY;
+                playOrder = SHUFFLE_PLAY;
                 break;
             case SHUFFLE_PLAY:
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
                 mMediaBrowserHelper.getmMediaController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-                playOrder=LIST_PLAY;
+                playOrder = LIST_PLAY;
                 break;
         }
         SharedPrefs.savePlayOrder(playOrder);
@@ -298,18 +306,38 @@ public class MyViewModel extends AndroidViewModel {
     }
 
     public void getPlayOrder() {
-        int repeatMode= getmMediaController().getRepeatMode();
-        int shuffleMode =getmMediaController().getShuffleMode();
-        if(repeatMode==PlaybackStateCompat.REPEAT_MODE_ALL&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_NONE)
-                playOrder=REPEAT_LIST;
-        else if(repeatMode==PlaybackStateCompat.REPEAT_MODE_ONE&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_NONE)
-                playOrder=REPEAT_ONE;
-        else if(repeatMode==PlaybackStateCompat.REPEAT_MODE_ALL&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_ALL)
-                playOrder=SHUFFLE_PLAY;
-        else if(repeatMode==PlaybackStateCompat.REPEAT_MODE_NONE&&shuffleMode==PlaybackStateCompat.SHUFFLE_MODE_NONE)
-                playOrder=LIST_PLAY;
+        int repeatMode = getmMediaController().getRepeatMode();
+        int shuffleMode = getmMediaController().getShuffleMode();
+        if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL && shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_NONE)
+            playOrder = REPEAT_LIST;
+        else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE && shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_NONE)
+            playOrder = REPEAT_ONE;
+        else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL && shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL)
+            playOrder = SHUFFLE_PLAY;
+        else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE && shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_NONE)
+            playOrder = LIST_PLAY;
         MainActivity.mainActivity.setPlayOrder(playOrder);
         Log.e(TAG, String.valueOf(getmMediaController().getQueue()));
+    }
+
+    public int getViewPagerId() {
+        return viewPagerId;
+    }
+
+    public void setListPosition(int listPosition) {
+        this.listPosition = listPosition;
+    }
+
+    public void setListPositionY(int listPositionY) {
+        this.listPositionY = listPositionY;
+    }
+
+    public int getListPosition() {
+        return listPosition;
+    }
+
+    public int getListPositionY() {
+        return listPositionY;
     }
 
     /**
@@ -337,10 +365,10 @@ public class MyViewModel extends AndroidViewModel {
 
             final MediaControllerCompat mediaController = getMediaController();
             mediaItemsMutableLiveData.setValue(children);
-            MediaMetadataCompat mediaMetadata=mediaController.getMetadata();
-            if(mediaMetadata==null) {
+            MediaMetadataCompat mediaMetadata = mediaController.getMetadata();
+            if (mediaMetadata == null) {
                 //mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
-                Log.e(TAG+"=======", String.valueOf(mediaController.getQueue()));
+                Log.e(TAG + "=======", String.valueOf(mediaController.getQueue()));
             }
 
             //searchResultsLiveData.setValue(children);
@@ -373,7 +401,7 @@ public class MyViewModel extends AndroidViewModel {
      */
     private class MediaBrowserListener extends MediaControllerCompat.Callback {
 
-       @Override
+        @Override
         public void onPlaybackStateChanged(PlaybackStateCompat playbackState) {
             super.onPlaybackStateChanged(playbackState);
             Log.d(TAG, "onPlaybackStateChanged: Called inside songsViewModel");
@@ -404,7 +432,7 @@ public class MyViewModel extends AndroidViewModel {
                         new Song("这是文件路径", "歌曲名称", "歌手", "专辑名", "0", 0L)
                 );
 
-            }else {
+            } else {
                 Log.d(TAG, "onMetadataChanged: called inside songsViewModel");
                 Log.d(TAG, "onMetadataChanged: Title " + mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
                 String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
@@ -420,7 +448,7 @@ public class MyViewModel extends AndroidViewModel {
             }
         }
 
-        public int getIdFromPlayingList(Song song){
+        public int getIdFromPlayingList(Song song) {
             return playingSongsMutableLiveData.getValue().indexOf(song);
         }
 
@@ -460,10 +488,10 @@ public class MyViewModel extends AndroidViewModel {
         @Override
         public void onSessionEvent(String event, Bundle extras) {
             Log.d(TAG, "onSessionEvent: Called inside SongsViewModel");
-            switch (event){
+            switch (event) {
                 case "PLAY_ERROR":
-                MainActivity.mainActivity.playingError(extras.getString("ERR_MSG","null"));
-                break;
+                    MainActivity.mainActivity.playingError(extras.getString("ERR_MSG", "null"));
+                    break;
             }
             super.onSessionEvent(event, extras);
         }

@@ -198,6 +198,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             adapter=new PlayingListAdapter(this,myViewModel.getmMediaController().getQueue(),refreshListener);
             playingList.setAdapter(adapter);
             adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+            viewPager.setCurrentItem(myViewModel.getViewPagerId());
             //myViewModel.getQueueItemsMutableLiveData().getValue();
             //myViewModel.getNowPlaying().getValue();
             splashCard=findViewById(R.id.splash_view);
@@ -525,7 +526,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
                         .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //musicService.deletePlayingList();
+                                myViewModel.getmMediaController().getTransportControls().sendCustomAction("CLEAR_PLAYLIST",null);
                                 dialog.dismiss();
                             }
                         })
@@ -664,7 +665,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 bottomNavigationView.getMenu().getItem(position).setChecked(true);
-                Animation animation;
+                myViewModel.setViewPagerId(position);
                 switch (bottomNavigationView.getMenu().getItem(position).getItemId()) {
                     case R.id.navigation_home:
                     default:
@@ -742,6 +743,7 @@ private PlayingListAdapter.RefreshListener refreshListener=new PlayingListAdapte
 
     public void setViewPagerToId(int pageId) {
         viewPager.setCurrentItem(pageId, true);
+        myViewModel.setViewPagerId(pageId);
     }
 
     public void setPlayOrder(int playOrder) {

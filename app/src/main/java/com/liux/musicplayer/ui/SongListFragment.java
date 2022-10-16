@@ -106,10 +106,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.item_menu_play:
-                            //myViewModel.getMusicService().setPlayingList(mSongList, positionToMusicId(position));
+                            myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
                             break;
                         case R.id.item_menu_next_play:
-                            //myViewModel.getMusicService().setPlayingListNextSong(mSongList.get(positionToMusicId(position)));
+                            myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-1);
                             break;
                         case R.id.item_menu_moreInfo:
                             showMusicDetails(positionToMusicId(position));
@@ -120,7 +120,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                                         @Override
                                         public void clickPositive(Song song) {
                                             mSongList.set(positionToMusicId(position), song);
-                                            //myViewModel.getMusicService().setAllSongListAfterAdd(mSongList);
+                                            SharedPrefs.saveSongListByName(mSongList,"allSongList");
                                         }
 
                                         @Override
@@ -137,8 +137,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            //myViewModel.getMusicService().deleteMusic(positionToMusicId(position));
+                                            myViewModel.getmMediaController().removeQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))));
+                                            mSongList.remove(positionToMusicId(position));
                                             adapter.notifyDataSetChanged();
+                                            SharedPrefs.saveSongListByName(mSongList,"allSongList");
                                             dialog.dismiss();
                                         }
                                     })
@@ -163,17 +165,20 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
 
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
-        //myViewModel.getMusicService().addMusic(songList);
+        List<String> pathList=songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList());
+        MusicLibrary.addMusicListToList(pathList,"allSongList");
     }
 
     private void addFolder(Uri uri) {
         Log.e("AddFolder", uri.toString());
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
-        searchFile(UriTransform.getPath(requireContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
+        List<String> pathList=new ArrayList<>();
+        searchFile(pathList,UriTransform.getPath(requireContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
+        MusicLibrary.addMusicListToList(pathList,"allSongList");
         refreshList();
     }
 
-    private void searchFile(String filePath) {
+    private void searchFile(List<String>pathList,String filePath) {
         File file = new File(filePath);
         List<File> folderList = new ArrayList<File>();
         if (file.isDirectory()) {
@@ -182,19 +187,21 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                     if (childFile.isDirectory()) {
                         folderList.add(childFile);
                     } else {
-                        checkChild(childFile);//筛选结果返回
+                        if(checkChild(childFile))
+                            pathList.add(childFile.getAbsolutePath());//筛选结果返回
                     }
                 }
             }
         } else {
-            checkChild(file);
+            if(checkChild(file))
+                pathList.add(file.getAbsolutePath());
         }
         for (File folder : folderList) {
-            searchFile(folder.getPath());
+            searchFile(pathList,folder.getPath());
         }
     }
 
-    private void checkChild(File childFile) {
+    private boolean checkChild(File childFile) {
         if (FileUtils.getFileExtension(childFile).equalsIgnoreCase("mp3")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("flac")
                 || FileUtils.getFileExtension(childFile).equalsIgnoreCase("amr")
@@ -210,9 +217,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             //创建模型类存储值，并添加到集合中。通过集合可做任意操作
             //Log.e("ScannedFiles", childFile.getAbsolutePath());
             //myViewModel.getMusicService().addMusic(childFile.getAbsolutePath());
-            MusicLibrary.addMusicToList(childFile.getAbsolutePath(),"allSongList");
+            return true;
             //}
         }
+        return false;
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -291,7 +299,30 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 //myViewModel.refreshSongsList();
                 adapter.notifyDataSetChanged();
                 break;
+            case R.id.playThisList:
+                playThisList();
+                break;
         }
+    }
+
+    private void playThisList() {
+                            /*Log.e("SongPlaylistFragment", (String) myViewModel.getmMediaController().getQueueTitle());
+                    if(myViewModel.getmMediaController().getQueueTitle().equals(nowSongListName)){
+                        Log.e("SongPlaylistFragment","equals(nowSongListName)");
+                        //myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
+                        int qid=myViewModel.getmMediaController().getQueue().stream()
+                                .map(t -> t.getDescription().getMediaUri().getPath()).distinct().collect(Collectors.toList())
+                                .indexOf(mSongList.get(positionToMusicId(position)).getSongPath());
+                        myViewModel.getmMediaController().getTransportControls().skipToQueueItem(myViewModel.getmMediaController().getQueue().get(qid).getQueueId());
+                    }else{*/
+                        Log.e("SongPlaylistFragment","newPlaylist");
+                        if(!mSongList.isEmpty()) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("QueueTitle", nowSongListName);
+                            //bundle.putString("Path", mSongList.get(0).getSongPath());
+                            myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
+                        }
+                   /* }*/
     }
 
     private void showNoPermissionDialog() {
@@ -352,11 +383,11 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     public void onPause() {
         super.onPause();  // Always call the superclass method first
         try {
-            listPosition = lvData.getFirstVisiblePosition();
-            listPositionY = lvData.getChildAt(0).getTop();
+            myViewModel.setListPosition(lvData.getFirstVisiblePosition());
+            myViewModel.setListPositionY ( lvData.getChildAt(0).getTop());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            listPosition = -1;
+            myViewModel.setListPosition(-1);
         }
     }
 
@@ -367,8 +398,8 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 //&& myViewModel.getMusicService() != null
                 //&& isWebPlaylist != myViewModel.getMusicService().isWebPlayMode())
             //initData();
-        if (listPosition != -1)
-            lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
+        if (myViewModel.getListPosition() != -1)
+            lvData.setSelectionFromTop(myViewModel.getListPosition(), myViewModel.getListPositionY() - DisplayUtils.dip2px(requireContext(), 44));
     }
 
     @Override
@@ -526,6 +557,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.refresh_list).setOnClickListener(this);
         view.findViewById(R.id.search_list).setOnClickListener(this);
         view.findViewById(R.id.sortWay).setOnClickListener(this);
+        view.findViewById(R.id.playThisList).setOnClickListener(this);
         addSongLayout = view.findViewById(R.id.ll_addBar);
         editSongLayout = view.findViewById(R.id.ll_editBar);
         sortSongLayout = view.findViewById(R.id.ll_sort);
@@ -651,6 +683,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
             setStateCheckedMap(false);
             adapter = new SongListAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
             lvData.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
             //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         //}
     }

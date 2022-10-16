@@ -18,6 +18,7 @@ package com.liux.musicplayer.media;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -151,6 +152,26 @@ public class MusicLibrary {
             }
         }
         SharedPrefs.saveSongListByName(theList,listName);
+        SongLists.remove(listName);
+    }
+    //添加音乐
+    public static void addMusicListToList(List<String> pathList,String listName) {
+        List<Song> theList = SharedPrefs.getSongListByName(listName);
+        for(String path:pathList) {
+            MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(path);
+            Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong);
+            if (theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
+                theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
+            } else {
+                if (theList.size() == 1 && !FileUtils.isFileExists(theList.get(0).getSongPath())) {  //播放列表第一位如果是示例数据则将其替换
+                    theList.set(0, newSong);
+                } else {
+                    theList.add(newSong);
+                }
+            }
+        }
+        SharedPrefs.saveSongListByName(theList,listName);
+        SongLists.remove(listName);
     }
 
     public static List<Song> getSongListByName(String name){
@@ -200,15 +221,21 @@ public class MusicLibrary {
     }
 
     public static void savePlayingList(List<MediaSessionCompat.QueueItem> mPlaylist) {
-        PlayingListOfSong.clear();
-        for (MediaSessionCompat.QueueItem queueItem:mPlaylist) {
-            Song song=new Song(queueItem.getDescription().getMediaUri().getPath(),
-                    String.valueOf(queueItem.getDescription().getTitle()),
-                    String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[0],
-                    String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[1],
-                    queueItem.getDescription().getExtras().getString("LYRIC_URI","null"));
-            PlayingListOfSong.add(song);
-        }
-        SharedPrefs.saveSongListByName(PlayingListOfSong,"playingList");
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                PlayingListOfSong.clear();
+                for (MediaSessionCompat.QueueItem queueItem:mPlaylist) {
+                    Song song=new Song(queueItem.getDescription().getMediaUri().getPath(),
+                            String.valueOf(queueItem.getDescription().getTitle()),
+                            String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[0],
+                            String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[1],
+                            queueItem.getDescription().getExtras().getString("LYRIC_URI","null"));
+                    PlayingListOfSong.add(song);
+                }
+                SharedPrefs.saveSongListByName(PlayingListOfSong,"playingList");
+            }
+        });
+
     }
 }

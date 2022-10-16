@@ -70,6 +70,7 @@ public abstract class PlayerAdapter {
     public abstract boolean isPlaying();
 
     public final void play() {
+        //Todo 上一首的焦点没拿回来
         if (mAudioFocusHelper.requestAudioFocus()) {
             registerAudioNoisyReceiver();
             onPlay();
@@ -149,6 +150,7 @@ public abstract class PlayerAdapter {
                     if (mPlayOnAudioFocus && !isPlaying()) {
                         //TODO
                         //play();
+                        setVolume(MEDIA_VOLUME_DEFAULT);
                     } else if (isPlaying()) {
                         setVolume(MEDIA_VOLUME_DEFAULT);
                     }
@@ -161,6 +163,7 @@ public abstract class PlayerAdapter {
                     if (isPlaying()) {
                         mPlayOnAudioFocus = true;
                         //TODO 读取设置选择性暂停
+                        setVolume(MEDIA_VOLUME_DUCK);
                         //pause();
                     }
                     break;

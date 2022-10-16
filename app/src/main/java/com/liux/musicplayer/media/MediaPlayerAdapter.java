@@ -56,27 +56,6 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     // while not playing.
 
     private int mSeekWhileNotPlaying = -1;
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            setNewState(PlaybackStateCompat.STATE_PLAYING);
-            handler.postDelayed(this, DURATION_DELAY);
-        }
-    };
-    Runnable sleepTimerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (shouldRunSleepTimer()) {
-                Log.d(TAG, "run: Less than current millis");
-                sleepHandler.postDelayed(this, 1000);
-            } else {
-                Log.d(TAG, "run: Pausing/Sleeping the mediaPlayer");
-                // Sleep timer timer has passed. Pause the mediaPlayer
-                Toast.makeText(mContext, "Player slept", Toast.LENGTH_SHORT).show();
-                onPause();
-            }
-        }
-    };
     private String TAG="MediaPlayerAdaptar";
 
     public MediaPlayerAdapter(SimpleMusicService musicService, PlaybackInfoListener listener) {

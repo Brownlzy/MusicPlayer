@@ -56,6 +56,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
     private boolean mainActivityState=true;
     public LyricReceiver lyricReceiver;
     private LyricUtils lyric=new LyricUtils();
+    private boolean hasPlayedOnce=false;
 
     public class LyricReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";
@@ -81,7 +82,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     break;
                 case "com.liux.musicplayer.BACKGROUND":
                     mainActivityState=false;
-                    if(SharedPrefs.getIsDeskLyric()&&mSession.isActive()) {
+                    if(SharedPrefs.getIsDeskLyric()&&mSession.isActive()&&hasPlayedOnce) {
                         intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
@@ -420,6 +421,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 Log.e(TAG, String.valueOf(mPreparedMedia));
             }
             try {
+                hasPlayedOnce=true;
                 mPlayback.playFromMedia(mPreparedMedia);
             }catch (Exception e){
                 onPlayError(e);
@@ -500,9 +502,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
             mPlayback.stop();
             mSession.setActive(false);
             mPreparedMedia=null;
-            //关闭桌面歌词
-            Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
-            stopService(deskLyricIntent);
         }
 
         @Override
@@ -729,6 +728,9 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     break;
                 case PlaybackStateCompat.STATE_STOPPED:
                     mServiceManager.moveServiceOutOfStartedState(state);
+                    //关闭桌面歌词
+                    Intent deskLyricIntent = new Intent(SimpleMusicService.this, FloatLyricService.class);
+                    stopService(deskLyricIntent);
                     break;
             }
             mSession.setPlaybackState(state);

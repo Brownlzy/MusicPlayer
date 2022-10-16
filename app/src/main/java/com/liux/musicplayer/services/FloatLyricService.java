@@ -280,38 +280,28 @@ private LyricUtils nowLyric=new LyricUtils();
         }
         firstScroll.scrollTo(0, 0);
         secondScroll.scrollTo(0, 0);
-        firstScroll.post(new Runnable() {
+        firstScroll.postDelayed(new Runnable() {
             @Override
             public void run() {
                 int offset = firstLyric.getMeasuredWidth() - firstScroll.getMeasuredWidth();
                 if (offset > 0) {
-                    try {
-                        Thread.sleep(700);
                         firstScroll.smoothScrollTo(offset, 0);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     firstScroll.scrollTo(0, 0);
                 }
             }
-        });
-        secondScroll.post(new Runnable() {
+        },700);
+        secondScroll.postDelayed(new Runnable() {
             @Override
             public void run() {
                 int offset = secondLyric.getMeasuredWidth() - secondScroll.getMeasuredWidth();
                 if (offset > 0) {
-                    try {
-                        Thread.sleep(700);
                         secondScroll.smoothScrollTo(offset, 0);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     secondScroll.scrollTo(0, 0);
                 }
             }
-        });
+        },700);
     }
 
     private class LyricThread extends Thread {

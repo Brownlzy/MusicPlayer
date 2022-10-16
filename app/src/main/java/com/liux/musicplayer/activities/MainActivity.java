@@ -477,9 +477,7 @@ public class MainActivity extends FragmentActivity {
         playingList.setAdapter(adapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setOnListViewItemClickListener();
-        backImageView.setVisibility(prefs.getBoolean("isNewAppearance", false)
-                ? View.VISIBLE
-                : View.GONE);
+        setNewAppearance(prefs.getBoolean("isNewAppearance", false));
         playBarPlayingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -799,8 +797,14 @@ public class MainActivity extends FragmentActivity {
     public void setNewAppearance(boolean isTrue) {
         if (isTrue) {
             backImageView.setVisibility(View.VISIBLE);
+            findViewById(R.id.realtimeBlurView).setVisibility(View.VISIBLE);
+            findViewById(R.id.blur_playing_list).setVisibility(View.VISIBLE);
+            findViewById(R.id.playingListBack).setVisibility(View.GONE);
         } else {
             backImageView.setVisibility(View.GONE);
+            findViewById(R.id.realtimeBlurView).setVisibility(View.GONE);
+            findViewById(R.id.blur_playing_list).setVisibility(View.GONE);
+            findViewById(R.id.playingListBack).setVisibility(View.VISIBLE);
         }
     }
 

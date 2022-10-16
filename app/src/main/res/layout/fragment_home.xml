@@ -48,8 +48,9 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/albumImageView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
                         android:src="@drawable/ic_baseline_music_note_24"
@@ -169,8 +170,8 @@
 
                                 <ImageView
                                     android:id="@+id/playLyric"
-                                    android:layout_width="40dp"
-                                    android:layout_height="40dp"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
                                     android:background="?android:attr/selectableItemBackground"
                                     android:clickable="true"
                                     android:contentDescription="@string/playPrev"

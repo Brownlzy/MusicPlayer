@@ -85,8 +85,14 @@
         app:rippleColor="@android:color/transparent"
         app:strokeColor="@color/green_700"
         app:strokeWidth="0.5dp">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/playingListBack"
+            app:cardElevation="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
         <com.github.mmin18.widget.RealtimeBlurView
-            style="@style/BlurColor"
+            android:id="@+id/blur_playing_list"
+            style="@style/MainActivityBlurColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:realtimeBlurRadius="50dp" />
@@ -211,6 +217,7 @@
                         android:id="@+id/playBarAlbumImage"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:scaleType="centerCrop"
                         android:src="@mipmap/ic_launcher"
                         app:layout_constraintDimensionRatio="1:1"
                         app:shapeAppearance="@style/CircleStyle" />

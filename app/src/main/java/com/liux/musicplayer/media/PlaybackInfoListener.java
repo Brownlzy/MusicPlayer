@@ -29,4 +29,5 @@ public abstract class PlaybackInfoListener {
 
     public void onPlaybackCompleted() {
     }
+    public abstract void onPlayingError(Exception e);
 }

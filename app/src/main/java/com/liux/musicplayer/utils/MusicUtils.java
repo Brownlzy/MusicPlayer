@@ -105,7 +105,7 @@ public class MusicUtils {
             mediaMetadataRetriever.release();
             return bitmap;
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -128,16 +128,16 @@ public class MusicUtils {
             md.isValid = true;
             return md;
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             //文件路径错误或无权限
             //Toast.makeText(context, "专辑图片读取失败", Toast.LENGTH_SHORT).show();
             //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             //文件本身无专辑图片
             //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
             //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
         }
@@ -234,15 +234,7 @@ public class MusicUtils {
 
     public static Bitmap getBitmap(Context context,int vectorDrawableId) {
         Bitmap bitmap=null;
-        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP){
-            Drawable vectorDrawable = context.getDrawable(vectorDrawableId);
-            bitmap = Bitmap.createBitmap(600,600,Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            vectorDrawable.draw(canvas);
-        }else {
             bitmap = BitmapFactory.decodeResource(context.getResources(), vectorDrawableId);
-        }
         return bitmap;
     }
 }

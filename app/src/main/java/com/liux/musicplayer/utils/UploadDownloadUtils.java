@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class UploadDownloadUtils {
     public final static String DOCUMENT_PATH = Environment.getExternalStorageDirectory() + "/RecorderGuide/";
     private OnImageLoadListener mOnImageLoadListener;
     private static List<MyCache> cacheList;
+    private static HashMap<String,String> cacheMap=new HashMap<>();
 
     public UploadDownloadUtils(Context context) {
         LoadCacheList();
@@ -84,21 +86,19 @@ public class UploadDownloadUtils {
             @SuppressLint("NewApi")
             @Override
             public void run() {
-                Log.e("Download", url);
-                int cacheId = -1;
-                cacheId = cacheList.stream().map(t -> t.url).distinct().collect(Collectors.toList()).indexOf(url);
-                if (cacheId >= 0) {
-                    if (FileUtils.isFileExists(path + "/" + cacheList.get(cacheId).cache)) {
+                Log.e("Download", url+"-"+fileName);
+                if (cacheMap.containsKey(url)) {
+                    if (FileUtils.isFileExists(path + "/" + cacheMap.get(url))) {
                         Message message = mHandler.obtainMessage();
                         ArrayList<String> array = new ArrayList<String>();
                         array.add(url);
-                        array.add(path + "/" + cacheList.get(cacheId).cache);
+                        array.add(path + "/" + cacheMap.get(url));
                         message.obj = array;
                         message.what = 2;
                         mHandler.sendMessage(message);
                         return;
                     } else {
-                        cacheList.remove(cacheId);
+                        cacheMap.remove(url);
                         saveCacheList();
                     }
                 }
@@ -158,7 +158,7 @@ public class UploadDownloadUtils {
                     message.what = 2;
                     Log.i(TAG, "downloadDocument" + "下载完成" + fileName);
                     mHandler.sendMessage(message);
-                    cacheList.add(new MyCache(url, fileName));
+                    cacheMap.put(url, fileName);
                     saveCacheList();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -182,10 +182,18 @@ public class UploadDownloadUtils {
             cacheList = gson.fromJson(strCacheList, cacheListType);
             if (cacheList == null)
                 cacheList = new ArrayList<>();
+            cacheMap.clear();
+            for (MyCache cache:cacheList) {
+                cacheMap.put(cache.url,cache.cache);
+            }
         }
     }
 
     private void saveCacheList() {
+        cacheList.clear();
+        for (String url:cacheMap.keySet()) {
+           cacheList.add(new MyCache(url,cacheMap.get(url)));
+        }
         Gson gson = new Gson();
         Type cacheListType = new TypeToken<ArrayList<MyCache>>() {
         }.getType();

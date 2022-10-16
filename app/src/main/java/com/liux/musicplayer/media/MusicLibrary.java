@@ -119,8 +119,8 @@ public class MusicLibrary {
     }
 
     public static MediaMetadataCompat getMetadata(Uri mediaUri) {
-        Log.e("MusicPlayer", mediaUri.getPath());
-        Song song = allListSongsTreeMap.get(mediaUri.getPath());
+        Log.e("MusicPlayer", mediaUri.toString());
+        Song song = allListSongsTreeMap.get(mediaUri.toString());
 //        Log.d(Constants.TAG, "getMetadata: song " + song);
         MediaMetadataCompat.Builder metaDataBuilder = new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getmId())
@@ -229,7 +229,7 @@ public class MusicLibrary {
     public static void savePlayingList(List<MediaSessionCompat.QueueItem> mPlaylist) {
         PlayingListOfSong.clear();
         for (MediaSessionCompat.QueueItem queueItem : mPlaylist) {
-            Song song = new Song(queueItem.getDescription().getMediaUri().getPath(),
+            Song song = new Song(queueItem.getDescription().getMediaUri().toString(),
                     String.valueOf(queueItem.getDescription().getTitle()),
                     String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[0],
                     String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[1],

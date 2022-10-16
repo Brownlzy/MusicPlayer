@@ -37,20 +37,6 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
-
-        <receiver
-            android:name=".receiver.HeadsetPlugReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".receiver.BluetoothStateReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".receiver.MediaButton2Receiver"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="Instantiatable" />
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
             android:exported="true" >

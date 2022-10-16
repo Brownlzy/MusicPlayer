@@ -148,7 +148,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         mMediaNotificationManager = new MediaNotificationManager(this);
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
-        mPlaylist=MusicLibrary.getPlayingMediaItemList();
+        //mPlaylist=MusicLibrary.getPlayingMediaItemList();
         mCallback.onCustomAction("REFRESH_PLAYLIST",null);
     }
 
@@ -712,6 +712,13 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPlaybackCompleted() {
+        }
+
+        @Override
+        public void onPlayingError(Exception e) {
+            Bundle bundle=new Bundle();
+            bundle.putString("ERR_MSG",e.toString());
+            mSession.sendSessionEvent("PLAY_ERROR",bundle);
         }
 
         @Override

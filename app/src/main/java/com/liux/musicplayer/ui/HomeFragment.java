@@ -243,8 +243,8 @@ public class HomeFragment extends Fragment {
             //    albumImageView.setImageBitmap(bitmap);
             //}
             initLyric(song);
-            MainActivity.mainActivity.HideSplash(2);
         }
+        MainActivity.mainActivity.HideSplash(2);
     }
 
     //显示歌词列表及模糊背景

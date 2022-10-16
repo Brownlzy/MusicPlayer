@@ -46,6 +46,19 @@
                     android:orientation="vertical">
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/albumImageViewBack"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:src="@drawable/ic_baseline_music_note_24"
+                        android:visibility="visible"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:shapeAppearance="@style/RoundedStyle" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/albumImageView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

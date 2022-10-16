@@ -37,9 +37,6 @@ import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.interfaces.MusicServiceCallback;
-import com.liux.musicplayer.receiver.BluetoothStateReceiver;
-import com.liux.musicplayer.receiver.HeadsetPlugReceiver;
-import com.liux.musicplayer.receiver.MediaButton2Receiver;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
@@ -52,7 +49,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MusicService extends Service implements MediaButton2Receiver.IKeyDownListener {
+public class MusicService extends Service{
     public static final String PLAY = "play";
     public static final String PAUSE = "pause";
     public static final String PREV = "prev";
@@ -97,12 +94,9 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
     private LyricUtils lyric = null;
     private MusicUtils.Metadata metadata = null;
     private Bitmap albumImage = null;
-    private MediaButton2Receiver mediaButtonReceiver;
     private int[] keyTimes = new int[1];
     private KeyTimeThread keyTimeThread;
-    private BluetoothStateReceiver mBluetoothStateReceiver;
     private boolean waitForDevice = false;
-    private HeadsetPlugReceiver mHeadsetPlugReceiver;
 
     public boolean isWebPlayMode() {
         return webPlayMode;
@@ -220,61 +214,9 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         initRemoteViews();
         initNotification();
         registerMusicReceiver();
-        //registerRemoteControlReceiver();
-        registerBluetoothReceiver();
-        registerHeadsetPlugReceiver();
         updateNotificationShow(nowId);
     }
 
-    private void registerBluetoothReceiver() {
-        mBluetoothStateReceiver = new BluetoothStateReceiver();
-        mBluetoothStateReceiver.setIBluetoothStateListener(new BluetoothStateReceiver.IBluetoothStateListener() {
-            @Override
-            public void onBluetoothDeviceConnected() {
-                if (waitForDevice) {
-                    setPlayOrPause(true);
-                }
-            }
-
-            @Override
-            public void onBluetoothDeviceDisconnected() {
-                if (isPlaying()) {
-                    waitForDevice = true;
-                    setPlayOrPause(false);
-                }
-            }
-        });
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF");
-        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON");
-        registerReceiver(mBluetoothStateReceiver, intentFilter);
-    }
-
-    private void registerHeadsetPlugReceiver() {
-        mHeadsetPlugReceiver = new HeadsetPlugReceiver();
-        mHeadsetPlugReceiver.setIHeadsetPlugListener(new HeadsetPlugReceiver.IHeadsetPlugListener() {
-            @Override
-            public void onHeadsetPlugged() {
-                if (waitForDevice) {
-                    setPlayOrPause(true);
-                }
-            }
-
-            @Override
-            public void onHeadsetUnplugged() {
-                if (isPlaying()) {
-                    waitForDevice = true;
-                    setPlayOrPause(false);
-                }
-            }
-        });
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.HEADSET_PLUG");
-        registerReceiver(mHeadsetPlugReceiver, intentFilter);
-    }
 
     private void initMemberData() {
         keyTimes[0] = 0;
@@ -305,8 +247,6 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         }
         stopService(new Intent(MusicService.this, FloatLyricService.class));
         //mMediaSession.release();
-        unregisterReceiver(mBluetoothStateReceiver);
-        unregisterReceiver(mHeadsetPlugReceiver);
         super.onDestroy();
     }
 
@@ -361,7 +301,6 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
             mediaPlayer.reset();
             AudioAttributes.Builder audioAttributesBuilder = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC);
             mediaPlayer.setAudioAttributes(audioAttributesBuilder.build());
-            mediaButtonReceiver = new MediaButton2Receiver(getApplicationContext(), this);
         }
         setMediaPlayerListener();
     }
@@ -952,38 +891,6 @@ public class MusicService extends Service implements MediaButton2Receiver.IKeyDo
         return albumImage;
     }
 
-    @Override
-    public void onKeyDown(int keyAction) {
-        switch (keyAction) {
-            case MediaButton2Receiver.KeyActions.PLAY_ACTION:
-                Log.d(TAG, "播放...");
-                setPlayOrPause(true);
-                break;
-            case MediaButton2Receiver.KeyActions.PAUSE_ACTION:
-                Log.d(TAG, "暂停...");
-                setPlayOrPause(false);
-                break;
-            case MediaButton2Receiver.KeyActions.PREV_ACTION:
-                Log.d(TAG, "上一首...");
-                playPrevOrNext(false);
-                break;
-            case MediaButton2Receiver.KeyActions.NEXT_ACTION:
-                Log.d(TAG, "下一首...");
-                playPrevOrNext(true);
-                break;
-            case MediaButton2Receiver.KeyActions.KEYCODE_HEADSETHOOK:
-                //Log.e(TAG, "keytimes:" + keyTimes[0]);
-                if (keyTimes[0] != 0)
-                    keyTimeThread.interrupt();
-                keyTimeThread = new KeyTimeThread();
-                keyTimeThread.start();
-                if (keyTimes[0] >= 6)
-                    keyTimes[0] = 0;
-                else
-                    keyTimes[0]++;
-                break;
-        }
-    }
 
     public List<MusicUtils.Song> getAllSongList() {
         return allSongList;

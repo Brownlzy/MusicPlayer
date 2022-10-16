@@ -84,7 +84,8 @@ public class MyViewModel extends AndroidViewModel {
 
     public Bitmap getNowAlbumArt() {
         if (nowAlbum == null) {   //获取图片失败，使用默认图片
-            return MusicUtils.getBitmap(MainActivity.mainActivity, R.drawable.ic_baseline_music_note_24);
+            return null;
+            //return MusicUtils.getBitmap(MainActivity.mainActivity, R.drawable.ic_baseline_music_note_24);
         } else {    //成功
             return nowAlbum;
         }
@@ -364,12 +365,11 @@ public class MyViewModel extends AndroidViewModel {
             Log.d(TAG, "onChildrenLoaded:  in songsViewModel: MediaItems size" + children.size());
 
             final MediaControllerCompat mediaController = getMediaController();
-            mediaItemsMutableLiveData.setValue(children);
-            MediaMetadataCompat mediaMetadata = mediaController.getMetadata();
-            if (mediaMetadata == null) {
+            //mediaItemsMutableLiveData.setValue(children);
+            //MediaMetadataCompat mediaMetadata = mediaController.getMetadata();
+            //if (mediaMetadata == null) {
                 //mediaController.getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
-                Log.e(TAG + "=======", String.valueOf(mediaController.getQueue()));
-            }
+            //}
 
             //searchResultsLiveData.setValue(children);
             // Queue up all media items for this simple sample.

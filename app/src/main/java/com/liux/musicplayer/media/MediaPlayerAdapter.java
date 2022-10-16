@@ -27,11 +27,18 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 
+import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.UploadDownloadUtils;
+
+import java.util.ArrayList;
 
 
 /**
@@ -101,6 +108,12 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                     }
                 }
             });
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    play();
+                }
+            });
         }
     }
 
@@ -108,7 +121,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     @Override
     public void playFromMedia(MediaMetadataCompat metadata) {
         mCurrentMedia = metadata;
-        playFile(metadata.getDescription().getMediaUri().getPath());
+        playFile(metadata.getDescription().getMediaUri().toString());
     }
 
     @Override
@@ -135,22 +148,54 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
         mFilename = filename;
 
+        if (FileUtils.isFileExists(mFilename)) {
+            try {
+                initializeMediaPlayer();
+                mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(filename));
+                mMediaPlayer.prepare();
+            } catch (Exception e) {
+                onStop();
+                mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + mFilename, e));
+            }
+        } else if (mFilename.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
+            UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(mContext);
+            uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
+                @Override
+                public void onFileDownloadCompleted(ArrayList<String> array) {
+                    if (!array.get(0).equals(mFilename))
+                        return;
+                    try {
+                        //TODO 更新信息
+                        initializeMediaPlayer();
+                        mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(array.get(1)));
+                        mMediaPlayer.prepare();
+                    } catch (Exception e) {
+                        //throw new RuntimeException("Failed to open file: " + Uri.parse(array.get(1)), e);
+                        onStop();
+                        mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + Uri.parse(array.get(1)), e));
+                    }
+                }
 
-        initializeMediaPlayer();
+                @Override
+                public void onFileDownloading(ArrayList<String> array) {
+                    if (!array.get(0).equals(mFilename))
+                        return;
+                    //Log.e("Downloading",array.get(1));
+                }
 
-        try {
-            mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(filename));
-            //            AssetFileDescriptor assetFileDescriptor = mContext.getAssets().openFd(mFilename);
-//            mMediaPlayer.setDataSource(
-//                    assetFileDescriptor.getFileDescriptor(),
-//                    assetFileDescriptor.getStartOffset(),
-//                    assetFileDescriptor.getLength());
-            mMediaPlayer.prepare();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to open file: " + mFilename, e);
+                @Override
+                public void onFileDownloadError(ArrayList<String> array) {
+                    if (!array.get(0).equals(mFilename))
+                        return;
+                    onStop();
+                    mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + Uri.parse(array.get(1))));
+                }
+            });
+            uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".tmp", mFilename);
+            setNewState(PlaybackStateCompat.STATE_BUFFERING);
+        } else {
+            throw new RuntimeException("Failed to open file: " + mFilename);
         }
-
-        play();
     }
 
     private void startSleepTimer() {
@@ -197,7 +242,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             setNewState(PlaybackStateCompat.STATE_PLAYING);
             //TODO 这样会导致卡顿
             //handler.postDelayed(runnable, DURATION_DELAY);
-            startSleepTimer();
+            //startSleepTimer();
         }
     }
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.SharedPrefs;
 
 public class SplashActivity  extends FragmentActivity {
@@ -17,12 +18,16 @@ public class SplashActivity  extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        SharedPrefs.init(getApplication());
+        MusicLibrary.init();
+        startService(new Intent(SplashActivity.this,SimpleMusicService.class));
     }
 
 
     @Override
     protected void onResume() {
-        super.onResume();/*
+        super.onResume();
+        /*
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -38,12 +43,11 @@ public class SplashActivity  extends FragmentActivity {
                 .postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SharedPrefs.init(getApplication());
-                        MusicLibrary.init();
+                        //startService(new Intent(SplashActivity.this,SimpleMusicService.class));
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
-                }, 100);
+                },100);
     }
 
     @Override

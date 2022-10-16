@@ -202,13 +202,11 @@ public class MainActivity extends FragmentActivity {
             adapter = new PlayingListAdapter(this, myViewModel.getmMediaController().getQueue(), refreshListener);
             playingList.setAdapter(adapter);
             adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
-            viewPager.setCurrentItem(myViewModel.getViewPagerId());
-            //myViewModel.getQueueItemsMutableLiveData().getValue();
-            //myViewModel.getNowPlaying().getValue();
             splashCard = findViewById(R.id.splash_view);
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
             splashCard.setVisibility(View.GONE);
+            return;
         }
         if (where == 1) isPlayList = true;
         if (where == 2) isHome = true;
@@ -284,14 +282,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashHandlers crashHandlers = CrashHandlers.getInstance();
+        crashHandlers.init(MainActivity.this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mainActivity = this;
-        CrashHandlers crashHandlers = CrashHandlers.getInstance();
-        crashHandlers.init(MainActivity.this);
         //SharedPrefs.init(getApplication());
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
-        CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
 
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -308,6 +305,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -388,8 +386,12 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         //两个状态不同，说明Activity被重绘了
-        if (!myViewModel.isSplash && isSplash) HideSplash(3);
-    }
+        if (!myViewModel.isSplash && isSplash) {
+            HideSplash(3);
+        }
+        //if(myViewModel!=null&&viewPager!=null)
+            //setViewPagerToId(myViewModel.getViewPagerId());
+        }
 
     private void removeObserver() {
         //myViewModel.getNowPlaying().removeObserver();
@@ -428,22 +430,17 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (viewPager.getCurrentItem() == 0) {
+        if(isPlayingListShowing){
+            showPlayingList();
+        }else if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else if (viewPager.getCurrentItem() == 1 && songListFragment.multipleChooseFlag) {
+        } else if (viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag||songListFragment.searchFlag)) {
             songListFragment.onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
-    }
-
-    public void setChildFragment() {
-        //if (musicService != null) {
-        //homeFragment.setMusicInfo(musicService.getPlayingList().get(musicService.getNowId()));
-        //setIsLyric(musicService.isAppLyric());
-        //}
     }
 
     private void initViewCompat() {
@@ -669,7 +666,6 @@ public class MainActivity extends FragmentActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 bottomNavigationView.getMenu().getItem(position).setChecked(true);
-                myViewModel.setViewPagerId(position);
                 switch (bottomNavigationView.getMenu().getItem(position).getItemId()) {
                     case R.id.navigation_home:
                     default:
@@ -678,6 +674,7 @@ public class MainActivity extends FragmentActivity {
                             showPlayingList();
                         else
                             setPlayBarTitle(false);
+                        myViewModel.setViewPagerId(0);
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_allSongList);
@@ -685,6 +682,7 @@ public class MainActivity extends FragmentActivity {
                             showPlayingList();
                         else
                             setPlayBarTitle(true);
+                        myViewModel.setViewPagerId(1);
                         break;
                     case R.id.navigation_settings:
                         TabTitle.setText(R.string.title_settings);
@@ -692,6 +690,7 @@ public class MainActivity extends FragmentActivity {
                             showPlayingList();
                         else
                             setPlayBarTitle(true);
+                        myViewModel.setViewPagerId(2);
                         break;
                 }
             }

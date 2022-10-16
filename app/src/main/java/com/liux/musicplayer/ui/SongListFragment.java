@@ -72,7 +72,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
 
     public boolean multipleChooseFlag = false;
-    private boolean searchFlag = false;
+    public boolean searchFlag = false;
     private boolean headerShowFlag = true;
 
     private int lastVisibleItemPosition = 0;// 标记上次滑动位置，初始化默认为0

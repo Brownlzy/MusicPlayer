@@ -95,7 +95,8 @@ public class PlayingListAdapter extends BaseAdapter {
         }
         holder.mItemSinger.setText(" - "+ String.valueOf(data.get(position).getDescription().getSubtitle()).split(" - ")[0]);
             //holder.mItemDuration.setText(MusicUtils.millis2FitTimeSpan(data.get(position).getDescription()));
-        if (FileUtils.isFileExists(data.get(position).getDescription().getExtras().getString("LYRIC_URI")))
+        if (data.get(position).getDescription().getExtras().getString("LYRIC_URI")==null||
+                data.get(position).getDescription().getExtras().getString("LYRIC_URI").equals("null"))
             holder.hasLyric.setVisibility(View.GONE);
         else
             holder.hasLyric.setVisibility(View.VISIBLE);

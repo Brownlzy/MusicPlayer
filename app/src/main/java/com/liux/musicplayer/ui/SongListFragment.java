@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -62,7 +63,7 @@ import java.util.stream.Collectors;
 public class SongListFragment extends Fragment implements View.OnClickListener {
 
     private ListView lvData;
-    private SongListAdapter adapter;
+        private SongListAdapter adapter;
     private int listPosition = -1;
     private int listPositionY = 0;
     private List<Song> mSongList = null;//所有数据
@@ -78,6 +79,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     private boolean scrollFlag = false;// 标记是否滑动
     private MaterialCardView playlistHeader;
     private EditText searchEditText;
+    private ImageView sortWay;
 
     private LinearLayout addSongLayout;
     private LinearLayout editSongLayout;
@@ -296,13 +298,38 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.sortWay:
-                //myViewModel.refreshSongsList();
-                adapter.notifyDataSetChanged();
+                sortSongPopMenu();
                 break;
             case R.id.playThisList:
                 playThisList();
                 break;
         }
+    }
+
+    private void sortSongPopMenu() {
+            PopupMenu popup = new PopupMenu(requireContext(), sortWay);
+            popup.getMenuInflater().inflate(R.menu.sort_way_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.sort_title_up:
+                            break;
+                        case R.id.sort_title_down:
+                            break;
+                        case R.id.sort_artist_up:
+                            break;
+                        case R.id.sort_artist_down:
+                            break;
+                        case R.id.sort_album_up:
+                            break;
+                        case R.id.sort_album_down:
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
     }
 
     private void playThisList() {
@@ -556,7 +583,8 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.edit_list).setOnClickListener(this);
         view.findViewById(R.id.refresh_list).setOnClickListener(this);
         view.findViewById(R.id.search_list).setOnClickListener(this);
-        view.findViewById(R.id.sortWay).setOnClickListener(this);
+        sortWay=view.findViewById(R.id.sortWay);
+        sortWay.setOnClickListener(this);
         view.findViewById(R.id.playThisList).setOnClickListener(this);
         addSongLayout = view.findViewById(R.id.ll_addBar);
         editSongLayout = view.findViewById(R.id.ll_editBar);

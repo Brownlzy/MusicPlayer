@@ -106,4 +106,10 @@
     <string name="title_user">账号</string>
     <string name="item_menu_delete">删除</string>
     <string name="totalCount">共%d首</string>
+    <string name="sort_title_up">按标题升序排列</string>
+    <string name="sort_title_down">按标题降序排列</string>
+    <string name="sort_artist_up">按歌手升序排列</string>
+    <string name="sort_album_up">按专辑升序排列</string>
+    <string name="sort_artist_down">按歌手降序排列</string>
+    <string name="sort_album_down">按专辑降序排列</string>
 </resources>

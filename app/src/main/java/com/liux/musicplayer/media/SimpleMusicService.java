@@ -10,9 +10,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -28,6 +30,7 @@ import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.liux.musicplayer.services.FloatLyricService;
+import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MediaNotificationManager;
 import com.liux.musicplayer.utils.SharedPrefs;
@@ -187,13 +190,6 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
     @Override
     public void onCustomAction(@NonNull String action, Bundle extras, @NonNull Result<Bundle> result) {
         super.onCustomAction(action, extras, result);
-        Log.e(TAG,action);
-        switch (action){
-            case "GET_LYRIC":
-                Bundle bundle=new Bundle();
-                bundle.putSerializable("lyric",lyric);
-                break;
-        }
     }
 
     // MediaSession Callback: Transport Controls -> MediaPlayerAdapter
@@ -207,6 +203,33 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
         private final boolean isRepeatModeOn = false;
         private int mRepeatMode;
         private int mShuffleMode;
+        private TimingThread timingThread=new TimingThread();
+        private class TimingThread extends Thread {
+            public boolean isTiming = false;
+
+            @Override
+            public void run() {
+                super.run();
+                int timing = 0;
+                do {
+                    try {
+                        timing = SharedPrefs.getTiming();
+                        Log.e(TAG, "timing" + timing);
+                        if (timing > 0) {
+                            isTiming = true;
+                            Thread.sleep(60000);
+                            timing--;
+                            SharedPrefs.putTiming(timing);
+                            Log.e(TAG,"Timing:"+timing);
+                        }
+                    } catch (InterruptedException | NullPointerException e) {
+                        return;
+                    }
+                } while (timing > 0);
+                onStop();
+                isTiming = false;
+            }
+        }
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
@@ -226,26 +249,44 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description, int index) {
-            onRemoveQueueItem(description);
-            MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
-            if(index==-2){
-                mPlaylist.add(++mQueueIndex,queueItem);
-                mSession.setQueue(mPlaylist);
-                mPreparedMedia=null;
-                onPlay();
-                MusicLibrary.savePlayingList(mPlaylist);
-                return;
-            }else if(index==-1){
-                mPlaylist.add(mQueueIndex+1,queueItem);
+            if(queueItemHashMap.containsKey(description.getMediaUri().getPath())){
+                if(index==-2){
+                    onSkipToQueueItem(mPlaylist.indexOf(queueItemHashMap.get(description.getMediaUri().getPath())));
+                }else {
+                    onRemoveQueueItem(description);
+                    MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+                    if(index==-1){
+                        mPlaylist.add(mQueueIndex + 1, queueItem);
+                    }else {
+                        mPlaylist.add(index, queueItem);
+                    }
+                    if (mPlaylistOriginal.size() != 0)
+                        mPlaylistOriginal.add(queueItem);
+                    mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
+                    mSession.setQueue(mPlaylist);
+                    MusicLibrary.savePlayingList(mPlaylist);
+                }
             }else {
-                mPlaylist.add(index,queueItem);
+                MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+                queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
+                if (index == -2) {
+                    mPlaylist.add(++mQueueIndex, queueItem);
+                    mSession.setQueue(mPlaylist);
+                    mPreparedMedia = null;
+                    onPlay();
+                    MusicLibrary.savePlayingList(mPlaylist);
+                    return;
+                } else if (index == -1) {
+                    mPlaylist.add(mQueueIndex + 1, queueItem);
+                } else {
+                    mPlaylist.add(index, queueItem);
+                }
+                if (mPlaylistOriginal.size() != 0)
+                    mPlaylistOriginal.add(queueItem);
+                mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
+                mSession.setQueue(mPlaylist);
+                MusicLibrary.savePlayingList(mPlaylist);
             }
-            if(mPlaylistOriginal.size()!=0)
-                mPlaylistOriginal.add(queueItem);
-            mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
-            mSession.setQueue(mPlaylist);
-            MusicLibrary.savePlayingList(mPlaylist);
         }
 
         @Override
@@ -316,6 +357,21 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 mSession.setActive(true);
             }
 
+        }
+
+        @Override
+        public void onCommand(String command, Bundle extras, ResultReceiver cb) {
+            Log.e(TAG,command);
+            Bundle bundle=new Bundle();
+            switch (command){
+                case "GET_LYRIC":
+                    bundle.putSerializable("lyric",lyric);
+                    break;
+                case "IS_TIMING":
+                    bundle.putBoolean("IS_TIMING",timingThread.isTiming);
+                    break;
+            }
+            cb.send(0,bundle);
         }
 
         @Override
@@ -589,6 +645,12 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     SharedPrefs.saveQueueTitle("playingList");
                     MusicLibrary.savePlayingList(mPlaylist);
                     break;
+                case "TIMING":
+                    if(extras.getBoolean("isStart",false))
+                        startTiming();
+                    else
+                        stopTiming();
+                    break;
             }
             super.onCustomAction(action, extras);
         }
@@ -617,6 +679,22 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
 
         private boolean isReadyToPlay() {
             return (!mPlaylist.isEmpty());
+        }
+
+        public void startTiming() {
+            if (timingThread == null) {
+                timingThread = new TimingThread();
+                timingThread.start();
+            } else {
+                timingThread.interrupt();
+                timingThread = new TimingThread();
+                timingThread.start();
+            }
+        }
+
+        public void stopTiming() {
+            if (timingThread != null)
+                timingThread.interrupt();
         }
 
     }

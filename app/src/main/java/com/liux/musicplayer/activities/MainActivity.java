@@ -289,7 +289,7 @@ public class MainActivity extends FragmentActivity {
         mainActivity = this;
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(MainActivity.this);
-        SharedPrefs.init(getApplication());
+        //SharedPrefs.init(getApplication());
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
 

@@ -146,4 +146,12 @@ public class SharedPrefs {
     public static void saveQueueTitle(String queueTitle) {
         sharedPreferencesEditor.putString("QueueTitle",queueTitle).apply();
     }
+
+    public static int getTiming() {
+        return sharedPreferences.getInt("timing",0);
+    }
+
+    public static void putTiming(int timing) {
+        sharedPreferencesEditor.putInt("timing",timing).apply();
+    }
 }

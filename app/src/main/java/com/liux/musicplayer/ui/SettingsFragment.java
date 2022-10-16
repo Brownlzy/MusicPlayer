@@ -18,6 +18,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.ResultReceiver;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.util.Log;
@@ -197,13 +200,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         playingList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         initPreferenceListener();
-        try {
-            //if (!((MainActivity) getActivity()).getMusicService().isTiming())
-            //    seekBarTiming.setValue(0);
-        } catch (Exception ignored) {
-        }
+        //获取当前是否在倒计时
+        myViewModel.getmMediaController().sendCommand("IS_TIMING",null,timingResult);
     }
 
+    private final ResultReceiver timingResult=new ResultReceiver(new Handler(Looper.getMainLooper())){
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if(!resultData.getBoolean("IS_TIMING",false))
+                seekBarTiming.setValue(0);
+        }
+    };
     private void initPreferenceListener() {
         crashMe.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -385,8 +392,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if ((int) newValue > 0) {
+                    Bundle bundle=new Bundle();
+                    bundle.putBoolean("isStart",true);
+                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("TIMING",bundle);
                     //((MainActivity) getActivity()).getMusicService().startTiming();
                 } else {
+                    Bundle bundle=new Bundle();
+                    bundle.putBoolean("isStart",false);
+                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("TIMING",bundle);
                     //((MainActivity) getActivity()).getMusicService().stopTiming();
                 }
                 return true;

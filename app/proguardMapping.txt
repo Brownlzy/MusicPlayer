@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: aec0855
-# pg_map_hash: SHA-256 aec08558fb39bf726622d4a0411dd72a39e3007309a9481214af3aa043340dfd
+# pg_map_id: cf123f2
+# pg_map_hash: SHA-256 cf123f2e426a994281cf736480f063dc197ede05d37dc03ad6efba9d747b6abf
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -34064,7 +34064,7 @@ com.google.gson.stream.MalformedJsonException -> com.google.gson.stream.Malforme
     33:34:void <init>(java.lang.String,java.lang.Throwable) -> <init>
     37:38:void <init>(java.lang.Throwable) -> <init>
 com.liux.musicplayer.activities.MainActivity -> com.liux.musicplayer.activities.MainActivity:
-    66:882:void <init>() -> <init>
+    66:880:void <init>() -> <init>
     198:229:void HideSplash(int) -> HideSplash
     66:66:com.liux.musicplayer.viewmodels.MyViewModel access$000(com.liux.musicplayer.activities.MainActivity) -> access$000
     66:66:android.widget.ListView access$100(com.liux.musicplayer.activities.MainActivity) -> access$100
@@ -34120,8 +34120,8 @@ com.liux.musicplayer.activities.MainActivity -> com.liux.musicplayer.activities.
     250:252:void setSeekBarMax(int) -> setSeekBarMax
     751:753:void setViewPagerToId(int) -> setViewPagerToId
     584:598:void showPlayingList() -> showPlayingList
-    808:816:void startProgressBar() -> startProgressBar
-    819:821:void stopProgressBar() -> stopProgressBar
+    808:814:void startProgressBar() -> startProgressBar
+    817:819:void stopProgressBar() -> stopProgressBar
 com.liux.musicplayer.activities.MainActivity$1 -> com.liux.musicplayer.activities.MainActivity$1:
     125:125:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
     128:129:void deleteThis(android.support.v4.media.MediaDescriptionCompat) -> deleteThis
@@ -34177,8 +34177,8 @@ com.liux.musicplayer.activities.MainActivity$21 -> com.liux.musicplayer.activiti
     706:706:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
     709:721:boolean onNavigationItemSelected(android.view.MenuItem) -> onNavigationItemSelected
 com.liux.musicplayer.activities.MainActivity$22 -> com.liux.musicplayer.activities.MainActivity$22:
-    882:882:void <init>(com.liux.musicplayer.activities.MainActivity,android.os.Looper) -> <init>
-    885:889:void handleMessage(android.os.Message) -> handleMessage
+    880:880:void <init>(com.liux.musicplayer.activities.MainActivity,android.os.Looper) -> <init>
+    883:887:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.activities.MainActivity$3 -> com.liux.musicplayer.activities.MainActivity$3:
     163:163:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
     163:163:void onChanged(java.lang.Object) -> onChanged
@@ -34210,13 +34210,13 @@ com.liux.musicplayer.activities.MainActivity$9 -> com.liux.musicplayer.activitie
     471:471:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
     474:474:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.activities.MainActivity$ProgressThread -> com.liux.musicplayer.activities.MainActivity$ProgressThread:
-    823:825:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
-    823:823:void <init>(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.activities.MainActivity$1) -> <init>
-    833:833:boolean isPaused() -> isPaused
-    846:853:void onPause() -> onPause
-    829:830:void pauseThread() -> pauseThread
-    838:842:void resumeThread() -> resumeThread
-    857:877:void run() -> run
+    821:823:void <init>(com.liux.musicplayer.activities.MainActivity) -> <init>
+    821:821:void <init>(com.liux.musicplayer.activities.MainActivity,com.liux.musicplayer.activities.MainActivity$1) -> <init>
+    831:831:boolean isPaused() -> isPaused
+    844:851:void onPause() -> onPause
+    827:828:void pauseThread() -> pauseThread
+    836:840:void resumeThread() -> resumeThread
+    855:875:void run() -> run
 com.liux.musicplayer.activities.MainActivity$ScreenSlidePagerAdapter -> com.liux.musicplayer.activities.MainActivity$ScreenSlidePagerAdapter:
     773:775:void <init>(com.liux.musicplayer.activities.MainActivity,androidx.fragment.app.FragmentActivity) -> <init>
     779:789:androidx.fragment.app.Fragment createFragment(int) -> createFragment

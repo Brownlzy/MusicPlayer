@@ -149,7 +149,7 @@ public class MainActivity extends FragmentActivity {
                     listPosition = -1;
                     listPositionY = 0;
                 }
-                TotalCount.setText(getString(R.string.totalCount).replace("%d",String.valueOf(queueItems.size())));
+                TotalCount.setText(getString(R.string.totalCount).replace("%d", String.valueOf(queueItems.size())));
                 adapter = new PlayingListAdapter(MainActivity.this, queueItems, refreshListener);
                 playingList.setAdapter(adapter);
                 if (myViewModel.getmMediaController().getMetadata() != null)
@@ -198,7 +198,7 @@ public class MainActivity extends FragmentActivity {
         if (where == 3) {
             initMainActivity();
             myViewModel.getPlayOrder();
-            TotalCount.setText(getString(R.string.totalCount).replace("%d",String.valueOf(myViewModel.getmMediaController().getQueue().size())));
+            TotalCount.setText(getString(R.string.totalCount).replace("%d", String.valueOf(myViewModel.getmMediaController().getQueue().size())));
             adapter = new PlayingListAdapter(this, myViewModel.getmMediaController().getQueue(), refreshListener);
             playingList.setAdapter(adapter);
             adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
@@ -215,7 +215,7 @@ public class MainActivity extends FragmentActivity {
         if (myViewModel.isSplash && isHome && isPlayList) {
             isSplash = false;
             myViewModel.isSplash = false;
-            TotalCount.setText(getString(R.string.totalCount).replace("%d",String.valueOf(myViewModel.getmMediaController().getQueue().size())));
+            TotalCount.setText(getString(R.string.totalCount).replace("%d", String.valueOf(myViewModel.getmMediaController().getQueue().size())));
             adapter = new PlayingListAdapter(this, myViewModel.getmMediaController().getQueue(), refreshListener);
             playingList.setAdapter(adapter);
             if (myViewModel.getmMediaController().getMetadata() != null)
@@ -456,7 +456,7 @@ public class MainActivity extends FragmentActivity {
         playProgressAllText = findViewById(R.id.allProgress);
         playBarTitle = findViewById(R.id.musicPlaying);
         TabTitle = findViewById(R.id.tabText);
-        TotalCount=findViewById(R.id.totalCount);
+        TotalCount = findViewById(R.id.totalCount);
         playButton = findViewById(R.id.playPause);
         PlayBarOrder = findViewById(R.id.playOrder);
         playBarPrev = findViewById(R.id.playPrevious);
@@ -805,13 +805,11 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void startProgressBar() {
-        if (viewPager.getCurrentItem() == 0) {
-            if (progressThread == null) {
-                progressThread = new ProgressThread();
-                progressThread.start();
-            } else if (progressThread.isPaused()) {
-                progressThread.resumeThread();
-            }
+        if (progressThread == null) {
+            progressThread = new ProgressThread();
+            progressThread.start();
+        } else if (progressThread.isPaused()) {
+            progressThread.resumeThread();
         }
     }
 

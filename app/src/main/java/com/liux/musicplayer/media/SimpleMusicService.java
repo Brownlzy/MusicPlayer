@@ -513,7 +513,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 mPreparedMedia = null;
                 onPlay();
             }else if(mRepeatMode==PlaybackStateCompat.REPEAT_MODE_NONE){
-                if(mQueueIndex>=mPlaylist.size())
+                if(mQueueIndex==mPlaylist.size()-1)
                     onStop();
                 else {
                     mQueueIndex++;

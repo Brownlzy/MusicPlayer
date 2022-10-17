@@ -19,6 +19,7 @@ import androidx.preference.PreferenceManager;
 import com.blankj.utilcode.util.TimeUtils;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.models.User;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -220,6 +221,8 @@ public class CrashHandlers implements UncaughtExceptionHandler {
         sb.append("\r\n");
         sb.append("\r\n");
         sb.append("************************************************" + time + "****************************************" + "\r\n");
+        sb.append("\r\n");
+        sb.append("User:"+(User.isLogin?User.getUserHash(User.userData.userName):"UnLogin"));
         sb.append("\r\n");
         for (Map.Entry<String, String> entry : infos.entrySet()) {
             String key = entry.getKey();

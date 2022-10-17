@@ -801,7 +801,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setNewAppearance(boolean isTrue) {
-        if (isTrue) {
+        if (User.isLogin&&isTrue) {
             backImageView.setVisibility(View.VISIBLE);
             findViewById(R.id.realtimeBlurView).setVisibility(View.VISIBLE);
             findViewById(R.id.blur_playing_list).setVisibility(View.VISIBLE);

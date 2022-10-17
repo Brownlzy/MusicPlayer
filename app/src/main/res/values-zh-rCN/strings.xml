@@ -94,7 +94,7 @@
     <string name="title_crashed">糟糕，我崩溃了！</string>
     <string name="crashed_info">刚才，在一股神秘力量的影响下，我崩溃了！现在我急需你的配合以帮助我反击！幸好我已经把敌人的行踪记录下来了，点击下面的发送错误报告，等我好消息！</string>
     <string name="send_error_log">发送错误报告</string>
-    <string name="lastErrorLog">最新错误日志</string>
+    <string name="lastErrorLog">发送最新错误日志</string>
     <string name="lastCrash">上次崩溃</string>
     <string name="gotoSettings">前往设置页</string>
     <string name="crashMe">崩溃测试</string>
@@ -127,4 +127,5 @@
     <string name="rsa_private_key">RSA私钥</string>
     <string name="rsa_decode_test">RSA公钥解密</string>
     <string name="rsa_encode_test">RSA私钥加密</string>
+    <string name="title_rsa">RSA工具</string>
 </resources>

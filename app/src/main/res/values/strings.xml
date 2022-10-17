@@ -93,7 +93,7 @@
     <string name="title_crashed">Oops, I\'m crashed!</string>
     <string name="crashed_info">Just now, under the influence of a mysterious force, I collapsed! Now I need your cooperation to help me fight back! Fortunately, I have recorded the whereabouts of the enemy. Click below to send an error report and wait for my good news!</string>
     <string name="send_error_log">Send Error Log</string>
-    <string name="lastErrorLog">Last Error Log</string>
+    <string name="lastErrorLog">Send Last Error Log</string>
     <string name="lastCrash">Last Crash</string>
     <string name="gotoSettings">Goto Settings</string>
     <string name="crashMe">Crash Test</string>
@@ -126,4 +126,5 @@
     <string name="inputUserName">Input your username</string>
     <string name="copyToRegister">Copy this and Send to me</string>
     <string name="notification_downloading_splash_pic">Downloading Splash Picture</string>
+    <string name="title_rsa">RSA</string>
 </resources>

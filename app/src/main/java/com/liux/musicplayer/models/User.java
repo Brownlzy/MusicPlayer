@@ -109,7 +109,7 @@ public class User {
                     userDataJson = gson.fromJson(result, UserDataJson.class);
                     if(checkResult(context)){
                         Message message = Message.obtain();
-                        message.obj = "登录成功！\n->请等待通知栏下载进度完成后重启本应用<-";
+                        message.obj = "登录成功！请等待通知栏下载进度完成后重启本应用";
                         handler.sendMessage(message);
                     }else {
                         Message message = Message.obtain();
@@ -232,7 +232,7 @@ public class User {
                                 if (downloadFileName != null) {
                                     downloadFileName = downloadFileName.substring(downloadFileName.lastIndexOf('/') + 1);
                                     //Toast.makeText(context, downloadFileName, Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(context, "专属开屏页图片下载完成，\n现在可以重启！", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "专属开屏页图片下载完成，现在可以重启！", Toast.LENGTH_SHORT).show();
 
                                     //android.os.Process.killProcess(android.os.Process.myPid());
                                 }

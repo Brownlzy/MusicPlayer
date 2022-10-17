@@ -587,6 +587,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                             break;
                     }
                     mPlaylist.clear();
+                    mPlaylistOriginal.clear();
                     queueItemHashMap.clear();
                     for(MediaDescriptionCompat description:newPlayList) {
                         MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
@@ -604,6 +605,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 case "NEW_PLAYLIST":
                     List<MediaDescriptionCompat> PlayList=MusicLibrary.getNewPlayingList(extras.getString("QueueTitle","playingList"));
                     mPlaylist.clear();
+                    mPlaylistOriginal.clear();
                     queueItemHashMap.clear();
                     for(MediaDescriptionCompat description:PlayList) {
                         MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
@@ -637,6 +639,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     mQueueIndex=-1;
                     mPreparedMedia=null;
                     mPlaylist.clear();
+                    mPlaylistOriginal.clear();
                     queueItemHashMap.clear();
                     mSession.setMetadata(null);
                     mSession.setQueue(mPlaylist);

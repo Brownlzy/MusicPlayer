@@ -177,6 +177,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         findPreference("debug").setVisible(false);
+        findPreference("rsa").setVisible(false);
         //绑定控件
         switch_new_appearance = findPreference("isNewAppearance");
         switch_storage_permission = findPreference("storage_permission");
@@ -531,6 +532,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     findPreference("debug").setVisible(true);
+                    if(User.isLogin&&User.userData.level<=0)
+                        findPreference("rsa").setVisible(true);
                 }
             });
         }

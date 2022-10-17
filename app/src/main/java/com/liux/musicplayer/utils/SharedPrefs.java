@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +29,20 @@ public class SharedPrefs {
         context = application.getApplicationContext();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferencesEditor = sharedPreferences.edit();
+    }
+
+    public static int getVersionCode(){
+       return sharedPreferences.getInt("versionCode",-1);
+    }
+
+    public static void putVersionCode(){
+        int code=-1;
+        try {
+            code = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        sharedPreferencesEditor.putInt("versionCode",code).apply();
     }
 
     public static void saveSleepTimerToggle(boolean isSleepTimerEnabled) {

@@ -83,6 +83,13 @@
             app:icon="@drawable/ic_round_account_circle_24"
             app:title="@string/user_unlogin"/>
 
+        <Preference
+            app:key="lastErrorLog"
+            app:icon="@drawable/ic_round_bug_report_24"
+            android:defaultValue="null"
+            app:title="@string/lastErrorLog"
+            app:defaultValue="null" />
+
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/title_about">
 
@@ -145,10 +152,24 @@
             app:defaultValue="false" />
 
         <Preference
-            app:key="lastErrorLog"
-            android:defaultValue="null"
-            app:title="@string/lastErrorLog"
-            app:defaultValue="null" />
+            app:icon="@drawable/ic_baseline_folder_24"
+            app:key="setMainFolder"
+            app:title="@string/mainfolder" />
+
+        <CheckBoxPreference
+            app:key="isMoveMusic"
+            app:title="@string/isMoveMusic"
+            app:summary="@string/isMoveMusic_summary" />
+
+        <EditTextPreference
+            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
+            app:key="mainFolder"
+            app:title="@string/mainfolder" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:key="rsa"
+        app:title="@string/title_rsa">
 
         <EditTextPreference
             app:key="rsa_private_key"
@@ -172,22 +193,6 @@
             app:title="@string/rsa_decode_test"
             android:persistent="false"/>
 
-        <Preference
-            app:icon="@drawable/ic_baseline_folder_24"
-            app:key="setMainFolder"
-            app:title="@string/mainfolder" />
-
-        <CheckBoxPreference
-            app:key="isMoveMusic"
-            app:title="@string/isMoveMusic"
-            app:summary="@string/isMoveMusic_summary" />
-
-        <EditTextPreference
-            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
-            app:key="mainFolder"
-            app:title="@string/mainfolder" />
-
     </PreferenceCategory>
-
 
 </PreferenceScreen>

@@ -81,8 +81,8 @@
     <string name="timing">定时播放</string>
     <string name="timing_summary">设定播放倒计时（单位：分钟）</string>
     <string name="experiment">实验室</string>
-    <string name="newAppearance">启用新外观</string>
-    <string name="newAppearance_summary">启用这个选项开启专辑图片背景</string>
+    <string name="newAppearance">启用模糊背景</string>
+    <string name="newAppearance_summary">启用这个选项开启专辑图片模糊背景</string>
     <string name="title_cacheList">缓存列表</string>
     <string name="title_checkUpdate">检查更新</string>
     <string name="title_update">软件更新</string>
@@ -112,4 +112,19 @@
     <string name="sort_album_up">按专辑升序排列</string>
     <string name="sort_artist_down">按歌手降序排列</string>
     <string name="sort_album_down">按专辑降序排列</string>
+    <string name="user_logined">已登录</string>
+    <string name="logout">注销</string>
+    <string name="sure">确认</string>
+    <string name="sure_to_logout">你真的要注销吗？</string>
+    <string name="userName">用户名：</string>
+    <string name="userLevel">许可级别：</string>
+    <string name="loginTime">登录时间：</string>
+    <string name="expiredTime">过期时间：</string>
+    <string name="inputUserName">请输入用户名</string>
+    <string name="copyToRegister">复制下面的字符串并发送给我，请勿错漏</string>
+    <string name="notification_downloading_splash_pic">正在下载专属开屏图片</string>
+    <string name="rsa_public_key">RSA公钥</string>
+    <string name="rsa_private_key">RSA私钥</string>
+    <string name="rsa_decode_test">RSA公钥解密</string>
+    <string name="rsa_encode_test">RSA私钥加密</string>
 </resources>

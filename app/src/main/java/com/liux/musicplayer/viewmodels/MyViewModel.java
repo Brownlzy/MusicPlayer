@@ -104,6 +104,7 @@ public class MyViewModel extends AndroidViewModel {
     public MyViewModel(@NonNull Application application) {
         super(application);
         //refreshSongsList();
+        SharedPrefs.init(getApplication());
         playOrder = SharedPrefs.getPlayOrder();
         MainActivity.mainActivity.setPlayOrder(playOrder);
         connectToMediaPlaybackService();

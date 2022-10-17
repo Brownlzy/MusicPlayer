@@ -24,6 +24,7 @@ import android.os.ResultReceiver;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -44,16 +45,21 @@ import androidx.preference.SeekBarPreference;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.RegexUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.utils.CrashHandlers;
+import com.liux.musicplayer.utils.RSAUtils;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -74,13 +80,18 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private Preference lastErrorLog;
     private Preference lastCrash;
     private Preference crashMe;
+    private Preference About;
+    private Preference userLogin;
+    private Preference Close;
+    private EditTextPreference rsaPublicKey;
+    private EditTextPreference rsaDecodeTest;
+    private EditTextPreference rsaPrivateKey;
+    private EditTextPreference rsaEncodeTest;
     private EditTextPreference playingList;
     private EditTextPreference allSongList;
     private EditTextPreference webAllSongList;
     private EditTextPreference MainFolder;
     private EditTextPreference cacheList;
-    private Preference About;
-    private Preference Close;
     private SeekBarPreference seekBarTiming;
 
     private final static String TAG = "SettingFragment";
@@ -173,6 +184,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_web_playlist = findPreference("isUseWebPlayList");
         switch_desk_lyric = findPreference("isShowLyric");
         switch_desk_lyric_lock = findPreference("deskLyricLock");
+        rsaPublicKey = findPreference("rsa_public_key");
+        rsaDecodeTest = findPreference("rsa_decode_test");
+        rsaPrivateKey = findPreference("rsa_private_key");
+        rsaEncodeTest = findPreference("rsa_encode_test");
         MainFolder = findPreference("mainFolder");
         cacheList = findPreference("cacheList");
         clickGotoAppDetails = findPreference("gotoAppDetails");
@@ -182,11 +197,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         playingList = findPreference("playingList");
         setMainFolder = findPreference("setMainFolder");
         webAllSongList = findPreference("webAllSongList");
-        allSongList=findPreference("allSongList");
+        allSongList = findPreference("allSongList");
         About = findPreference("info");
         Close = findPreference("exit");
+        userLogin = findPreference("user");
         seekBarTiming = findPreference("timing");
+
         prefs.registerOnSharedPreferenceChangeListener(this); // 注册
+
         if (checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -199,19 +217,96 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         playingList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
-        initPreferenceListener();
         //获取当前是否在倒计时
-        myViewModel.getmMediaController().sendCommand("IS_TIMING",null,timingResult);
+        myViewModel.getmMediaController().sendCommand("IS_TIMING", null, timingResult);
+        if (User.isLogin){
+            userLogin.setTitle(User.userData.userName);
+        }else{
+            userLogin.setTitle(R.string.user_unlogin);
+            findPreference("exp").setVisible(false);
+            switch_new_appearance.setChecked(false);
+        }
+        //else if(SHA256Util.getSHA256StrJava(userRecord+getActivity().getPackageName()).equals())
+        if (prefs.getString("rsa_private_key", "").equals("")
+                || prefs.getString("rsa_public_key", "").equals("")) {
+            try {
+                Map<String, String> keMap = RSAUtils.genKeyPair();
+                rsaPublicKey.setText(keMap.get("publicKey"));
+                rsaPrivateKey.setText(keMap.get("privateKey"));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        initPreferenceListener();
     }
 
-    private final ResultReceiver timingResult=new ResultReceiver(new Handler(Looper.getMainLooper())){
+    private final ResultReceiver timingResult = new ResultReceiver(new Handler(Looper.getMainLooper())) {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            if(!resultData.getBoolean("IS_TIMING",false))
+            if (!resultData.getBoolean("IS_TIMING", false))
                 seekBarTiming.setValue(0);
         }
     };
+
     private void initPreferenceListener() {
+        rsaDecodeTest.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                try {
+                    Toast.makeText(getContext(), RSAUtils.publicKeyDecrypt((String) newValue, rsaPublicKey.getText()), Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "RSA Test Failed", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+        rsaEncodeTest.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                try {
+                    //Toast.makeText(getContext(), RSAUtils.privateKeyEncrypt((String) newValue,rsaPrivateKey.getText()), Toast.LENGTH_SHORT).show();
+                    rsaEncodeTest.setText(RSAUtils.privateKeyEncrypt((String) newValue, rsaPrivateKey.getText()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "RSA Test Failed", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+        userLogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                if(User.isLogin){
+                    AlertDialog alertInfoDialog = null;
+                    alertInfoDialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.user_logined)
+                            .setMessage(getString(R.string.userName)+User.userData.userName+"\n"
+                                        +getString(R.string.userLevel)+User.userData.level+"\n"
+                                        +getString(R.string.loginTime)+ TimeUtils.millis2Date(Long.parseLong(User.userData.loginTime))+"\n"
+                                        +getString(R.string.expiredTime)+TimeUtils.millis2Date(Long.parseLong(User.userData.expired))
+                            )
+                            .setIcon(R.drawable.ic_round_account_circle_24)
+                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .setNeutralButton(R.string.logout, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    User.logout(getContext());
+                                }
+                            })
+                            .create();
+                    alertInfoDialog.show();
+                }else {
+                    showLoginDialog();
+                }
+                return false;
+            }
+        });
         crashMe.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -241,18 +336,23 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_new_appearance.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                ((MainActivity) getActivity()).setNewAppearance((boolean) newValue);
-                return true;
+                if(User.isLogin) {
+                    ((MainActivity) getActivity()).setNewAppearance((boolean) newValue);
+                    return true;
+                }else {
+                    Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
         });
         switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 Intent lyricIntent;
-                if((boolean) newValue)
-                    lyricIntent =new Intent("com.liux.musicplayer.OPEN_LYRIC");
+                if ((boolean) newValue)
+                    lyricIntent = new Intent("com.liux.musicplayer.OPEN_LYRIC");
                 else
-                    lyricIntent =new Intent("com.liux.musicplayer.CLOSE_LYRIC");
+                    lyricIntent = new Intent("com.liux.musicplayer.CLOSE_LYRIC");
                 getActivity().sendBroadcast(lyricIntent);
                 return true;
             }
@@ -261,10 +361,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 Intent lyricIntent;
-                if((boolean) newValue)
-                    lyricIntent =new Intent("com.liux.musicplayer.LOCK_LYRIC");
+                if ((boolean) newValue)
+                    lyricIntent = new Intent("com.liux.musicplayer.LOCK_LYRIC");
                 else
-                    lyricIntent =new Intent("com.liux.musicplayer.UNLOCK_LYRIC");
+                    lyricIntent = new Intent("com.liux.musicplayer.UNLOCK_LYRIC");
                 getActivity().sendBroadcast(lyricIntent);
                 return true;
             }
@@ -392,14 +492,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if ((int) newValue > 0) {
-                    Bundle bundle=new Bundle();
-                    bundle.putBoolean("isStart",true);
-                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("TIMING",bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isStart", true);
+                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("TIMING", bundle);
                     //((MainActivity) getActivity()).getMusicService().startTiming();
                 } else {
-                    Bundle bundle=new Bundle();
-                    bundle.putBoolean("isStart",false);
-                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("TIMING",bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isStart", false);
+                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("TIMING", bundle);
                     //((MainActivity) getActivity()).getMusicService().stopTiming();
                 }
                 return true;
@@ -414,31 +514,32 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        AlertDialog alertInfoDialog = null;
-        alertInfoDialog = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.app_name)
-                .setMessage(getString(R.string.appInfo).replace("\\n", "\n")
-                        + versionName)
-                .setIcon(R.mipmap.ic_launcher)
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertInfoDialog = null;
+        alertInfoDialog = new AlertDialog.Builder(getContext());
+        alertInfoDialog.setTitle(R.string.app_name);
+        alertInfoDialog.setMessage(getString(R.string.appInfo).replace("\\n", "\n")
+                        + versionName);
+        alertInfoDialog.setIcon(R.mipmap.ic_launcher);
+        alertInfoDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                })
-                .setNegativeButton(R.string.title_debug, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        findPreference("debug").setVisible(true);
-                    }
-                })
-                .setNeutralButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
+                });
+        if(User.isLogin&&User.userData.level<=2) {
+            alertInfoDialog.setNegativeButton(R.string.title_debug, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    findPreference("debug").setVisible(true);
+                }
+            });
+        }
+        alertInfoDialog.setNeutralButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         checkUpdate();
                     }
-                })
-                .create();
+                });
         alertInfoDialog.show();
     }
 
@@ -479,6 +580,59 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             }
 
         });
+    }
+
+    public void showLoginDialog() {
+        /*@setView 装入一个EditView
+         */
+        final EditText editText = new EditText(getContext());
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
+        inputDialog.setTitle(R.string.inputUserName).setView(editText);
+        inputDialog.setIcon(R.drawable.ic_round_account_circle_24);
+        inputDialog.setPositiveButton("登录",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(editText.getText().toString().trim().length()>=4)
+                            User.login(getContext(),editText.getText().toString().trim());
+                        else
+                            Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        inputDialog.setNeutralButton("注册",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(editText.getText().toString().trim().length()>=4){
+                            showRegisterDialog(editText.getText().toString().trim());
+                        } else
+                            Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        inputDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        inputDialog.show();
+    }
+
+    private void showRegisterDialog(String userName) {
+        final EditText editText = new EditText(getContext());
+        editText.setOnClickListener(null);
+        editText.setText(User.getUserHash(userName));
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
+        inputDialog.setTitle(R.string.copyToRegister).setView(editText);
+        inputDialog.setIcon(R.drawable.ic_round_account_circle_24);
+        inputDialog.setPositiveButton(R.string.confirm,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        inputDialog.show();
     }
 
     static class UpdateInfo {

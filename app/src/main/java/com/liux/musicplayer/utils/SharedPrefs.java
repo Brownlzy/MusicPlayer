@@ -10,6 +10,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.models.User;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,6 +56,19 @@ public class SharedPrefs {
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         return gson.fromJson(songListJson, songListType);
+    }
+
+    public static User.UserData getUserData() {
+        String userDataJson;
+        userDataJson = sharedPreferences.getString("user","");
+        Gson gson = new Gson();
+        return gson.fromJson(userDataJson, User.UserData.class);
+    }
+
+    public static void saveUserData(User.UserData userData) {
+        Gson gson = new Gson();
+        String userDataJson = gson.toJson(userData, User.UserData.class);
+        sharedPreferencesEditor.putString("user",userDataJson).apply();
     }
 /*
     public static void savePlayingList(List<Song> songs) {

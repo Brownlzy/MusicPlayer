@@ -51,18 +51,22 @@
             app:title="@string/deskLyricLock"
             app:dependency="layer_permission" />
 
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/experiment">
-
         <CheckBoxPreference
             app:key="isNewAppearance"
             app:title="@string/newAppearance"
+            app:icon="@drawable/ic_round_photo_album_24"
             app:summary="@string/newAppearance_summary" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="exp"
+        app:title="@string/experiment">
 
         <CheckBoxPreference
             app:key="isUseWebPlayList"
             app:enabled="true"
+            app:icon="@drawable/ic_round_earth_24"
             app:title="@string/isUseWebPlayList"
             app:summary="@string/isUseWebPlayList_summary" />
 
@@ -145,6 +149,28 @@
             android:defaultValue="null"
             app:title="@string/lastErrorLog"
             app:defaultValue="null" />
+
+        <EditTextPreference
+            app:key="rsa_private_key"
+            app:icon="@drawable/ic_round_key_24"
+            app:title="@string/rsa_private_key"
+            app:useSimpleSummaryProvider="true"/>
+
+        <EditTextPreference
+            app:key="rsa_encode_test"
+            app:title="@string/rsa_encode_test"
+            android:persistent="false"/>
+
+        <EditTextPreference
+            app:key="rsa_public_key"
+            app:icon="@drawable/ic_round_key_24"
+            app:title="@string/rsa_public_key"
+            app:useSimpleSummaryProvider="true"/>
+
+        <EditTextPreference
+            app:key="rsa_decode_test"
+            app:title="@string/rsa_decode_test"
+            android:persistent="false"/>
 
         <Preference
             app:icon="@drawable/ic_baseline_folder_24"

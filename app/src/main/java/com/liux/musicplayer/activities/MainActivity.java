@@ -11,7 +11,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -54,6 +56,7 @@ import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.SimpleMusicService;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SongListFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
@@ -61,6 +64,7 @@ import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
+import java.io.File;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity {
@@ -87,7 +91,7 @@ public class MainActivity extends FragmentActivity {
     private FragmentStateAdapter pagerAdapter;
     private LinearLayout playProgressLayout;
     private LinearLayout musicPlayingLayout;
-    private RelativeLayout playingListLayout;
+    private LinearLayout playingListLayout;
     private ListView playingList;
     private TextView playProgressNowText;
     private TextView playProgressAllText;
@@ -287,6 +291,9 @@ public class MainActivity extends FragmentActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mainActivity = this;
+        if(User.isLogin)
+            ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    User.userData.userName+User.userData.loginTime)));
         //SharedPrefs.init(getApplication());
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
 

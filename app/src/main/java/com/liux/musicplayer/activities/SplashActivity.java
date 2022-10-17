@@ -1,16 +1,22 @@
 package com.liux.musicplayer.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.widget.ImageView;
 
 import androidx.fragment.app.FragmentActivity;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.SharedPrefs;
+
+import java.io.File;
 
 public class SplashActivity  extends FragmentActivity {
 
@@ -20,6 +26,10 @@ public class SplashActivity  extends FragmentActivity {
         setContentView(R.layout.activity_splash);
         SharedPrefs.init(getApplication());
         MusicLibrary.init();
+        User.init(getApplicationContext());
+        if(User.isLogin)
+            ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    User.userData.userName+User.userData.loginTime)));
         startService(new Intent(SplashActivity.this,SimpleMusicService.class));
     }
 

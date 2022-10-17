@@ -105,7 +105,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                     stopService(deskLyricIntent);
                     break;
                 case Intent.ACTION_SCREEN_ON:
-                    if(!mainActivityState&& SharedPrefs.getIsDeskLyric())
+                    if(!mainActivityState&& SharedPrefs.getIsDeskLyric()&&mPlayback.isPlaying())
                         startService(deskLyricIntent);
                     break;
             }
@@ -424,7 +424,7 @@ public class SimpleMusicService extends MediaBrowserServiceCompat {
                 hasPlayedOnce=true;
                 mPlayback.playFromMedia(mPreparedMedia);
             }catch (Exception e){
-                onPlayError(e);
+                //onPlayError(e);
                 onStop();
             }
             if(mShuffleMode==PlaybackStateCompat.SHUFFLE_MODE_ALL){

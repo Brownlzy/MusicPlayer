@@ -47,6 +47,7 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.utils.CustomDialogUtils;
 import com.liux.musicplayer.utils.DisplayUtils;
 import com.liux.musicplayer.utils.MusicUtils;
@@ -301,7 +302,11 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                 sortSongPopMenu();
                 break;
             case R.id.playThisList:
-                playThisList();
+                if(User.isLogin) {
+                    playThisList();
+                }else {
+                    Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -515,6 +520,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
         lvData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(position>=mSongList.size()) return;
                 if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
                 } else {
@@ -534,6 +540,7 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
                         bundle.putString("Path", mSongList.get(positionToMusicId(position)).getSongPath());
                         myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
                     }*/
+
                     myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
                 }
             }
@@ -764,7 +771,10 @@ public class SongListFragment extends Fragment implements View.OnClickListener {
     }
 
     public int onBackPressed() {
-        editList();
+        if(multipleChooseFlag)
+            editList();
+        if(searchFlag)
+            searchState();
         return 0;
     }
 

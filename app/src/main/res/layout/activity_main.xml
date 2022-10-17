@@ -60,7 +60,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout"
         app:layout_constraintVertical_bias="0.0" />
-<RelativeLayout
+<LinearLayout
     android:id="@+id/main_layout_playing_list"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -70,14 +70,15 @@
     android:visibility="gone"
     tools:visibility="visible"
     android:orientation="vertical">
-
+<TextView
+    android:layout_weight="1"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"/>
     <com.google.android.material.card.MaterialCardView
+        android:layout_weight="2"
         app:cardBackgroundColor="@android:color/transparent"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="200dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="0dp"
         app:cardCornerRadius="5dp"
         app:cardElevation="0dp"
@@ -126,6 +127,14 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"/>
                 <ImageView
+                    android:id="@+id/add_all_to_list"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="20dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/ic_round_add_to_new_list_24"/>
+                <ImageView
                     android:id="@+id/delete_all_playing_list"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
@@ -143,7 +152,7 @@
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-</RelativeLayout>
+</LinearLayout>
 
 
     <com.google.android.material.card.MaterialCardView
@@ -214,15 +223,27 @@
                     android:gravity="center_vertical|center_horizontal"
                     android:orientation="horizontal"
                     android:visibility="gone">
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/playBarAlbumImage"
+                    <RelativeLayout
                         android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_launcher"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:shapeAppearance="@style/CircleStyle" />
+                        android:layout_height="24dp">
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/playBarAlbumImageBack"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_baseline_music_note_24"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:shapeAppearance="@style/CircleStyle" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/playBarAlbumImage"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:scaleType="centerCrop"
+                            android:src="@mipmap/ic_launcher"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:shapeAppearance="@style/CircleStyle" />
+                    </RelativeLayout>
 
                     <com.liux.musicplayer.views.AlwaysFocusTextView
                         android:id="@+id/musicPlaying"
@@ -346,10 +367,20 @@
             style="@style/SplashBackgroundColor"
             android:clickable="true"/>
         <ImageView
+            android:id="@+id/backgroundPic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/imageView"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/ic_launcher_foreground"
             app:layout_constraintBottom_toTopOf="@id/appname"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

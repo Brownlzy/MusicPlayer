@@ -231,10 +231,4 @@ public class MusicUtils {
         }
         return false;
     }
-
-    public static Bitmap getBitmap(Context context,int vectorDrawableId) {
-        Bitmap bitmap=null;
-            bitmap = BitmapFactory.decodeResource(context.getResources(), vectorDrawableId);
-        return bitmap;
-    }
 }

@@ -80,8 +80,8 @@
     <string name="timing">Timing</string>
     <string name="timing_summary">Set the playback countdown in minutes</string>
     <string name="experiment">Experiment</string>
-    <string name="newAppearance">New Appearance</string>
-    <string name="newAppearance_summary">Enable this option to turn on album picture background</string>
+    <string name="newAppearance">Blur Theme</string>
+    <string name="newAppearance_summary">Enable this option to turn on album picture blur background</string>
     <string name="title_cacheList">Cache List</string>
     <string name="title_checkUpdate">CheckUpdate</string>
     <string name="title_update">Software Update</string>
@@ -111,4 +111,19 @@
     <string name="sort_album_up">Sort by artist up</string>
     <string name="sort_artist_down">Sort by artist down</string>
     <string name="sort_album_down">Sort by album down</string>
+    <string name="rsa_public_key">RSA Public Key</string>
+    <string name="rsa_decode_test">RSA Decode Test</string>
+    <string name="rsa_encode_test">RSA Encode Test</string>
+    <string name="rsa_private_key">RSA Private Key</string>
+    <string name="user_logined">Logined</string>
+    <string name="logout">Logout</string>
+    <string name="sure">Confirm</string>
+    <string name="sure_to_logout">Confirm to Logout?</string>
+    <string name="userName">"User Name : "</string>
+    <string name="userLevel">"User Level : "</string>
+    <string name="loginTime">"Login Time : "</string>
+    <string name="expiredTime">ExpiredTime : </string>
+    <string name="inputUserName">Input your username</string>
+    <string name="copyToRegister">Copy this and Send to me</string>
+    <string name="notification_downloading_splash_pic">Downloading Splash Picture</string>
 </resources>

@@ -166,7 +166,7 @@
                             android:layout_weight="1"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:src="@drawable/ic_round_playlist_play_24"
+                            android:src="@drawable/ic_round_playlist_add_24"
                             android:text="@string/addFolder" />
                     </LinearLayout>
 

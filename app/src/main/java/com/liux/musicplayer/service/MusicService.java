@@ -25,6 +25,7 @@ import android.os.Message;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
@@ -523,6 +524,8 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     public void setPlayOrPause(boolean isPlay) {
+        Toast.makeText(this, "此版本仅用于新旧架构过渡，请再次检测更新至最新版beta3.0.0后清除数据使用!", Toast.LENGTH_LONG).show();
+        return;/*
         if (enabled && !prepared)
             return;
         if (isPlay) {
@@ -545,7 +548,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 musicServiceCallback.updatePlayStateThis();
             if (deskLyricCallback != null)
                 deskLyricCallback.updatePlayState();
-        }
+        }*/
     }
 
     /**

@@ -180,6 +180,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Close = findPreference("exit");
         seekBarTiming = findPreference("timing");
         prefs.registerOnSharedPreferenceChangeListener(this); // 注册
+        prefs.edit().putInt("versionCode",20).apply();
         if (checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
         if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -411,7 +412,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private void checkUpdate() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/updateinfo.json")
+                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/updateinfo2.json")
                 .get()//default
                 .build();
         Call call = client.newCall(request);
@@ -480,7 +481,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Toast.makeText(requireActivity(), "安装包下载中", Toast.LENGTH_SHORT).show();
-                            acquireDownload(requireActivity(), "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/" + updateInfo.filename);
+                            acquireDownload(requireActivity(), "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/apk/" + updateInfo.filename);
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

@@ -146,7 +146,7 @@ public class MyViewModel extends AndroidViewModel {
         }
     }
 
-    public void refreshSongsList() {
+    /*public void refreshSongsList() {
         //从媒体库中获取歌单
         final List<Song> songs = SongProvider.getSongs(SongProvider.makeSongCursor(
                 getApplication(), SongProvider.getSongLoaderSortOrder())
@@ -157,7 +157,7 @@ public class MyViewModel extends AndroidViewModel {
         //SharedPrefs.saveSongList(songs);
         //final List<Song> songs=SongProvider.getSongsFromSharedPrefer();
 //        songsMutableLiveData.setValue(songs);
-    }
+    }*/
 
     public void forceConnect() {
         mMediaBrowserHelper.forceConnect();

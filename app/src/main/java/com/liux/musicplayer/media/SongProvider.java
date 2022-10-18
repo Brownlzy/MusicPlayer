@@ -136,9 +136,9 @@ public class SongProvider {
         return MediaStore.Audio.Artists.DEFAULT_SORT_ORDER + ", " + MediaStore.Audio.Albums.DEFAULT_SORT_ORDER + ", " + MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
     }
 
-    public static List<Song> getSongsFromSharedPrefer(){
+    /*public static List<Song> getSongsFromSharedPrefer(){
         String defaultPlayList = "[{}]";
         return SharedPrefs.getSongListFromSharedPrefer(defaultPlayList);
-    }
+    }*/
 
 }

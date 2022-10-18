@@ -14,6 +14,14 @@
         android:divider="@null"
         android:paddingTop="44dp" />
 
+    <ListView
+        android:id="@+id/list_lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playlist_list_header"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/playlist_header"
         android:layout_width="match_parent"
@@ -27,6 +35,7 @@
         app:strokeWidth="0dp">
 
         <LinearLayout
+            android:id="@+id/song_tools"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:layout_gravity="center_vertical">
@@ -218,5 +227,156 @@
             </LinearLayout>
 
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/playlist_list_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp"
+        app:contentPadding="4dp"
+        style="@style/DarkCardViewBackgroundColor"
+        app:rippleColor="@color/white"
+        app:strokeColor="@color/green_700"
+        app:strokeWidth="0dp">
+
+        <LinearLayout
+            android:id="@+id/songlist_tools"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="6"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/addEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="bottom">
+
+                    <LinearLayout
+                        android:id="@+id/ll_addListBar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2">
+
+                        <ImageView
+                            android:id="@+id/addNewList"
+                            android:layout_width="54dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:src="@drawable/ic_outline_add_box_24"
+                            android:text="@string/addSongs" />
+
+                        <ImageView
+                            android:id="@+id/addFolderList"
+                            android:layout_width="54dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:src="@drawable/ic_outline_create_new_folder_24"
+                            android:text="@string/addFolder" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_editListBar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+
+                        <ImageView
+                            android:id="@+id/ll_deleteList"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:src="@drawable/ic_baseline_delete_24" />
+
+                        <ImageView
+                            android:id="@+id/ll_select_all_List"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:src="@drawable/ic_baseline_done_all_24" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lll_sortSearchList"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="bottom"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:id="@+id/ll_sort_list"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2">
+
+                        <ImageView
+                            android:id="@+id/sortWayList"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:src="@drawable/ic_round_sort_24"
+                            android:text="@string/addSongs" />
+
+                        <ImageView
+                            android:id="@+id/refresh_list_list"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="36dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:src="@drawable/ic_baseline_sync_24"
+                            android:text="@string/editList" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_search_list"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:visibility="gone">
+
+                        <EditText
+                            android:id="@+id/searchEditText_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:imeOptions="actionSearch"
+                            android:singleLine="true"
+                            android:inputType="text"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </RelativeLayout>

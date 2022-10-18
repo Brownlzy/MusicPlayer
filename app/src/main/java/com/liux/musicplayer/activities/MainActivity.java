@@ -452,7 +452,7 @@ public class MainActivity extends FragmentActivity {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else if (viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag||songListFragment.searchFlag)) {
+        } else if (viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag||songListFragment.searchFlag||songListFragment.songlistFlag)) {
             songListFragment.onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);

@@ -132,4 +132,6 @@
     <string name="readed">朕已阅</string>
     <string name="isNeedFastStart">快速启动</string>
     <string name="isNeedFastStart_summary">缩短开屏页展示时间</string>
+    <string name="allSongList">所有音乐</string>
+    <string name="inputListName">请输入歌单名</string>
 </resources>

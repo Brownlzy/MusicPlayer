@@ -131,4 +131,6 @@
     <string name="readed">I have readed</string>
     <string name="isNeedFastStart">Fast Start</string>
     <string name="isNeedFastStart_summary">Reduce screen opening page impression time</string>
+    <string name="allSongList">All Songs</string>
+    <string name="inputListName">Input Songlist Name</string>
 </resources>

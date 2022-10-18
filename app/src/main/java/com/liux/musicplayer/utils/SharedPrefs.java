@@ -18,7 +18,9 @@ import com.liux.musicplayer.models.User;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SharedPrefs {
     @SuppressLint("StaticFieldLeak")
@@ -30,6 +32,22 @@ public class SharedPrefs {
         context = application.getApplicationContext();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferencesEditor = sharedPreferences.edit();
+    }
+
+    public static List<String> getAllSonglistList(){
+        List<String> list=new ArrayList<>();
+        Set<String> set=sharedPreferences.getStringSet("allSonglistList",null);
+        if(set!=null)
+            list.addAll(set);
+        list.add(0,"allSongList");
+        return list;
+    }
+
+    public static void putAllSonglistList(List<String> list){
+        Set<String> set=new HashSet<>();
+        set.addAll(list);
+        set.remove("allSongList");
+        sharedPreferencesEditor.putStringSet("allSonglistList",set).apply();
     }
 
     public static int getVersionCode(){
@@ -65,7 +83,7 @@ public class SharedPrefs {
                 Calendar.getInstance().getTimeInMillis());
     }
 
-
+/*
     public static List<Song> getPlayingListFromSharedPrefer(String defaultPlayList) {
         String songListJson;
         songListJson = sharedPreferences.getString("playingList",defaultPlayList);
@@ -73,7 +91,7 @@ public class SharedPrefs {
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         return gson.fromJson(songListJson, songListType);
-    }
+    }*/
 
     public static User.UserData getUserData() {
         String userDataJson;
@@ -96,22 +114,22 @@ public class SharedPrefs {
         sharedPreferencesEditor.putString("playingList",gson.toJson(songs,songListType)).apply();
     }*/
 
-    public static List<Song> getSongListFromSharedPrefer(String defaultPlayList) {
+    /*public static List<Song> getSongListFromSharedPrefer(String defaultPlayList) {
         String songListJson;
         songListJson = sharedPreferences.getString("allSongList",defaultPlayList);
         Gson gson = new Gson();
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         return gson.fromJson(songListJson, songListType);
-    }
+    }*/
 
-    public static void saveSongList(List<Song> songs) {
+    /*public static void saveSongList(List<Song> songs) {
         Gson gson = new Gson();
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
         gson.toJson(songs,songListType);
         sharedPreferencesEditor.putString("allSongList",gson.toJson(songs,songListType)).apply();
-    }
+    }*/
 
     public static void putIsDeskLyric(boolean b) {
         sharedPreferencesEditor.putBoolean("isShowLyric",b).apply();
@@ -153,7 +171,7 @@ public class SharedPrefs {
 
     public static List<Song> getSongListByName(String listName) {
         String songListJson;
-        songListJson = sharedPreferences.getString(listName,"");
+        songListJson = sharedPreferences.getString("SONGLIST_"+listName,"");
         Gson gson = new Gson();
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
@@ -168,7 +186,7 @@ public class SharedPrefs {
         Gson gson = new Gson();
         Type songListType = new TypeToken<ArrayList<Song>>() {
         }.getType();
-        sharedPreferencesEditor.putString(listName,gson.toJson(theList,songListType)).apply();
+        sharedPreferencesEditor.putString("SONGLIST_"+listName,gson.toJson(theList,songListType)).apply();
     }
 
     public static CharSequence getQueueTitle() {
@@ -181,13 +199,11 @@ public class SharedPrefs {
     public static int getTiming() {
         return sharedPreferences.getInt("timing",0);
     }
-
     public static void putTiming(int timing) {
         sharedPreferencesEditor.putInt("timing",timing).apply();
     }
-
     public static long getLastCheckUpdateTime() {
-       return sharedPreferences.getLong("lastCheckUpdate",0);
+       return sharedPreferences.getLong("lastCheckUpdate",0L);
     }
     public static void putLastCheckUpdateTime(long date) {
         sharedPreferencesEditor.putLong("lastCheckUpdate",date).apply();
@@ -196,12 +212,11 @@ public class SharedPrefs {
        sharedPreferencesEditor.putLong("lastNewsUpdate",date).apply();
     }
     public static long getLastNewsUpdateTime() {
-       return sharedPreferences.getLong("lastNewsUpdate",0);
+       return sharedPreferences.getLong("lastNewsUpdate",0L);
     }
     public static void putLastNewsId(int newsId) {
-       sharedPreferencesEditor.putLong("lastNewsId",newsId).apply();
+       sharedPreferencesEditor.putInt("lastNewsId",newsId).apply();
     }
-
     public static int getLastNewsId() {
         return sharedPreferences.getInt("lastNewsId",-1);
     }

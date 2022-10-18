@@ -127,4 +127,8 @@
     <string name="copyToRegister">Copy this and Send to me</string>
     <string name="notification_downloading_splash_pic">Downloading Splash Picture</string>
     <string name="title_rsa">RSA</string>
+    <string name="newsBoard">News</string>
+    <string name="readed">I have readed</string>
+    <string name="isNeedFastStart">Fast Start</string>
+    <string name="isNeedFastStart_summary">Reduce screen opening page impression time</string>
 </resources>

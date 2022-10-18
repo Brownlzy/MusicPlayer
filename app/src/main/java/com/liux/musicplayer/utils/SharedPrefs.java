@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.models.Song;
@@ -183,5 +184,36 @@ public class SharedPrefs {
 
     public static void putTiming(int timing) {
         sharedPreferencesEditor.putInt("timing",timing).apply();
+    }
+
+    public static long getLastCheckUpdateTime() {
+       return sharedPreferences.getLong("lastCheckUpdate",0);
+    }
+    public static void putLastCheckUpdateTime(long date) {
+        sharedPreferencesEditor.putLong("lastCheckUpdate",date).apply();
+    }
+    public static void putLastNewsUpdateTime(long date) {
+       sharedPreferencesEditor.putLong("lastNewsUpdate",date).apply();
+    }
+    public static long getLastNewsUpdateTime() {
+       return sharedPreferences.getLong("lastNewsUpdate",0);
+    }
+    public static void putLastNewsId(int newsId) {
+       sharedPreferencesEditor.putLong("lastNewsId",newsId).apply();
+    }
+
+    public static int getLastNewsId() {
+        return sharedPreferences.getInt("lastNewsId",-1);
+    }
+
+    public static boolean getIsNeedFastStart() {
+        return sharedPreferences.getBoolean("isNeedFastStart",false);
+    }
+    public static void putIsNeedFastStart(boolean isNeedFastStart) {
+        sharedPreferencesEditor.putBoolean("isNeedFastStart",isNeedFastStart).apply();
+    }
+
+    public static void cleanOldData() {
+        sharedPreferencesEditor.putString("playList","").apply();
     }
 }

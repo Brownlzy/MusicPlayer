@@ -75,6 +75,11 @@
             app:title="@string/WebPlayListUrl"
             app:useSimpleSummaryProvider="true" />
 
+        <CheckBoxPreference
+            app:key="isNeedFastStart"
+            app:title="@string/isNeedFastStart"
+            app:summary="@string/isNeedFastStart_summary"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/title_user">

@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -56,9 +58,11 @@ public class User {
                         ||Long.parseLong(userData.expired)<TimeUtils.getNowMills()
                         ||!userHash.equals(RSAUtils.publicKeyDecrypt(userData.userHashRSA, userData.publicKey))
                 ) {
+                    String userName=userData.userName;
                     userData = new UserData();
                     SharedPrefs.saveUserData(userData);
-                    Toast.makeText(context, "登录过期，请重新登录", Toast.LENGTH_SHORT).show();
+                    login(context,userName,true);
+                    Toast.makeText(context, "登录过期，正在重新登录", Toast.LENGTH_SHORT).show();
                 }else {
                     isLogin=true;
                 }
@@ -71,7 +75,7 @@ public class User {
         }
     }
 
-    public static void login(Context context, String userName) {
+    public static void login(Context context, String userName,boolean isReLogin) {
         userData.userName = userName;
         userHash = SHA256Util.getSHA256StrJava(userName + HASH_SALT);
         Log.e(TAG, userName + "  " + userHash);
@@ -107,9 +111,12 @@ public class User {
                 if (id == 200) {
                     Gson gson = new Gson();
                     userDataJson = gson.fromJson(result, UserDataJson.class);
-                    if(checkResult(context)){
+                    if(checkResult(context,isReLogin)){
                         Message message = Message.obtain();
-                        message.obj = "登录成功！请等待通知栏下载进度完成后重启本应用";
+                        if(isReLogin)
+                            message.obj = "重新登录成功！请重启本应用";
+                        else
+                            message.obj = "登录成功！请等待通知栏下载进度完成后重启本应用";
                         handler.sendMessage(message);
                     }else {
                         Message message = Message.obtain();
@@ -128,7 +135,7 @@ public class User {
 
     }
 
-    private static boolean checkResult(Context context) {
+    private static boolean checkResult(Context context,boolean isReLogin) {
         try {
             if (userHash.equals(RSAUtils.publicKeyDecrypt(userDataJson.userHashRSA, userDataJson.publicKey))
                 &&Long.parseLong(userDataJson.expired)>TimeUtils.getNowMills()) {
@@ -138,7 +145,8 @@ public class User {
                 userData.level = userDataJson.level;
                 userData.expired = userDataJson.expired;
                 userData.loginTime = String.valueOf(TimeUtils.getNowMills());
-                acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/pic/" + userDataJson.userSplash);
+                if(!isReLogin)
+                    acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/pic/" + userDataJson.userSplash);
                 SharedPrefs.saveUserData(userData);
                 Log.e(TAG, String.valueOf(userData));
                 return true;
@@ -158,7 +166,8 @@ public class User {
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FileUtils.delete(new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), userData.userName+userData.loginTime));
+                        User.isLogin=false;
+                        FileUtils.delete(new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), userData.userName));
                         userData=new UserData();
                         SharedPrefs.saveUserData(userData);
                     }
@@ -202,7 +211,7 @@ public class User {
      */
     private static boolean acquireDownload(Context context, String url) {
         Log.i(TAG + "//acquireDownload()", "Download requested");
-        String fileName = userData.userName + userData.loginTime;
+        String fileName = userData.userName;
         File localFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName);
         if (localFile.exists()) {
             return true;

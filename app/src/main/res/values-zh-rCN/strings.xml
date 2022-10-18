@@ -128,4 +128,8 @@
     <string name="rsa_decode_test">RSA公钥解密</string>
     <string name="rsa_encode_test">RSA私钥加密</string>
     <string name="title_rsa">RSA工具</string>
+    <string name="newsBoard">公告板</string>
+    <string name="readed">朕已阅</string>
+    <string name="isNeedFastStart">快速启动</string>
+    <string name="isNeedFastStart_summary">缩短开屏页展示时间</string>
 </resources>

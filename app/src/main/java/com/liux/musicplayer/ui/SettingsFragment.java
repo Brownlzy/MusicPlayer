@@ -52,6 +52,8 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.RSAUtils;
+import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.UpdateUtils;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
@@ -284,8 +286,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                             .setTitle(R.string.user_logined)
                             .setMessage(getString(R.string.userName)+User.userData.userName+"\n"
                                         +getString(R.string.userLevel)+User.userData.level+"\n"
-                                        +getString(R.string.loginTime)+ TimeUtils.millis2Date(Long.parseLong(User.userData.loginTime))+"\n"
-                                        +getString(R.string.expiredTime)+TimeUtils.millis2Date(Long.parseLong(User.userData.expired))
+                                        +getString(R.string.loginTime)+ TimeUtils.millis2String(Long.parseLong(User.userData.loginTime))+"\n"
+                                        +getString(R.string.expiredTime)+TimeUtils.millis2String(Long.parseLong(User.userData.expired))
                             )
                             .setIcon(R.drawable.ic_round_account_circle_24)
                             .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
@@ -303,6 +305,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                             .create();
                     alertInfoDialog.show();
                 }else {
+                    userLogin.setTitle(R.string.user_unlogin);
+                    findPreference("rsa").setVisible(false);
+                    findPreference("exp").setVisible(false);
+                    findPreference("debug").setVisible(false);
                     showLoginDialog();
                 }
                 return false;
@@ -540,49 +546,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         alertInfoDialog.setNeutralButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        checkUpdate();
+                        UpdateUtils.checkUpdate(getContext(),true);
                     }
                 });
         alertInfoDialog.show();
-    }
-
-    private void checkUpdate() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/updateinfo.json")
-                .get()//default
-                .build();
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: ");
-                requireActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(requireActivity(), "获取更新信息失败", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String result = response.body().string();
-                int id = response.code();
-                Log.d(TAG, "onResponse: " + result);
-                requireActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (id == 200) {
-                            updateHandle(result);
-                        } else {
-                            Toast.makeText(requireActivity(), "获取更新信息失败:" + id, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-
-        });
     }
 
     public void showLoginDialog() {
@@ -597,7 +564,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(editText.getText().toString().trim().length()>=4)
-                            User.login(getContext(),editText.getText().toString().trim());
+                            User.login(getContext(),editText.getText().toString().trim(),false);
                         else
                             Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
                     }
@@ -636,54 +603,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                     }
                 });
         inputDialog.show();
-    }
-
-    static class UpdateInfo {
-        String lastVersionName;
-        int lastVersionCode;
-        String filename;
-        String size;
-        String changLog;
-    }
-
-    private void updateHandle(String result) {
-        int versionCode = 0;
-        try {
-            versionCode = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        Gson gson = new Gson();
-        UpdateInfo updateInfo = gson.fromJson(result, UpdateInfo.class);
-
-        if (updateInfo == null || versionCode == 0)
-            Toast.makeText(requireActivity(), "获取更新信息失败:" + versionCode, Toast.LENGTH_SHORT).show();
-        else if (updateInfo.lastVersionCode > versionCode) {
-            AlertDialog alertInfoDialog = null;
-            alertInfoDialog = new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.title_update)
-                    .setMessage(getString(R.string.title_lastVersion) + updateInfo.lastVersionName + "\n"
-                            + getString(R.string.title_size) + updateInfo.size + "\n"
-                            + getString(R.string.title_changlog) + "\n"
-                            + updateInfo.changLog.replace("\\n", "\n"))
-                    .setIcon(R.mipmap.ic_launcher)
-                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(requireActivity(), "安装包下载中", Toast.LENGTH_SHORT).show();
-                            acquireDownload(requireActivity(), "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/" + updateInfo.filename);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .create();
-            alertInfoDialog.show();
-        } else {
-            Toast.makeText(requireActivity(), "当前已是最新版", Toast.LENGTH_SHORT).show();
-        }
     }
 
     //检查权限是否获取成功
@@ -780,67 +699,4 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
     }
 
-    /**
-     * 调用系统下载器下载文件
-     *
-     * @param context ()
-     * @return boolean 是否成功调用系统下载
-     */
-    private boolean acquireDownload(Context context, String url) {
-        Log.i(getClass().toString() + "//acquireDownload()", "Download requested");
-        String fileName = url.substring(url.lastIndexOf('/') + 1);
-        File localFile = new File(context.getExternalCacheDir() + "/apk", fileName);
-        if (localFile.exists()) {
-            Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), localFile);
-            Log.d(getClass().toString() + "//acquireDownload()", "File exists");
-            Log.d(getClass().toString() + "//acquireDownload()", uri.toString());
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setDataAndType(uri, "application/vnd.android.package-archive");
-            context.startActivity(intent);
-            return true;
-        } else {
-            Log.d(getClass().toString() + "//acquireDownload()", "Download file");
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-            request.setTitle(context.getResources().getString(R.string.app_name));
-            request.setDescription(context.getResources().getString(R.string.notification_downloading_latest_version));
-            request.setVisibleInDownloadsUi(true);
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-            File cloudFile = new File(context.getExternalCacheDir() + "/apk", fileName);
-            request.setDestinationUri(Uri.fromFile(cloudFile));
-            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-            if (downloadManager != null) {
-                Long requestID = downloadManager.enqueue(request);
-                context.registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        DownloadManager.Query query = new DownloadManager.Query();
-                        query.setFilterById(requestID);
-                        Cursor cursor = downloadManager.query(query);
-                        if (cursor.moveToFirst()) {
-                            int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                            if (DownloadManager.STATUS_SUCCESSFUL == cursor.getInt(columnIndex)) {
-                                int columnIndexUri = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-                                String downloadFileName = cursor.getString(columnIndexUri);
-                                if (downloadFileName != null) {
-                                    downloadFileName = downloadFileName.substring(downloadFileName.lastIndexOf('/') + 1);
-                                    File downloadFile = new File(context.getExternalCacheDir() + "/apk", downloadFileName);
-                                    Uri uri = FileProvider.getUriForFile(context, requireActivity().getPackageName(), downloadFile);
-                                    Log.i(getClass().toString() + "//acquireDownload()", uri.toString());
-                                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                                    installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    installIntent.setDataAndType(uri, "application/vnd.android.package-archive");
-                                    context.startActivity(installIntent);
-                                }
-                            }
-                        }
-                    }
-                }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-                return true;
-            }
-        }
-        return false;
-    }
 }

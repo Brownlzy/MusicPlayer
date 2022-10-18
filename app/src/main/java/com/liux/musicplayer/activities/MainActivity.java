@@ -46,6 +46,7 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.blankj.utilcode.util.TimeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -62,6 +63,7 @@ import com.liux.musicplayer.ui.SongListFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.UpdateUtils;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
@@ -240,6 +242,10 @@ public class MainActivity extends FragmentActivity {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_outline_24));
         } else {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
+            if(myViewModel.getmMediaController().getPlaybackState()==null
+                    ||myViewModel.getmMediaController().getPlaybackState()!=null&&myViewModel.getmMediaController().getPlaybackState().getState()!=PlaybackStateCompat.STATE_PAUSED) {
+                setSeekBarDuration(0L);
+            }
         }
     }
 
@@ -293,10 +299,9 @@ public class MainActivity extends FragmentActivity {
         mainActivity = this;
         if(User.isLogin)
             ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    User.userData.userName+User.userData.loginTime)));
+                    User.userData.userName)));
         //SharedPrefs.init(getApplication());
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
-
         //允许在主线程连接网络
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
@@ -313,6 +318,10 @@ public class MainActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
+        if(Math.abs(SharedPrefs.getLastCheckUpdateTime()- TimeUtils.getNowMills())>86400000L)
+            UpdateUtils.checkUpdate(this,false);
+        if(Math.abs(SharedPrefs.getLastNewsUpdateTime()- TimeUtils.getNowMills())>14400000L)
+            UpdateUtils.checkNews(this);
         new Handler().post(new Runnable() {
             @Override
             public void run() {

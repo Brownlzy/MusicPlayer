@@ -18,7 +18,6 @@ package com.liux.musicplayer.media;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -40,6 +39,17 @@ import java.util.stream.Collectors;
 
 
 public class MusicLibrary {
+    public static class SongList {
+        public String n;
+        public String s;
+        public int c;
+
+        public SongList(String name, String summary, int count) {
+            n = name;
+            s = summary;
+            c = count;
+        }
+    }
 
     private static final TreeMap<String, MediaBrowserCompat.MediaItem> music = new TreeMap<>();
     private static final TreeMap<String, MediaBrowserCompat.MediaItem> PlayingMediaItemList = new TreeMap<>();
@@ -50,7 +60,8 @@ public class MusicLibrary {
     private static final TreeMap<String, Song> allListSongsTreeMap = new TreeMap<>();
     private static final String TAG = "MusicLibrary";
     private static final HashMap<String, List<Song>> SongLists = new HashMap<>();
-    private static List<String> allSonglistList;
+    private static final HashMap<String, SongList> SongListHash = new HashMap<>();
+    private static List<SongList> allSongListList;
 
     public static List<MediaBrowserCompat.MediaItem> getPlayingMediaItemList() {
         /*buildMediaItems(
@@ -152,12 +163,14 @@ public class MusicLibrary {
                 theList.set(0, newSong);
             } else {
                 theList.add(newSong);
+                allListSongsTreeMap.put(path,newSong);
             }
         }
         SharedPrefs.saveSongListByName(theList, listName);
-        SongLists.put(listName,theList);
-        if(!Objects.equals(listName, "allSongList"))
-            addMusicToList(path,"allSongList");
+        SongLists.put(listName, theList);
+        updateSongListInfo(listName);
+        if (!Objects.equals(listName, "allSongList"))
+            addMusicToList(path, "allSongList");
     }
 
     //添加音乐
@@ -170,12 +183,27 @@ public class MusicLibrary {
                 theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
             } else {
                 theList.add(newSong);
+                allListSongsTreeMap.put(path,newSong);
             }
         }
         SharedPrefs.saveSongListByName(theList, listName);
-        SongLists.put(listName,theList);
-        if(!Objects.equals(listName, "allSongList"))
-            addMusicListToList(pathList,"allSongList");
+        SongLists.put(listName, theList);
+        updateSongListInfo(listName);
+        if (!Objects.equals(listName, "allSongList"))
+            addMusicListToList(pathList, "allSongList");
+    }
+
+    private static void updateSongListInfo(String listName) {
+        SongList songList;
+        int id;
+        if (SongListHash.containsKey(listName)) {
+            songList = SongListHash.get(listName);
+            id = allSongListList.indexOf(songList);
+            songList.c = SongLists.get(listName).size();
+            allSongListList.set(id, songList);
+            SongListHash.put(listName, songList);
+            SharedPrefs.putAllSonglistList(allSongListList);
+        }
     }
 
     public static List<Song> getSongListByName(String name) {
@@ -183,15 +211,16 @@ public class MusicLibrary {
             return SongLists.get(name);
         else {
             List<Song> newSongList = SharedPrefs.getSongListByName(name);
-            if(!name.equals("allSongList")) {
+            if (!name.equals("allSongList")) {
                 newSongList.removeIf(song -> !allListSongsTreeMap.containsKey(song.getSongPath()));
             } else {
-                for (Song song:newSongList) {
-                    allListSongsTreeMap.put(song.getSongPath(),song);
+                for (Song song : newSongList) {
+                    allListSongsTreeMap.put(song.getSongPath(), song);
                 }
             }
             SongLists.put(name, newSongList);
-            SharedPrefs.saveSongListByName(newSongList,name);
+            updateSongListInfo(name);
+            SharedPrefs.saveSongListByName(newSongList, name);
             return newSongList;
         }
     }
@@ -243,41 +272,79 @@ public class MusicLibrary {
         SharedPrefs.saveSongListByName(PlayingListOfSong, "playingList");
     }
 
-    public static List<String> getAllSonglistList() {
-        if(allSonglistList==null)
-            allSonglistList=SharedPrefs.getAllSonglistList();
-        return allSonglistList;
+    public static List<SongList> getAllSongListList() {
+        if (allSongListList == null) {
+            allSongListList = SharedPrefs.getAllSonglistList();
+            for (SongList s : allSongListList) {
+                SongListHash.put(s.n, s);
+            }
+        }
+        return allSongListList;
     }
 
-    public static boolean addNewSongList(String name){
-        if(allSonglistList.contains(name))
+    public static boolean addNewSongList(String name, String summary) {
+        if (SongListHash.containsKey(name))
             return false;
         else {
-            allSonglistList.add(name);
-            SharedPrefs.putAllSonglistList(allSonglistList);
+            SongList songList = new SongList(name, summary, 0);
+            allSongListList.add(songList);
+            SongListHash.put(name, songList);
+            SharedPrefs.putAllSonglistList(allSongListList);
             return true;
         }
     }
 
-    public static void deleteSongList(String name){
-        if(allSonglistList.contains(name)&&!name.equals("allSongList")){
-            SharedPrefs.saveSongListByName(new ArrayList<>(),name);
-            allSonglistList.remove(name);
+    public static void deleteSongList(String name) {
+        if (SongListHash.containsKey(name) && !name.equals("allSongList")) {
+            SharedPrefs.saveSongListByName(new ArrayList<>(), name);
+            allSongListList.removeIf(songList -> songList.n.equals(name));
+            SongListHash.remove(name);
             SongLists.remove(name);
-            SharedPrefs.putAllSonglistList(allSonglistList);
+            SharedPrefs.putAllSonglistList(allSongListList);
         }
     }
 
     public static void deleteMusicListFromList(List<String> pathList, String listName) {
-        if(SongLists.containsKey(listName)) {
+        if (SongLists.containsKey(listName)) {
             SongLists.get(listName).removeIf(song -> pathList.contains(song.getSongPath()));
-            if(listName.equals("allSongList")) {
+            if (listName.equals("allSongList")) {
                 for (String aListName : SongLists.keySet()) {
-                    if(!aListName.equals("allSongList"))
-                    deleteMusicListFromList(pathList, aListName);
+                    if (!aListName.equals("allSongList"))
+                        deleteMusicListFromList(pathList, aListName);
+                }
+                for (String path:pathList) {
+                    allListSongsTreeMap.remove(path);
                 }
             }
-            SharedPrefs.saveSongListByName(SongLists.get(listName),listName);
+            updateSongListInfo(listName);
+            SharedPrefs.saveSongListByName(SongLists.get(listName), listName);
         }
+    }
+
+    public static void deleteMusicFromList(String songPath, String listName) {
+        if (SongLists.containsKey(listName)) {
+            SongLists.get(listName).removeIf(song -> song.getSongPath().equals(songPath));
+            if (listName.equals("allSongList")) {
+                for (String aListName : SongLists.keySet()) {
+                    if (!aListName.equals("allSongList"))
+                        deleteMusicFromList(songPath, aListName);
+                }
+                allListSongsTreeMap.remove(songPath);
+            }
+            updateSongListInfo(listName);
+            SharedPrefs.saveSongListByName(SongLists.get(listName), listName);
+        }
+    }
+
+    public static boolean renameSongList(String oldName,String newName){
+        if(SongListHash.containsKey(oldName)&&!SongListHash.containsKey(newName)){
+            addNewSongList(newName,"");
+            SongLists.put(newName,getSongListByName(oldName));
+            deleteSongList(oldName);
+            Objects.requireNonNull(SongListHash.get(newName)).c=getSongListByName(newName).size();
+            SharedPrefs.saveSongListByName(getSongListByName(newName),newName);
+            return true;
+        }else
+            return false;
     }
 }

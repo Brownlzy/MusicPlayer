@@ -252,6 +252,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     };
 
     private void initPreferenceListener() {
+        findPreference("newsBoard").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                UpdateUtils.checkNews(getContext(),true);
+                return false;
+            }
+        });
         rsaDecodeTest.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {

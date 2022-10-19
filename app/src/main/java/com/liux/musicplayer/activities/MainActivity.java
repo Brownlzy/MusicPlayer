@@ -5,11 +5,14 @@ import static com.liux.musicplayer.services.MusicService.REPEAT_LIST;
 import static com.liux.musicplayer.services.MusicService.REPEAT_ONE;
 import static com.liux.musicplayer.services.MusicService.SHUFFLE_PLAY;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,16 +31,19 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -67,6 +73,7 @@ import com.liux.musicplayer.utils.UpdateUtils;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity {
@@ -321,7 +328,7 @@ public class MainActivity extends FragmentActivity {
         if(Math.abs(SharedPrefs.getLastCheckUpdateTime()- TimeUtils.getNowMills())>86400000L)
             UpdateUtils.checkUpdate(this,false);
         if(Math.abs(SharedPrefs.getLastNewsUpdateTime()- TimeUtils.getNowMills())>14400000L)
-            UpdateUtils.checkNews(this);
+            UpdateUtils.checkNews(this,false);
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -491,6 +498,15 @@ public class MainActivity extends FragmentActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setOnListViewItemClickListener();
         setNewAppearance(prefs.getBoolean("isNewAppearance", false));
+        findViewById(R.id.add_all_to_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(User.isLogin)
+                    genSonglistFromPlaylist();
+                else
+                    Toast.makeText(MainActivity.this, "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+            }
+        });
         playBarPlayingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -578,6 +594,44 @@ public class MainActivity extends FragmentActivity {
             }
         });
         //resetPlayProgress();
+    }
+
+    private void genSonglistFromPlaylist() {
+        if(adapter.getCount()==0){
+            Toast.makeText(MainActivity.this, "播放列表为空", Toast.LENGTH_SHORT).show();
+        }else {
+            final EditText editText = new EditText(this);
+            AlertDialog.Builder inputDialog = new AlertDialog.Builder(this);
+            inputDialog.setTitle(R.string.inputListName).setView(editText);
+            inputDialog.setIcon(R.drawable.ic_round_add_to_new_list_24);
+            inputDialog.setPositiveButton(R.string.confirm,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (editText.getText().toString().trim().length() >= 1) {
+                                if (MusicLibrary.addNewSongList(editText.getText().toString().trim(), "")) {
+                                    List<String> pathList = new ArrayList<>();
+                                    for (int i = 0; i < adapter.getCount(); i++) {
+                                        pathList.add(((MediaSessionCompat.QueueItem) adapter.getItem(i)).getDescription().getMediaUri().getPath());
+                                    }
+                                    MusicLibrary.addMusicListToList(pathList, editText.getText().toString().trim());
+                                    songListFragment.initData();
+                                    songListFragment.initSongData(editText.getText().toString().trim());
+                                    setViewPagerToId(1);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "添加歌单失败，可能该名称已被使用", Toast.LENGTH_SHORT).show();
+                                }
+                            } else
+                                Toast.makeText(MainActivity.this, "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            inputDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            inputDialog.show();
+        }
     }
 
 
@@ -693,7 +747,7 @@ public class MainActivity extends FragmentActivity {
                         myViewModel.setViewPagerId(0);
                         break;
                     case R.id.navigation_playlist:
-                        TabTitle.setText(R.string.title_allSongList);
+                        setSongListFragmentTitle();
                         if (isPlayingListShowing)
                             showPlayingList();
                         else
@@ -735,7 +789,19 @@ public class MainActivity extends FragmentActivity {
             }
         });
     }
+    @SuppressLint("SetTextI18n")
+    public void setSongListFragmentTitle(){
+        TabTitle.setText(getString(R.string.title_allSongList)+
+                (songListFragment.songlistFlag
+                        ?" - "+(songListFragment.nowSongListName.equals("allSongList")
+                            ?getString(R.string.allSongList)
+                            :songListFragment.nowSongListName)
+                        +" "+
+                                getString(R.string.songlist_summary)
+                                        .replace("%d",String.valueOf(MusicLibrary.getSongListByName(songListFragment.nowSongListName).size()))
 
+                        :""));
+    }
     public void setPlayBarTitle(boolean isShow) {
         if (isShow) {
             if (!isAlreadyShowPlayBarTitle) {
@@ -763,6 +829,9 @@ public class MainActivity extends FragmentActivity {
     public void setViewPagerToId(int pageId) {
         viewPager.setCurrentItem(pageId, true);
         myViewModel.setViewPagerId(pageId);
+        if(pageId==1){
+
+        }
     }
 
     public void setPlayOrder(int playOrder) {

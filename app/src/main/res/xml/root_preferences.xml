@@ -87,7 +87,10 @@
             app:key="user"
             app:icon="@drawable/ic_round_account_circle_24"
             app:title="@string/user_unlogin"/>
-
+        <Preference
+            app:key="newsBoard"
+            app:title="@string/newsBoard"
+            app:persistent="false" />
         <Preference
             app:key="lastErrorLog"
             app:icon="@drawable/ic_round_bug_report_24"

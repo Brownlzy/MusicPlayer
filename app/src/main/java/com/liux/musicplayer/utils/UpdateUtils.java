@@ -52,6 +52,8 @@ public class UpdateUtils {
         String ct;
     }
     public static void checkUpdate(Context context,boolean isShowStateInfo) {
+        if(isShowStateInfo)
+            Toast.makeText(context, "正在检查更新，请稍候", Toast.LENGTH_SHORT).show();
         updateHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -97,15 +99,18 @@ public class UpdateUtils {
             }
         });
     }
-    public static void checkNews(Context context) {
+    public static void checkNews(Context context,boolean isManual) {
+        if(isManual)
+            Toast.makeText(context, "正在读取公告板", Toast.LENGTH_SHORT).show();
         newsHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if(msg.arg1==200){
-                    newsHandle(context, String.valueOf(msg.obj));
+                    newsHandle(context, String.valueOf(msg.obj),isManual);
                     SharedPrefs.putLastNewsUpdateTime(TimeUtils.getNowMills());
-                }
+                }else if(isManual)
+                    Toast.makeText(context, String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -119,6 +124,10 @@ public class UpdateUtils {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure: 获取信息失败（无法连接服务器）");
+                Message message = Message.obtain();
+                message.arg1=0;
+                message.obj = "获取失败（无法连接服务器）";
+                newsHandler.sendMessage(message);
             }
 
             @Override
@@ -131,6 +140,8 @@ public class UpdateUtils {
                     message.arg1=200;
                     message.obj = result;
                 } else {
+                    message.arg1=0;
+                    message.obj = "获取失败";
                     Log.d(TAG, "onResponse: " + id);
                 }
                 newsHandler.sendMessage(message);
@@ -179,10 +190,10 @@ public class UpdateUtils {
                 Toast.makeText(context, "当前已是最新版", Toast.LENGTH_SHORT).show();
         }
     }
-    private static void newsHandle(Context context, String result) {
+    private static void newsHandle(Context context, String result,boolean isManual) {
         Gson gson = new Gson();
         News news = gson.fromJson(result, News.class);
-        if(news.id>SharedPrefs.getLastNewsId()){
+        if(isManual||news.id>SharedPrefs.getLastNewsId()){
             AlertDialog alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.newsBoard)

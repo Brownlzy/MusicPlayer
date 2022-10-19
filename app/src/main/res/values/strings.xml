@@ -133,4 +133,11 @@
     <string name="isNeedFastStart_summary">Reduce screen opening page impression time</string>
     <string name="allSongList">All Songs</string>
     <string name="inputListName">Input Songlist Name</string>
+    <string name="songlist_summary">A total of %d songs</string>
+    <string name="sort_time_up">Sort by time up</string>
+    <string name="sort_time_down">Sort by time down</string>
+    <string name="sort_name_up">Sort by name up</string>
+    <string name="sort_name_down">Sort by name down</string>
+    <string name="sort_amount_up">Sort by amount up</string>
+    <string name="sort_amount_down">Sort by amount down</string>
 </resources>

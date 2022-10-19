@@ -134,4 +134,11 @@
     <string name="isNeedFastStart_summary">缩短开屏页展示时间</string>
     <string name="allSongList">所有音乐</string>
     <string name="inputListName">请输入歌单名</string>
+    <string name="songlist_summary">共%d个文件</string>
+    <string name="sort_time_up">按添加时间升序排列</string>
+    <string name="sort_time_down">按添加时间降序排列</string>
+    <string name="sort_name_up">按歌单名称升序排列</string>
+    <string name="sort_name_down">按歌单名称降序排列</string>
+    <string name="sort_amount_up">按歌曲数量升序排列</string>
+    <string name="sort_amount_down">按歌曲数量降序排列</string>
 </resources>

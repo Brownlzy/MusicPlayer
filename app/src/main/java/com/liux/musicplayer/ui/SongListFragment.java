@@ -71,7 +71,7 @@ public class SongListFragment extends Fragment{
     private int listPosition = -1;
     private int listPositionY = 0;
     private List<Song> mSongList = null;//所有数据
-    private List<String> mSonglistList = null;//所有数据
+    private List<MusicLibrary.SongList> mSonglistList = null;//所有数据
     private final List<String> mCheckedData = new ArrayList<>();//将选中数据放入里面
     private final SparseBooleanArray stateCheckedMap = new SparseBooleanArray();//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private boolean isSelectedAll = true;//用来控制点击全选，全选和全不选相互切换
@@ -95,7 +95,7 @@ public class SongListFragment extends Fragment{
     private List<Song> searchList;
 
     private MyViewModel myViewModel;
-    private String nowSongListName;
+    public String nowSongListName;
     public boolean songlistFlag;
 
     //用于接受系统文件管理器返回目录的回调
@@ -150,10 +150,7 @@ public class SongListFragment extends Fragment{
                                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            myViewModel.getmMediaController().removeQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))));
-                                            mSongList.remove(positionToMusicId(position));
-                                            songAdapter.notifyDataSetChanged();
-                                            SharedPrefs.saveSongListByName(mSongList,"allSongList");
+                                            MusicLibrary.deleteMusicFromList(((Song)songAdapter.getItem(position)).getSongPath(),nowSongListName);
                                             dialog.dismiss();
                                         }
                                     })
@@ -184,56 +181,71 @@ public class SongListFragment extends Fragment{
                     switch (item.getItemId()) {
                         case R.id.item_menu_play:
                             Log.e("SongPlaylistFragment","newPlaylist");
-                            if(!MusicLibrary.getSongListByName((String) songlistAdapter.getItem(position)).isEmpty()) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString("QueueTitle", (String) songlistAdapter.getItem(position));
-                                //bundle.putString("Path", mSongList.get(0).getSongPath());
-                                myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
-                            }
+                            if(User.isLogin) {
+                                if(!MusicLibrary.getSongListByName((String) songlistAdapter.getItem(position)).isEmpty()) {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("QueueTitle", (String) songlistAdapter.getItem(position));
+                                    //bundle.putString("Path", mSongList.get(0).getSongPath());
+                                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
+                                }
+                            } else
+                                Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
                             break;
                         case R.id.item_menu_moreInfo:
-                            showMusicDetails(positionToMusicId(position));
+                            //showMusicDetails(positionToMusicId(position));
                             break;
                         case R.id.item_menu_edit:
-                            CustomDialogUtils.showSongInfoEditDialog(MainActivity.mainActivity, mSongList.get(positionToMusicId(position)), false,
-                                    new CustomDialogUtils.AlertDialogBtnClickListener() {
-                                        @Override
-                                        public void clickPositive(Song song) {
-                                            mSongList.set(positionToMusicId(position), song);
-                                            SharedPrefs.saveSongListByName(mSongList,"allSongList");
-                                        }
-
-                                        @Override
-                                        public void clickNegative() {
-
-                                        }
-                                    });
+                            if((songlistAdapter.getItem(position)).equals("allSongList"))
+                                Toast.makeText(getContext(), "此歌单不允许编辑", Toast.LENGTH_SHORT).show();
+                            else {
+                                final EditText editText = new EditText(getContext());
+                                AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
+                                inputDialog.setTitle(R.string.inputListName).setView(editText);
+                                inputDialog.setIcon(R.drawable.ic_outline_create_24);
+                                inputDialog.setPositiveButton(R.string.confirm,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (editText.getText().toString().trim().length() >= 1) {
+                                                    MusicLibrary.renameSongList((String) songlistAdapter.getItem(position), editText.getText().toString().trim());
+                                                    initData();
+                                                } else
+                                                    Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                inputDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                inputDialog.show();
+                            }
                             break;
                         case R.id.item_menu_delete:
-                            AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                                    .setTitle(R.string.confirmDelete)
-                                    .setMessage(R.string.deleteInfo)
-                                    .setIcon(R.mipmap.ic_launcher)
-                                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            String toDeleteName=(String)songlistAdapter.getItem(position);
-                                            if(toDeleteName.equals("allSongList"))
-                                                Toast.makeText(getContext(), "此歌单不允许删除", Toast.LENGTH_SHORT).show();
-                                            else
-                                                MusicLibrary.deleteSongList((String)songlistAdapter.getItem(position));
-                                            initData();
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .create();
-                            dialog.show();
+                            if((songlistAdapter.getItem(position)).equals("allSongList"))
+                                Toast.makeText(getContext(), "此歌单不允许删除", Toast.LENGTH_SHORT).show();
+                            else {
+                                AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                                        .setTitle(R.string.confirmDelete)
+                                        .setMessage(R.string.deleteInfo)
+                                        .setIcon(R.mipmap.ic_launcher)
+                                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                MusicLibrary.deleteSongList((String) songlistAdapter.getItem(position));
+                                                initData();
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .create();
+                                dialog.show();
+                            }
                             break;
                     }
                     return true;
@@ -399,11 +411,14 @@ public class SongListFragment extends Fragment{
                     addNewList();
                     break;
                 case R.id.addFolderList:
-                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                        addNewListFromFolder();
-                    else {
-                        showNoPermissionDialog();
-                    }
+                    if(User.isLogin) {
+                        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                            addNewListFromFolder();
+                        else {
+                            showNoPermissionDialog();
+                        }
+                    } else
+                        Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.sortWayList:
                     sortSonglistPopMenu();
@@ -422,7 +437,7 @@ public class SongListFragment extends Fragment{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(editText.getText().toString().trim().length()>=1) {
-                            MusicLibrary.addNewSongList(editText.getText().toString().trim());
+                            MusicLibrary.addNewSongList(editText.getText().toString().trim(),"");
                             initData();
                         }else
                             Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
@@ -446,7 +461,7 @@ public class SongListFragment extends Fragment{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(editText.getText().toString().trim().length()>=1) {
-                            if(MusicLibrary.addNewSongList(editText.getText().toString().trim())) {
+                            if(MusicLibrary.addNewSongList(editText.getText().toString().trim(),"")) {
                                 initData();
                                 initSongData(editText.getText().toString().trim());
                                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
@@ -496,7 +511,7 @@ public class SongListFragment extends Fragment{
     }
     private void sortSonglistPopMenu() {
             PopupMenu popup = new PopupMenu(requireContext(), sortWayList);
-            popup.getMenuInflater().inflate(R.menu.sort_way_menu, popup.getMenu());
+            popup.getMenuInflater().inflate(R.menu.sort_list_way_menu, popup.getMenu());
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -912,7 +927,7 @@ public class SongListFragment extends Fragment{
     public void initData() {
         //if (myViewModel!=null && myViewModel.getMusicService() != null) {
             //isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
-        mSonglistList=MusicLibrary.getAllSonglistList();
+        mSonglistList=MusicLibrary.getAllSongListList();
         songlistAdapter = new SonglistAdapter(requireContext(), mSonglistList, stateCheckedMap,popUpMenuListListener);
         songlistListView.setAdapter(songlistAdapter);
         songlistAdapter.notifyDataSetChanged();
@@ -932,6 +947,7 @@ public class SongListFragment extends Fragment{
         songListView.setAdapter(songAdapter);
         songAdapter.notifyDataSetChanged();
         showSonglistList(false);
+        MainActivity.mainActivity.setSongListFragmentTitle();
     }
     public void unInitSongData(){
         showSonglistList(true);
@@ -1009,6 +1025,8 @@ public class SongListFragment extends Fragment{
                 searchState();
         }else if(songlistFlag){
             unInitSongData();
+            initData();
+            MainActivity.mainActivity.setSongListFragmentTitle();
         }
         return 0;
     }

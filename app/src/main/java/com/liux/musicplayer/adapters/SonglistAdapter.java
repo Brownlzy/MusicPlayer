@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class SonglistAdapter extends BaseAdapter {
 
-    List<String> data;
+    List<MusicLibrary.SongList> data;
     private final Context mContext;
     ViewHolder holder;
     private boolean isShowCheckBox = false;//表示当前是否是多选状态。
@@ -28,7 +29,7 @@ public class SonglistAdapter extends BaseAdapter {
         void PopUpMenu(int position,View v);
     }
 
-    public SonglistAdapter(Context context, List<String> data, SparseBooleanArray stateCheckedMap, PopUpMenuListener playlistFragment) {
+    public SonglistAdapter(Context context, List<MusicLibrary.SongList> data, SparseBooleanArray stateCheckedMap, PopUpMenuListener playlistFragment) {
         this.data = data;
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;
@@ -44,7 +45,7 @@ public class SonglistAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return data.get(i);
+        return data.get(i).n;
     }
 
     @Override
@@ -69,12 +70,16 @@ public class SonglistAdapter extends BaseAdapter {
         holder.mItemSummary = convertView.findViewById(R.id.item_summary);
         showAndHideCheckBox();//控制CheckBox的那个的框显示与隐藏
         //设置数据
-        if(data.get(position).equals("allSongList"))
+        if(data.get(position).n.equals("allSongList"))
             holder.mItemTitle.setText(R.string.allSongList);
         else
-            holder.mItemTitle.setText(data.get(position));
+            holder.mItemTitle.setText(data.get(position).n);
         holder.mItemId.setText(String.valueOf(position + 1));
-        holder.mItemSummary.setText(data.get(position));
+        holder.mItemSummary.setText(
+                mContext.getString(R.string.songlist_summary)
+                        .replace("%d",
+                        String.valueOf(data.get(position).c)
+                ));
         holder.checkBox.setChecked(stateCheckedMap.get(position));//设置CheckBox是否选中
         holder.btnMore.setOnClickListener(new View.OnClickListener() {  //设置单击监听器
             @Override

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sort_time_up"
+        android:title="@string/sort_time_up" />
+    <item
+        android:id="@+id/sort_time_down"
+        android:title="@string/sort_time_down" />
+    <item
+        android:id="@+id/sort_name_up"
+        android:title="@string/sort_name_up" />
+    <item
+        android:id="@+id/sort_name_down"
+        android:title="@string/sort_name_down" />
+    <item
+        android:id="@+id/sort_amount_up"
+        android:title="@string/sort_amount_up" />
+    <item
+        android:id="@+id/sort_amount_down"
+        android:title="@string/sort_amount_down" />
+
+</menu>

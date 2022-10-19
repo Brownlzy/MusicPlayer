@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.models.User;
 
@@ -34,20 +35,25 @@ public class SharedPrefs {
         sharedPreferencesEditor = sharedPreferences.edit();
     }
 
-    public static List<String> getAllSonglistList(){
-        List<String> list=new ArrayList<>();
-        Set<String> set=sharedPreferences.getStringSet("allSonglistList",null);
-        if(set!=null)
-            list.addAll(set);
-        list.add(0,"allSongList");
+    public static List<MusicLibrary.SongList> getAllSonglistList(){
+        Gson gson = new Gson();
+        Type songListListType = new TypeToken<ArrayList<MusicLibrary.SongList>>() {
+        }.getType();
+        List<MusicLibrary.SongList> list;
+        list=gson.fromJson(sharedPreferences.getString("allSonglistList","[]"),songListListType);
+        if(list==null||list.size()==0) {
+            list=new ArrayList<>();
+            list.add(0,new MusicLibrary.SongList("allSongList","",0));
+        }
         return list;
     }
 
-    public static void putAllSonglistList(List<String> list){
-        Set<String> set=new HashSet<>();
-        set.addAll(list);
-        set.remove("allSongList");
-        sharedPreferencesEditor.putStringSet("allSonglistList",set).apply();
+    public static void putAllSonglistList(List<MusicLibrary.SongList> list){
+        Gson gson = new Gson();
+        Type songListListType = new TypeToken<ArrayList<MusicLibrary.SongList>>() {
+        }.getType();
+        String listJson=gson.toJson(list,songListListType);
+        sharedPreferencesEditor.putString("allSonglistList",listJson).apply();
     }
 
     public static int getVersionCode(){

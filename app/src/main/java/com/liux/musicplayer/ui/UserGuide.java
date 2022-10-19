@@ -3,7 +3,9 @@ package com.liux.musicplayer.ui;
 import com.liux.musicplayer.R;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -64,6 +66,8 @@ public class UserGuide extends AppCompatActivity {
         over.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharedPreferences sp= PreferenceManager.getDefaultSharedPreferences(UserGuide.this);
+                sp.edit().putBoolean("isFirstStart",false).apply();
                 finish();
             }
         });

@@ -165,14 +165,8 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.ll_cancel:
-                cancel();
-                break;
             case R.id.ll_delete:
                 delete();
-                break;
-            case R.id.ll_inverse:
-                inverse();
                 break;
             case R.id.ll_select_all:
                 selectAll();
@@ -187,6 +181,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
                 refreshList();
                 break;
             case R.id.addSongs:
+                //检查权限
                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
                             .setTitle(R.string.addAllMusic)
@@ -424,9 +419,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private void initView(View view) {
         playlistHeader = view.findViewById(R.id.playlist_header);
-        view.findViewById(R.id.ll_cancel).setOnClickListener(this);
         view.findViewById(R.id.ll_delete).setOnClickListener(this);
-        view.findViewById(R.id.ll_inverse).setOnClickListener(this);
         view.findViewById(R.id.ll_select_all).setOnClickListener(this);
         view.findViewById(R.id.addSongs).setOnClickListener(this);
         view.findViewById(R.id.addFolder).setOnClickListener(this);

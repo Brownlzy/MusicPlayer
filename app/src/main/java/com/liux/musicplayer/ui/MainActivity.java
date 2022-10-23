@@ -203,6 +203,11 @@ public class MainActivity extends FragmentActivity {
         initViewPager2();
         initBackgroundCallBack();
         setMainActivityData();
+        SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(this);
+        if(sp.getBoolean("isFirstStart",true)){
+            Intent intent=new Intent(MainActivity.this,UserGuide.class);
+            startActivity(intent);
+        }
     }
 
     private void setMainActivityData() {

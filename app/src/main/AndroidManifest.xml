@@ -23,6 +23,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
+        <activity
+            android:name=".ui.UserGuide"
+            android:exported="true"
+            android:launchMode="singleTask">
+        </activity>
+
         <receiver
             android:name=".receiver.HeadsetPlugReceiver"
             android:enabled="true"
@@ -48,13 +54,14 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.liux.musicplayer"

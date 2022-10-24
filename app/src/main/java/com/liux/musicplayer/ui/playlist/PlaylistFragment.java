@@ -81,7 +81,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     private LinearLayout searchSongLayout;
     private List<MusicUtils.Song> searchList;
 
-    //用于接受系统文件管理器返回目录的回调
+    /**
+     * 用于接受系统文件管理器返回目录的回调
+     * @return
+     */
     ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         int resultCode = result.getResultCode();
         if (resultCode == -1) {
@@ -99,8 +102,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addFolder(Uri uri) {
-        Log.e("AddFolder", uri.toString());
+        Log.e("AddFolder000000000000", uri.toString());
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+        Log.e("AddFolder000000000000", docUri.toString());
         searchFile(UriTransform.getPath(requireContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
         refreshList();
     }
@@ -127,15 +131,16 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     }
 
     private void checkChild(File childFile) {
-        if (FileUtils.getFileExtension(childFile).equalsIgnoreCase("mp3")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("flac")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("amr")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("aac")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("ogg")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("3gp")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("m4a")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("gsm")
-                || FileUtils.getFileExtension(childFile).equalsIgnoreCase("wav")
+        String fileType=FileUtils.getFileExtension(childFile);
+        if (fileType.equalsIgnoreCase("mp3")
+                || fileType.equalsIgnoreCase("flac")
+                || fileType.equalsIgnoreCase("amr")
+                || fileType.equalsIgnoreCase("aac")
+                || fileType.equalsIgnoreCase("ogg")
+                || fileType.equalsIgnoreCase("3gp")
+                || fileType.equalsIgnoreCase("m4a")
+                || fileType.equalsIgnoreCase("gsm")
+                || fileType.equalsIgnoreCase("wav")
         ) {
             //文件大小限制
             //if (childFile.length() / 1024 > 1024) {

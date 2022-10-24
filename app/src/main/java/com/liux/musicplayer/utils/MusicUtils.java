@@ -151,6 +151,8 @@ public class MusicUtils {
 
     /**
      * 扫描系统里面的音频文件，返回一个list集合
+     * @param context 上下文
+     * @return list
      */
     public static List<Song> getMusicData(Context context) {
         List<Song> list = new ArrayList<Song>();
@@ -194,13 +196,26 @@ public class MusicUtils {
         }
         return list;
     }
-
+/**
+ * 将歌曲列表添加到播放列表
+ * @param context 上下文
+ * @param songList 歌曲列表
+ * @param  playList 播放列表
+ * @return void
+ */
     public static void addMusicToList(Context context,List<Song>songList,List<Song>playList) {
         for (MusicUtils.Song song : songList) {
             addMusic(context,song.source_uri.replace("/storage/emulated/0", "/sdcard"),playList);
         }
     }
 
+    /**
+     * 添加歌曲信息到歌曲列表
+     * @param context 上下文
+     * @param path 路径
+     * @param songList 歌曲列表
+     * @return void
+     */
     //添加音乐
     public static void addMusic(Context context,String path,List<Song>songList) {
         MusicUtils.Song newSong = new MusicUtils.Song();

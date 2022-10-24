@@ -114,6 +114,11 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
     }
 
+    /**
+     * 显示歌曲信息
+     * @param song 歌曲的结构体
+     * @return void
+     */
     @SuppressLint("SetTextI18n")
     public void setMusicInfo(MusicUtils.Song song) {
         if (mView != null) {

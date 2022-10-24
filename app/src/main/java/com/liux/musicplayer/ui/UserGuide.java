@@ -19,7 +19,7 @@ public class UserGuide extends AppCompatActivity {
     private Button over;
 
     private ImageView imageGuide;
-    private int[] imageId = new int[3];
+    private int[] imageId = new int[6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +29,18 @@ public class UserGuide extends AppCompatActivity {
     }
 
     private void initView() {
-        imageId[0] = R.drawable.ic_baseline_music_note_24;
-        imageId[1] = R.drawable.ic_baseline_create_24;
-        imageId[2] = R.drawable.ic_baseline_done_all_24;
+        imageId[0] = R.mipmap.guide_1;
+        imageId[1] = R.mipmap.guide_2;
+        imageId[2] = R.mipmap.guide_3;
+        imageId[3] = R.mipmap.guide_4;
+        imageId[4] = R.mipmap.guide_6;
+        imageId[5] = R.mipmap.guide_5;
         pageId = 0;
         imageGuide =findViewById(R.id.ImageGuide);
         pageUp = findViewById(R.id.PageUp);
         pageDown = findViewById(R.id.PageDown);
         over = findViewById(R.id.PageOver);
+        over.setVisibility(View.GONE);
 
 
         pageUp.setEnabled(false);
@@ -48,7 +52,7 @@ public class UserGuide extends AppCompatActivity {
                 imageGuide.setImageResource(imageId[pageId]);
                 if (pageId == 0)
                     pageUp.setEnabled(false);
-                if(pageId!=2)
+                if(pageId!=5)
                     pageDown.setEnabled(true);
             }
         });
@@ -56,8 +60,9 @@ public class UserGuide extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 pageId++;
+                if(pageId==4) over.setVisibility(View.VISIBLE);
                 imageGuide.setImageResource(imageId[pageId]);
-                if (pageId == 2)
+                if (pageId == 5)
                     pageDown.setEnabled(false);
                 if(pageId!=0)
                     pageUp.setEnabled(true);

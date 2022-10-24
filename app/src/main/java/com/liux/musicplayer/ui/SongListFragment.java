@@ -151,6 +151,7 @@ public class SongListFragment extends Fragment{
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             MusicLibrary.deleteMusicFromList(((Song)songAdapter.getItem(position)).getSongPath(),nowSongListName);
+                                            initSongData(nowSongListName);
                                             dialog.dismiss();
                                         }
                                     })

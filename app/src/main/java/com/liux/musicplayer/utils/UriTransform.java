@@ -19,12 +19,12 @@ public class UriTransform {
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
+            if (true||isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
 
-                if ("primary".equalsIgnoreCase(type)) {
+                if (true||"primary".equalsIgnoreCase(type)) {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
 
@@ -34,10 +34,10 @@ public class UriTransform {
             else if (isDownloadsDocument(uri)) {
 
                 final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
+                //final Uri contentUri = ContentUris.withAppendedId(
+                //        Uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
 
-                return getDataColumn(context, contentUri, null, null);
+                return getDataColumn(context, Uri.parse("content://downloads/public_downloads/"), null, null);
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {

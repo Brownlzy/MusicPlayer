@@ -29,7 +29,7 @@ public class BluetoothStateReceiver extends BroadcastReceiver {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device == null) return;
                 //如果在Android32 SDK还需要声明 android.permission.BLUETOOTH_CONNECT权限
-                /*if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     // TO-DO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -38,7 +38,7 @@ public class BluetoothStateReceiver extends BroadcastReceiver {
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
                     return;
-                }*/
+                }
                 if (isHeadPhone(device.getBluetoothClass())) {
                     Log.d("BluetoothStateReceiver", "蓝牙音频设备已连接");
                     iBluetoothStateListener.onBluetoothDeviceConnected();

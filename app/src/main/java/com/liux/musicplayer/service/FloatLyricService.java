@@ -33,9 +33,14 @@ import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.views.StrokeTextView;
 
-
+ /**
+  * 用于显示桌面悬浮歌词的后台服务，需要由{@link MusicService}启动，启动后会立即绑定{@link MusicService}。展示所需的歌词数据和歌曲信息均由{@link MusicService}提供
+  * @author         Brownlzy
+  * @CreateDate:     2022/10/6
+  * @UpdateDate:     2022/9/28
+  * @Version:        1.0
+  */
 public class FloatLyricService extends Service {
-
 
     private WindowManager winManager;
     private WindowManager.LayoutParams wmParams;
@@ -48,8 +53,6 @@ public class FloatLyricService extends Service {
 
     //浮动布局
     private View mFloatingLayout;
-    private Chronometer chronometer;
-    private long rangeTime;
     private boolean isAllShow;
     private boolean isSettingsBar;
     private MusicService musicService;
@@ -61,9 +64,10 @@ public class FloatLyricService extends Service {
     private String nowTitle = "";
     private String nowArtist = "";
     private SharedPreferences sp;
-    private DeskLyricCallback deskLyricCallback = new DeskLyricCallback() {
+    /** 实现的桌面歌词回调接口{@link DeskLyricCallback} */
+    private final DeskLyricCallback deskLyricCallback = new DeskLyricCallback() {
         @Override
-        public void updatePlayState(int musicId) {
+        public void updateNowPlaying(int musicId) {
             nowTitle = musicService.getPlayList().get(musicId).title;
             nowArtist = musicService.getPlayList().get(musicId).artist;
             updatePlayInfo(nowTitle
@@ -75,6 +79,7 @@ public class FloatLyricService extends Service {
 
         @Override
         public void updatePlayState() {
+            //根据最新播放状态设置显示的播放按钮图标
             if (musicService.isPlaying()) {
                 ((ImageView) mFloatingLayout.findViewById(R.id.playPause)).setImageDrawable(getDrawable(R.drawable.ic_round_pause_circle_float_24));
                 startLyricThread();
@@ -86,14 +91,16 @@ public class FloatLyricService extends Service {
                 stopLyricThread();
             }
         }
-
-        @Override
-        public void newLyricSettings() {
-            initLyricSettings();
-        }
     };
-
-    public void LyricSettings() {
+ /**
+  * 根据已加载的界面自定义参数设置
+  * @param textSize 桌面歌词的字号（单位sp）
+  * @param colorID 歌词字体颜色id（0-4）
+  * @return void
+  */
+    public void LyricSettings(int textSize, int colorID) {
+        nowColorId = colorID;
+        nowTextSize = textSize;
         int color;
         switch (nowColorId) {
             case 0:
@@ -117,12 +124,6 @@ public class FloatLyricService extends Service {
         ((StrokeTextView) (mFloatingLayout.findViewById(R.id.firstLyric))).setTextSize(SP, nowTextSize);
         ((StrokeTextView) (mFloatingLayout.findViewById(R.id.secondLyric))).setTextSize(SP, nowTextSize);
         setColorCheck(nowColorId);
-    }
-
-    public void LyricSettings(int textSize, int colorID) {
-        nowColorId = colorID;
-        nowTextSize = textSize;
-        LyricSettings();
         saveLyricSettings();
     }
 
@@ -164,23 +165,31 @@ public class FloatLyricService extends Service {
             }
         }
     };
-
+ /**
+  * 切换桌面歌词为锁定模式（因为取消锁定桌面歌词在{@link com.liux.musicplayer.ui.settings.SettingsFragment}中，进行{@link FloatLyricService}一定处于终止状态，故无需设置解锁方法）
+  * @return void
+  */
     private void LockLyric() {
+        //点击锁定按钮时，桌面歌词一定为完整状态，调用此方法用于切换仅显示歌词模式
         setAllShow();
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        //设置窗口flag
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL    //不接受点击事件
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE //不可聚焦
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE //不可触摸
                 | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
+        //更新参数
         winManager.updateViewLayout(mFloatingLayout, wmParams);
+        //报存锁定设置
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("deskLyricLock", true);
         editor.apply();
     }
-
+    /** 点击设置栏时触发的监听器 */
     private View.OnClickListener lyricSettingListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            //根据点击到的控件id确定执行代码
             switch (v.getId()) {
                 case R.id.color_red:
                     nowColorId = 0;
@@ -198,19 +207,27 @@ public class FloatLyricService extends Service {
                     nowColorId = 4;
                     break;
                 case R.id.largerText:
+                    //字体最大字号为24sp
                     if (nowTextSize < 24)
                         nowTextSize += 2;
                     break;
                 case R.id.smallerText:
+                    //字体最小字号为14sp
                     if (nowTextSize > 14)
                         nowTextSize -= 2;
                     break;
             }
+            //更新颜色选中信息显示
             setColorCheck(nowColorId);
+            //更新设置
             LyricSettings(nowTextSize, nowColorId);
         }
     };
-
+     /**
+      * 根据颜色id更新设置栏颜色选项的选中对勾位置
+      * @param nowColorID 新选中的颜色id
+      * @return void
+      */
     private void setColorCheck(int nowColorID) {
         ((ImageView) (mFloatingLayout.findViewById(R.id.color_red))).setImageDrawable(null);
         ((ImageView) (mFloatingLayout.findViewById(R.id.color_blue))).setImageDrawable(null);
@@ -235,22 +252,27 @@ public class FloatLyricService extends Service {
                 viewID = R.id.color_purple;
                 break;
         }
+        //设置被选中的ImageView控件显示对勾
         ((ImageView) (mFloatingLayout.findViewById(viewID))).setImageDrawable(getDrawable(R.drawable.ic_round_check_24));
     }
-
+ /**
+  * 更新当前显示的歌词
+  * @return void
+  */
     private void updateLyric() {
+        //如果当前歌词行id大于歌词列表的长度，说明歌词数据未初始化，暂不执行操作
         if (nowLyricId >= lyric.lyricList.size()) return;
-        if (lyric.lyricList.size() > 1) {
-            String s = lyric.lyricList.get(nowLyricId);
-            if (s.contains("\n")) {
-                firstLyric.setText(s.split("\n")[0]);
-                secondLyric.setText(s.split("\n")[1]);
-            } else {
-                firstLyric.setText(s);
-                if (lyric.size() > nowLyricId + 1) {
-                    secondLyric.setText(lyric.lyricList.get(nowLyricId + 1));
+        if (lyric.lyricList.size() > 1) {   //如果歌词总行数大于1，则按常规显示方法显示
+            String s = lyric.lyricList.get(nowLyricId); //通过歌词行id获取当前行歌词
+            if (s.contains("\n")) { //该行歌词包括换行，说明它为带翻译的歌词
+                firstLyric.setText(s.split("\n")[0]);   //第一个TextView显示原文
+                secondLyric.setText(s.split("\n")[1]);  //第二行TextView显示翻译
+            } else {    //不包含换行
+                firstLyric.setText(s);  //第一行显示获取到的歌词
+                if (lyric.size() > nowLyricId + 1) {    //判断是否存在下一行歌词
+                    secondLyric.setText(lyric.lyricList.get(nowLyricId + 1));  //第二个TextView显示下一行歌词
                 } else {
-                    secondLyric.setText("The End");
+                    secondLyric.setText("The End"); //第二个TextView显示结束标记
                 }
             }
         } else if (lyric.lyricList.size() == 1) {
@@ -262,38 +284,28 @@ public class FloatLyricService extends Service {
         }
         firstScroll.scrollTo(0, 0);
         secondScroll.scrollTo(0, 0);
-        firstScroll.post(new Runnable() {
+        firstScroll.postDelayed(new Runnable() {
             @Override
             public void run() {
                 int offset = firstLyric.getMeasuredWidth() - firstScroll.getMeasuredWidth();
                 if (offset > 0) {
-                    try {
-                        Thread.sleep(700);
                         firstScroll.smoothScrollTo(offset, 0);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     firstScroll.scrollTo(0, 0);
                 }
             }
-        });
-        secondScroll.post(new Runnable() {
+        },700);
+        secondScroll.postDelayed(new Runnable() {
             @Override
             public void run() {
                 int offset = secondLyric.getMeasuredWidth() - secondScroll.getMeasuredWidth();
                 if (offset > 0) {
-                    try {
-                        Thread.sleep(700);
                         secondScroll.smoothScrollTo(offset, 0);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     secondScroll.scrollTo(0, 0);
                 }
             }
-        });
+        },700);
     }
 
     private class LyricThread extends Thread {
@@ -401,7 +413,7 @@ public class FloatLyricService extends Service {
     private void initLyricSettings() {
         nowTextSize = sp.getInt("deskLyricTextSize", 18);
         nowColorId = sp.getInt("deskLyricColorId", 1);
-        LyricSettings();
+        LyricSettings(nowTextSize,nowColorId);
     }
 
     private void saveLyricSettings() {

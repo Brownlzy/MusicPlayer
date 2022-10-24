@@ -1,7 +1,5 @@
 package com.liux.musicplayer.service;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -212,8 +210,6 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
 
     @Override
     public void onCreate() {
-        lyric = new LyricUtils(this);
-        metadata = new MusicUtils.Metadata();
         initializePlayer();
         initMemberData();
         initRemoteViews();
@@ -226,6 +222,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     private void registerBluetoothReceiver() {
+        mediaButtonReceiver = new MediaButtonReceiver(getApplicationContext(), this);
         mBluetoothStateReceiver = new BluetoothStateReceiver();
         mBluetoothStateReceiver.setIBluetoothStateListener(new BluetoothStateReceiver.IBluetoothStateListener() {
             @Override
@@ -276,6 +273,8 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     }
 
     private void initMemberData() {
+        lyric = new LyricUtils(this);
+        metadata = new MusicUtils.Metadata();
         keyTimes[0] = 0;
         keyTimeThread = new KeyTimeThread();
         songList = new ArrayList<>();
@@ -358,7 +357,6 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             mediaPlayer.reset();
             AudioAttributes.Builder audioAttributesBuilder = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC);
             mediaPlayer.setAudioAttributes(audioAttributesBuilder.build());
-            mediaButtonReceiver = new MediaButtonReceiver(getApplicationContext(), this);
         }
         setMediaPlayerListener();
     }
@@ -516,7 +514,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
 
     public void updateDeskLyricPlayInfo() {
         if (deskLyricCallback != null)
-            deskLyricCallback.updatePlayState(getNowId());
+            deskLyricCallback.updateNowPlaying(getNowId());
     }
 
     public void setPlayOrPause(boolean isPlay) {
@@ -777,14 +775,14 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 if (musicServiceCallback != null)
                     musicServiceCallback.nowLoadingThis(musicId);
                 if (deskLyricCallback != null)
-                    deskLyricCallback.updatePlayState(musicId);
+                    deskLyricCallback.updateNowPlaying(musicId);
                 break;
             default:
             case -1:
                 if (musicServiceCallback != null)
                     musicServiceCallback.playingErrorThis(musicId);
                 if (deskLyricCallback != null)
-                    deskLyricCallback.updatePlayState(musicId);
+                    deskLyricCallback.updateNowPlaying(musicId);
                 setEnabled(false);
                 break;
         }
@@ -831,7 +829,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                         if (musicServiceCallback != null)
                             musicServiceCallback.playingErrorThis(nowId);
                         if (deskLyricCallback != null)
-                            deskLyricCallback.updatePlayState(nowId);
+                            deskLyricCallback.updateNowPlaying(nowId);
                         setEnabled(false);
                     }
                 });
@@ -858,7 +856,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             if (musicServiceCallback != null)
                 musicServiceCallback.playingErrorThis(nowId);
             if (deskLyricCallback != null)
-                deskLyricCallback.updatePlayState(nowId);
+                deskLyricCallback.updateNowPlaying(nowId);
             setEnabled(false);
         }
     }

@@ -22,8 +22,8 @@ public class LyricUtils {
     public List<String> lyricList;
     public List<String> startTime;
     public List<Long> startMillionTime;
-    private Context mContext;
-    private List<OnLyricLoadCallback> onLyricLoadCallbackList = new ArrayList<>();
+    private final Context mContext;
+    private final List<OnLyricLoadCallback> onLyricLoadCallbackList = new ArrayList<>();
 
     public interface OnLyricLoadCallback {
         void LyricLoadCompleted();

@@ -34,8 +34,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Create by JiYaRuo on 2021/8/20.
- * Describe:
+ * 修改自 JiYaRuo on 2021/8/20.
+ * 修改内容：支持缓存列表，缓存列表中存在的优先返回缓存地址
  */
 public class UploadDownloadUtils {
     private static final String TAG = UploadDownloadUtils.class.getSimpleName();
@@ -119,13 +119,11 @@ public class UploadDownloadUtils {
                     ResponseBody body = execute.body();
                     InputStream inputStream = body.byteStream();
                     final long lengh = body.contentLength();
-//                    LogUtils.i(TAG,"downloadDocument","文件大小=="+lengh);
                     // 文件保存到本地
                     File file1 = null;
                     file1 = new File(path);
                     if (!file1.exists())
                         file1.mkdirs();
-//                    LogUtils.i(TAG,"downloadDocument","文件名称=="+fileName);
                     File file = new File(file1, fileName);
                     if (!file.exists()) {
                         file.createNewFile();
@@ -138,11 +136,11 @@ public class UploadDownloadUtils {
                         outputStream.write(bytes, 0, lien);
                         losing += lien;
                         final float i = losing * 1.0f / lengh;
-                        if (i == 1.0) {
-                            //Log.i(TAG, "downloadDocument" + "下载完成" + fileName);
-                        } else {
-                            //LogUtils.i(TAG,"downloadDocument","下载进度=="+i);
-                        }
+//                        if (i == 1.0) {
+//                            //Log.i(TAG, "downloadDocument" + "下载完成" + fileName);
+//                        } else {
+//                            //LogUtils.i(TAG,"downloadDocument","下载进度=="+i);
+//                        }
                         Message message = mHandler.obtainMessage();
                         ArrayList<String> array = new ArrayList<String>();
                         array.add(url);
@@ -154,6 +152,7 @@ public class UploadDownloadUtils {
                     outputStream.flush();
                     inputStream.close();
                     outputStream.close();
+                    //发送信息
                     Message message = mHandler.obtainMessage();
                     ArrayList<String> array = new ArrayList<String>();
                     array.add(url);
@@ -162,6 +161,7 @@ public class UploadDownloadUtils {
                     message.what = 2;
                     Log.i(TAG, "downloadDocument" + "下载完成" + fileName);
                     mHandler.sendMessage(message);
+                    //存入缓存列表
                     cacheList.add(new MyCache(url, fileName));
                     saveCacheList();
                 } catch (IOException e) {
@@ -176,7 +176,9 @@ public class UploadDownloadUtils {
             }
         }).start();
     }
-
+ /**
+  * 加载缓存列表
+  */
     private void LoadCacheList() {
         if (cacheList == null) {
             String strCacheList = prefs.getString("cacheList", "[]");
@@ -188,7 +190,9 @@ public class UploadDownloadUtils {
                 cacheList = new ArrayList<>();
         }
     }
-
+ /**
+  * 保存缓存列表
+  */
     private void saveCacheList() {
         Gson gson = new Gson();
         Type cacheListType = new TypeToken<ArrayList<MyCache>>() {
@@ -198,23 +202,23 @@ public class UploadDownloadUtils {
         editor.putString("cacheList", strCacheListJson);
         editor.apply();
     }
-
+/** 处理OkHttp线程的下载信息 */
     Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case 2:
+                case 2: //下载完成
                     if (mOnImageLoadListener != null) {
                         mOnImageLoadListener.onFileDownloadCompleted((ArrayList<String>) msg.obj);
                     }
                     break;
-                case 3:
+                case 3: //下载失败
                     if (mOnImageLoadListener != null) {
                         mOnImageLoadListener.onFileDownloadError((ArrayList<String>) msg.obj);
                     }
                     break;
-                case 6:
+                case 6: //正在下载
                     if (mOnImageLoadListener != null) {
                         mOnImageLoadListener.onFileDownloading((ArrayList<String>) msg.obj);
                     }
@@ -224,52 +228,16 @@ public class UploadDownloadUtils {
     };
 
     /**
-     * 获取文件夹下的文件
-     */
-    public static List<String> getLocalPic(String path) {
-        List<String> mList = new ArrayList<>();
-        File dir = new File(path);
-        if (dir == null || !dir.exists() || !dir.isDirectory())
-            return null;
-        for (File file : dir.listFiles()) {
-            if (file.isFile())
-                mList.add(file.getPath());
-        }
-        return mList;
-    }
-
-    /**
-     * 删除文件
-     */
-    public void deleteFile(String path) {
-        File file = new File(path);
-        deleteDirWithFile(file);
-    }
-
-    /**
-     * 删除文件
-     *
-     * @param dir
-     */
-    private void deleteDirWithFile(File dir) {
-        if (dir == null || !dir.exists() || !dir.isDirectory())
-            return;
-        for (File file : dir.listFiles()) {
-            if (file.isFile())
-                file.delete(); // 删除所有文件
-            else if (file.isDirectory())
-                deleteDirWithFile(file); // 递规的方式删除文件夹
-        }
-    }
-
-    /**
      * 销毁
      */
     public void onDestroy() {
         mOnImageLoadListener = null;
         mInstance = null;
     }
-
+ /**
+  * 缓存类
+  * @author         Brownlzy
+  */
     private class MyCache {
         String url = "";
         String cache = "";

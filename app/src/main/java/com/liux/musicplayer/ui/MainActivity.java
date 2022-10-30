@@ -182,9 +182,11 @@ public class MainActivity extends FragmentActivity {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             musicService = ((MusicService.MyMusicBinder) iBinder).getService();
             Log.e("MusicConnector", "musicService" + musicService);
+            //注册MusicServiceCallback
             musicService.setMusicServiceCallback(musicServiceCallback);
+            //连接服务成功，初始化mainActivity
             initMainActivity();
-            if (viewPager.getCurrentItem() == 1)
+            if (viewPager.getCurrentItem() == 1)    //如果当前页为播放列表，初始化列表数据
                 playlistFragment.initData();
         }
 
@@ -204,6 +206,7 @@ public class MainActivity extends FragmentActivity {
         initBackgroundCallBack();
         setMainActivityData();
         SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(this);
+        //首次启动显示教程
         if(sp.getBoolean("isFirstStart",true)){
             Intent intent=new Intent(MainActivity.this,UserGuide.class);
             startActivity(intent);
@@ -277,14 +280,11 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //初始化错误日志生成
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //允许在主线程连接网络
-        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
-//initMainActivity();
         // Bind to LocalService
         serviceConnection = new MusicConnector();
         Intent intent = new Intent();
@@ -368,16 +368,17 @@ public class MainActivity extends FragmentActivity {
         musicService.unregisterMusicServiceCallback(musicServiceCallback);
         unbindService(serviceConnection);
         homeFragment.onDestroy();
-        //homeFragment.stopLyric();
         stopProgressBar();
         super.onDestroy();
     }
 
     public void setPlayOrPause() {
-        //setPlayOrPause(!musicService.isPlaying());
         musicService.setPlayOrPause(!musicService.isPlaying());
     }
-
+ /**
+  * 获取MainActivity绑定的{@link MusicService}
+  * @return MusicService
+  */
     public MusicService getMusicService() {
         if (musicService != null)
             return musicService;

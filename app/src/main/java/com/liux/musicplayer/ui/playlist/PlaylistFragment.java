@@ -39,8 +39,6 @@ import androidx.preference.PreferenceManager;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.card.MaterialCardView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.ui.MainActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.utils.CustomDialogUtils;
@@ -49,7 +47,6 @@ import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.UriTransform;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -98,7 +95,7 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
 
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
-        ((MainActivity) requireActivity()).getMusicService().addMusic(songList);
+        ((MainActivity) requireActivity()).getMusicService().addMusicList(songList);
     }
 
     private void addFolder(Uri uri) {
@@ -626,9 +623,9 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         if (((MainActivity) requireActivity()).getMusicService().isWebPlayMode()) {
             metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
         } else {
-            metadata = MusicUtils.getMetadata(requireContext(), mSongList.get(musicId).source_uri);
+            metadata = MusicUtils.getMetadata(mSongList.get(musicId).source_uri);
         }
-        Bitmap bitmap = MusicUtils.getAlbumImage(requireContext(), mSongList.get(musicId).source_uri);
+        Bitmap bitmap = MusicUtils.getAlbumImage(mSongList.get(musicId).source_uri);
         AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(mSongList.get(musicId).title)
                 .setMessage(

@@ -21,20 +21,20 @@ public class CustomDialogUtils {
     private static MusicUtils.Song content;
 
     /**
+     * 弹出歌曲信息编辑框
      * @param activity                    Context
      * @param cancelableTouchOut          点击外部是否隐藏提示框
      * @param alertDialogBtnClickListener 点击监听
      */
-
     public static void showSongInfoEditDialog(MainActivity activity, MusicUtils.Song song, boolean cancelableTouchOut, final AlertDialogBtnClickListener alertDialogBtnClickListener) {
         content = song;
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_song_info_edit, null);
         LinearLayout frame = (LinearLayout) view.findViewById(R.id.edit_info);
-        EditText frameEditTextTitle = (EditText) view.findViewById(R.id.newTitle);
-        EditText frameEditTextArtist = (EditText) view.findViewById(R.id.newArtist);
-        EditText frameEditTextAlbum = (EditText) view.findViewById(R.id.newAlbum);
+        EditText frameEditTextTitle = (EditText) view.findViewById(R.id.newTitle);  //标题
+        EditText frameEditTextArtist = (EditText) view.findViewById(R.id.newArtist);    //歌手
+        EditText frameEditTextAlbum = (EditText) view.findViewById(R.id.newAlbum);  //专辑
         EditText frameEditTextPath = (EditText) view.findViewById(R.id.oldPath);
-        EditText frameEditTextLyric = (EditText) view.findViewById(R.id.newLyric);
+        EditText frameEditTextLyric = (EditText) view.findViewById(R.id.newLyric);  //歌词路径
         TextView frameConfirm = (TextView) view.findViewById(R.id.dialog_button_confirm);
         TextView frameCancel = (TextView) view.findViewById(R.id.dialog_button_cancel);
         frameEditTextTitle.setText(song.title);
@@ -42,13 +42,13 @@ public class CustomDialogUtils {
         frameEditTextAlbum.setText(song.album);
         frameEditTextPath.setText(song.source_uri);
         frameEditTextLyric.setText(song.lyric_uri);
-
+        //根据颜色主题切换背景色
         if (activity.getApplicationContext().getResources().getConfiguration().uiMode == 0x21) {
             frame.setBackgroundResource(R.drawable.popup_full_dark);
         } else {
             frame.setBackgroundResource(R.drawable.popup_full_bright);
         }
-
+        //标题
         frameEditTextTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -65,6 +65,7 @@ public class CustomDialogUtils {
 
             }
         });
+        //歌手
         frameEditTextArtist.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,6 +82,7 @@ public class CustomDialogUtils {
 
             }
         });
+        //专辑
         frameEditTextAlbum.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,6 +99,7 @@ public class CustomDialogUtils {
 
             }
         });
+        //歌词
         frameEditTextLyric.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -113,7 +116,7 @@ public class CustomDialogUtils {
 
             }
         });
-
+        //确定
         frameConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +124,7 @@ public class CustomDialogUtils {
                 dialog.dismiss();
             }
         });
-
+        //取消
         frameCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +132,7 @@ public class CustomDialogUtils {
                 dialog.dismiss();
             }
         });
-
+        //dialogBuilder
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setView(view);
         dialog = builder.create();

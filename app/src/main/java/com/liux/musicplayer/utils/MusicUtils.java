@@ -66,8 +66,12 @@ public class MusicUtils {
         public String duration = "0";
         public Long size = 0L;
     }
-
-    public static Bitmap getAlbumImage(Context context, String path) {
+     /**
+      * 描述一下方法的作用
+      * @param path 歌曲文件路径
+      * @return BitMap 专辑图片
+      */
+    public static Bitmap getAlbumImage(String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             mediaMetadataRetriever.setDataSource(path);
@@ -76,22 +80,17 @@ public class MusicUtils {
             Bitmap bitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
             mediaMetadataRetriever.release();
             return bitmap;
-        } catch (IllegalArgumentException e) {
-            //文件路径错误或无权限
-            //Toast.makeText(context, "专辑图片读取失败", Toast.LENGTH_SHORT).show();
-            return null;
-        } catch (NullPointerException e) {
-            //文件本身无专辑图片
-            //Toast.makeText(context, "该文件无专辑图片", Toast.LENGTH_SHORT).show();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
             return null;
         }
     }
-
-    public static Metadata getMetadata(Context context, String path) {
+ /**
+  * 返回歌曲tag信息
+  * @param path 歌曲文件路径
+  * @return Metadata 歌曲元信息
+  */
+    public static Metadata getMetadata(String path) {
         try {
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             mediaMetadataRetriever.setDataSource(path);
@@ -107,15 +106,6 @@ public class MusicUtils {
             mediaMetadataRetriever.release();
             md.isValid = true;
             return md;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            //文件路径错误或无权限
-            //Toast.makeText(context, "专辑图片读取失败", Toast.LENGTH_SHORT).show();
-            //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            //文件本身无专辑图片
-            //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
         } catch (Exception e) {
             e.printStackTrace();
             //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
@@ -123,7 +113,11 @@ public class MusicUtils {
         }
         return new Metadata();
     }
-
+ /**
+  * 返回歌曲MetaData
+  * @param song 歌曲
+  * @return Metadata tag数据
+  */
     public static Metadata getMetadataFromSong(Song song) {
         Metadata md = new Metadata();
         md.title = song.title;
@@ -137,7 +131,11 @@ public class MusicUtils {
         md.isValid = true;
         return md;
     }
-
+ /**
+  * 毫秒数转时间字符串
+  * @param t 毫秒数
+  * @return String 时间字符串
+  */
     public static String millis2FitTimeSpan(long t) {
         if (t < 60000) {
             return "0:" + (t % 60000) / 1000;
@@ -220,7 +218,7 @@ public class MusicUtils {
     public static void addMusic(Context context,String path,List<Song>songList) {
         MusicUtils.Song newSong = new MusicUtils.Song();
         newSong.source_uri = path;
-        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(context, newSong.source_uri);
+        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(newSong.source_uri);
         if (newMetadata.isValid) {
             newSong.title = newMetadata.title;
             newSong.artist = newMetadata.artist;
@@ -260,7 +258,12 @@ public class MusicUtils {
         }
         savePlayList(context, songList);
     }
-
+ /**
+  * 把songList保存到设置文件中
+  * @param context 上下文
+  * @param songList 要保存的歌曲列表
+  * @return
+  */
     public static void savePlayList(Context context,List<Song> songList) {
             Gson gson = new Gson();
             Type playListType = new TypeToken<ArrayList<Song>>() {
@@ -271,6 +274,4 @@ public class MusicUtils {
             editor.putString("playList", playListJson);
             editor.apply();
     }
-
-
 }

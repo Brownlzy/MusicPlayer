@@ -51,7 +51,7 @@ public class LyricUtils {
         mContext = context;
         LoadLyric(song);
     }
-
+//判断此歌曲是否有歌词文件
     public void LoadLyric(MusicUtils.Song song) {
         isCompleted = false;
         lyricList = new ArrayList<>();
@@ -81,10 +81,11 @@ public class LyricUtils {
         sendCompleted();
         isCompleted = true;
     }
-
+//从歌词文件中获取歌词信息
     private void LyricFromFile(String path) {
         try {
             File lyricFile = FileUtils.getFileByPath(path);
+//            用流的方式逐行输出歌词内容
             InputStream inStream = null;
             inStream = new FileInputStream(lyricFile);
             InputStreamReader inputReader = new InputStreamReader(inStream);
@@ -111,10 +112,11 @@ public class LyricUtils {
         sendCompleted();
         isCompleted = true;
     }
-
+//歌词信息是url时会尝试获取在线歌词
     public void LyricFromUrl(MusicUtils.Song song) {
         UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(mContext);
         uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
+//            歌词下载完成时加载
             @Override
             public void onFileDownloadCompleted(ArrayList<String> array) {
                 Log.e("lyric", array.get(0));
@@ -122,7 +124,7 @@ public class LyricUtils {
                     return;
                 handleUrlResult(array.get(1), song);
             }
-
+//          歌词下载失败
             @Override
             public void onFileDownloadError(ArrayList<String> array) {
                 if (!array.get(0).equals(song.lyric_uri))
@@ -135,7 +137,7 @@ public class LyricUtils {
         });
         uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".lrc", song.lyric_uri);
     }
-
+//将下载下来的歌词存到歌词文件中
     private void handleUrlResult(String resultFilePath, MusicUtils.Song song) {
         try {
             File lyricFile = FileUtils.getFileByPath(resultFilePath);

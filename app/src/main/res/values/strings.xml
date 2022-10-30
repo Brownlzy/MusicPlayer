@@ -98,4 +98,7 @@
     <string name="gotoSettings">Goto Settings</string>
     <string name="crashMe">Crash Test</string>
     <string name="title_name">"Title: "</string>
+    <string name="page_up">Page up</string>
+    <string name="page_down">Page down</string>
+    <string name="over">Over</string>
 </resources>

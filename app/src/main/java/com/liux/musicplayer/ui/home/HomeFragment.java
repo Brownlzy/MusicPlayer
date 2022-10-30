@@ -166,10 +166,12 @@ public class HomeFragment extends Fragment {
     //显示歌词列表及模糊背景
     public void setIsLyricLayoutShow(boolean isLyric) {
         if (songLyricLayout != null && isLyric != lastLyricEnabled) {
+//            当歌词区域不显示歌词时，将显示明显的专辑封面
             if (!isLyric) {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_hide);
                 songLyricLayout.startAnimation(animation);
                 songLyricLayout.setVisibility(View.INVISIBLE);
+//                当歌词区域显示歌词时，将专辑封面虚化处理
             } else {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.gradually_show);
                 songLyricLayout.setVisibility(View.VISIBLE);

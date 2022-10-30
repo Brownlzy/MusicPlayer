@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: 5a9812c
-# pg_map_hash: SHA-256 5a9812ca0aa98963520d3dc1991e96cbf12ebb58f3ed2f930cb38d7eaf528315
+# pg_map_id: f9dd610
+# pg_map_hash: SHA-256 f9dd61038f554a8c2e89578abaceb3314f76662c066a632602d1cd85777dcd37
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -34343,23 +34343,23 @@ com.liux.musicplayer.ui.UserGuide$3 -> com.liux.musicplayer.ui.UserGuide$3:
     71:71:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
     74:77:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.home.HomeFragment -> com.liux.musicplayer.ui.home.HomeFragment:
-    35:305:void <init>() -> <init>
+    35:307:void <init>() -> <init>
     35:35:boolean access$002(com.liux.musicplayer.ui.home.HomeFragment,boolean) -> access$002
     35:35:com.liux.musicplayer.ui.home.LyricAdapter access$100(com.liux.musicplayer.ui.home.HomeFragment) -> access$100
     35:35:android.os.Handler access$200(com.liux.musicplayer.ui.home.HomeFragment) -> access$200
     109:110:void callMainActivityForInfo() -> callMainActivityForInfo
-    216:228:void initLyric(com.liux.musicplayer.utils.MusicUtils$Song) -> initLyric
+    218:230:void initLyric(com.liux.musicplayer.utils.MusicUtils$Song) -> initLyric
     69:106:void initViewCompat() -> initViewCompat
     54:55:void onAttach(android.content.Context) -> onAttach
     59:64:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
     114:115:void onDestroyView() -> onDestroyView
-    184:186:void onPause() -> onPause
-    190:193:void onResume() -> onResume
-    168:180:void setIsLyricLayoutShow(boolean) -> setIsLyricLayoutShow
-    197:212:void setLyricPosition(int) -> setLyricPosition
+    186:188:void onPause() -> onPause
+    192:195:void onResume() -> onResume
+    168:182:void setIsLyricLayoutShow(boolean) -> setIsLyricLayoutShow
+    199:214:void setLyricPosition(int) -> setLyricPosition
     124:164:void setMusicInfo(com.liux.musicplayer.utils.MusicUtils$Song) -> setMusicInfo
-    292:298:void startLyric() -> startLyric
-    301:303:void stopLyric() -> stopLyric
+    294:300:void startLyric() -> startLyric
+    303:305:void stopLyric() -> stopLyric
 com.liux.musicplayer.ui.home.HomeFragment$1 -> com.liux.musicplayer.ui.home.HomeFragment$1:
     69:69:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
     72:73:boolean onLongClick(android.view.View) -> onLongClick
@@ -34371,19 +34371,19 @@ com.liux.musicplayer.ui.home.HomeFragment$3 -> com.liux.musicplayer.ui.home.Home
     98:98:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
     103:104:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.liux.musicplayer.ui.home.HomeFragment$4 -> com.liux.musicplayer.ui.home.HomeFragment$4:
-    222:222:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
-    225:226:void LyricLoadCompleted() -> LyricLoadCompleted
+    224:224:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
+    227:228:void LyricLoadCompleted() -> LyricLoadCompleted
 com.liux.musicplayer.ui.home.HomeFragment$5 -> com.liux.musicplayer.ui.home.HomeFragment$5:
-    305:305:void <init>(com.liux.musicplayer.ui.home.HomeFragment,android.os.Looper) -> <init>
-    308:311:void handleMessage(android.os.Message) -> handleMessage
+    307:307:void <init>(com.liux.musicplayer.ui.home.HomeFragment,android.os.Looper) -> <init>
+    310:313:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.ui.home.HomeFragment$LyricThread -> com.liux.musicplayer.ui.home.HomeFragment$LyricThread:
-    230:232:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
-    230:230:void <init>(com.liux.musicplayer.ui.home.HomeFragment,com.liux.musicplayer.ui.home.HomeFragment$1) -> <init>
-    240:240:boolean isPaused() -> isPaused
-    253:260:void onPause() -> onPause
-    236:237:void pauseThread() -> pauseThread
-    245:249:void resumeThread() -> resumeThread
-    264:286:void run() -> run
+    232:234:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
+    232:232:void <init>(com.liux.musicplayer.ui.home.HomeFragment,com.liux.musicplayer.ui.home.HomeFragment$1) -> <init>
+    242:242:boolean isPaused() -> isPaused
+    255:262:void onPause() -> onPause
+    238:239:void pauseThread() -> pauseThread
+    247:251:void resumeThread() -> resumeThread
+    266:288:void run() -> run
 com.liux.musicplayer.ui.home.LyricAdapter -> com.liux.musicplayer.ui.home.LyricAdapter:
     25:30:void <init>(com.liux.musicplayer.ui.home.HomeFragment,android.content.Context,com.liux.musicplayer.utils.LyricUtils,android.util.SparseBooleanArray) -> <init>
     34:34:int getCount() -> getCount
@@ -34721,21 +34721,21 @@ com.liux.musicplayer.utils.DisplayUtils -> com.liux.musicplayer.utils.DisplayUti
 com.liux.musicplayer.utils.LyricUtils -> com.liux.musicplayer.utils.LyricUtils:
     21:48:void <init>(android.content.Context) -> <init>
     56:71:void LoadLyric(com.liux.musicplayer.utils.MusicUtils$Song) -> LoadLyric
-    87:113:void LyricFromFile(java.lang.String) -> LyricFromFile
-    116:137:void LyricFromUrl(com.liux.musicplayer.utils.MusicUtils$Song) -> LyricFromUrl
+    87:114:void LyricFromFile(java.lang.String) -> LyricFromFile
+    117:139:void LyricFromUrl(com.liux.musicplayer.utils.MusicUtils$Song) -> LyricFromUrl
     20:20:void access$000(com.liux.musicplayer.utils.LyricUtils,java.lang.String,com.liux.musicplayer.utils.MusicUtils$Song) -> access$000
-    204:220:long formatTime(java.lang.String) -> formatTime
-    228:235:int getNowLyric(int) -> getNowLyric
-    197:200:void getStartMillionTime() -> getStartMillionTime
-    141:162:void handleUrlResult(java.lang.String,com.liux.musicplayer.utils.MusicUtils$Song) -> handleUrlResult
+    206:222:long formatTime(java.lang.String) -> formatTime
+    230:237:int getNowLyric(int) -> getNowLyric
+    199:202:void getStartMillionTime() -> getStartMillionTime
+    143:164:void handleUrlResult(java.lang.String,com.liux.musicplayer.utils.MusicUtils$Song) -> handleUrlResult
     37:41:void sendCompleted() -> sendCompleted
     33:34:void setOnLyricLoadCallback(com.liux.musicplayer.utils.LyricUtils$OnLyricLoadCallback) -> setOnLyricLoadCallback
-    224:224:int size() -> size
-    167:194:void splitLyricFromLine(java.lang.String) -> splitLyricFromLine
+    226:226:int size() -> size
+    169:196:void splitLyricFromLine(java.lang.String) -> splitLyricFromLine
 com.liux.musicplayer.utils.LyricUtils$1 -> com.liux.musicplayer.utils.LyricUtils$1:
-    117:117:void <init>(com.liux.musicplayer.utils.LyricUtils,com.liux.musicplayer.utils.MusicUtils$Song) -> <init>
-    120:124:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
-    128:134:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
+    118:118:void <init>(com.liux.musicplayer.utils.LyricUtils,com.liux.musicplayer.utils.MusicUtils$Song) -> <init>
+    122:126:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
+    130:136:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
 com.liux.musicplayer.utils.MusicUtils -> com.liux.musicplayer.utils.MusicUtils:
     java.lang.String $r8$lambda$cScavgqel1xLUs7_dEtyCwrfzFg(com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$cScavgqel1xLUs7_dEtyCwrfzFg
       # {"id":"com.android.tools.r8.synthesized"}

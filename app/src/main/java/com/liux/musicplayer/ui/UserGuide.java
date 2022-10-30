@@ -27,7 +27,11 @@ public class UserGuide extends AppCompatActivity {
         setContentView(R.layout.activity_user_guide);
         initView();
     }
-
+/**
+ * 初始化引导页
+ * @param
+ * @return void
+ */
     private void initView() {
         imageId[0] = R.mipmap.guide_1;
         imageId[1] = R.mipmap.guide_2;

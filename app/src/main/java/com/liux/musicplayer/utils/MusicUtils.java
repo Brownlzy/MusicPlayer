@@ -3,6 +3,7 @@ package com.liux.musicplayer.utils;
 import static com.blankj.utilcode.util.ThreadUtils.runOnUiThread;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,10 +13,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
+
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -26,9 +31,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -144,6 +151,8 @@ public class MusicUtils {
 
     /**
      * 扫描系统里面的音频文件，返回一个list集合
+     * @param context 上下文
+     * @return list
      */
     public static List<Song> getMusicData(Context context) {
         List<Song> list = new ArrayList<Song>();
@@ -187,5 +196,81 @@ public class MusicUtils {
         }
         return list;
     }
+/**
+ * 将歌曲列表添加到播放列表
+ * @param context 上下文
+ * @param songList 歌曲列表
+ * @param  playList 播放列表
+ * @return void
+ */
+    public static void addMusicToList(Context context,List<Song>songList,List<Song>playList) {
+        for (MusicUtils.Song song : songList) {
+            addMusic(context,song.source_uri.replace("/storage/emulated/0", "/sdcard"),playList);
+        }
+    }
+
+    /**
+     * 添加歌曲信息到歌曲列表
+     * @param context 上下文
+     * @param path 路径
+     * @param songList 歌曲列表
+     * @return void
+     */
+    //添加音乐
+    public static void addMusic(Context context,String path,List<Song>songList) {
+        MusicUtils.Song newSong = new MusicUtils.Song();
+        newSong.source_uri = path;
+        MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(context, newSong.source_uri);
+        if (newMetadata.isValid) {
+            newSong.title = newMetadata.title;
+            newSong.artist = newMetadata.artist;
+            newSong.album = newMetadata.album;
+            newSong.duration = newMetadata.duration;
+        }
+        newSong.size = newMetadata.sizeLong;
+        if (newSong.album == null) newSong.album = "null";
+        if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
+            if (newSong.title == null)
+                newSong.title = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
+            if (newSong.artist == null)
+                newSong.artist = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
+        } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
+            if (newSong.title == null)
+                newSong.title = FileUtils.getFileNameNoExtension(path).split("-")[1];
+            if (newSong.artist == null)
+                newSong.artist = FileUtils.getFileNameNoExtension(path).split("-")[0];
+        } else {
+            if (newSong.title == null) newSong.title = FileUtils.getFileNameNoExtension(path);
+            if (newSong.artist == null) newSong.artist = "null";
+        }
+        //判断是否存在歌词
+        if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
+            newSong.lyric_uri = path.replace(FileUtils.getFileExtension(path), "lrc");
+        else
+            newSong.lyric_uri = "null";
+
+        if (songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
+            songList.set(songList.stream().map(t -> t.source_uri).distinct().collect(Collectors.toList()).indexOf(path), newSong);
+        } else {
+            if (songList.size() == 1 && !FileUtils.isFileExists(songList.get(0).source_uri)) {  //播放列表第一位如果是示例数据则将其替换
+                songList.set(0, newSong);
+            } else {
+                songList.add(newSong);
+            }
+        }
+        savePlayList(context, songList);
+    }
+
+    public static void savePlayList(Context context,List<Song> songList) {
+            Gson gson = new Gson();
+            Type playListType = new TypeToken<ArrayList<Song>>() {
+            }.getType();
+            String playListJson = gson.toJson(songList, playListType);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("playList", playListJson);
+            editor.apply();
+    }
+
 
 }

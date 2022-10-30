@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +27,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -47,42 +45,37 @@ import com.liux.musicplayer.ui.home.HomeFragment;
 import com.liux.musicplayer.ui.playlist.PlaylistFragment;
 import com.liux.musicplayer.ui.settings.SettingsFragment;
 import com.liux.musicplayer.utils.CrashHandlers;
-import com.liux.musicplayer.utils.MusicUtils;
 
 public class MainActivity extends FragmentActivity {
 
-    private ActivityMainBinding binding = null;
-    private SeekBar playProgressBar;
-    private TextView PlayBarTitle;
-    private TextView TabTitle;
-    private ImageView PlayBarLyric;
-    private ImageView PlayBarPause;
-    private ImageView PlayBarOrder;
-    private ImageView PlayBarPrev;
-    private ImageView PlayBarNext;
-    //private MusicPlayer musicPlayer;
-    private static final int NUM_PAGES = 3;
-    private HomeFragment homeFragment;
-    private PlaylistFragment playlistFragment;
-    private SettingsFragment settingsFragment;
-    private ViewPager2 viewPager;
-    private BottomNavigationView bottomNavigationView;
-    private FragmentStateAdapter pagerAdapter;
-    private ProgressThread progressThread;
-    private LinearLayout playProgressLayout;
-    private LinearLayout musicPlayingLayout;
-    private TextView playProgressNowText;
-    private TextView playProgressAllText;
-    private ShapeableImageView shapeableImageView;
-    private ShapeableImageView backImageView;
-    private int lastPageId = 0;
-    //是否进入后台
+    private SeekBar playProgressBar;    //播放进度条
+    private TextView PlayBarTitle;  //正在播放信息
+    private TextView TabTitle;  //当前页信息
+    private ImageView PlayBarLyric; //歌词开关
+    private ImageView PlayBarPause; //播放暂停键
+    private ImageView PlayBarOrder; //播放顺序键
+    private static final int NUM_PAGES = 3; //总页数
+    private HomeFragment homeFragment;  //主页
+    private PlaylistFragment playlistFragment;  //播放列表页
+    private SettingsFragment settingsFragment;  //设置页
+    private ViewPager2 viewPager;   //用于fragment滑动切换
+    private BottomNavigationView bottomNavigationView;  //底部导航栏
+    private ProgressThread progressThread;  //用于更新进度条的子线程
+    private LinearLayout playProgressLayout;    //进度条所在布局
+    private LinearLayout musicPlayingLayout;    //正在播放信息所在布局
+    private TextView playProgressNowText;   //播放进度显示文本
+    private TextView playProgressAllText;   //总时长显示文本
+    private ShapeableImageView shapeableImageView;  //专辑图片
+    private ShapeableImageView backImageView;   //背景图片
+    private int lastPageId = 0; //上页id
+    //用于判断程序是否进入后台
     private int countActivity = 0;
     private boolean isBackground = false;
 
-    private MusicService musicService;
-    private MusicConnector serviceConnection;
-    private MusicServiceCallback musicServiceCallback = new MusicServiceCallback() {
+    private MusicService musicService;//音乐服务
+    private MusicConnector serviceConnection;//和音乐服务的连接器
+    /** 音乐服务的状态回调，详见{@link MusicServiceCallback} */
+    private final MusicServiceCallback musicServiceCallback = new MusicServiceCallback() {
         @Override
         public void nowPlayingThis(int musicID) {
             nowPlaying(musicID);
@@ -103,12 +96,15 @@ public class MainActivity extends FragmentActivity {
             nowLoading(musicId);
         }
     };
-
+     /**
+      * 修改正在缓冲的音乐信息
+      * @param musicId
+      */
     private void nowLoading(int musicId) {
         prepareInfo(musicId);
         PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_24));
     }
-
+/** 用于接受来自子线程的信息，并在主线程更新进度条 */
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -118,7 +114,10 @@ public class MainActivity extends FragmentActivity {
             }
         }
     };
-
+ /**
+  * 用于更新播放进度条的线程
+  * @author         Brownlzt
+  */
     private class ProgressThread extends Thread {
         private final Object lock = new Object();
         private boolean pause = false;
@@ -164,7 +163,7 @@ public class MainActivity extends FragmentActivity {
                         int nowMillionSeconds = musicService.getCurrentPosition();
                         Message msg = new Message();
                         msg.what = 100;  //消息发送的标志
-                        msg.obj = nowMillionSeconds; //消息发送的内容如：  Object String 类 int
+                        msg.obj = nowMillionSeconds; //消息发送的内容
                         progressHandler.sendMessage(msg);
                     }
                     Thread.sleep(1000);
@@ -175,7 +174,10 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-
+ /**
+  * 用于绑定音乐服务的连接器
+  * @author         Brownlzy
+  */
     private class MusicConnector implements ServiceConnection {
         //成功绑定时调用 即bindService（）执行成功同时返回非空Ibinder对象
         @Override
@@ -197,14 +199,16 @@ public class MainActivity extends FragmentActivity {
             Log.i("binding is fail", "binding is fail");
         }
     }
-
+     /**
+      * 初始化MainActivity
+      */
     private void initMainActivity() {
+        //声明当前位于前台（方便桌面歌词隐藏和显示）
         musicService.setActivityForeground(true);
-        initVariable();
         initViewCompat();
         initViewPager2();
         initBackgroundCallBack();
-        setMainActivityData();
+        initMainActivityData();
         SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(this);
         //首次启动显示教程
         if(sp.getBoolean("isFirstStart",true)){
@@ -212,28 +216,25 @@ public class MainActivity extends FragmentActivity {
             startActivity(intent);
         }
     }
-
-    private void setMainActivityData() {
+ /**
+  * 初始化MainActivity数据
+  */
+    private void initMainActivityData() {
         setPlayOrder(musicService.getPlayOrder());
         setPlayBarTitle(musicService.getNowId());
         if (musicService.isPlaying()) {
             prepareInfo(musicService.getNowId());
             updatePlayState();
         } else if (musicService.isEnabled()) {
-            //setHomeFragment();
             resetPlayProgress();
             int nowMillionSeconds = musicService.getCurrentPosition();
             playProgressBar.setProgress(nowMillionSeconds); //实时获取播放音乐的位置并且设置进度条的位置
             playProgressNowText.setText(nowMillionSeconds / 60000 + ((nowMillionSeconds / 1000 % 60 < 10) ? ":0" : ":") + nowMillionSeconds / 1000 % 60);
         }
     }
-
-    private void initVariable() {
-        lastPageId = 0;
-        countActivity = 0;
-        isBackground = false;
-    }
-
+ /**
+  * 更新播放状态
+  */
     private void updatePlayState() {
         if (musicService.isPlaying()) {
             if (viewPager.getCurrentItem() == 0)
@@ -246,13 +247,19 @@ public class MainActivity extends FragmentActivity {
             PlayBarPause.setImageDrawable(getDrawable(R.drawable.ic_round_play_circle_outline_24));
         }
     }
-
+ /**
+  * 修改正在播放的音乐信息
+  * @param musicId 正在播放的id
+  */
     private void nowPlaying(int musicId) {
         prepareInfo(musicId);
         //开启进度条跟踪线程
         updatePlayState();
     }
-
+    /**
+     * 根据id设置音乐信息
+     * @param musicId 音乐的id
+     */
     private void prepareInfo(int musicId) {
         setPlayBarTitle(musicId);
         setChildFragment();
@@ -260,9 +267,13 @@ public class MainActivity extends FragmentActivity {
         //初始化进度条
         resetPlayProgress();
     }
-
+    /**
+     * 修改播放出错的音乐信息
+     * @param musicId 正在播放的id
+     */
     private void playingError(int musicId) {
         prepareInfo(musicId);
+        //弹窗告知
         AlertDialog alertInfoDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.play_error)
                 .setMessage(getString(R.string.play_err_Info))
@@ -283,9 +294,9 @@ public class MainActivity extends FragmentActivity {
         //初始化错误日志生成
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(this);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.liux.musicplayer.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        // Bind to LocalService
+        // Bind to MusicService
         serviceConnection = new MusicConnector();
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, MusicService.class);
@@ -298,7 +309,9 @@ public class MainActivity extends FragmentActivity {
         super.onStart();
         CrashHandlers.checkIfExistsLastCrash(this);
     }
-
+ /**
+  * 初始化后台状态回调
+  */
     private void initBackgroundCallBack() {
         registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
@@ -314,7 +327,6 @@ public class MainActivity extends FragmentActivity {
                     Log.e("MyApplication", "onActivityStarted: 应用进入前台");
                     isBackground = false;
                     //说明应用重新进入了前台
-                    //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
                     if (viewPager.getCurrentItem() == 0) {
                         startProgressBar();
                         homeFragment.startLyric();
@@ -342,10 +354,8 @@ public class MainActivity extends FragmentActivity {
                     Log.e("MyApplication", "onActivityStarted: 应用进入后台");
                     isBackground = true;
                     //说明应用进入了后台
-                    //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
                     if (viewPager.getCurrentItem() == 0) {
                         stopProgressBar();
-                        //homeFragment.stopLyric();
                     }
                     musicService.setActivityForeground(false);
                 }
@@ -371,7 +381,9 @@ public class MainActivity extends FragmentActivity {
         stopProgressBar();
         super.onDestroy();
     }
-
+ /**
+  * 切换播放状态
+  */
     public void setPlayOrPause() {
         musicService.setPlayOrPause(!musicService.isPlaying());
     }
@@ -385,7 +397,10 @@ public class MainActivity extends FragmentActivity {
         else
             return null;
     }
-
+ /**
+  * 设置正在播放信息栏
+  * @param musicId 正在播放的音乐id
+  */
     public void setPlayBarTitle(int musicId) {
         PlayBarTitle.setText(musicService.getPlayList().get(musicId).title + " - " + musicService.getPlayList().get(musicId).artist);
         Bitmap bitmap = musicService.getAlbumImage();
@@ -397,24 +412,29 @@ public class MainActivity extends FragmentActivity {
             backImageView.setImageBitmap(bitmap);
         }
     }
-
+ /**
+  * 上一首或下一首
+  * @param isNext true-下一首 false-上一首
+  */
     public void playPrevOrNext(boolean isNext) {
         musicService.playPrevOrNext(isNext);
     }
-
+ /**
+  * 返回键
+  */
     @Override
     public void onBackPressed() {
-        if (viewPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
-        } else if (viewPager.getCurrentItem() == 1 && playlistFragment.multipleChooseFlag) {
-            playlistFragment.onBackPressed();
+        if (viewPager.getCurrentItem() == 0) {//当前页为主页
+            super.onBackPressed();//退出
+        } else if (viewPager.getCurrentItem() == 1 && playlistFragment.multipleChooseFlag) {//当前页在播放列表且处于多选状态
+            playlistFragment.onBackPressed();//让播放列表执行返回操作
         } else {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);//页面id-1
         }
     }
-
+ /**
+  * 设置子窗体信息
+  */
     public void setChildFragment() {
         if (musicService != null) {
             homeFragment.setMusicInfo(musicService.getPlayList().get(musicService.getNowId()));
@@ -423,6 +443,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initViewCompat() {
+        //绑定控件
         playProgressBar = findViewById(R.id.seekBar);
         playProgressLayout = findViewById(R.id.playProgress);
         musicPlayingLayout = findViewById(R.id.musicPlayingLayout);
@@ -433,14 +454,16 @@ public class MainActivity extends FragmentActivity {
         PlayBarLyric = findViewById(R.id.playLyric);
         PlayBarPause = findViewById(R.id.playPause);
         PlayBarOrder = findViewById(R.id.playOrder);
-        PlayBarPrev = findViewById(R.id.playPrevious);
-        PlayBarNext = findViewById(R.id.playNext);
+        ImageView playBarPrev = findViewById(R.id.playPrevious);
+        ImageView playBarNext = findViewById(R.id.playNext);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
         backImageView = findViewById(R.id.backImageView);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //根据外观设置决定是否显示
         backImageView.setVisibility(prefs.getBoolean("isNewAppearance", false)
                 ? View.VISIBLE
                 : View.GONE);
+        //设置点击监听器
         PlayBarLyric.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -459,13 +482,13 @@ public class MainActivity extends FragmentActivity {
                 setPlayOrder();
             }
         });
-        PlayBarPrev.setOnClickListener(new View.OnClickListener() {
+        playBarPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playPrevOrNext(false);
             }
         });
-        PlayBarNext.setOnClickListener(new View.OnClickListener() {
+        playBarNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playPrevOrNext(true);
@@ -477,7 +500,7 @@ public class MainActivity extends FragmentActivity {
                 playlistFragment.setListViewPosition(musicService.getNowId());
             }
         });
-        //根据音乐的时长设置进度条的最大进度
+        //设置进度条拖动监听器
         playProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -485,26 +508,33 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                //手指在进度条上时暂停进度条更新
                 stopProgressBar();
-                //homeFragment.stopLyric();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                //手指松开之后音乐跳转到相应位置
                 musicService.setProgress(seekBar.getProgress());
-                //松开之后音乐跳转到相应位置
                 playProgressNowText.setText(seekBar.getProgress() / 60000 + ((seekBar.getProgress() / 1000 % 60 < 10) ? ":0" : ":") + seekBar.getProgress() / 1000 % 60);
+                //恢复进度条更新
                 startProgressBar();
                 homeFragment.startLyric();
             }
         });
+        //初始化进度条
         resetPlayProgress();
     }
-
+ /**
+  * 切换歌词显示
+  */
     public void setIsLyric() {
         setIsLyric(!musicService.isAppLyric());
     }
-
+ /**
+  * 设置是否显示歌词
+  * @param isLyric 是否显示歌词
+  */
     public void setIsLyric(boolean isLyric) {
         if (!isLyric) {
             homeFragment.setIsLyricLayoutShow(false);
@@ -516,7 +546,9 @@ public class MainActivity extends FragmentActivity {
             musicService.setAppLyric(true);
         }
     }
-
+ /**
+  * 切换播放顺序
+  */
     private void setPlayOrder() {
         switch (musicService.getPlayOrder()) {
             case MusicService.LIST_PLAY:
@@ -542,7 +574,10 @@ public class MainActivity extends FragmentActivity {
                 break;
         }
     }
-
+ /**
+  * 设置播放顺序图标
+  * @param playOrder 新的播放顺序
+  */
     public void setPlayOrder(int playOrder) {
         switch (playOrder) {
             default:
@@ -568,7 +603,7 @@ public class MainActivity extends FragmentActivity {
         homeFragment = new HomeFragment();
         playlistFragment = new PlaylistFragment();
         settingsFragment = new SettingsFragment();
-        pagerAdapter = new ScreenSlidePagerAdapter(this);
+        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setSaveEnabled(false);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -576,7 +611,10 @@ public class MainActivity extends FragmentActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
-
+             /**
+              * 页面被选中
+              * @param position 被选中的id
+              */
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -585,27 +623,31 @@ public class MainActivity extends FragmentActivity {
                 switch (bottomNavigationView.getMenu().getItem(position).getItemId()) {
                     case R.id.navigation_home:
                     default:
-                        TabTitle.setText(R.string.app_name);
+                        TabTitle.setText(R.string.app_name);//修改页眉
+                        //进度条和播放信息的切换动画
                         animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
                         musicPlayingLayout.startAnimation(animation);
                         musicPlayingLayout.setVisibility(View.GONE);
                         animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
                         playProgressLayout.setVisibility(View.VISIBLE);
                         playProgressLayout.startAnimation(animation);
+                        //启动进度条和歌词更新
                         startProgressBar();
                         homeFragment.startLyric();
-                        musicService.setNowPageId(0);
+                        musicService.setNowPageId(0);//保存
                         break;
                     case R.id.navigation_playlist:
                         TabTitle.setText(R.string.title_playlist);
                         if (lastPageId == 0) {
                             animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_show);
+                            //进度条和播放信息的切换动画
                             musicPlayingLayout.setVisibility(View.VISIBLE);
                             musicPlayingLayout.startAnimation(animation);
                             animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
                             playProgressLayout.startAnimation(animation);
                             playProgressLayout.setVisibility(View.GONE);
                         }
+                        //暂停进度条更新
                         stopProgressBar();
                         //homeFragment.stopLyric();
                         musicService.setNowPageId(1);
@@ -620,6 +662,7 @@ public class MainActivity extends FragmentActivity {
                             playProgressLayout.startAnimation(animation);
                             playProgressLayout.setVisibility(View.GONE);
                         }
+                        //暂停进度条更新
                         stopProgressBar();
                         //homeFragment.stopLyric();
                         musicService.setNowPageId(2);
@@ -633,7 +676,9 @@ public class MainActivity extends FragmentActivity {
                 super.onPageScrollStateChanged(state);
             }
         });
+        //从MusicServer读取上次页面id并恢复
         viewPager.setCurrentItem(musicService.getNowPageId(), false);
+        //设置底部导航栏选择事件
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -671,7 +716,10 @@ public class MainActivity extends FragmentActivity {
             }
         });
     }
-
+ /**
+  * 切换至页面
+  * @param pageId 页面id
+  */
     public void setViewPagerToId(int pageId) {
         viewPager.setCurrentItem(pageId, true);
     }
@@ -702,7 +750,9 @@ public class MainActivity extends FragmentActivity {
             return NUM_PAGES;
         }
     }
-
+ /**
+  * 开始进度条更新
+  */
     public void startProgressBar() {
         if (viewPager.getCurrentItem() == 0 && musicService.isPlaying()) {
             if (progressThread == null) {
@@ -713,6 +763,9 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
+    /**
+     * 暂停进度条更新
+     */
     public void stopProgressBar() {
         if (progressThread != null && !progressThread.isPaused())
             progressThread.pauseThread();
@@ -727,7 +780,10 @@ public class MainActivity extends FragmentActivity {
         //setPlayOrPause(false);
     }
 
-
+ /**
+  * 是否使用新外观
+  * @param isTrue
+  */
     public void setNewAppearance(boolean isTrue) {
         if (isTrue) {
             backImageView.setVisibility(View.VISIBLE);

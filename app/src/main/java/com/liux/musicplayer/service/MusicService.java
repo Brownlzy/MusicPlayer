@@ -48,7 +48,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
  /**
   * 音乐播放器后台服务，实现播放音乐的核心功能，为其他类提供完整生命周期的信息存储
   * @author         Brownlzy
@@ -205,6 +204,22 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
              return timingThread.isTiming;
          else return false;
      }
+
+     @Override
+     public void onCreate() {
+         //初始化
+         initializePlayer();
+         initMemberData();
+         initRemoteViews();
+         initNotification();
+         registerRemoteMusicReceiver();
+         registerBluetoothReceiver();
+         registerHeadsetPlugReceiver();
+         mediaButtonReceiver = new MediaButtonReceiver(getApplicationContext(), this);
+         updateNotificationShow(nowId);
+     }
+
+
      /**
       * 设置MediaPlayer的播放进度
       * @param mSec 要定位到的毫秒数
@@ -222,20 +237,6 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         if (prepared)
             mediaPlayer.start();
         updateNotificationShow(getNowId());
-    }
-
-    @Override
-    public void onCreate() {
-         //初始化
-        initializePlayer();
-        initMemberData();
-        initRemoteViews();
-        initNotification();
-        registerRemoteMusicReceiver();
-        registerBluetoothReceiver();
-        registerHeadsetPlugReceiver();
-        mediaButtonReceiver = new MediaButtonReceiver(getApplicationContext(), this);
-        updateNotificationShow(nowId);
     }
  /**
   * 注册蓝牙监听器
@@ -257,6 +258,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 }
             }
         });
+        //设置广播过滤器
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -345,6 +347,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             AudioAttributes.Builder audioAttributesBuilder = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC);
             mediaPlayer.setAudioAttributes(audioAttributesBuilder.build());
         }
+        //设置播放器状态监听器
         setMediaPlayerListener();
     }
 
@@ -601,7 +604,9 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         //根据计算得出的id播放
         startToPrepare(nowId);
     }
-
+ /**
+  * 设置播放器状态监听器
+  */
     private void setMediaPlayerListener() {
         //MediaPlayer准备资源的监听器
         mediaPlayer.setOnPreparedListener(mediaPlayer -> {
@@ -624,13 +629,16 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             //把所有的都回归到0
             if (prepared) {
                 if (enabled)
+                    //下一首
                     playPrevOrNext(true);
                 else
                     prepared = false;
             }
         });
     }
-
+ /**
+  * 重新读取播放列表
+  */
     public void refreshPlayList() {
         readPlayList();
     }
@@ -642,7 +650,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 "\"source_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.mp3\"," +
                 "\"lyric_uri\":\"file:///storage/emulated/0/Android/data/" + getPackageName() + "/Music/这是歌手 - 这是音乐标题.lrc\",\"duration\":\"0\"}]";
         String playListJson;
-        if (!webPlayMode)
+        if (!webPlayMode)   //根据webmode选择读取的列表
             playListJson = prefs.getString("playList", defaultPlayList);
         else
             playListJson = prefs.getString("webPlayList", defaultPlayList);
@@ -657,7 +665,10 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         }
         if (nowId >= songList.size()) nowId = 0;
     }
-
+ /**
+  * 设置新的播放列表
+  * @param newSongList 新的播放列表
+  */
     public void setPlayList(List<MusicUtils.Song> newSongList) {
         songList = newSongList;
         savePlayList();
@@ -714,8 +725,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
   */
     public void playThisFromList(int musicId) {
         Log.e(TAG, "enabled:" + enabled + " prepared:" + prepared);
-        if (enabled && !prepared) return;
-        else startToPrepare(musicId);
+        if (!enabled ||prepared) startToPrepare(musicId);
     }
  /**
   * 播放准备工作，向注册的监听器反馈播放准备状态
@@ -756,34 +766,37 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             reId = -1;
         } else {
             lyric.LoadLyric(songList.get(id));
-            if (FileUtils.isFileExists(songList.get(id).source_uri)) {
+            if (FileUtils.isFileExists(songList.get(id).source_uri)) {  //如果path是本地文件且文件存在
+                //加载资源信息
                 albumImage = MusicUtils.getAlbumImage(songList.get(id).source_uri);
                 metadata = MusicUtils.getMetadata(songList.get(id).source_uri);
                 startPlay(songList.get(id).source_uri);
                 reId = 0;
             } else if (songList.get(id).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
+                //如果path的格式符合HTTP URL
                 albumImage = null;
                 metadata = MusicUtils.getMetadataFromSong(songList.get(id));
+                //开始下载音乐文件
                 UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(this);
+                //设置下载状态监听器
                 uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
                     @Override
                     public void onFileDownloadCompleted(ArrayList<String> array) {
                         if (!array.get(0).equals(songList.get(id).source_uri))
                             return;
+                        //下载完成
                         startPlay(array.get(1));
                     }
 
                     @Override
                     public void onFileDownloading(ArrayList<String> array) {
-                        if (!array.get(0).equals(songList.get(id).source_uri))
-                            return;
-                        //Log.e("Downloading",array.get(1));
                     }
 
                     @Override
                     public void onFileDownloadError(ArrayList<String> array) {
                         if (!array.get(0).equals(songList.get(id).source_uri))
                             return;
+                        //下载失败，通知监听器失败
                         if (musicServiceCallback != null)
                             musicServiceCallback.playingErrorThis(nowId);
                         if (deskLyricCallback != null)
@@ -791,6 +804,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                         setEnabled(false);
                     }
                 });
+                //开始下载
                 uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".tmp", songList.get(id).source_uri);
                 reId = 0;
             } else {
@@ -800,7 +814,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         return reId;
     }
  /**
-  * 描述一下方法的作用
+  * 开始播放
   * @param path 音乐文件路径
   */
     private void startPlay(String path) {

@@ -1,10 +1,10 @@
 # compiler: R8
 # compiler_version: 3.2.74
-# min_api: 26
+# min_api: 29
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: e76468a
-# pg_map_hash: SHA-256 e76468acfa5a652c581d275160e6fd3eec899dce262e5c1611e0c3d55b523c13
+# pg_map_id: 9c45a42
+# pg_map_hash: SHA-256 9c45a421bc187fcb58ed983f0f0a3b232f10339bacd75a3b311154b76d37a1ba
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -656,7 +656,7 @@ android.support.v4.media.session.MediaControllerCompat$MediaControllerImplApi21 
     2234:2234:android.app.PendingIntent getSessionActivity() -> getSessionActivity
     2264:2278:android.os.Bundle getSessionInfo() -> getSessionInfo
     2206:2213:int getShuffleMode() -> getShuffleMode
-    2084:2088:android.support.v4.media.session.MediaControllerCompat$TransportControls getTransportControls() -> getTransportControls
+    2084:2086:android.support.v4.media.session.MediaControllerCompat$TransportControls getTransportControls() -> getTransportControls
     2182:2189:boolean isCaptioningEnabled() -> isCaptioningEnabled
     2254:2254:boolean isSessionReady() -> isSessionReady
     2292:2308:void processPendingCallbacksLocked() -> processPendingCallbacksLocked
@@ -834,7 +834,7 @@ android.support.v4.media.session.MediaSessionCompat$Callback -> android.support.
     1175:1175:void onCommand(java.lang.String,android.os.Bundle,android.os.ResultReceiver) -> onCommand
     1467:1467:void onCustomAction(java.lang.String,android.os.Bundle) -> onCustomAction
     1359:1359:void onFastForward() -> onFastForward
-    1189:1243:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
+    1189:1194:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
     1341:1341:void onPause() -> onPause
     1306:1306:void onPlay() -> onPlay
     1313:1313:void onPlayFromMediaId(java.lang.String,android.os.Bundle) -> onPlayFromMediaId
@@ -888,7 +888,7 @@ android.support.v4.media.session.MediaSessionCompat$Callback$MediaSessionCallbac
     1697:1704:void onSkipToPrevious() -> onSkipToPrevious
     1664:1671:void onSkipToQueueItem(long) -> onSkipToQueueItem
     1730:1737:void onStop() -> onStop
-    1889:1901:void setCurrentControllerInfo(android.support.v4.media.session.MediaSessionCompat$MediaSessionImpl) -> setCurrentControllerInfo
+    1889:1893:void setCurrentControllerInfo(android.support.v4.media.session.MediaSessionCompat$MediaSessionImpl) -> setCurrentControllerInfo
 android.support.v4.media.session.MediaSessionCompat$MediaSessionImplApi18 -> android.support.v4.media.session.MediaSessionCompat$MediaSessionImplApi18:
     3739:3739:void <clinit>() -> <clinit>
     3743:3744:void <init>(android.content.Context,java.lang.String,android.content.ComponentName,android.app.PendingIntent,androidx.versionedparcelable.VersionedParcelable,android.os.Bundle) -> <init>
@@ -2332,7 +2332,7 @@ androidx.appcompat.app.NavItemSelectedListener -> androidx.appcompat.app.NavItem
     44:44:void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
 androidx.appcompat.app.ResourcesFlusher -> androidx.appcompat.app.ResourcesFlusher:
     209:210:void <init>() -> <init>
-    46:56:void flush(android.content.res.Resources) -> flush
+    46:48:void flush(android.content.res.Resources) -> flush
     60:80:void flushLollipops(android.content.res.Resources) -> flushLollipops
     84:109:void flushMarshmallows(android.content.res.Resources) -> flushMarshmallows
     113:162:void flushNougats(android.content.res.Resources) -> flushNougats
@@ -4287,8 +4287,8 @@ androidx.appcompat.widget.AppCompatEditText -> androidx.appcompat.widget.AppComp
     142:143:android.content.res.ColorStateList getSupportBackgroundTintList() -> getSupportBackgroundTintList
     170:171:android.graphics.PorterDuff$Mode getSupportBackgroundTintMode() -> getSupportBackgroundTintMode
     58:58:java.lang.CharSequence getText() -> getText
-    94:99:android.text.Editable getText() -> getText
-    233:236:android.view.textclassifier.TextClassifier getTextClassifier() -> getTextClassifier
+    94:95:android.text.Editable getText() -> getText
+    233:234:android.view.textclassifier.TextClassifier getTextClassifier() -> getTextClassifier
     195:195:android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) -> onCreateInputConnection
     112:116:void setBackgroundDrawable(android.graphics.drawable.Drawable) -> setBackgroundDrawable
     104:108:void setBackgroundResource(int) -> setBackgroundResource
@@ -4296,7 +4296,7 @@ androidx.appcompat.widget.AppCompatEditText -> androidx.appcompat.widget.AppComp
     127:130:void setSupportBackgroundTintList(android.content.res.ColorStateList) -> setSupportBackgroundTintList
     155:158:void setSupportBackgroundTintMode(android.graphics.PorterDuff$Mode) -> setSupportBackgroundTintMode
     187:191:void setTextAppearance(android.content.Context,int) -> setTextAppearance
-    215:220:void setTextClassifier(android.view.textclassifier.TextClassifier) -> setTextClassifier
+    215:217:void setTextClassifier(android.view.textclassifier.TextClassifier) -> setTextClassifier
 androidx.appcompat.widget.AppCompatHintHelper -> androidx.appcompat.widget.AppCompatHintHelper:
     43:44:void <init>() -> <init>
     28:40:android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.InputConnection,android.view.inputmethod.EditorInfo,android.view.View) -> onCreateInputConnection
@@ -4592,7 +4592,7 @@ androidx.appcompat.widget.AppCompatTextView -> androidx.appcompat.widget.AppComp
     637:637:android.content.res.ColorStateList getSupportCompoundDrawablesTintList() -> getSupportCompoundDrawablesTintList
     680:680:android.graphics.PorterDuff$Mode getSupportCompoundDrawablesTintMode() -> getSupportCompoundDrawablesTintMode
     498:499:java.lang.CharSequence getText() -> getText
-    526:529:android.view.textclassifier.TextClassifier getTextClassifier() -> getTextClassifier
+    526:527:android.view.textclassifier.TextClassifier getTextClassifier() -> getTextClassifier
     457:457:androidx.core.text.PrecomputedTextCompat$Params getTextMetricsParamsCompat() -> getTextMetricsParamsCompat
     399:399:android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) -> onCreateInputConnection
     207:211:void onLayout(boolean,int,int,int,int) -> onLayout
@@ -4619,7 +4619,7 @@ androidx.appcompat.widget.AppCompatTextView -> androidx.appcompat.widget.AppComp
     660:662:void setSupportCompoundDrawablesTintList(android.content.res.ColorStateList) -> setSupportCompoundDrawablesTintList
     700:702:void setSupportCompoundDrawablesTintMode(android.graphics.PorterDuff$Mode) -> setSupportCompoundDrawablesTintMode
     188:192:void setTextAppearance(android.content.Context,int) -> setTextAppearance
-    508:513:void setTextClassifier(android.view.textclassifier.TextClassifier) -> setTextClassifier
+    508:510:void setTextClassifier(android.view.textclassifier.TextClassifier) -> setTextClassifier
     545:549:void setTextFuture(java.util.concurrent.Future) -> setTextFuture
     468:469:void setTextMetricsParamsCompat(androidx.core.text.PrecomputedTextCompat$Params) -> setTextMetricsParamsCompat
     215:222:void setTextSize(int,float) -> setTextSize
@@ -4708,7 +4708,7 @@ androidx.appcompat.widget.DrawableUtils -> androidx.appcompat.widget.DrawableUti
     142:176:boolean canSafelyMutateDrawable(android.graphics.drawable.Drawable) -> canSafelyMutateDrawable
     131:135:void fixDrawable(android.graphics.drawable.Drawable) -> fixDrawable
     184:194:void fixVectorDrawableTinting(android.graphics.drawable.Drawable) -> fixVectorDrawableTinting
-    73:122:android.graphics.Rect getOpticalBounds(android.graphics.drawable.Drawable) -> getOpticalBounds
+    73:80:android.graphics.Rect getOpticalBounds(android.graphics.drawable.Drawable) -> getOpticalBounds
     200:207:android.graphics.PorterDuff$Mode parseTintMode(int,android.graphics.PorterDuff$Mode) -> parseTintMode
 androidx.appcompat.widget.DropDownListView -> androidx.appcompat.widget.DropDownListView:
     50:128:void <init>(android.content.Context,boolean) -> <init>
@@ -5259,7 +5259,7 @@ androidx.appcompat.widget.SearchView$PreQAutoCompleteTextViewReflector -> androi
     2085:2092:void doAfterTextChanged(android.widget.AutoCompleteTextView) -> doAfterTextChanged
     2075:2082:void doBeforeTextChanged(android.widget.AutoCompleteTextView) -> doBeforeTextChanged
     2095:2102:void ensureImeVisible(android.widget.AutoCompleteTextView) -> ensureImeVisible
-    2105:2109:void preApi29Check() -> preApi29Check
+    2105:2106:void preApi29Check() -> preApi29Check
 androidx.appcompat.widget.SearchView$SavedState -> androidx.appcompat.widget.SearchView$SavedState:
     1330:1330:void <clinit>() -> <clinit>
     1309:1310:void <init>(android.os.Parcelable) -> <init>
@@ -5812,7 +5812,7 @@ androidx.arch.core.executor.ArchTaskExecutor$2 -> androidx.arch.core.executor.Ar
     53:54:void execute(java.lang.Runnable) -> execute
 androidx.arch.core.executor.DefaultTaskExecutor -> androidx.arch.core.executor.DefaultTaskExecutor:
     37:41:void <init>() -> <init>
-    81:96:android.os.Handler createAsync(android.os.Looper) -> createAsync
+    81:82:android.os.Handler createAsync(android.os.Looper) -> createAsync
     59:60:void executeOnDiskIO(java.lang.Runnable) -> executeOnDiskIO
     77:77:boolean isMainThread() -> isMainThread
     64:73:void postToMainThread(java.lang.Runnable) -> postToMainThread
@@ -9323,7 +9323,7 @@ androidx.core.app.ActivityCompat -> androidx.core.app.ActivityCompat:
     580:606:void recreate(android.app.Activity) -> recreate
     569:569:androidx.core.view.DragAndDropPermissionsCompat requestDragAndDropPermissions(android.app.Activity,android.view.DragEvent) -> requestDragAndDropPermissions
     498:538:void requestPermissions(android.app.Activity,java.lang.String[],int) -> requestPermissions
-    365:373:android.view.View requireViewById(android.app.Activity,int) -> requireViewById
+    365:366:android.view.View requireViewById(android.app.Activity,int) -> requireViewById
     386:392:void setEnterSharedElementCallback(android.app.Activity,androidx.core.app.SharedElementCallback) -> setEnterSharedElementCallback
     405:411:void setExitSharedElementCallback(android.app.Activity,androidx.core.app.SharedElementCallback) -> setExitSharedElementCallback
     640:643:void setLocusContext(android.app.Activity,androidx.core.content.LocusIdCompat,android.os.Bundle) -> setLocusContext
@@ -9389,7 +9389,7 @@ androidx.core.app.ActivityRecreator -> androidx.core.app.ActivityRecreator:
     368:372:java.lang.reflect.Field getTokenField() -> getTokenField
     330:330:boolean needsRelaunchCall() -> needsRelaunchCall
     257:297:boolean queueOnStopIfNecessary(java.lang.Object,int,android.app.Activity) -> queueOnStopIfNecessary
-    109:171:boolean recreate(android.app.Activity) -> recreate
+    109:111:boolean recreate(android.app.Activity) -> recreate
 androidx.core.app.ActivityRecreator$1 -> androidx.core.app.ActivityRecreator$1:
     143:143:void <init>(androidx.core.app.ActivityRecreator$LifecycleCheckCallbacks,java.lang.Object) -> <init>
     146:147:void run() -> run
@@ -9467,7 +9467,7 @@ androidx.core.app.CoreComponentFactory -> androidx.core.app.CoreComponentFactory
     75:75:android.app.Service instantiateService(java.lang.ClassLoader,java.lang.String,android.content.Intent) -> instantiateService
 androidx.core.app.DialogCompat -> androidx.core.app.DialogCompat:
     32:33:void <init>() -> <init>
-    55:63:android.view.View requireViewById(android.app.Dialog,int) -> requireViewById
+    55:56:android.view.View requireViewById(android.app.Dialog,int) -> requireViewById
 androidx.core.app.FrameMetricsAggregator -> androidx.core.app.FrameMetricsAggregator:
     199:200:void <init>() -> <init>
     212:218:void <init>(int) -> <init>
@@ -9618,10 +9618,10 @@ androidx.core.app.NotificationCompat -> androidx.core.app.NotificationCompat:
     7224:7225:androidx.core.app.NotificationCompat$Action getAction(android.app.Notification,int) -> getAction
     7263:7314:androidx.core.app.NotificationCompat$Action getActionCompatFromAction(android.app.Notification$Action) -> getActionCompatFromAction
     7207:7208:int getActionCount(android.app.Notification) -> getActionCount
-    7649:7652:boolean getAllowSystemGeneratedContextualActions(android.app.Notification) -> getAllowSystemGeneratedContextualActions
+    7649:7650:boolean getAllowSystemGeneratedContextualActions(android.app.Notification) -> getAllowSystemGeneratedContextualActions
     7468:7468:boolean getAutoCancel(android.app.Notification) -> getAutoCancel
     7582:7583:int getBadgeIconType(android.app.Notification) -> getBadgeIconType
-    7252:7255:androidx.core.app.NotificationCompat$BubbleMetadata getBubbleMetadata(android.app.Notification) -> getBubbleMetadata
+    7252:7253:androidx.core.app.NotificationCompat$BubbleMetadata getBubbleMetadata(android.app.Notification) -> getBubbleMetadata
     7402:7403:java.lang.String getCategory(android.app.Notification) -> getCategory
     7557:7558:java.lang.String getChannelId(android.app.Notification) -> getChannelId
     7478:7479:int getColor(android.app.Notification) -> getColor
@@ -9634,7 +9634,7 @@ androidx.core.app.NotificationCompat -> androidx.core.app.NotificationCompat:
     7506:7506:boolean getHighPriority(android.app.Notification) -> getHighPriority
     7327:7343:java.util.List getInvisibleActions(android.app.Notification) -> getInvisibleActions
     7416:7417:boolean getLocalOnly(android.app.Notification) -> getLocalOnly
-    7621:7625:androidx.core.content.LocusIdCompat getLocusId(android.app.Notification) -> getLocusId
+    7621:7623:androidx.core.content.LocusIdCompat getLocusId(android.app.Notification) -> getLocusId
     7174:7183:android.app.Notification[] getNotificationArrayFromBundle(android.os.Bundle,java.lang.String) -> getNotificationArrayFromBundle
     7473:7473:boolean getOngoing(android.app.Notification) -> getOngoing
     7463:7463:boolean getOnlyAlertOnce(android.app.Notification) -> getOnlyAlertOnce
@@ -9795,7 +9795,7 @@ androidx.core.app.NotificationCompat$Builder -> androidx.core.app.NotificationCo
     2398:2398:int getPriority() -> getPriority
     2388:2388:long getWhenIfShowing() -> getWhenIfShowing
     2350:2354:java.lang.CharSequence limitCharSequenceLength(java.lang.CharSequence) -> limitCharSequenceLength
-    1424:1443:android.graphics.Bitmap reduceLargeIconSize(android.graphics.Bitmap) -> reduceLargeIconSize
+    1424:1425:android.graphics.Bitmap reduceLargeIconSize(android.graphics.Bitmap) -> reduceLargeIconSize
     2329:2330:androidx.core.app.NotificationCompat$Builder setAllowSystemGeneratedContextualActions(boolean) -> setAllowSystemGeneratedContextualActions
     1606:1607:androidx.core.app.NotificationCompat$Builder setAutoCancel(boolean) -> setAutoCancel
     2280:2281:androidx.core.app.NotificationCompat$Builder setBadgeIconType(int) -> setBadgeIconType
@@ -10089,7 +10089,7 @@ androidx.core.app.NotificationManagerCompat -> androidx.core.app.NotificationMan
     504:507:android.app.NotificationChannel getNotificationChannel(java.lang.String,java.lang.String) -> getNotificationChannel
     484:490:androidx.core.app.NotificationChannelCompat getNotificationChannelCompat(java.lang.String) -> getNotificationChannelCompat
     521:527:androidx.core.app.NotificationChannelCompat getNotificationChannelCompat(java.lang.String,java.lang.String) -> getNotificationChannelCompat
-    537:545:android.app.NotificationChannelGroup getNotificationChannelGroup(java.lang.String) -> getNotificationChannelGroup
+    537:538:android.app.NotificationChannelGroup getNotificationChannelGroup(java.lang.String) -> getNotificationChannelGroup
     559:570:androidx.core.app.NotificationChannelGroupCompat getNotificationChannelGroupCompat(java.lang.String) -> getNotificationChannelGroupCompat
     611:612:java.util.List getNotificationChannelGroups() -> getNotificationChannelGroups
     624:642:java.util.List getNotificationChannelGroupsCompat() -> getNotificationChannelGroupsCompat
@@ -10189,7 +10189,7 @@ androidx.core.app.RemoteInput -> androidx.core.app.RemoteInput:
     123:123:java.lang.CharSequence getLabel() -> getLabel
     116:116:java.lang.String getResultKey() -> getResultKey
     376:377:android.os.Bundle getResultsFromIntent(android.content.Intent) -> getResultsFromIntent
-    530:537:int getResultsSource(android.content.Intent) -> getResultsSource
+    530:531:int getResultsSource(android.content.Intent) -> getResultsSource
     143:146:boolean isDataOnly() -> isDataOnly
     505:515:void setResultsSource(android.content.Intent,int) -> setResultsSource
 androidx.core.app.RemoteInput$Builder -> androidx.core.app.RemoteInput$Builder:
@@ -10317,7 +10317,7 @@ androidx.core.content.ContextCompat -> androidx.core.content.ContextCompat:
     479:480:android.graphics.drawable.Drawable getDrawable(android.content.Context,int) -> getDrawable
     458:459:java.io.File[] getExternalCacheDirs(android.content.Context) -> getExternalCacheDirs
     405:406:java.io.File[] getExternalFilesDirs(android.content.Context,java.lang.String) -> getExternalFilesDirs
-    684:687:java.util.concurrent.Executor getMainExecutor(android.content.Context) -> getMainExecutor
+    684:685:java.util.concurrent.Executor getMainExecutor(android.content.Context) -> getMainExecutor
     573:574:java.io.File getNoBackupFilesDir(android.content.Context) -> getNoBackupFilesDir
     352:353:java.io.File[] getObbDirs(android.content.Context) -> getObbDirs
     719:720:java.lang.Object getSystemService(android.content.Context,java.lang.Class) -> getSystemService
@@ -10460,7 +10460,7 @@ androidx.core.content.pm.PackageInfoCompat -> androidx.core.content.pm.PackageIn
     261:262:void <init>() -> <init>
     244:249:boolean byteArrayContains(byte[][],byte[]) -> byteArrayContains
     254:257:byte[] computeSHA256Digest(byte[]) -> computeSHA256Digest
-    50:53:long getLongVersionCode(android.content.pm.PackageInfo) -> getLongVersionCode
+    50:51:long getLongVersionCode(android.content.pm.PackageInfo) -> getLongVersionCode
     86:107:java.util.List getSignatures(android.content.pm.PackageManager,java.lang.String) -> getSignatures
     140:240:boolean hasSignatures(android.content.pm.PackageManager,java.lang.String,java.util.Map,boolean) -> hasSignatures
 androidx.core.content.pm.PackageInfoCompat$Api28Impl -> androidx.core.content.pm.PackageInfoCompat$Api28Impl:
@@ -10471,8 +10471,8 @@ androidx.core.content.pm.PackageInfoCompat$Api28Impl -> androidx.core.content.pm
     271:271:boolean hasSigningCertificate(android.content.pm.PackageManager,java.lang.String,byte[],int) -> hasSigningCertificate
 androidx.core.content.pm.PermissionInfoCompat -> androidx.core.content.pm.PermissionInfoCompat:
     34:35:void <init>() -> <init>
-    74:77:int getProtection(android.content.pm.PermissionInfo) -> getProtection
-    88:91:int getProtectionFlags(android.content.pm.PermissionInfo) -> getProtectionFlags
+    74:75:int getProtection(android.content.pm.PermissionInfo) -> getProtection
+    88:89:int getProtectionFlags(android.content.pm.PermissionInfo) -> getProtectionFlags
 androidx.core.content.pm.ShortcutInfoChangeListener -> androidx.core.content.pm.ShortcutInfoChangeListener:
     34:34:void <init>() -> <init>
     45:45:void onAllShortcutsRemoved() -> onAllShortcutsRemoved
@@ -10496,7 +10496,7 @@ androidx.core.content.pm.ShortcutInfoCompat -> androidx.core.content.pm.Shortcut
     287:287:android.content.Intent[] getIntents() -> getIntents
     394:394:long getLastChangedTimestamp() -> getLastChangedTimestamp
     309:309:androidx.core.content.LocusIdCompat getLocusId() -> getLocusId
-    473:477:androidx.core.content.LocusIdCompat getLocusId(android.content.pm.ShortcutInfo) -> getLocusId
+    473:475:androidx.core.content.LocusIdCompat getLocusId(android.content.pm.ShortcutInfo) -> getLocusId
     488:490:androidx.core.content.LocusIdCompat getLocusIdFromExtra(android.os.PersistableBundle) -> getLocusIdFromExtra
     248:248:java.lang.CharSequence getLongLabel() -> getLongLabel
     357:360:boolean getLongLivedFromExtra(android.os.PersistableBundle) -> getLongLivedFromExtra
@@ -10674,7 +10674,7 @@ androidx.core.content.res.ResourcesCompat -> androidx.core.content.res.Resources
     193:195:android.content.res.ColorStateList getColorStateList(android.content.res.Resources,int,android.content.res.Resources$Theme) -> getColorStateList
     103:104:android.graphics.drawable.Drawable getDrawable(android.content.res.Resources,int,android.content.res.Resources$Theme) -> getDrawable
     136:137:android.graphics.drawable.Drawable getDrawableForDensity(android.content.res.Resources,int,int,android.content.res.Resources$Theme) -> getDrawableForDensity
-    331:341:float getFloat(android.content.res.Resources,int) -> getFloat
+    331:332:float getFloat(android.content.res.Resources,int) -> getFloat
     367:370:android.graphics.Typeface getFont(android.content.Context,int) -> getFont
     488:496:void getFont(android.content.Context,int,androidx.core.content.res.ResourcesCompat$FontCallback,android.os.Handler) -> getFont
     506:509:android.graphics.Typeface getFont(android.content.Context,int,android.util.TypedValue,int,androidx.core.content.res.ResourcesCompat$FontCallback) -> getFont
@@ -10765,7 +10765,7 @@ androidx.core.database.CursorKt -> androidx.core.database.CursorKt:
     98:98:java.lang.String getStringOrNull(android.database.Cursor,int) -> getStringOrNull
 androidx.core.database.CursorWindowCompat -> androidx.core.database.CursorWindowCompat:
     30:32:void <init>() -> <init>
-    42:45:android.database.CursorWindow create(java.lang.String,long) -> create
+    42:43:android.database.CursorWindow create(java.lang.String,long) -> create
 androidx.core.database.DatabaseUtilsCompat -> androidx.core.database.DatabaseUtilsCompat:
     29:31:void <init>() -> <init>
     60:66:java.lang.String[] appendSelectionArgs(java.lang.String[],java.lang.String[]) -> appendSelectionArgs
@@ -10825,7 +10825,7 @@ androidx.core.graphics.BitmapKt -> androidx.core.graphics.BitmapKt:
     58:58:void set(android.graphics.Bitmap,int,int,int) -> set
 androidx.core.graphics.BlendModeColorFilterCompat -> androidx.core.graphics.BlendModeColorFilterCompat:
     54:54:void <init>() -> <init>
-    42:50:android.graphics.ColorFilter createBlendModeColorFilterCompat(int,androidx.core.graphics.BlendModeCompat) -> createBlendModeColorFilterCompat
+    42:45:android.graphics.ColorFilter createBlendModeColorFilterCompat(int,androidx.core.graphics.BlendModeCompat) -> createBlendModeColorFilterCompat
 androidx.core.graphics.BlendModeCompat -> androidx.core.graphics.BlendModeCompat:
     27:419:void <clinit>() -> <clinit>
     27:27:void <init>(java.lang.String,int) -> <init>
@@ -11057,7 +11057,7 @@ androidx.core.graphics.PaintCompat -> androidx.core.graphics.PaintCompat:
     156:156:void <init>() -> <init>
     51:52:boolean hasGlyph(android.graphics.Paint,java.lang.String) -> hasGlyph
     145:153:androidx.core.util.Pair obtainEmptyRects() -> obtainEmptyRects
-    126:140:boolean setBlendMode(android.graphics.Paint,androidx.core.graphics.BlendModeCompat) -> setBlendMode
+    126:129:boolean setBlendMode(android.graphics.Paint,androidx.core.graphics.BlendModeCompat) -> setBlendMode
 androidx.core.graphics.PathKt -> androidx.core.graphics.PathKt:
 # {"id":"sourceFile","fileName":"Path.kt"}
     68:70:android.graphics.Path and(android.graphics.Path,android.graphics.Path) -> and
@@ -11389,14 +11389,14 @@ androidx.core.graphics.drawable.IconCompat -> androidx.core.graphics.drawable.Ic
     244:262:androidx.core.graphics.drawable.IconCompat createWithResource(android.content.res.Resources,java.lang.String,int) -> createWithResource
     457:468:android.graphics.Bitmap getBitmap() -> getBitmap
     436:442:int getResId() -> getResId
-    1157:1170:int getResId(android.graphics.drawable.Icon) -> getResId
+    1157:1158:int getResId(android.graphics.drawable.Icon) -> getResId
     410:424:java.lang.String getResPackage() -> getResPackage
-    1128:1141:java.lang.String getResPackage(android.graphics.drawable.Icon) -> getResPackage
+    1128:1129:java.lang.String getResPackage(android.graphics.drawable.Icon) -> getResPackage
     736:751:android.content.res.Resources getResources(android.content.Context,java.lang.String) -> getResources
     395:398:int getType() -> getType
-    1100:1113:int getType(android.graphics.drawable.Icon) -> getType
+    1100:1101:int getType(android.graphics.drawable.Icon) -> getType
     481:487:android.net.Uri getUri() -> getUri
-    1185:1198:android.net.Uri getUri(android.graphics.drawable.Icon) -> getUri
+    1185:1186:android.net.Uri getUri(android.graphics.drawable.Icon) -> getUri
     716:732:java.io.InputStream getUriInputStream(android.content.Context) -> getUriInputStream
     639:641:android.graphics.drawable.Drawable loadDrawable(android.content.Context) -> loadDrawable
     656:705:android.graphics.drawable.Drawable loadDrawableInner(android.content.Context) -> loadDrawableInner
@@ -11643,9 +11643,9 @@ androidx.core.location.LocationManagerCompat -> androidx.core.location.LocationM
     216:216:void <clinit>() -> <clinit>
     409:409:void <init>() -> <init>
     146:186:void getCurrentLocation(android.location.LocationManager,java.lang.String,androidx.core.os.CancellationSignal,java.util.concurrent.Executor,androidx.core.util.Consumer) -> getCurrentLocation
-    196:199:java.lang.String getGnssHardwareModelName(android.location.LocationManager) -> getGnssHardwareModelName
-    208:211:int getGnssYearOfHardware(android.location.LocationManager) -> getGnssYearOfHardware
-    88:121:boolean isLocationEnabled(android.location.LocationManager) -> isLocationEnabled
+    196:197:java.lang.String getGnssHardwareModelName(android.location.LocationManager) -> getGnssHardwareModelName
+    208:209:int getGnssYearOfHardware(android.location.LocationManager) -> getGnssYearOfHardware
+    88:89:boolean isLocationEnabled(android.location.LocationManager) -> isLocationEnabled
     229:233:boolean registerGnssStatusCallback(android.location.LocationManager,androidx.core.location.GnssStatusCompat$Callback,android.os.Handler) -> registerGnssStatusCallback
     259:266:boolean registerGnssStatusCallback(android.location.LocationManager,java.util.concurrent.Executor,androidx.core.location.GnssStatusCompat$Callback) -> registerGnssStatusCallback
     274:306:boolean registerGnssStatusCallback(android.location.LocationManager,android.os.Handler,java.util.concurrent.Executor,androidx.core.location.GnssStatusCompat$Callback) -> registerGnssStatusCallback
@@ -11833,10 +11833,10 @@ androidx.core.os.ExecutorCompat$HandlerExecutor -> androidx.core.os.ExecutorComp
     51:54:void execute(java.lang.Runnable) -> execute
 androidx.core.os.HandlerCompat -> androidx.core.os.HandlerCompat:
     245:247:void <init>() -> <init>
-    65:95:android.os.Handler createAsync(android.os.Looper) -> createAsync
-    124:154:android.os.Handler createAsync(android.os.Looper,android.os.Handler$Callback) -> createAsync
-    211:241:boolean hasCallbacks(android.os.Handler,java.lang.Runnable) -> hasCallbacks
-    182:188:boolean postDelayed(android.os.Handler,java.lang.Runnable,java.lang.Object,long) -> postDelayed
+    65:66:android.os.Handler createAsync(android.os.Looper) -> createAsync
+    124:125:android.os.Handler createAsync(android.os.Looper,android.os.Handler$Callback) -> createAsync
+    211:214:boolean hasCallbacks(android.os.Handler,java.lang.Runnable) -> hasCallbacks
+    182:183:boolean postDelayed(android.os.Handler,java.lang.Runnable,java.lang.Object,long) -> postDelayed
 androidx.core.os.HandlerCompat$Api28Impl -> androidx.core.os.HandlerCompat$Api28Impl:
     262:264:void <init>() -> <init>
     267:267:android.os.Handler createAsync(android.os.Looper) -> createAsync
@@ -11972,7 +11972,7 @@ androidx.core.os.TraceCompat -> androidx.core.os.TraceCompat:
     104:107:void beginSection(java.lang.String) -> beginSection
     153:162:void endAsyncSection(java.lang.String,int) -> endAsyncSection
     117:120:void endSection() -> endSection
-    78:89:boolean isEnabled() -> isEnabled
+    78:79:boolean isEnabled() -> isEnabled
     172:181:void setCounter(java.lang.String,int) -> setCounter
 androidx.core.os.TraceKt -> androidx.core.os.TraceKt:
 # {"id":"sourceFile","fileName":"Trace.kt"}
@@ -12131,7 +12131,7 @@ androidx.core.provider.SelfDestructiveThread$3 -> androidx.core.provider.SelfDes
     180:191:void run() -> run
 androidx.core.telephony.SubscriptionManagerCompat -> androidx.core.telephony.SubscriptionManagerCompat:
     75:75:void <init>() -> <init>
-    43:71:int getSlotIndex(int) -> getSlotIndex
+    43:48:int getSlotIndex(int) -> getSlotIndex
 androidx.core.telephony.SubscriptionManagerCompat$Api29Impl -> androidx.core.telephony.SubscriptionManagerCompat$Api29Impl:
     79:79:void <init>() -> <init>
     83:83:int getSlotIndex(int) -> getSlotIndex
@@ -12229,15 +12229,15 @@ androidx.core.text.PrecomputedTextCompat -> androidx.core.text.PrecomputedTextCo
     498:503:void <init>(android.text.PrecomputedText,androidx.core.text.PrecomputedTextCompat$Params) -> <init>
     754:754:char charAt(int) -> charAt
     432:485:androidx.core.text.PrecomputedTextCompat create(java.lang.CharSequence,androidx.core.text.PrecomputedTextCompat$Params) -> create
-    531:534:int getParagraphCount() -> getParagraphCount
-    556:560:int getParagraphEnd(int) -> getParagraphEnd
-    543:547:int getParagraphStart(int) -> getParagraphStart
+    531:532:int getParagraphCount() -> getParagraphCount
+    556:558:int getParagraphEnd(int) -> getParagraphEnd
+    543:545:int getParagraphStart(int) -> getParagraphStart
     523:523:androidx.core.text.PrecomputedTextCompat$Params getParams() -> getParams
     512:515:android.text.PrecomputedText getPrecomputedText() -> getPrecomputedText
     729:729:int getSpanEnd(java.lang.Object) -> getSpanEnd
     734:734:int getSpanFlags(java.lang.Object) -> getSpanFlags
     724:724:int getSpanStart(java.lang.Object) -> getSpanStart
-    714:717:java.lang.Object[] getSpans(int,int,java.lang.Class) -> getSpans
+    714:715:java.lang.Object[] getSpans(int,int,java.lang.Class) -> getSpans
     653:663:java.util.concurrent.Future getTextFuture(java.lang.CharSequence,androidx.core.text.PrecomputedTextCompat$Params,java.util.concurrent.Executor) -> getTextFuture
     749:749:int length() -> length
     739:739:int nextSpanTransition(int,int,java.lang.Class) -> nextSpanTransition
@@ -12389,7 +12389,7 @@ androidx.core.text.util.LinkifyCompat -> androidx.core.text.util.LinkifyCompat:
     308:311:boolean addLinks(android.text.Spannable,java.util.regex.Pattern,java.lang.String,android.text.util.Linkify$MatchFilter,android.text.util.Linkify$TransformFilter) -> addLinks
     335:372:boolean addLinks(android.text.Spannable,java.util.regex.Pattern,java.lang.String,java.lang.String[],android.text.util.Linkify$MatchFilter,android.text.util.Linkify$TransformFilter) -> addLinks
     440:443:void applyLink(java.lang.String,int,int,android.text.Spannable) -> applyLink
-    487:490:java.lang.String findAddress(java.lang.String) -> findAddress
+    487:488:java.lang.String findAddress(java.lang.String) -> findAddress
     420:437:void gatherLinks(java.util.ArrayList,android.text.Spannable,java.util.regex.Pattern,java.lang.String[],android.text.util.Linkify$MatchFilter,android.text.util.Linkify$TransformFilter) -> gatherLinks
     446:484:void gatherMapLinks(java.util.ArrayList,android.text.Spannable) -> gatherMapLinks
     391:414:java.lang.String makeUrl(java.lang.String,java.lang.String[],java.util.regex.Matcher,android.text.util.Linkify$TransformFilter) -> makeUrl
@@ -13003,13 +13003,13 @@ androidx.core.view.DisplayCutoutCompat -> androidx.core.view.DisplayCutoutCompat
     56:57:void <init>(android.graphics.Rect,java.util.List) -> <init>
     77:79:void <init>(androidx.core.graphics.Insets,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect,androidx.core.graphics.Insets) -> <init>
     112:114:void <init>(java.lang.Object) -> <init>
-    84:108:android.view.DisplayCutout constructDisplayCutout(androidx.core.graphics.Insets,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect,androidx.core.graphics.Insets) -> constructDisplayCutout
+    84:88:android.view.DisplayCutout constructDisplayCutout(androidx.core.graphics.Insets,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect,androidx.core.graphics.Insets) -> constructDisplayCutout
     191:198:boolean equals(java.lang.Object) -> equals
-    163:166:java.util.List getBoundingRects() -> getBoundingRects
-    127:130:int getSafeInsetBottom() -> getSafeInsetBottom
-    136:139:int getSafeInsetLeft() -> getSafeInsetLeft
-    145:148:int getSafeInsetRight() -> getSafeInsetRight
-    118:121:int getSafeInsetTop() -> getSafeInsetTop
+    163:164:java.util.List getBoundingRects() -> getBoundingRects
+    127:128:int getSafeInsetBottom() -> getSafeInsetBottom
+    136:137:int getSafeInsetLeft() -> getSafeInsetLeft
+    145:146:int getSafeInsetRight() -> getSafeInsetRight
+    118:119:int getSafeInsetTop() -> getSafeInsetTop
     182:185:androidx.core.graphics.Insets getWaterfallInsets() -> getWaterfallInsets
     203:203:int hashCode() -> hashCode
     208:208:java.lang.String toString() -> toString
@@ -13076,7 +13076,7 @@ androidx.core.view.KeyEventDispatcher -> androidx.core.view.KeyEventDispatcher:
     115:138:boolean activitySuperDispatchKeyEventPre28(android.app.Activity,android.view.KeyEvent) -> activitySuperDispatchKeyEventPre28
     161:174:boolean dialogSuperDispatchKeyEventPre28(android.app.Dialog,android.view.KeyEvent) -> dialogSuperDispatchKeyEventPre28
     63:63:boolean dispatchBeforeHierarchy(android.view.View,android.view.KeyEvent) -> dispatchBeforeHierarchy
-    80:92:boolean dispatchKeyEvent(androidx.core.view.KeyEventDispatcher$Component,android.view.View,android.view.Window$Callback,android.view.KeyEvent) -> dispatchKeyEvent
+    80:84:boolean dispatchKeyEvent(androidx.core.view.KeyEventDispatcher$Component,android.view.View,android.view.Window$Callback,android.view.KeyEvent) -> dispatchKeyEvent
     142:157:android.content.DialogInterface$OnKeyListener getDialogKeyListenerPre28(android.app.Dialog) -> getDialogKeyListenerPre28
 androidx.core.view.LayoutInflaterCompat -> androidx.core.view.LayoutInflaterCompat:
     96:97:void <init>() -> <init>
@@ -13229,7 +13229,7 @@ androidx.core.view.ViewCompat -> androidx.core.view.ViewCompat:
     1227:1233:int addAccessibilityAction(android.view.View,java.lang.CharSequence,androidx.core.view.accessibility.AccessibilityViewCommand) -> addAccessibilityAction
     1321:1328:void addAccessibilityAction(android.view.View,androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat) -> addAccessibilityAction
     3936:3939:void addKeyboardNavigationClusters(android.view.View,java.util.Collection,int) -> addKeyboardNavigationClusters
-    4054:4069:void addOnUnhandledKeyEventListener(android.view.View,androidx.core.view.ViewCompat$OnUnhandledKeyEventListenerCompat) -> addOnUnhandledKeyEventListener
+    4054:4056:void addOnUnhandledKeyEventListener(android.view.View,androidx.core.view.ViewCompat$OnUnhandledKeyEventListenerCompat) -> addOnUnhandledKeyEventListener
     2068:2076:androidx.core.view.ViewPropertyAnimatorCompat animate(android.view.View) -> animate
     1886:1894:void bindTempDetach() -> bindTempDetach
     539:539:boolean canScrollHorizontally(android.view.View,int) -> canScrollHorizontally
@@ -13249,12 +13249,12 @@ androidx.core.view.ViewCompat -> androidx.core.view.ViewCompat:
     3286:3293:void dispatchNestedScroll(android.view.View,int,int,int,int,int[],int,int[]) -> dispatchNestedScroll
     3322:3329:boolean dispatchNestedScroll(android.view.View,int,int,int,int,int[],int) -> dispatchNestedScroll
     1900:1917:void dispatchStartTemporaryDetach(android.view.View) -> dispatchStartTemporaryDetach
-    4129:4132:boolean dispatchUnhandledKeyEventBeforeCallback(android.view.View,android.view.KeyEvent) -> dispatchUnhandledKeyEventBeforeCallback
-    4121:4124:boolean dispatchUnhandledKeyEventBeforeHierarchy(android.view.View,android.view.KeyEvent) -> dispatchUnhandledKeyEventBeforeHierarchy
+    4129:4130:boolean dispatchUnhandledKeyEventBeforeCallback(android.view.View,android.view.KeyEvent) -> dispatchUnhandledKeyEventBeforeCallback
+    4121:4122:boolean dispatchUnhandledKeyEventBeforeHierarchy(android.view.View,android.view.KeyEvent) -> dispatchUnhandledKeyEventBeforeHierarchy
     1414:1417:void enableAccessibleClickableSpanSupport(android.view.View) -> enableAccessibleClickableSpanSupport
     3985:3986:int generateViewId() -> generateViewId
     922:929:androidx.core.view.AccessibilityDelegateCompat getAccessibilityDelegate(android.view.View) -> getAccessibilityDelegate
-    945:948:android.view.View$AccessibilityDelegate getAccessibilityDelegateInternal(android.view.View) -> getAccessibilityDelegateInternal
+    945:946:android.view.View$AccessibilityDelegate getAccessibilityDelegateInternal(android.view.View) -> getAccessibilityDelegateInternal
     954:975:android.view.View$AccessibilityDelegate getAccessibilityDelegateThroughReflection(android.view.View) -> getAccessibilityDelegateThroughReflection
     1789:1790:int getAccessibilityLiveRegion(android.view.View) -> getAccessibilityLiveRegion
     1443:1449:androidx.core.view.accessibility.AccessibilityNodeProviderCompat getAccessibilityNodeProvider(android.view.View) -> getAccessibilityNodeProvider
@@ -13298,7 +13298,7 @@ androidx.core.view.ViewCompat -> androidx.core.view.ViewCompat:
     2318:2318:float getScaleY(android.view.View) -> getScaleY
     3736:3737:int getScrollIndicators(android.view.View) -> getScrollIndicators
     1399:1399:java.lang.CharSequence getStateDescription(android.view.View) -> getStateDescription
-    2606:2609:java.util.List getSystemGestureExclusionRects(android.view.View) -> getSystemGestureExclusionRects
+    2606:2607:java.util.List getSystemGestureExclusionRects(android.view.View) -> getSystemGestureExclusionRects
     2409:2410:java.lang.String getTransitionName(android.view.View) -> getTransitionName
     1953:1953:float getTranslationX(android.view.View) -> getTranslationX
     1967:1967:float getTranslationY(android.view.View) -> getTranslationY
@@ -13346,10 +13346,10 @@ androidx.core.view.ViewCompat -> androidx.core.view.ViewCompat:
     1079:1084:void postOnAnimationDelayed(android.view.View,java.lang.Runnable,long) -> postOnAnimationDelayed
     1338:1343:void removeAccessibilityAction(android.view.View,int) -> removeAccessibilityAction
     1346:1353:void removeActionWithId(int,android.view.View) -> removeActionWithId
-    4081:4094:void removeOnUnhandledKeyEventListener(android.view.View,androidx.core.view.ViewCompat$OnUnhandledKeyEventListenerCompat) -> removeOnUnhandledKeyEventListener
+    4081:4083:void removeOnUnhandledKeyEventListener(android.view.View,androidx.core.view.ViewCompat$OnUnhandledKeyEventListenerCompat) -> removeOnUnhandledKeyEventListener
     1312:1317:void replaceAccessibilityAction(android.view.View,androidx.core.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat,java.lang.CharSequence,androidx.core.view.accessibility.AccessibilityViewCommand) -> replaceAccessibilityAction
     2433:2438:void requestApplyInsets(android.view.View) -> requestApplyInsets
-    1672:1680:android.view.View requireViewById(android.view.View,int) -> requireViewById
+    1672:1673:android.view.View requireViewById(android.view.View,int) -> requireViewById
     1713:1713:int resolveSizeAndState(int,int,int) -> resolveSizeAndState
     3950:3951:boolean restoreDefaultFocus(android.view.View) -> restoreDefaultFocus
     522:526:void saveAttributeDataForStyleable(android.view.View,android.content.Context,int[],android.util.AttributeSet,android.content.res.TypedArray,int,int) -> saveAttributeDataForStyleable
@@ -13511,11 +13511,11 @@ androidx.core.view.ViewConfigurationCompat -> androidx.core.view.ViewConfigurati
     150:150:void <init>() -> <init>
     106:119:float getLegacyScrollFactor(android.view.ViewConfiguration,android.content.Context) -> getLegacyScrollFactor
     81:82:float getScaledHorizontalScrollFactor(android.view.ViewConfiguration,android.content.Context) -> getScaledHorizontalScrollFactor
-    128:131:int getScaledHoverSlop(android.view.ViewConfiguration) -> getScaledHoverSlop
+    128:129:int getScaledHoverSlop(android.view.ViewConfiguration) -> getScaledHoverSlop
     57:57:int getScaledPagingTouchSlop(android.view.ViewConfiguration) -> getScaledPagingTouchSlop
     98:99:float getScaledVerticalScrollFactor(android.view.ViewConfiguration,android.content.Context) -> getScaledVerticalScrollFactor
     68:68:boolean hasPermanentMenuKey(android.view.ViewConfiguration) -> hasPermanentMenuKey
-    141:147:boolean shouldShowMenuShortcutsWhenKeyboardPresent(android.view.ViewConfiguration,android.content.Context) -> shouldShowMenuShortcutsWhenKeyboardPresent
+    141:142:boolean shouldShowMenuShortcutsWhenKeyboardPresent(android.view.ViewConfiguration,android.content.Context) -> shouldShowMenuShortcutsWhenKeyboardPresent
 androidx.core.view.ViewGroupCompat -> androidx.core.view.ViewGroupCompat:
     52:52:void <init>() -> <init>
     114:115:int getLayoutMode(android.view.ViewGroup) -> getLayoutMode
@@ -13721,7 +13721,7 @@ androidx.core.view.ViewPropertyAnimatorListenerAdapter -> androidx.core.view.Vie
 androidx.core.view.WindowCompat -> androidx.core.view.WindowCompat:
     68:68:void <init>() -> <init>
     135:138:androidx.core.view.WindowInsetsControllerCompat getInsetsController(android.view.Window,android.view.View) -> getInsetsController
-    88:96:android.view.View requireViewById(android.view.Window,int) -> requireViewById
+    88:89:android.view.View requireViewById(android.view.Window,int) -> requireViewById
     117:122:void setDecorFitsSystemWindows(android.view.Window,boolean) -> setDecorFitsSystemWindows
 androidx.core.view.WindowCompat$Impl16 -> androidx.core.view.WindowCompat$Impl16:
     143:143:void <init>() -> <init>
@@ -14203,7 +14203,7 @@ androidx.core.view.accessibility.AccessibilityNodeInfoCompat -> androidx.core.vi
     2123:2124:int getMovementGranularities() -> getMovementGranularities
     2722:2727:android.util.SparseArray getOrCreateSpansFromViewTags(android.view.View) -> getOrCreateSpansFromViewTags
     2618:2618:java.lang.CharSequence getPackageName() -> getPackageName
-    3819:3822:java.lang.CharSequence getPaneTitle() -> getPaneTitle
+    3819:3820:java.lang.CharSequence getPaneTitle() -> getPaneTitle
     2165:2165:androidx.core.view.accessibility.AccessibilityNodeInfoCompat getParent() -> getParent
     3037:3043:androidx.core.view.accessibility.AccessibilityNodeInfoCompat$RangeInfoCompat getRangeInfo() -> getRangeInfo
     3989:3990:java.lang.CharSequence getRoleDescription() -> getRoleDescription
@@ -14212,7 +14212,7 @@ androidx.core.view.accessibility.AccessibilityNodeInfoCompat -> androidx.core.vi
     2666:2680:java.lang.CharSequence getText() -> getText
     3517:3518:int getTextSelectionEnd() -> getTextSelectionEnd
     3504:3505:int getTextSelectionStart() -> getTextSelectionStart
-    3763:3766:java.lang.CharSequence getTooltipText() -> getTooltipText
+    3763:3764:java.lang.CharSequence getTooltipText() -> getTooltipText
     4043:4049:androidx.core.view.accessibility.AccessibilityNodeInfoCompat$TouchDelegateInfoCompat getTouchDelegateInfo() -> getTouchDelegateInfo
     3599:3600:androidx.core.view.accessibility.AccessibilityNodeInfoCompat getTraversalAfter() -> getTraversalAfter
     3534:3535:androidx.core.view.accessibility.AccessibilityNodeInfoCompat getTraversalBefore() -> getTraversalBefore
@@ -14233,16 +14233,16 @@ androidx.core.view.accessibility.AccessibilityNodeInfoCompat -> androidx.core.vi
     2513:2513:boolean isEnabled() -> isEnabled
     2331:2331:boolean isFocusable() -> isFocusable
     2355:2355:boolean isFocused() -> isFocused
-    3909:3914:boolean isHeading() -> isHeading
+    3909:3910:boolean isHeading() -> isHeading
     2588:2589:boolean isImportantForAccessibility() -> isImportantForAccessibility
     2489:2489:boolean isLongClickable() -> isLongClickable
     3733:3734:boolean isMultiLine() -> isMultiLine
     2537:2537:boolean isPassword() -> isPassword
-    3838:3841:boolean isScreenReaderFocusable() -> isScreenReaderFocusable
+    3838:3839:boolean isScreenReaderFocusable() -> isScreenReaderFocusable
     2561:2561:boolean isScrollable() -> isScrollable
     2441:2441:boolean isSelected() -> isSelected
     3872:3873:boolean isShowingHintText() -> isShowingHintText
-    3942:3945:boolean isTextEntryKey() -> isTextEntryKey
+    3942:3943:boolean isTextEntryKey() -> isTextEntryKey
     2379:2380:boolean isVisibleToUser() -> isVisibleToUser
     1739:1739:androidx.core.view.accessibility.AccessibilityNodeInfoCompat obtain(android.view.View) -> obtain
     1753:1755:androidx.core.view.accessibility.AccessibilityNodeInfoCompat obtain(android.view.View,int) -> obtain
@@ -14360,8 +14360,8 @@ androidx.core.view.accessibility.AccessibilityNodeInfoCompat$RangeInfoCompat -> 
 androidx.core.view.accessibility.AccessibilityNodeInfoCompat$TouchDelegateInfoCompat -> androidx.core.view.accessibility.AccessibilityNodeInfoCompat$TouchDelegateInfoCompat:
     1123:1129:void <init>(java.util.Map) -> <init>
     1131:1133:void <init>(android.view.accessibility.AccessibilityNodeInfo$TouchDelegateInfo) -> <init>
-    1165:1168:android.graphics.Region getRegionAt(int) -> getRegionAt
-    1146:1149:int getRegionCount() -> getRegionCount
+    1165:1166:android.graphics.Region getRegionAt(int) -> getRegionAt
+    1146:1147:int getRegionCount() -> getRegionCount
     1193:1199:androidx.core.view.accessibility.AccessibilityNodeInfoCompat getTargetForRegion(android.graphics.Region) -> getTargetForRegion
 androidx.core.view.accessibility.AccessibilityNodeProviderCompat -> androidx.core.view.accessibility.AccessibilityNodeProviderCompat:
     119:129:void <init>() -> <init>
@@ -14876,11 +14876,11 @@ androidx.core.widget.ScrollerCompat -> androidx.core.widget.ScrollerCompat:
     183:184:void startScroll(int,int,int,int,int) -> startScroll
 androidx.core.widget.TextViewCompat -> androidx.core.widget.TextViewCompat:
     111:111:void <init>() -> <init>
-    456:462:int getAutoSizeMaxTextSize(android.widget.TextView) -> getAutoSizeMaxTextSize
-    439:445:int getAutoSizeMinTextSize(android.widget.TextView) -> getAutoSizeMinTextSize
-    422:428:int getAutoSizeStepGranularity(android.widget.TextView) -> getAutoSizeStepGranularity
-    473:479:int[] getAutoSizeTextAvailableSizes(android.widget.TextView) -> getAutoSizeTextAvailableSizes
-    406:412:int getAutoSizeTextType(android.widget.TextView) -> getAutoSizeTextType
+    456:457:int getAutoSizeMaxTextSize(android.widget.TextView) -> getAutoSizeMaxTextSize
+    439:440:int getAutoSizeMinTextSize(android.widget.TextView) -> getAutoSizeMinTextSize
+    422:423:int getAutoSizeStepGranularity(android.widget.TextView) -> getAutoSizeStepGranularity
+    473:474:int[] getAutoSizeTextAvailableSizes(android.widget.TextView) -> getAutoSizeTextAvailableSizes
+    406:407:int getAutoSizeTextType(android.widget.TextView) -> getAutoSizeTextType
     1029:1031:android.content.res.ColorStateList getCompoundDrawableTintList(android.widget.TextView) -> getCompoundDrawableTintList
     1064:1066:android.graphics.PorterDuff$Mode getCompoundDrawableTintMode(android.widget.TextView) -> getCompoundDrawableTintMode
     295:296:android.graphics.drawable.Drawable[] getCompoundDrawablesRelative(android.widget.TextView) -> getCompoundDrawablesRelative
@@ -14890,7 +14890,7 @@ androidx.core.widget.TextViewCompat -> androidx.core.widget.TextViewCompat:
     252:253:int getMinLines(android.widget.TextView) -> getMinLines
     983:1000:int getTextDirection(android.text.TextDirectionHeuristic) -> getTextDirection
     927:974:android.text.TextDirectionHeuristic getTextDirectionHeuristic(android.widget.TextView) -> getTextDirectionHeuristic
-    835:847:androidx.core.text.PrecomputedTextCompat$Params getTextMetricsParams(android.widget.TextView) -> getTextMetricsParams
+    835:836:androidx.core.text.PrecomputedTextCompat$Params getTextMetricsParams(android.widget.TextView) -> getTextMetricsParams
     114:121:java.lang.reflect.Field retrieveField(java.lang.String) -> retrieveField
     126:130:int retrieveIntFromField(java.lang.reflect.Field,android.widget.TextView) -> retrieveIntFromField
     361:368:void setAutoSizeTextTypeUniformWithConfiguration(android.widget.TextView,int,int,int,int) -> setAutoSizeTextTypeUniformWithConfiguration
@@ -14902,14 +14902,14 @@ androidx.core.widget.TextViewCompat -> androidx.core.widget.TextViewCompat:
     178:187:void setCompoundDrawablesRelativeWithIntrinsicBounds(android.widget.TextView,android.graphics.drawable.Drawable,android.graphics.drawable.Drawable,android.graphics.drawable.Drawable,android.graphics.drawable.Drawable) -> setCompoundDrawablesRelativeWithIntrinsicBounds
     210:219:void setCompoundDrawablesRelativeWithIntrinsicBounds(android.widget.TextView,int,int,int,int) -> setCompoundDrawablesRelativeWithIntrinsicBounds
     506:508:void setCustomSelectionActionModeCallback(android.widget.TextView,android.view.ActionMode$Callback) -> setCustomSelectionActionModeCallback
-    713:738:void setFirstBaselineToTopHeight(android.widget.TextView,int) -> setFirstBaselineToTopHeight
+    713:716:void setFirstBaselineToTopHeight(android.widget.TextView,int) -> setFirstBaselineToTopHeight
     758:779:void setLastBaselineToBottomHeight(android.widget.TextView,int) -> setLastBaselineToBottomHeight
     816:824:void setLineHeight(android.widget.TextView,int) -> setLineHeight
     904:915:void setPrecomputedText(android.widget.TextView,androidx.core.text.PrecomputedTextCompat) -> setPrecomputedText
     283:288:void setTextAppearance(android.widget.TextView,int) -> setTextAppearance
     862:889:void setTextMetricsParams(android.widget.TextView,androidx.core.text.PrecomputedTextCompat$Params) -> setTextMetricsParams
     541:544:android.view.ActionMode$Callback unwrapCustomSelectionActionModeCallback(android.view.ActionMode$Callback) -> unwrapCustomSelectionActionModeCallback
-    519:529:android.view.ActionMode$Callback wrapCustomSelectionActionModeCallback(android.widget.TextView,android.view.ActionMode$Callback) -> wrapCustomSelectionActionModeCallback
+    519:523:android.view.ActionMode$Callback wrapCustomSelectionActionModeCallback(android.widget.TextView,android.view.ActionMode$Callback) -> wrapCustomSelectionActionModeCallback
 androidx.core.widget.TextViewCompat$OreoCallback -> androidx.core.widget.TextViewCompat$OreoCallback:
     564:568:void <init>(android.view.ActionMode$Callback,android.widget.TextView) -> <init>
     691:691:android.content.Intent createProcessTextIntent() -> createProcessTextIntent
@@ -18038,7 +18038,7 @@ androidx.media.AudioManagerCompat -> androidx.media.AudioManagerCompat:
     176:176:void <init>() -> <init>
     115:124:int abandonAudioFocusRequest(android.media.AudioManager,androidx.media.AudioFocusRequestCompat) -> abandonAudioFocusRequest
     139:139:int getStreamMaxVolume(android.media.AudioManager,int) -> getStreamMaxVolume
-    151:154:int getStreamMinVolume(android.media.AudioManager,int) -> getStreamMinVolume
+    151:152:int getStreamMinVolume(android.media.AudioManager,int) -> getStreamMinVolume
     169:170:boolean isVolumeFixed(android.media.AudioManager) -> isVolumeFixed
     86:94:int requestAudioFocus(android.media.AudioManager,androidx.media.AudioFocusRequestCompat) -> requestAudioFocus
 androidx.media.AudioManagerCompat$Api21Impl -> androidx.media.AudioManagerCompat$Api21Impl:
@@ -22960,7 +22960,7 @@ androidx.transition.ViewGroupOverlayApi18 -> androidx.transition.ViewGroupOverla
 androidx.transition.ViewGroupUtils -> androidx.transition.ViewGroupUtils:
     37:37:void <clinit>() -> <clinit>
     110:111:void <init>() -> <init>
-    83:105:int getChildDrawingOrder(android.view.ViewGroup,int) -> getChildDrawingOrder
+    83:84:int getChildDrawingOrder(android.view.ViewGroup,int) -> getChildDrawingOrder
     46:47:androidx.transition.ViewGroupOverlayImpl getOverlay(android.view.ViewGroup) -> getOverlay
     68:77:void hiddenSuppressLayout(android.view.ViewGroup,boolean) -> hiddenSuppressLayout
     56:63:void suppressLayout(android.view.ViewGroup,boolean) -> suppressLayout
@@ -25118,7 +25118,7 @@ com.blankj.utilcode.util.FileUtils -> com.blankj.utilcode.util.FileUtils:
     153:153:boolean isDir(java.io.File) -> isDir
     173:173:boolean isFile(java.io.File) -> isFile
     76:81:boolean isFileExists(java.lang.String) -> isFileExists
-    85:100:boolean isFileExistsApi29(java.lang.String) -> isFileExistsApi29
+    85:98:boolean isFileExistsApi29(java.lang.String) -> isFileExistsApi29
 com.blankj.utilcode.util.KeyboardUtils -> com.blankj.utilcode.util.KeyboardUtils:
     183:183:void <clinit>() -> <clinit>
     330:331:void fixSoftInputLeaks(android.app.Activity) -> fixSoftInputLeaks
@@ -28501,7 +28501,7 @@ com.google.android.material.floatingactionbutton.FloatingActionButtonImpl -> com
     281:282:void updateImageMatrixScale() -> updateImageMatrixScale
     664:668:void updatePadding() -> updatePadding
     371:374:void updateShapeElevation(float) -> updateShapeElevation
-    608:620:void workAroundOreoBug(android.animation.ObjectAnimator) -> workAroundOreoBug
+    608:609:void workAroundOreoBug(android.animation.ObjectAnimator) -> workAroundOreoBug
 com.google.android.material.floatingactionbutton.FloatingActionButtonImpl$1 -> com.google.android.material.floatingactionbutton.FloatingActionButtonImpl$1:
     434:434:void <init>(com.google.android.material.floatingactionbutton.FloatingActionButtonImpl,boolean,com.google.android.material.floatingactionbutton.FloatingActionButtonImpl$InternalVisibilityChangedListener) -> <init>
     448:449:void onAnimationCancel(android.animation.Animator) -> onAnimationCancel
@@ -30852,7 +30852,7 @@ com.google.android.material.snackbar.Snackbar -> com.google.android.material.sna
     111:114:void <init>(android.content.Context,android.view.ViewGroup,android.view.View,com.google.android.material.snackbar.ContentViewCallback) -> <init>
     127:128:void dismiss() -> dismiss
     267:291:android.view.ViewGroup findSuitableParent(android.view.View) -> findSuitableParent
-    363:375:int getDuration() -> getDuration
+    363:370:int getDuration() -> getDuration
     230:233:boolean hasSnackbarButtonStyleAttr(android.content.Context) -> hasSnackbarButtonStyleAttr
     237:241:boolean hasSnackbarContentStyleAttrs(android.content.Context) -> hasSnackbarContentStyleAttrs
     134:134:boolean isShown() -> isShown
@@ -33929,7 +33929,7 @@ com.liux.musicplayer.databinding.FragmentHomeBinding -> com.liux.musicplayer.dat
     83:83:androidx.constraintlayout.widget.ConstraintLayout getRoot() -> getRoot
 com.liux.musicplayer.databinding.FragmentPlaylistBinding -> com.liux.musicplayer.databinding.FragmentPlaylistBinding:
     22:22:android.view.View getRoot() -> getRoot
-    125:125:android.widget.RelativeLayout getRoot() -> getRoot
+    121:121:android.widget.RelativeLayout getRoot() -> getRoot
 com.liux.musicplayer.databinding.ItemLyricBinding -> com.liux.musicplayer.databinding.ItemLyricBinding:
     18:18:android.view.View getRoot() -> getRoot
     33:33:android.widget.LinearLayout getRoot() -> getRoot
@@ -33962,9 +33962,9 @@ com.liux.musicplayer.receiver.MediaButtonReceiver$1 -> com.liux.musicplayer.rece
     36:36:void <init>(com.liux.musicplayer.receiver.MediaButtonReceiver,com.liux.musicplayer.receiver.MediaButtonReceiver$IKeyDownListener) -> <init>
     39:43:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
 com.liux.musicplayer.service.FloatLyricService -> com.liux.musicplayer.service.FloatLyricService:
-    43:371:void <init>() -> <init>
-    174:187:void LockLyric() -> LockLyric
-    102:128:void LyricSettings(int,int) -> LyricSettings
+    43:399:void <init>() -> <init>
+    194:207:void LockLyric() -> LockLyric
+    114:140:void LyricSettings(int,int) -> LyricSettings
     43:43:java.lang.String access$000(com.liux.musicplayer.service.FloatLyricService) -> access$000
     43:43:java.lang.String access$002(com.liux.musicplayer.service.FloatLyricService,java.lang.String) -> access$002
     43:43:com.liux.musicplayer.service.MusicService access$100(com.liux.musicplayer.service.FloatLyricService) -> access$100
@@ -34017,207 +34017,190 @@ com.liux.musicplayer.service.FloatLyricService -> com.liux.musicplayer.service.F
     43:43:boolean access$800(com.liux.musicplayer.service.FloatLyricService) -> access$800
     43:43:boolean access$802(com.liux.musicplayer.service.FloatLyricService,boolean) -> access$802
     43:43:void access$900(com.liux.musicplayer.service.FloatLyricService) -> access$900
-    563:578:android.view.WindowManager$LayoutParams getMyParams() -> getMyParams
-    443:469:void initFloating() -> initFloating
-    414:417:void initLyricSettings() -> initLyricSettings
-    533:560:void initWindow() -> initWindow
-    603:603:android.os.IBinder onBind(android.content.Intent) -> onBind
-    429:437:void onCreate() -> onCreate
-    589:598:void onDestroy() -> onDestroy
-    584:584:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    420:425:void saveLyricSettings() -> saveLyricSettings
-    472:482:void setAllShow() -> setAllShow
-    232:257:void setColorCheck(int) -> setColorCheck
-    607:613:void startLyricThread() -> startLyricThread
-    616:618:void stopLyricThread() -> stopLyricThread
-    264:309:void updateLyric() -> updateLyric
-    621:622:void updatePlayInfo(java.lang.String) -> updatePlayInfo
+    602:617:android.view.WindowManager$LayoutParams getMyParams() -> getMyParams
+    485:511:void initFloating() -> initFloating
+    454:457:void initLyricSettings() -> initLyricSettings
+    571:599:void initWindow() -> initWindow
+    645:645:android.os.IBinder onBind(android.content.Intent) -> onBind
+    472:479:void onCreate() -> onCreate
+    629:640:void onDestroy() -> onDestroy
+    623:623:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    463:468:void saveLyricSettings() -> saveLyricSettings
+    516:526:void setAllShow() -> setAllShow
+    252:277:void setColorCheck(int) -> setColorCheck
+    651:657:void startLyricThread() -> startLyricThread
+    662:664:void stopLyricThread() -> stopLyricThread
+    284:331:void updateLyric() -> updateLyric
+    670:671:void updatePlayInfo(java.lang.String) -> updatePlayInfo
 com.liux.musicplayer.service.FloatLyricService$1 -> com.liux.musicplayer.service.FloatLyricService$1:
-    68:68:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    71:78:void updateNowPlaying(int) -> updateNowPlaying
-    83:93:void updatePlayState() -> updatePlayState
+    80:80:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    83:90:void updateNowPlaying(int) -> updateNowPlaying
+    95:105:void updatePlayState() -> updatePlayState
 com.liux.musicplayer.service.FloatLyricService$2 -> com.liux.musicplayer.service.FloatLyricService$2:
-    130:130:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    133:166:void onClick(android.view.View) -> onClick
+    142:142:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    145:186:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.service.FloatLyricService$3 -> com.liux.musicplayer.service.FloatLyricService$3:
-    189:189:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    193:224:void onClick(android.view.View) -> onClick
+    209:209:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    213:244:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.service.FloatLyricService$4 -> com.liux.musicplayer.service.FloatLyricService$4:
-    287:287:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    290:296:void run() -> run
+    309:309:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    312:318:void run() -> run
 com.liux.musicplayer.service.FloatLyricService$5 -> com.liux.musicplayer.service.FloatLyricService$5:
-    298:298:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    301:307:void run() -> run
+    320:320:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    323:329:void run() -> run
 com.liux.musicplayer.service.FloatLyricService$6 -> com.liux.musicplayer.service.FloatLyricService$6:
-    371:371:void <init>(com.liux.musicplayer.service.FloatLyricService,android.os.Looper) -> <init>
-    374:380:void handleMessage(android.os.Message) -> handleMessage
+    399:399:void <init>(com.liux.musicplayer.service.FloatLyricService,android.os.Looper) -> <init>
+    402:408:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.service.FloatLyricService$FloatingListener -> com.liux.musicplayer.service.FloatLyricService$FloatingListener:
-    491:491:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    491:491:void <init>(com.liux.musicplayer.service.FloatLyricService,com.liux.musicplayer.service.FloatLyricService$1) -> <init>
-    495:525:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
+    530:530:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    530:530:void <init>(com.liux.musicplayer.service.FloatLyricService,com.liux.musicplayer.service.FloatLyricService$1) -> <init>
+    533:563:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
 com.liux.musicplayer.service.FloatLyricService$LyricThread -> com.liux.musicplayer.service.FloatLyricService$LyricThread:
-    311:313:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    311:311:void <init>(com.liux.musicplayer.service.FloatLyricService,com.liux.musicplayer.service.FloatLyricService$1) -> <init>
-    321:321:boolean isPaused() -> isPaused
-    334:341:void onPause() -> onPause
-    317:318:void pauseThread() -> pauseThread
-    326:330:void resumeThread() -> resumeThread
-    345:365:void run() -> run
+    338:340:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    338:338:void <init>(com.liux.musicplayer.service.FloatLyricService,com.liux.musicplayer.service.FloatLyricService$1) -> <init>
+    348:348:boolean isPaused() -> isPaused
+    361:368:void onPause() -> onPause
+    344:345:void pauseThread() -> pauseThread
+    353:357:void resumeThread() -> resumeThread
+    372:393:void run() -> run
 com.liux.musicplayer.service.FloatLyricService$MusicConnector -> com.liux.musicplayer.service.FloatLyricService$MusicConnector:
-    383:383:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
-    383:383:void <init>(com.liux.musicplayer.service.FloatLyricService,com.liux.musicplayer.service.FloatLyricService$1) -> <init>
-    387:403:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
-    408:410:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+    416:416:void <init>(com.liux.musicplayer.service.FloatLyricService) -> <init>
+    416:416:void <init>(com.liux.musicplayer.service.FloatLyricService,com.liux.musicplayer.service.FloatLyricService$1) -> <init>
+    420:440:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    445:447:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
 com.liux.musicplayer.service.FloatLyricService$MusicConnector$1 -> com.liux.musicplayer.service.FloatLyricService$MusicConnector$1:
-    395:395:void <init>(com.liux.musicplayer.service.FloatLyricService$MusicConnector) -> <init>
-    398:400:void LyricLoadCompleted() -> LyricLoadCompleted
+    430:430:void <init>(com.liux.musicplayer.service.FloatLyricService$MusicConnector) -> <init>
+    434:436:void LyricLoadCompleted() -> LyricLoadCompleted
 com.liux.musicplayer.service.MusicService -> com.liux.musicplayer.service.MusicService:
-    java.lang.String $r8$lambda$VfVXsnlopuDjI7o2rpELMzmcedE(com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$VfVXsnlopuDjI7o2rpELMzmcedE
+    void $r8$lambda$00vVAy-qsY_PRFl6due_X2H13AI(com.liux.musicplayer.service.MusicService,android.media.MediaPlayer) -> $r8$lambda$00vVAy-qsY_PRFl6due_X2H13AI
       # {"id":"com.android.tools.r8.synthesized"}
-    java.lang.String $r8$lambda$bb1kgBmIgSKt4a2PDDZAWFx7_rw(com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$bb1kgBmIgSKt4a2PDDZAWFx7_rw
+    void $r8$lambda$qt8AMg8n_KREWWH9E63N077iQyY(com.liux.musicplayer.service.MusicService,android.media.MediaPlayer) -> $r8$lambda$qt8AMg8n_KREWWH9E63N077iQyY
       # {"id":"com.android.tools.r8.synthesized"}
-    55:943:void <init>() -> <init>
-    55:55:boolean access$000(com.liux.musicplayer.service.MusicService) -> access$000
-    55:55:boolean access$002(com.liux.musicplayer.service.MusicService,boolean) -> access$002
-    55:55:void access$1000(com.liux.musicplayer.service.MusicService,java.lang.String) -> access$1000
-    55:55:int[] access$1100(com.liux.musicplayer.service.MusicService) -> access$1100
-    55:55:android.os.Handler access$1200(com.liux.musicplayer.service.MusicService) -> access$1200
-    55:55:void access$200(com.liux.musicplayer.service.MusicService,int) -> access$200
-    55:55:boolean access$300(com.liux.musicplayer.service.MusicService) -> access$300
-    55:55:boolean access$302(com.liux.musicplayer.service.MusicService,boolean) -> access$302
-    55:55:com.liux.musicplayer.interfaces.MusicServiceCallback access$400(com.liux.musicplayer.service.MusicService) -> access$400
-    55:55:com.liux.musicplayer.interfaces.DeskLyricCallback access$500(com.liux.musicplayer.service.MusicService) -> access$500
-    55:55:int access$600(com.liux.musicplayer.service.MusicService) -> access$600
-    55:55:android.content.SharedPreferences access$700(com.liux.musicplayer.service.MusicService) -> access$700
-    55:55:boolean access$800(com.liux.musicplayer.service.MusicService) -> access$800
-    55:55:java.util.List access$900(com.liux.musicplayer.service.MusicService) -> access$900
-    692:695:void addMusic(java.util.List) -> addMusic
-    699:740:void addMusic(java.lang.String) -> addMusic
-    439:446:void closeNotification() -> closeNotification
-    888:888:android.graphics.Bitmap getAlbumImage() -> getAlbumImage
-    127:127:int getCurrentPosition() -> getCurrentPosition
-    131:136:int getDuration() -> getDuration
-    875:875:com.liux.musicplayer.utils.LyricUtils getLyric() -> getLyric
-    150:150:int getMaxID() -> getMaxID
-    884:884:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata() -> getMetadata
-    146:146:int getNowId() -> getNowId
-    158:158:int getNowPageId() -> getNowPageId
-    142:142:java.util.List getPlayList() -> getPlayList
-    154:154:int getPlayOrder() -> getPlayOrder
-    507:513:void hideDesktopLyric(boolean) -> hideDesktopLyric
-    276:293:void initMemberData() -> initMemberData
-    365:389:void initNotification() -> initNotification
-    449:486:void initRemoteViews() -> initRemoteViews
-    355:362:void initializePlayer() -> initializePlayer
-    123:123:boolean isAppLyric() -> isAppLyric
-    119:119:boolean isEnabled() -> isEnabled
-    111:111:boolean isPlaying() -> isPlaying
-    115:115:boolean isPrepared() -> isPrepared
-    1050:1052:boolean isTiming() -> isTiming
-    105:105:boolean isWebPlayMode() -> isWebPlayMode
-    730:730:java.lang.String lambda$addMusic$0(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$addMusic$0
-    731:731:java.lang.String lambda$addMusic$1(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$addMusic$1
-    340:340:android.os.IBinder onBind(android.content.Intent) -> onBind
-    213:222:void onCreate() -> onCreate
-    297:307:void onDestroy() -> onDestroy
-    893:922:void onKeyDown(int) -> onKeyDown
-    346:346:void onRebind(android.content.Intent) -> onRebind
-    311:311:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    351:351:boolean onUnbind(android.content.Intent) -> onUnbind
-    201:203:void pause() -> pause
-    561:612:void playPrevOrNext(boolean) -> playPrevOrNext
-    793:842:int playThis(int) -> playThis
-    765:768:void playThisFromList(int) -> playThisFromList
-    771:790:void playThisNow(int) -> playThisNow
-    847:862:void prepare(java.lang.String) -> prepare
-    653:671:void readPlayList() -> readPlayList
-    649:650:void refreshPlayList() -> refreshPlayList
-    225:250:void registerBluetoothReceiver() -> registerBluetoothReceiver
-    253:273:void registerHeadsetPlugReceiver() -> registerHeadsetPlugReceiver
-    550:558:void registerMusicReceiver() -> registerMusicReceiver
-    679:688:void savePlayList() -> savePlayList
-    759:762:void savePlayOrder() -> savePlayOrder
-    167:169:void setActivityForeground(boolean) -> setActivityForeground
-    197:198:void setAppLyric(boolean) -> setAppLyric
-    181:182:void setDeskLyricCallback(com.liux.musicplayer.interfaces.DeskLyricCallback) -> setDeskLyricCallback
-    162:164:void setDesktopLyric(boolean) -> setDesktopLyric
-    189:190:void setEnabled(boolean) -> setEnabled
-    616:646:void setMediaPlayerListener() -> setMediaPlayerListener
+    58:878:void <init>() -> <init>
+    58:58:boolean access$000(com.liux.musicplayer.service.MusicService) -> access$000
+    58:58:boolean access$002(com.liux.musicplayer.service.MusicService,boolean) -> access$002
+    58:58:android.content.SharedPreferences access$1000(com.liux.musicplayer.service.MusicService) -> access$1000
+    58:58:java.util.List access$200(com.liux.musicplayer.service.MusicService) -> access$200
+    58:58:void access$300(com.liux.musicplayer.service.MusicService,java.lang.String) -> access$300
+    58:58:com.liux.musicplayer.interfaces.MusicServiceCallback access$400(com.liux.musicplayer.service.MusicService) -> access$400
+    58:58:int access$500(com.liux.musicplayer.service.MusicService) -> access$500
+    58:58:com.liux.musicplayer.interfaces.DeskLyricCallback access$600(com.liux.musicplayer.service.MusicService) -> access$600
+    58:58:int[] access$700(com.liux.musicplayer.service.MusicService) -> access$700
+    58:58:android.os.Handler access$800(com.liux.musicplayer.service.MusicService) -> access$800
+    58:58:void access$900(com.liux.musicplayer.service.MusicService,int) -> access$900
+    681:683:void addMusic(java.lang.String) -> addMusic
+    676:677:void addMusicList(java.util.List) -> addMusicList
+    425:432:void closeNotification() -> closeNotification
+    201:201:android.graphics.Bitmap getAlbumImage() -> getAlbumImage
+    136:136:int getCurrentPosition() -> getCurrentPosition
+    139:144:int getDuration() -> getDuration
+    191:191:com.liux.musicplayer.utils.LyricUtils getLyric() -> getLyric
+    155:155:int getMaxID() -> getMaxID
+    198:198:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata() -> getMetadata
+    152:152:int getNowId() -> getNowId
+    161:161:int getNowPageId() -> getNowPageId
+    149:149:java.util.List getPlayList() -> getPlayList
+    158:158:int getPlayOrder() -> getPlayOrder
+    493:499:void hideDesktopLyric(boolean) -> hideDesktopLyric
+    297:314:void initMemberData() -> initMemberData
+    352:375:void initNotification() -> initNotification
+    435:472:void initRemoteViews() -> initRemoteViews
+    342:349:void initializePlayer() -> initializePlayer
+    133:133:boolean isAppLyric() -> isAppLyric
+    130:130:boolean isEnabled() -> isEnabled
+    124:124:boolean isPlaying() -> isPlaying
+    127:127:boolean isPrepared() -> isPrepared
+    204:206:boolean isTiming() -> isTiming
+    121:121:boolean isWebPlayMode() -> isWebPlayMode
+    608:621:void lambda$setMediaPlayerListener$0(android.media.MediaPlayer) -> lambda$setMediaPlayerListener$0
+    625:631:void lambda$setMediaPlayerListener$1(android.media.MediaPlayer) -> lambda$setMediaPlayerListener$1
+    338:338:android.os.IBinder onBind(android.content.Intent) -> onBind
+    230:239:void onCreate() -> onCreate
+    318:328:void onDestroy() -> onDestroy
+    827:855:void onKeyDown(int) -> onKeyDown
+    332:332:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    217:219:void pause() -> pause
+    550:603:void playPrevOrNext(boolean) -> playPrevOrNext
+    716:719:void playThisFromList(int) -> playThisFromList
+    751:800:int prepareThis(int) -> prepareThis
+    641:659:void readPlayList() -> readPlayList
+    635:636:void refreshPlayList() -> refreshPlayList
+    244:267:void registerBluetoothReceiver() -> registerBluetoothReceiver
+    272:292:void registerHeadsetPlugReceiver() -> registerHeadsetPlugReceiver
+    536:544:void registerRemoteMusicReceiver() -> registerRemoteMusicReceiver
+    669:672:void savePlayList() -> savePlayList
+    707:710:void savePlayOrder() -> savePlayOrder
+    168:170:void setActivityForeground(boolean) -> setActivityForeground
+    188:189:void setAppLyric(boolean) -> setAppLyric
+    179:180:void setDeskLyricCallback(com.liux.musicplayer.interfaces.DeskLyricCallback) -> setDeskLyricCallback
+    164:166:void setDesktopLyric(boolean) -> setDesktopLyric
+    182:183:void setEnabled(boolean) -> setEnabled
+    607:632:void setMediaPlayerListener() -> setMediaPlayerListener
     172:173:void setMusicServiceCallback(com.liux.musicplayer.interfaces.MusicServiceCallback) -> setMusicServiceCallback
-    193:194:void setNowPageId(int) -> setNowPageId
-    674:676:void setPlayList(java.util.List) -> setPlayList
-    521:544:void setPlayOrPause(boolean) -> setPlayOrPause
-    743:756:void setPlayOrder(int) -> setPlayOrder
-    185:186:void setProgress(int) -> setProgress
-    879:881:void setWebPlayMode(boolean) -> setWebPlayMode
-    489:504:void showDesktopLyric() -> showDesktopLyric
-    206:209:void start() -> start
-    1034:1042:void startTiming() -> startTiming
-    1045:1047:void stopTiming() -> stopTiming
-    176:178:void unregisterMusicServiceCallback(com.liux.musicplayer.interfaces.MusicServiceCallback) -> unregisterMusicServiceCallback
-    516:518:void updateDeskLyricPlayInfo() -> updateDeskLyricPlayInfo
-    393:433:void updateNotificationShow(int) -> updateNotificationShow
+    185:186:void setNowPageId(int) -> setNowPageId
+    662:664:void setPlayList(java.util.List) -> setPlayList
+    507:530:void setPlayOrPause(boolean) -> setPlayOrPause
+    689:704:void setPlayOrder(int) -> setPlayOrder
+    213:214:void setProgress(int) -> setProgress
+    194:196:void setWebPlayMode(boolean) -> setWebPlayMode
+    475:490:void showDesktopLyric() -> showDesktopLyric
+    222:225:void start() -> start
+    808:823:void startPlay(java.lang.String) -> startPlay
+    969:974:void startTiming() -> startTiming
+    725:744:void startToPrepare(int) -> startToPrepare
+    980:982:void stopTiming() -> stopTiming
+    175:177:void unregisterMusicServiceCallback(com.liux.musicplayer.interfaces.MusicServiceCallback) -> unregisterMusicServiceCallback
+    502:504:void updateDeskLyricPlayInfo() -> updateDeskLyricPlayInfo
+    379:419:void updateNotificationShow(int) -> updateNotificationShow
 com.liux.musicplayer.service.MusicService$$ExternalSyntheticLambda0 -> com.liux.musicplayer.service.MusicService$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
-    com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$0 com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$0.INSTANCE -> INSTANCE
-    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$0.<clinit>() -> <clinit>
+    com.liux.musicplayer.service.MusicService com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$71a8d56cdae5afd04d49c0e3b82e19b1e020010bc7d87af807db5c3be3700a55$1.f$0 -> f$0
+    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$71a8d56cdae5afd04d49c0e3b82e19b1e020010bc7d87af807db5c3be3700a55$1.<init>(com.liux.musicplayer.service.MusicService) -> <init>
       # {"id":"com.android.tools.r8.synthesized"}
-    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$0.<init>() -> <init>
-      # {"id":"com.android.tools.r8.synthesized"}
-    java.lang.Object com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$0.apply(java.lang.Object) -> apply
+    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$71a8d56cdae5afd04d49c0e3b82e19b1e020010bc7d87af807db5c3be3700a55$1.onCompletion(android.media.MediaPlayer) -> onCompletion
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.service.MusicService$$ExternalSyntheticLambda1 -> com.liux.musicplayer.service.MusicService$$ExternalSyntheticLambda1:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
-    com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$1 com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$1.INSTANCE -> INSTANCE
-    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$1.<clinit>() -> <clinit>
+    com.liux.musicplayer.service.MusicService com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$71a8d56cdae5afd04d49c0e3b82e19b1e020010bc7d87af807db5c3be3700a55$0.f$0 -> f$0
+    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$71a8d56cdae5afd04d49c0e3b82e19b1e020010bc7d87af807db5c3be3700a55$0.<init>(com.liux.musicplayer.service.MusicService) -> <init>
       # {"id":"com.android.tools.r8.synthesized"}
-    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$1.<init>() -> <init>
-      # {"id":"com.android.tools.r8.synthesized"}
-    java.lang.Object com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$dff8012e4c5aceb556b45da5ed543d3fc4a11f693284ecf4b00ad60b6b574642$1.apply(java.lang.Object) -> apply
+    void com.liux.musicplayer.service.MusicService$$InternalSyntheticLambda$0$71a8d56cdae5afd04d49c0e3b82e19b1e020010bc7d87af807db5c3be3700a55$0.onPrepared(android.media.MediaPlayer) -> onPrepared
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.service.MusicService$1 -> com.liux.musicplayer.service.MusicService$1:
-    227:227:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    230:233:void onBluetoothDeviceConnected() -> onBluetoothDeviceConnected
-    237:241:void onBluetoothDeviceDisconnected() -> onBluetoothDeviceDisconnected
+    245:245:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
+    248:251:void onBluetoothDeviceConnected() -> onBluetoothDeviceConnected
+    254:258:void onBluetoothDeviceDisconnected() -> onBluetoothDeviceDisconnected
 com.liux.musicplayer.service.MusicService$2 -> com.liux.musicplayer.service.MusicService$2:
-    254:254:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    257:260:void onHeadsetPlugged() -> onHeadsetPlugged
-    264:268:void onHeadsetUnplugged() -> onHeadsetUnplugged
+    273:273:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
+    276:279:void onHeadsetPlugged() -> onHeadsetPlugged
+    283:287:void onHeadsetUnplugged() -> onHeadsetUnplugged
+com.liux.musicplayer.service.MusicService$3 -> com.liux.musicplayer.service.MusicService$3:
+    650:650:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
 com.liux.musicplayer.service.MusicService$4 -> com.liux.musicplayer.service.MusicService$4:
-    616:616:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    619:631:void onPrepared(android.media.MediaPlayer) -> onPrepared
+    768:768:void <init>(com.liux.musicplayer.service.MusicService,int) -> <init>
+    771:774:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
+    785:792:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
+    778:779:void onFileDownloading(java.util.ArrayList) -> onFileDownloading
 com.liux.musicplayer.service.MusicService$5 -> com.liux.musicplayer.service.MusicService$5:
-    634:634:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    638:644:void onCompletion(android.media.MediaPlayer) -> onCompletion
-com.liux.musicplayer.service.MusicService$6 -> com.liux.musicplayer.service.MusicService$6:
-    662:662:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-com.liux.musicplayer.service.MusicService$7 -> com.liux.musicplayer.service.MusicService$7:
-    681:681:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-com.liux.musicplayer.service.MusicService$8 -> com.liux.musicplayer.service.MusicService$8:
-    810:810:void <init>(com.liux.musicplayer.service.MusicService,int) -> <init>
-    813:816:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
-    827:834:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
-    820:821:void onFileDownloading(java.util.ArrayList) -> onFileDownloading
-com.liux.musicplayer.service.MusicService$9 -> com.liux.musicplayer.service.MusicService$9:
-    943:943:void <init>(com.liux.musicplayer.service.MusicService,android.os.Looper) -> <init>
-    946:953:void handleMessage(android.os.Message) -> handleMessage
+    878:878:void <init>(com.liux.musicplayer.service.MusicService,android.os.Looper) -> <init>
+    881:888:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.service.MusicService$KeyTimeThread -> com.liux.musicplayer.service.MusicService$KeyTimeThread:
-    924:924:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    924:924:void <init>(com.liux.musicplayer.service.MusicService,com.liux.musicplayer.service.MusicService$1) -> <init>
-    928:940:void run() -> run
-com.liux.musicplayer.service.MusicService$MusicReceiver -> com.liux.musicplayer.service.MusicService$MusicReceiver:
-    956:956:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    971:995:void UIControl(java.lang.String) -> UIControl
-    962:963:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    860:860:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
+    860:860:void <init>(com.liux.musicplayer.service.MusicService,com.liux.musicplayer.service.MusicService$1) -> <init>
+    864:875:void run() -> run
 com.liux.musicplayer.service.MusicService$MyMusicBinder -> com.liux.musicplayer.service.MusicService$MyMusicBinder:
-    998:998:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    1001:1001:com.liux.musicplayer.service.MusicService getService() -> getService
+    927:927:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
+    930:930:com.liux.musicplayer.service.MusicService getService() -> getService
 com.liux.musicplayer.service.MusicService$TimingThread -> com.liux.musicplayer.service.MusicService$TimingThread:
-    1005:1006:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
-    1005:1005:void <init>(com.liux.musicplayer.service.MusicService,com.liux.musicplayer.service.MusicService$1) -> <init>
-    1010:1030:void run() -> run
+    937:938:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
+    937:937:void <init>(com.liux.musicplayer.service.MusicService,com.liux.musicplayer.service.MusicService$1) -> <init>
+    942:963:void run() -> run
+com.liux.musicplayer.service.MusicService$remoteMusicReceiver -> com.liux.musicplayer.service.MusicService$remoteMusicReceiver:
+    894:894:void <init>(com.liux.musicplayer.service.MusicService) -> <init>
+    907:924:void UIControl(java.lang.String) -> UIControl
+    899:900:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.liux.musicplayer.ui.MainActivity -> com.liux.musicplayer.ui.MainActivity:
     52:112:void <init>() -> <init>
     52:52:void access$000(com.liux.musicplayer.ui.MainActivity,int) -> access$000
@@ -34250,35 +34233,35 @@ com.liux.musicplayer.ui.MainActivity -> com.liux.musicplayer.ui.MainActivity:
     52:52:android.os.Handler access$700(com.liux.musicplayer.ui.MainActivity) -> access$700
     52:52:com.liux.musicplayer.interfaces.MusicServiceCallback access$800(com.liux.musicplayer.ui.MainActivity) -> access$800
     52:52:void access$900(com.liux.musicplayer.ui.MainActivity) -> access$900
-    382:385:com.liux.musicplayer.service.MusicService getMusicService() -> getMusicService
+    383:386:com.liux.musicplayer.service.MusicService getMusicService() -> getMusicService
     303:364:void initBackgroundCallBack() -> initBackgroundCallBack
-    200:211:void initMainActivity() -> initMainActivity
-    229:232:void initVariable() -> initVariable
-    425:501:void initViewCompat() -> initViewCompat
-    565:672:void initViewPager2() -> initViewPager2
+    202:214:void initMainActivity() -> initMainActivity
+    232:235:void initVariable() -> initVariable
+    426:502:void initViewCompat() -> initViewCompat
+    566:673:void initViewPager2() -> initViewPager2
     108:110:void nowLoading(int) -> nowLoading
-    248:251:void nowPlaying(int) -> nowPlaying
-    406:415:void onBackPressed() -> onBackPressed
-    279:294:void onCreate(android.os.Bundle) -> onCreate
-    368:374:void onDestroy() -> onDestroy
+    251:254:void nowPlaying(int) -> nowPlaying
+    407:416:void onBackPressed() -> onBackPressed
+    282:294:void onCreate(android.os.Bundle) -> onCreate
+    368:373:void onDestroy() -> onDestroy
     298:300:void onStart() -> onStart
-    401:402:void playPrevOrNext(boolean) -> playPrevOrNext
-    262:275:void playingError(int) -> playingError
-    254:259:void prepareInfo(int) -> prepareInfo
-    721:727:void resetPlayProgress() -> resetPlayProgress
-    418:422:void setChildFragment() -> setChildFragment
-    504:505:void setIsLyric() -> setIsLyric
-    508:517:void setIsLyric(boolean) -> setIsLyric
-    214:226:void setMainActivityData() -> setMainActivityData
-    731:736:void setNewAppearance(boolean) -> setNewAppearance
-    389:398:void setPlayBarTitle(int) -> setPlayBarTitle
-    378:379:void setPlayOrPause() -> setPlayOrPause
-    520:543:void setPlayOrder() -> setPlayOrder
-    546:561:void setPlayOrder(int) -> setPlayOrder
-    675:676:void setViewPagerToId(int) -> setViewPagerToId
-    706:714:void startProgressBar() -> startProgressBar
-    716:718:void stopProgressBar() -> stopProgressBar
-    235:245:void updatePlayState() -> updatePlayState
+    402:403:void playPrevOrNext(boolean) -> playPrevOrNext
+    265:278:void playingError(int) -> playingError
+    257:262:void prepareInfo(int) -> prepareInfo
+    722:728:void resetPlayProgress() -> resetPlayProgress
+    419:423:void setChildFragment() -> setChildFragment
+    505:506:void setIsLyric() -> setIsLyric
+    509:518:void setIsLyric(boolean) -> setIsLyric
+    217:229:void setMainActivityData() -> setMainActivityData
+    732:737:void setNewAppearance(boolean) -> setNewAppearance
+    390:399:void setPlayBarTitle(int) -> setPlayBarTitle
+    376:377:void setPlayOrPause() -> setPlayOrPause
+    521:544:void setPlayOrder() -> setPlayOrder
+    547:562:void setPlayOrder(int) -> setPlayOrder
+    676:677:void setViewPagerToId(int) -> setViewPagerToId
+    707:715:void startProgressBar() -> startProgressBar
+    717:719:void stopProgressBar() -> stopProgressBar
+    238:248:void updatePlayState() -> updatePlayState
 com.liux.musicplayer.ui.MainActivity$1 -> com.liux.musicplayer.ui.MainActivity$1:
     85:85:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
     103:104:void nowLoadingThis(int) -> nowLoadingThis
@@ -34286,27 +34269,27 @@ com.liux.musicplayer.ui.MainActivity$1 -> com.liux.musicplayer.ui.MainActivity$1
     93:94:void playingErrorThis(int) -> playingErrorThis
     98:99:void updatePlayStateThis() -> updatePlayStateThis
 com.liux.musicplayer.ui.MainActivity$10 -> com.liux.musicplayer.ui.MainActivity$10:
-    473:473:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    476:477:void onClick(android.view.View) -> onClick
+    474:474:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    477:478:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.MainActivity$11 -> com.liux.musicplayer.ui.MainActivity$11:
-    480:480:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    483:483:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    487:489:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    493:498:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+    481:481:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    484:484:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    488:490:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    494:499:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
 com.liux.musicplayer.ui.MainActivity$12 -> com.liux.musicplayer.ui.MainActivity$12:
-    573:573:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    632:633:void onPageScrollStateChanged(int) -> onPageScrollStateChanged
-    576:577:void onPageScrolled(int,float,int) -> onPageScrolled
-    581:628:void onPageSelected(int) -> onPageSelected
+    574:574:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    633:634:void onPageScrollStateChanged(int) -> onPageScrollStateChanged
+    577:578:void onPageScrolled(int,float,int) -> onPageScrolled
+    582:629:void onPageSelected(int) -> onPageSelected
 com.liux.musicplayer.ui.MainActivity$13 -> com.liux.musicplayer.ui.MainActivity$13:
-    636:636:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    639:669:boolean onNavigationItemSelected(android.view.MenuItem) -> onNavigationItemSelected
+    637:637:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    640:670:boolean onNavigationItemSelected(android.view.MenuItem) -> onNavigationItemSelected
 com.liux.musicplayer.ui.MainActivity$2 -> com.liux.musicplayer.ui.MainActivity$2:
     112:112:void <init>(com.liux.musicplayer.ui.MainActivity,android.os.Looper) -> <init>
     115:119:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.ui.MainActivity$3 -> com.liux.musicplayer.ui.MainActivity$3:
-    267:267:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    270:271:void onClick(android.content.DialogInterface,int) -> onClick
+    270:270:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    273:274:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.MainActivity$4 -> com.liux.musicplayer.ui.MainActivity$4:
     303:303:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
     307:307:void onActivityCreated(android.app.Activity,android.os.Bundle) -> onActivityCreated
@@ -34317,25 +34300,25 @@ com.liux.musicplayer.ui.MainActivity$4 -> com.liux.musicplayer.ui.MainActivity$4
     311:325:void onActivityStarted(android.app.Activity) -> onActivityStarted
     339:352:void onActivityStopped(android.app.Activity) -> onActivityStopped
 com.liux.musicplayer.ui.MainActivity$5 -> com.liux.musicplayer.ui.MainActivity$5:
-    443:443:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    446:447:void onClick(android.view.View) -> onClick
+    444:444:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    447:448:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.MainActivity$6 -> com.liux.musicplayer.ui.MainActivity$6:
-    449:449:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    452:453:void onClick(android.view.View) -> onClick
+    450:450:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    453:454:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.MainActivity$7 -> com.liux.musicplayer.ui.MainActivity$7:
-    455:455:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    458:459:void onClick(android.view.View) -> onClick
+    456:456:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    459:460:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.MainActivity$8 -> com.liux.musicplayer.ui.MainActivity$8:
-    461:461:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    464:465:void onClick(android.view.View) -> onClick
+    462:462:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    465:466:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.MainActivity$9 -> com.liux.musicplayer.ui.MainActivity$9:
-    467:467:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
-    470:471:void onClick(android.view.View) -> onClick
+    468:468:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
+    471:472:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.MainActivity$MusicConnector -> com.liux.musicplayer.ui.MainActivity$MusicConnector:
     179:179:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
     179:179:void <init>(com.liux.musicplayer.ui.MainActivity,com.liux.musicplayer.ui.MainActivity$1) -> <init>
-    183:189:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
-    194:196:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+    183:191:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    196:198:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
 com.liux.musicplayer.ui.MainActivity$ProgressThread -> com.liux.musicplayer.ui.MainActivity$ProgressThread:
     122:124:void <init>(com.liux.musicplayer.ui.MainActivity) -> <init>
     122:122:void <init>(com.liux.musicplayer.ui.MainActivity,com.liux.musicplayer.ui.MainActivity$1) -> <init>
@@ -34345,9 +34328,9 @@ com.liux.musicplayer.ui.MainActivity$ProgressThread -> com.liux.musicplayer.ui.M
     137:141:void resumeThread() -> resumeThread
     155:173:void run() -> run
 com.liux.musicplayer.ui.MainActivity$ScreenSlidePagerAdapter -> com.liux.musicplayer.ui.MainActivity$ScreenSlidePagerAdapter:
-    679:681:void <init>(com.liux.musicplayer.ui.MainActivity,androidx.fragment.app.FragmentActivity) -> <init>
-    685:695:androidx.fragment.app.Fragment createFragment(int) -> createFragment
-    701:701:int getItemCount() -> getItemCount
+    680:682:void <init>(com.liux.musicplayer.ui.MainActivity,androidx.fragment.app.FragmentActivity) -> <init>
+    686:696:androidx.fragment.app.Fragment createFragment(int) -> createFragment
+    702:702:int getItemCount() -> getItemCount
 com.liux.musicplayer.ui.UserGuide -> com.liux.musicplayer.ui.UserGuide:
     14:22:void <init>() -> <init>
     14:14:int access$000(com.liux.musicplayer.ui.UserGuide) -> access$000
@@ -34357,35 +34340,36 @@ com.liux.musicplayer.ui.UserGuide -> com.liux.musicplayer.ui.UserGuide:
     14:14:android.widget.ImageView access$200(com.liux.musicplayer.ui.UserGuide) -> access$200
     14:14:android.widget.Button access$300(com.liux.musicplayer.ui.UserGuide) -> access$300
     14:14:android.widget.Button access$400(com.liux.musicplayer.ui.UserGuide) -> access$400
-    32:74:void initView() -> initView
+    14:14:android.widget.Button access$500(com.liux.musicplayer.ui.UserGuide) -> access$500
+    36:83:void initView() -> initView
     26:29:void onCreate(android.os.Bundle) -> onCreate
 com.liux.musicplayer.ui.UserGuide$1 -> com.liux.musicplayer.ui.UserGuide$1:
-    44:44:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
-    47:53:void onClick(android.view.View) -> onClick
+    52:52:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
+    55:61:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.UserGuide$2 -> com.liux.musicplayer.ui.UserGuide$2:
-    55:55:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
-    58:64:void onClick(android.view.View) -> onClick
+    63:63:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
+    66:73:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.UserGuide$3 -> com.liux.musicplayer.ui.UserGuide$3:
-    66:66:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
-    69:72:void onClick(android.view.View) -> onClick
+    75:75:void <init>(com.liux.musicplayer.ui.UserGuide) -> <init>
+    78:81:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.ui.home.HomeFragment -> com.liux.musicplayer.ui.home.HomeFragment:
-    35:300:void <init>() -> <init>
+    35:307:void <init>() -> <init>
     35:35:boolean access$002(com.liux.musicplayer.ui.home.HomeFragment,boolean) -> access$002
     35:35:com.liux.musicplayer.ui.home.LyricAdapter access$100(com.liux.musicplayer.ui.home.HomeFragment) -> access$100
     35:35:android.os.Handler access$200(com.liux.musicplayer.ui.home.HomeFragment) -> access$200
     109:110:void callMainActivityForInfo() -> callMainActivityForInfo
-    211:223:void initLyric(com.liux.musicplayer.utils.MusicUtils$Song) -> initLyric
+    218:230:void initLyric(com.liux.musicplayer.utils.MusicUtils$Song) -> initLyric
     69:106:void initViewCompat() -> initViewCompat
     54:55:void onAttach(android.content.Context) -> onAttach
     59:64:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
     114:115:void onDestroyView() -> onDestroyView
-    179:181:void onPause() -> onPause
-    185:188:void onResume() -> onResume
-    163:175:void setIsLyricLayoutShow(boolean) -> setIsLyricLayoutShow
-    192:207:void setLyricPosition(int) -> setLyricPosition
-    119:159:void setMusicInfo(com.liux.musicplayer.utils.MusicUtils$Song) -> setMusicInfo
-    287:293:void startLyric() -> startLyric
-    296:298:void stopLyric() -> stopLyric
+    186:188:void onPause() -> onPause
+    192:195:void onResume() -> onResume
+    168:182:void setIsLyricLayoutShow(boolean) -> setIsLyricLayoutShow
+    199:214:void setLyricPosition(int) -> setLyricPosition
+    124:164:void setMusicInfo(com.liux.musicplayer.utils.MusicUtils$Song) -> setMusicInfo
+    294:300:void startLyric() -> startLyric
+    303:305:void stopLyric() -> stopLyric
 com.liux.musicplayer.ui.home.HomeFragment$1 -> com.liux.musicplayer.ui.home.HomeFragment$1:
     69:69:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
     72:73:boolean onLongClick(android.view.View) -> onLongClick
@@ -34397,19 +34381,19 @@ com.liux.musicplayer.ui.home.HomeFragment$3 -> com.liux.musicplayer.ui.home.Home
     98:98:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
     103:104:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.liux.musicplayer.ui.home.HomeFragment$4 -> com.liux.musicplayer.ui.home.HomeFragment$4:
-    217:217:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
-    220:221:void LyricLoadCompleted() -> LyricLoadCompleted
+    224:224:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
+    227:228:void LyricLoadCompleted() -> LyricLoadCompleted
 com.liux.musicplayer.ui.home.HomeFragment$5 -> com.liux.musicplayer.ui.home.HomeFragment$5:
-    300:300:void <init>(com.liux.musicplayer.ui.home.HomeFragment,android.os.Looper) -> <init>
-    303:306:void handleMessage(android.os.Message) -> handleMessage
+    307:307:void <init>(com.liux.musicplayer.ui.home.HomeFragment,android.os.Looper) -> <init>
+    310:313:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.ui.home.HomeFragment$LyricThread -> com.liux.musicplayer.ui.home.HomeFragment$LyricThread:
-    225:227:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
-    225:225:void <init>(com.liux.musicplayer.ui.home.HomeFragment,com.liux.musicplayer.ui.home.HomeFragment$1) -> <init>
-    235:235:boolean isPaused() -> isPaused
-    248:255:void onPause() -> onPause
-    231:232:void pauseThread() -> pauseThread
-    240:244:void resumeThread() -> resumeThread
-    259:281:void run() -> run
+    232:234:void <init>(com.liux.musicplayer.ui.home.HomeFragment) -> <init>
+    232:232:void <init>(com.liux.musicplayer.ui.home.HomeFragment,com.liux.musicplayer.ui.home.HomeFragment$1) -> <init>
+    242:242:boolean isPaused() -> isPaused
+    255:262:void onPause() -> onPause
+    238:239:void pauseThread() -> pauseThread
+    247:251:void resumeThread() -> resumeThread
+    266:288:void run() -> run
 com.liux.musicplayer.ui.home.LyricAdapter -> com.liux.musicplayer.ui.home.LyricAdapter:
     25:30:void <init>(com.liux.musicplayer.ui.home.HomeFragment,android.content.Context,com.liux.musicplayer.utils.LyricUtils,android.util.SparseBooleanArray) -> <init>
     34:34:int getCount() -> getCount
@@ -34440,60 +34424,59 @@ com.liux.musicplayer.ui.playlist.PlaylistFragment -> com.liux.musicplayer.ui.pla
       # {"id":"com.android.tools.r8.synthesized"}
     boolean $r8$lambda$yR_dAbiH4j1ZY0IcC2M9gCVpvlU(com.liux.musicplayer.ui.playlist.PlaylistFragment,com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$yR_dAbiH4j1ZY0IcC2M9gCVpvlU
       # {"id":"com.android.tools.r8.synthesized"}
-    58:58:void <clinit>() -> <clinit>
-    58:85:void <init>() -> <init>
-    58:58:void access$000(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$000
-    58:58:void access$100(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$100
-    58:58:android.widget.ListView access$1000(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$1000
-    58:58:int access$1100(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$1100
-    58:58:int access$1102(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> access$1102
-    58:58:void access$1200(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> access$1200
-    58:58:java.util.List access$1300(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$1300
-    58:58:void access$200(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$200
-    58:58:void access$300(com.liux.musicplayer.ui.playlist.PlaylistFragment,android.view.View,int) -> access$300
-    58:58:int access$400(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> access$400
-    58:58:void access$500(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$500
-    58:58:com.liux.musicplayer.ui.playlist.PlaylistAdapter access$600(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$600
-    58:58:void access$700(com.liux.musicplayer.ui.playlist.PlaylistFragment,boolean) -> access$700
-    58:58:void access$800(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$800
-    58:58:boolean access$900(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$900
-    58:58:boolean access$902(com.liux.musicplayer.ui.playlist.PlaylistFragment,boolean) -> access$902
+    55:55:void <clinit>() -> <clinit>
+    55:85:void <init>() -> <init>
+    55:55:void access$000(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$000
+    55:55:void access$100(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$100
+    55:55:android.widget.ListView access$1000(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$1000
+    55:55:int access$1100(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$1100
+    55:55:int access$1102(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> access$1102
+    55:55:void access$1200(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> access$1200
+    55:55:java.util.List access$1300(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$1300
+    55:55:void access$200(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$200
+    55:55:void access$300(com.liux.musicplayer.ui.playlist.PlaylistFragment,android.view.View,int) -> access$300
+    55:55:int access$400(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> access$400
+    55:55:void access$500(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$500
+    55:55:com.liux.musicplayer.ui.playlist.PlaylistAdapter access$600(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$600
+    55:55:void access$700(com.liux.musicplayer.ui.playlist.PlaylistFragment,boolean) -> access$700
+    55:55:void access$800(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$800
+    55:55:boolean access$900(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> access$900
+    55:55:boolean access$902(com.liux.musicplayer.ui.playlist.PlaylistFragment,boolean) -> access$902
     97:99:void addAllMusic() -> addAllMusic
-    102:106:void addFolder(android.net.Uri) -> addFolder
-    339:346:void beSureDelete() -> beSureDelete
-    305:309:void cancel() -> cancel
-    130:147:void checkChild(java.io.File) -> checkChild
-    312:335:void delete() -> delete
-    244:255:void editList() -> editList
-    566:575:void initData() -> initData
-    426:495:void initView(android.view.View) -> initView
-    352:363:void inverse() -> inverse
-    339:339:boolean lambda$beSureDelete$1(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$beSureDelete$1
+    102:107:void addFolder(android.net.Uri) -> addFolder
+    336:343:void beSureDelete() -> beSureDelete
+    302:306:void cancel() -> cancel
+    131:149:void checkChild(java.io.File) -> checkChild
+    309:332:void delete() -> delete
+    241:252:void editList() -> editList
+    561:570:void initData() -> initData
+    423:490:void initView(android.view.View) -> initView
+    336:336:boolean lambda$beSureDelete$1(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$beSureDelete$1
     86:93:void lambda$new$0(androidx.activity.result.ActivityResult) -> lambda$new$0
-    371:371:java.lang.String lambda$selectAll$2(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$selectAll$2
-    660:661:int onBackPressed() -> onBackPressed
-    167:221:void onClick(android.view.View) -> onClick
-    150:156:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
-    301:302:void onDestroyView() -> onDestroyView
-    278:286:void onPause() -> onPause
-    290:297:void onResume() -> onResume
-    161:163:void onStart() -> onStart
-    588:620:void popMenu(int,android.view.View) -> popMenu
-    623:623:int positionToMusicId(int) -> positionToMusicId
-    527:549:void refreshList() -> refreshList
-    109:127:void searchFile(java.lang.String) -> searchFile
-    498:506:void searchFromList() -> searchFromList
-    258:274:void searchState() -> searchState
-    366:378:void selectAll() -> selectAll
-    665:668:void setListViewPosition(int) -> setListViewPosition
-    671:675:void setNowPlaying(int) -> setNowPlaying
-    381:391:void setOnListViewItemClickListener() -> setOnListViewItemClickListener
-    399:410:void setOnListViewItemLongClickListener() -> setOnListViewItemLongClickListener
-    581:585:void setStateCheckedMap(boolean) -> setStateCheckedMap
-    627:657:void showMusicDetails(int) -> showMusicDetails
-    224:241:void showNoPermissionDialog() -> showNoPermissionDialog
-    509:524:void showPlaylistHeaderBar(boolean) -> showPlaylistHeaderBar
-    413:423:void updateCheckBoxStatus(android.view.View,int) -> updateCheckBoxStatus
+    368:368:java.lang.String lambda$selectAll$2(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$selectAll$2
+    655:656:int onBackPressed() -> onBackPressed
+    169:218:void onClick(android.view.View) -> onClick
+    152:158:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    298:299:void onDestroyView() -> onDestroyView
+    275:283:void onPause() -> onPause
+    287:294:void onResume() -> onResume
+    163:165:void onStart() -> onStart
+    583:615:void popMenu(int,android.view.View) -> popMenu
+    618:618:int positionToMusicId(int) -> positionToMusicId
+    522:544:void refreshList() -> refreshList
+    110:128:void searchFile(java.lang.String) -> searchFile
+    493:501:void searchFromList() -> searchFromList
+    255:271:void searchState() -> searchState
+    363:375:void selectAll() -> selectAll
+    660:663:void setListViewPosition(int) -> setListViewPosition
+    666:670:void setNowPlaying(int) -> setNowPlaying
+    378:388:void setOnListViewItemClickListener() -> setOnListViewItemClickListener
+    396:407:void setOnListViewItemLongClickListener() -> setOnListViewItemLongClickListener
+    576:580:void setStateCheckedMap(boolean) -> setStateCheckedMap
+    622:652:void showMusicDetails(int) -> showMusicDetails
+    221:238:void showNoPermissionDialog() -> showNoPermissionDialog
+    504:519:void showPlaylistHeaderBar(boolean) -> showPlaylistHeaderBar
+    410:420:void updateCheckBoxStatus(android.view.View,int) -> updateCheckBoxStatus
 com.liux.musicplayer.ui.playlist.PlaylistFragment$$ExternalSyntheticLambda0 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
@@ -34521,46 +34504,46 @@ com.liux.musicplayer.ui.playlist.PlaylistFragment$$ExternalSyntheticLambda2 -> c
     boolean com.liux.musicplayer.ui.playlist.PlaylistFragment$$InternalSyntheticLambda$0$977298d27537a65396b279d900aa98222c3bd53f5886ee22eb380f21b20afa81$0.test(java.lang.Object) -> test
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.ui.playlist.PlaylistFragment$1 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$1:
-    202:202:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    205:205:void onClick(android.content.DialogInterface,int) -> onClick
+    199:199:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    202:202:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$10 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$10:
-    450:450:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    481:493:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-    454:476:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
+    445:445:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    476:488:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
+    449:471:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
 com.liux.musicplayer.ui.playlist.PlaylistFragment$11 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$11:
-    590:590:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> <init>
-    593:616:boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
+    585:585:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment,int) -> <init>
+    588:611:boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$11$1 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$11$1:
-    602:602:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment$11) -> <init>
-    612:612:void clickNegative() -> clickNegative
-    605:607:void clickPositive(com.liux.musicplayer.utils.MusicUtils$Song) -> clickPositive
+    597:597:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment$11) -> <init>
+    607:607:void clickNegative() -> clickNegative
+    600:602:void clickPositive(com.liux.musicplayer.utils.MusicUtils$Song) -> clickPositive
 com.liux.musicplayer.ui.playlist.PlaylistFragment$12 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$12:
-    646:646:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    649:649:void onClick(android.content.DialogInterface,int) -> onClick
+    641:641:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    644:644:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$2 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$2:
-    195:195:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    198:200:void onClick(android.content.DialogInterface,int) -> onClick
+    192:192:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    195:197:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$3 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$3:
-    233:233:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    236:237:void onClick(android.content.DialogInterface,int) -> onClick
+    230:230:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    233:234:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$4 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$4:
-    228:228:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    231:231:void onClick(android.content.DialogInterface,int) -> onClick
+    225:225:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    228:228:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$5 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$5:
-    327:327:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    330:331:void onClick(android.content.DialogInterface,int) -> onClick
+    324:324:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    327:328:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$6 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$6:
-    320:320:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    323:325:void onClick(android.content.DialogInterface,int) -> onClick
+    317:317:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    320:322:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$7 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$7:
-    381:381:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    384:389:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    378:378:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    381:386:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$8 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$8:
-    399:399:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    402:407:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
+    396:396:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    399:404:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
 com.liux.musicplayer.ui.playlist.PlaylistFragment$9 -> com.liux.musicplayer.ui.playlist.PlaylistFragment$9:
-    441:441:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
-    444:445:boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
+    436:436:void <init>(com.liux.musicplayer.ui.playlist.PlaylistFragment) -> <init>
+    439:440:boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
 com.liux.musicplayer.ui.settings.SettingsFragment -> com.liux.musicplayer.ui.settings.SettingsFragment:
     void $r8$lambda$DhApWFiGKbZSm3wPBNpBsM-T-zo(com.liux.musicplayer.ui.settings.SettingsFragment,androidx.activity.result.ActivityResult) -> $r8$lambda$DhApWFiGKbZSm3wPBNpBsM-T-zo
       # {"id":"com.android.tools.r8.synthesized"}
@@ -34703,7 +34686,7 @@ com.liux.musicplayer.utils.CrashHandlers -> com.liux.musicplayer.utils.CrashHand
     64:64:com.liux.musicplayer.utils.CrashHandlers getInstance() -> getInstance
     140:151:boolean handleException(java.lang.Throwable) -> handleException
     104:110:void init(android.content.Context) -> init
-    210:262:java.lang.String saveCrashInfo2File(java.lang.Throwable,java.lang.String) -> saveCrashInfo2File
+    210:260:java.lang.String saveCrashInfo2File(java.lang.Throwable,java.lang.String) -> saveCrashInfo2File
     155:160:void savePreference(java.lang.String) -> savePreference
     163:171:void shareErrorLog(java.lang.String,android.content.Context) -> shareErrorLog
     118:131:void uncaughtException(java.lang.Thread,java.lang.Throwable) -> uncaughtException
@@ -34716,73 +34699,104 @@ com.liux.musicplayer.utils.CrashHandlers$2 -> com.liux.musicplayer.utils.CrashHa
 com.liux.musicplayer.utils.CustomDialogUtils -> com.liux.musicplayer.utils.CustomDialogUtils:
     18:18:com.liux.musicplayer.utils.MusicUtils$Song access$000() -> access$000
     18:18:androidx.appcompat.app.AlertDialog access$100() -> access$100
-    30:140:void showSongInfoEditDialog(com.liux.musicplayer.ui.MainActivity,com.liux.musicplayer.utils.MusicUtils$Song,boolean,com.liux.musicplayer.utils.CustomDialogUtils$AlertDialogBtnClickListener) -> showSongInfoEditDialog
+    30:143:void showSongInfoEditDialog(com.liux.musicplayer.ui.MainActivity,com.liux.musicplayer.utils.MusicUtils$Song,boolean,com.liux.musicplayer.utils.CustomDialogUtils$AlertDialogBtnClickListener) -> showSongInfoEditDialog
 com.liux.musicplayer.utils.CustomDialogUtils$1 -> com.liux.musicplayer.utils.CustomDialogUtils$1:
     52:52:void <init>() -> <init>
     66:66:void afterTextChanged(android.text.Editable) -> afterTextChanged
     56:56:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
     60:61:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
 com.liux.musicplayer.utils.CustomDialogUtils$2 -> com.liux.musicplayer.utils.CustomDialogUtils$2:
-    68:68:void <init>() -> <init>
-    82:82:void afterTextChanged(android.text.Editable) -> afterTextChanged
-    72:72:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
-    76:77:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    69:69:void <init>() -> <init>
+    83:83:void afterTextChanged(android.text.Editable) -> afterTextChanged
+    73:73:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    77:78:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
 com.liux.musicplayer.utils.CustomDialogUtils$3 -> com.liux.musicplayer.utils.CustomDialogUtils$3:
-    84:84:void <init>() -> <init>
-    98:98:void afterTextChanged(android.text.Editable) -> afterTextChanged
-    88:88:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
-    92:93:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    86:86:void <init>() -> <init>
+    100:100:void afterTextChanged(android.text.Editable) -> afterTextChanged
+    90:90:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    94:95:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
 com.liux.musicplayer.utils.CustomDialogUtils$4 -> com.liux.musicplayer.utils.CustomDialogUtils$4:
-    100:100:void <init>() -> <init>
-    114:114:void afterTextChanged(android.text.Editable) -> afterTextChanged
-    104:104:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
-    108:109:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    103:103:void <init>() -> <init>
+    117:117:void afterTextChanged(android.text.Editable) -> afterTextChanged
+    107:107:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    111:112:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
 com.liux.musicplayer.utils.CustomDialogUtils$5 -> com.liux.musicplayer.utils.CustomDialogUtils$5:
-    117:117:void <init>(com.liux.musicplayer.utils.CustomDialogUtils$AlertDialogBtnClickListener) -> <init>
-    120:122:void onClick(android.view.View) -> onClick
+    120:120:void <init>(com.liux.musicplayer.utils.CustomDialogUtils$AlertDialogBtnClickListener) -> <init>
+    123:125:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.utils.CustomDialogUtils$6 -> com.liux.musicplayer.utils.CustomDialogUtils$6:
-    125:125:void <init>(com.liux.musicplayer.utils.CustomDialogUtils$AlertDialogBtnClickListener) -> <init>
-    128:130:void onClick(android.view.View) -> onClick
+    128:128:void <init>(com.liux.musicplayer.utils.CustomDialogUtils$AlertDialogBtnClickListener) -> <init>
+    131:133:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.utils.DisplayUtils -> com.liux.musicplayer.utils.DisplayUtils:
     13:14:int dip2px(android.content.Context,float) -> dip2px
 com.liux.musicplayer.utils.LyricUtils -> com.liux.musicplayer.utils.LyricUtils:
     21:48:void <init>(android.content.Context) -> <init>
     56:71:void LoadLyric(com.liux.musicplayer.utils.MusicUtils$Song) -> LoadLyric
-    87:113:void LyricFromFile(java.lang.String) -> LyricFromFile
-    116:137:void LyricFromUrl(com.liux.musicplayer.utils.MusicUtils$Song) -> LyricFromUrl
+    87:114:void LyricFromFile(java.lang.String) -> LyricFromFile
+    117:139:void LyricFromUrl(com.liux.musicplayer.utils.MusicUtils$Song) -> LyricFromUrl
     20:20:void access$000(com.liux.musicplayer.utils.LyricUtils,java.lang.String,com.liux.musicplayer.utils.MusicUtils$Song) -> access$000
-    204:220:long formatTime(java.lang.String) -> formatTime
-    228:235:int getNowLyric(int) -> getNowLyric
-    197:200:void getStartMillionTime() -> getStartMillionTime
-    141:162:void handleUrlResult(java.lang.String,com.liux.musicplayer.utils.MusicUtils$Song) -> handleUrlResult
+    206:222:long formatTime(java.lang.String) -> formatTime
+    230:237:int getNowLyric(int) -> getNowLyric
+    199:202:void getStartMillionTime() -> getStartMillionTime
+    143:164:void handleUrlResult(java.lang.String,com.liux.musicplayer.utils.MusicUtils$Song) -> handleUrlResult
     37:41:void sendCompleted() -> sendCompleted
     33:34:void setOnLyricLoadCallback(com.liux.musicplayer.utils.LyricUtils$OnLyricLoadCallback) -> setOnLyricLoadCallback
-    224:224:int size() -> size
-    167:194:void splitLyricFromLine(java.lang.String) -> splitLyricFromLine
+    226:226:int size() -> size
+    169:196:void splitLyricFromLine(java.lang.String) -> splitLyricFromLine
 com.liux.musicplayer.utils.LyricUtils$1 -> com.liux.musicplayer.utils.LyricUtils$1:
-    117:117:void <init>(com.liux.musicplayer.utils.LyricUtils,com.liux.musicplayer.utils.MusicUtils$Song) -> <init>
-    120:124:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
-    128:134:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
+    118:118:void <init>(com.liux.musicplayer.utils.LyricUtils,com.liux.musicplayer.utils.MusicUtils$Song) -> <init>
+    122:126:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
+    130:136:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
 com.liux.musicplayer.utils.MusicUtils -> com.liux.musicplayer.utils.MusicUtils:
-    65:83:android.graphics.Bitmap getAlbumImage(android.content.Context,java.lang.String) -> getAlbumImage
-    89:117:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata(android.content.Context,java.lang.String) -> getMetadata
-    121:131:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadataFromSong(com.liux.musicplayer.utils.MusicUtils$Song) -> getMetadataFromSong
-    149:188:java.util.List getMusicData(android.content.Context) -> getMusicData
-    135:141:java.lang.String millis2FitTimeSpan(long) -> millis2FitTimeSpan
+    java.lang.String $r8$lambda$cScavgqel1xLUs7_dEtyCwrfzFg(com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$cScavgqel1xLUs7_dEtyCwrfzFg
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.String $r8$lambda$nC_KGv8acr_n24DnukSdSgpwhsQ(com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$nC_KGv8acr_n24DnukSdSgpwhsQ
+      # {"id":"com.android.tools.r8.synthesized"}
+    219:260:void addMusic(android.content.Context,java.lang.String,java.util.List) -> addMusic
+    205:208:void addMusicToList(android.content.Context,java.util.List,java.util.List) -> addMusicToList
+    76:85:android.graphics.Bitmap getAlbumImage(java.lang.String) -> getAlbumImage
+    95:114:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata(java.lang.String) -> getMetadata
+    122:132:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadataFromSong(com.liux.musicplayer.utils.MusicUtils$Song) -> getMetadataFromSong
+    156:195:java.util.List getMusicData(android.content.Context) -> getMusicData
+    250:250:java.lang.String lambda$addMusic$0(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$addMusic$0
+    251:251:java.lang.String lambda$addMusic$1(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$addMusic$1
+    140:146:java.lang.String millis2FitTimeSpan(long) -> millis2FitTimeSpan
+    268:276:void savePlayList(android.content.Context,java.util.List) -> savePlayList
+com.liux.musicplayer.utils.MusicUtils$$ExternalSyntheticLambda0 -> com.liux.musicplayer.utils.MusicUtils$$ExternalSyntheticLambda0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$1 com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$1.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$1.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$1.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.Object com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$1.apply(java.lang.Object) -> apply
+      # {"id":"com.android.tools.r8.synthesized"}
+com.liux.musicplayer.utils.MusicUtils$$ExternalSyntheticLambda1 -> com.liux.musicplayer.utils.MusicUtils$$ExternalSyntheticLambda1:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$0 com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$0.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$0.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$0.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.Object com.liux.musicplayer.utils.MusicUtils$$InternalSyntheticLambda$0$0d1d2a5396df0fa97dacdcd0f3ced8db699bf4771100eaba7c0b39af54a77230$0.apply(java.lang.Object) -> apply
+      # {"id":"com.android.tools.r8.synthesized"}
+com.liux.musicplayer.utils.MusicUtils$1 -> com.liux.musicplayer.utils.MusicUtils$1:
+    269:269:void <init>() -> <init>
 com.liux.musicplayer.utils.MusicUtils$Metadata -> com.liux.musicplayer.utils.MusicUtils$Metadata:
-    40:49:void <init>() -> <init>
+    47:56:void <init>() -> <init>
 com.liux.musicplayer.utils.MusicUtils$Song -> com.liux.musicplayer.utils.MusicUtils$Song:
-    52:60:void <init>() -> <init>
+    59:67:void <init>() -> <init>
 com.liux.musicplayer.utils.UploadDownloadUtils -> com.liux.musicplayer.utils.UploadDownloadUtils:
     41:43:void <clinit>() -> <clinit>
-    45:202:void <init>(android.content.Context) -> <init>
-    181:190:void LoadCacheList() -> LoadCacheList
+    45:206:void <init>(android.content.Context) -> <init>
+    183:192:void LoadCacheList() -> LoadCacheList
     40:40:java.util.List access$000() -> access$000
     40:40:void access$100(com.liux.musicplayer.utils.UploadDownloadUtils) -> access$100
     40:40:java.lang.String access$200() -> access$200
     40:40:com.liux.musicplayer.utils.UploadDownloadUtils$OnImageLoadListener access$300(com.liux.musicplayer.utils.UploadDownloadUtils) -> access$300
     87:178:void downloadFile(java.lang.String,java.lang.String,java.lang.String) -> downloadFile
-    193:200:void saveCacheList() -> saveCacheList
+    197:204:void saveCacheList() -> saveCacheList
     56:57:void set0nImageLoadListener(com.liux.musicplayer.utils.UploadDownloadUtils$OnImageLoadListener) -> set0nImageLoadListener
 com.liux.musicplayer.utils.UploadDownloadUtils$1 -> com.liux.musicplayer.utils.UploadDownloadUtils$1:
     java.lang.String $r8$lambda$T92wbEuyk8456jMNccONVh6WZXU(com.liux.musicplayer.utils.UploadDownloadUtils$MyCache) -> $r8$lambda$T92wbEuyk8456jMNccONVh6WZXU
@@ -34801,14 +34815,14 @@ com.liux.musicplayer.utils.UploadDownloadUtils$1$$ExternalSyntheticLambda0 -> co
     java.lang.Object com.liux.musicplayer.utils.UploadDownloadUtils$1$$InternalSyntheticLambda$0$6b8d3e474bcd67d3470c60dafb013e5e96bcb77cd142ef429639e87331b6a05f$0.apply(java.lang.Object) -> apply
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.utils.UploadDownloadUtils$2 -> com.liux.musicplayer.utils.UploadDownloadUtils$2:
-    184:184:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils) -> <init>
+    186:186:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils) -> <init>
 com.liux.musicplayer.utils.UploadDownloadUtils$3 -> com.liux.musicplayer.utils.UploadDownloadUtils$3:
-    194:194:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils) -> <init>
+    198:198:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils) -> <init>
 com.liux.musicplayer.utils.UploadDownloadUtils$4 -> com.liux.musicplayer.utils.UploadDownloadUtils$4:
-    202:202:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils,android.os.Looper) -> <init>
-    205:223:void handleMessage(android.os.Message) -> handleMessage
+    206:206:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils,android.os.Looper) -> <init>
+    209:227:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.utils.UploadDownloadUtils$MyCache -> com.liux.musicplayer.utils.UploadDownloadUtils$MyCache:
-    274:280:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils,java.lang.String,java.lang.String) -> <init>
+    242:248:void <init>(com.liux.musicplayer.utils.UploadDownloadUtils,java.lang.String,java.lang.String) -> <init>
 com.liux.musicplayer.utils.UploadDownloadUtils$OnImageLoadListener -> com.liux.musicplayer.utils.UploadDownloadUtils$OnImageLoadListener:
     63:63:void onFileDownloading(java.util.ArrayList) -> onFileDownloading
 com.liux.musicplayer.utils.UriTransform -> com.liux.musicplayer.utils.UriTransform:
@@ -34816,31 +34830,31 @@ com.liux.musicplayer.utils.UriTransform -> com.liux.musicplayer.utils.UriTransfo
     17:79:java.lang.String getPath(android.content.Context,android.net.Uri) -> getPath
     135:135:boolean isGooglePhotosUri(android.net.Uri) -> isGooglePhotosUri
 com.liux.musicplayer.views.AlwaysFocusTextView -> com.liux.musicplayer.views.AlwaysFocusTextView:
-    12:13:void <init>(android.content.Context) -> <init>
-    16:17:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
-    20:21:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
-    25:25:boolean isFocused() -> isFocused
+    15:16:void <init>(android.content.Context) -> <init>
+    19:20:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
+    23:24:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
+    28:28:boolean isFocused() -> isFocused
 com.liux.musicplayer.views.MyScrollView -> com.liux.musicplayer.views.MyScrollView:
-    13:14:void <init>(android.content.Context) -> <init>
-    17:18:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
-    21:22:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
-    42:42:boolean dispatchTouchEvent(android.view.MotionEvent) -> dispatchTouchEvent
-    30:37:boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
+    17:18:void <init>(android.content.Context) -> <init>
+    21:22:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
+    25:26:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
+    46:46:boolean dispatchTouchEvent(android.view.MotionEvent) -> dispatchTouchEvent
+    34:41:boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
 com.liux.musicplayer.views.StrokeTextView -> com.liux.musicplayer.views.StrokeTextView:
-    20:27:void <init>(android.content.Context) -> <init>
-    20:33:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
-    20:39:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
-    42:48:void init() -> init
-    102:104:void onDraw(android.graphics.Canvas) -> onDraw
-    97:99:void onLayout(boolean,int,int,int,int) -> onLayout
-    86:88:void onMeasure(int,int) -> onMeasure
-    108:116:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
-    75:77:void setGravity(int) -> setGravity
-    69:71:void setLayoutParams(android.view.ViewGroup$LayoutParams) -> setLayoutParams
-    58:60:void setLineSpacing(float,float) -> setLineSpacing
-    64:66:void setMaxWidth(int) -> setMaxWidth
-    81:83:void setPadding(int,int,int,int) -> setPadding
-    92:94:void setTextSize(int,float) -> setTextSize
+    24:31:void <init>(android.content.Context) -> <init>
+    24:37:void <init>(android.content.Context,android.util.AttributeSet) -> <init>
+    24:43:void <init>(android.content.Context,android.util.AttributeSet,int) -> <init>
+    48:54:void init() -> init
+    108:110:void onDraw(android.graphics.Canvas) -> onDraw
+    103:105:void onLayout(boolean,int,int,int,int) -> onLayout
+    92:94:void onMeasure(int,int) -> onMeasure
+    114:122:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    81:83:void setGravity(int) -> setGravity
+    75:77:void setLayoutParams(android.view.ViewGroup$LayoutParams) -> setLayoutParams
+    64:66:void setLineSpacing(float,float) -> setLineSpacing
+    70:72:void setMaxWidth(int) -> setMaxWidth
+    87:89:void setPadding(int,int,int,int) -> setPadding
+    98:100:void setTextSize(int,float) -> setTextSize
 kotlin.ExceptionsKt__ExceptionsKt -> kotlin.ExceptionsKt__ExceptionsKt:
 # {"id":"sourceFile","fileName":"Exceptions.kt"}
     70:72:void addSuppressed(java.lang.Throwable,java.lang.Throwable) -> addSuppressed
@@ -37560,7 +37574,7 @@ kotlinx.coroutines.android.HandlerDispatcher -> kotlinx.coroutines.android.Handl
 kotlinx.coroutines.android.HandlerDispatcherKt -> kotlinx.coroutines.android.HandlerDispatcherKt:
 # {"id":"sourceFile","fileName":"HandlerDispatcher.kt"}
     107:234:void <clinit>() -> <clinit>
-    84:102:android.os.Handler asHandler(android.os.Looper,boolean) -> asHandler
+    84:91:android.os.Handler asHandler(android.os.Looper,boolean) -> asHandler
 kotlinx.coroutines.channels.AbstractChannel -> kotlinx.coroutines.channels.AbstractChannel:
 # {"id":"sourceFile","fileName":"AbstractChannel.kt"}
     517:517:void <init>(kotlin.jvm.functions.Function1) -> <init>

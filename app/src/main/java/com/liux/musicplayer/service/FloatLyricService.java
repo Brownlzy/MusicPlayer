@@ -564,58 +564,51 @@ public class FloatLyricService extends Service {
         }
     }
 
-    /**
-     * 初始化窗口
-     */
-    private void initWindow() {
-        int y = sp.getInt("deskLyricY", 210);
-        boolean lyricLock = sp.getBoolean("deskLyricLock", false);
-        winManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-        //设置好悬浮窗的参数
-        wmParams = getMyParams();
-        // 透明背景
-        wmParams.format = PixelFormat.RGBA_8888;
-        // 悬浮窗默认显示以左上角为起始坐标
-        wmParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
-        //悬浮窗的开始位置，因为设置的是从左上角开始，所以屏幕左上角是x=0;y=0
-        //wmParams.x = winManager.getDefaultDisplay().getWidth();
-        wmParams.x = 0;
-        wmParams.y = y;
-        wmParams.width = winManager.getDefaultDisplay().getWidth();
-        //得到容器，通过这个inflater来获得悬浮窗控件
-        inflater = LayoutInflater.from(getApplicationContext());
-        // 获取浮动窗口视图所在布局
-        mFloatingLayout = inflater.inflate(R.layout.desktop_lyric, null);
-        // 添加悬浮窗的视图
-        if (lyricLock) {
-            //悬浮窗属性设置
-            wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
-        }
-        winManager.addView(mFloatingLayout, wmParams);
-    }
+     /**
+      * 初始化窗口
+      */
+     private void initWindow() {
+         boolean lyricLock = sp.getBoolean("deskLyricLock", false);
+         winManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
+         //设置好悬浮窗的参数
+         wmParams = getMyParams(lyricLock);
+         //得到容器，通过这个inflater来获得悬浮窗控件
+         inflater = LayoutInflater.from(getApplicationContext());
+         // 获取浮动窗口视图所在布局
+         mFloatingLayout = inflater.inflate(R.layout.desktop_lyric, null);
+         // 添加悬浮窗的视图
+         winManager.addView(mFloatingLayout, wmParams);
+     }
 
-    private WindowManager.LayoutParams getMyParams() {
-        wmParams = new WindowManager.LayoutParams();
-        //设置window type 下面变量2002是在屏幕区域显示，2003则可以显示在状态栏之上
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        //} else {
-        //    wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-        //}
-        //设置可以显示在状态栏上
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
-
-        //设置悬浮窗口长宽数据
-        wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        return wmParams;
-    }
+     private WindowManager.LayoutParams getMyParams(boolean isLock) {
+         wmParams = new WindowManager.LayoutParams();
+         wmParams.alpha=0.8f;
+         wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+         if(!isLock){
+             //设置可以显示在状态栏上
+             wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+         }else {
+             wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                     | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                     | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                     | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
+         }
+         //设置悬浮窗口长宽数据
+         wmParams.width = winManager.getDefaultDisplay().getWidth();
+         wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+         // 透明背景
+         wmParams.format = PixelFormat.RGBA_8888;
+         // 悬浮窗默认显示以左上角为起始坐标
+         wmParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+         //悬浮窗的开始位置，因为设置的是从左上角开始，所以屏幕左上角是x=0;y=0
+         int y = sp.getInt("deskLyricY", 210);
+         wmParams.x = 0;
+         wmParams.y = y;
+         return wmParams;
+     }
 
 
     @Override

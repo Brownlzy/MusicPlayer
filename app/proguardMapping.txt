@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: 73c0c31
-# pg_map_hash: SHA-256 73c0c3105ba177ba711628c8a8d09e61563a12f19b296816e8b172e29a89e92a
+# pg_map_id: e9b5e3a
+# pg_map_hash: SHA-256 e9b5e3afa2840db5ac5788bf840c726bb48ae3323b833ceacdf1457934deda69
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -34777,7 +34777,7 @@ com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager ->
     748:748:void access$500(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$500
     748:748:void access$800(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$800
     748:748:void access$900(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$900
-    785:788:void moveServiceOutOfStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceOutOfStartedState
+    785:790:void moveServiceOutOfStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceOutOfStartedState
     751:764:void moveServiceToStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceToStartedState
     775:782:void updateNotificationForLyric(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForLyric
     767:773:void updateNotificationForPause(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForPause

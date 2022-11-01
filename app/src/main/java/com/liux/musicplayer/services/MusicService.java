@@ -783,6 +783,8 @@ public class MusicService extends MediaBrowserServiceCompat {
 
             private void moveServiceOutOfStartedState(PlaybackStateCompat state) {
                 stopForeground(true);
+                mMediaNotificationManager.getNotificationManager()
+                        .cancel(MediaNotificationManager.NOTIFICATION_ID);
                 mServiceInStartedState = false;
                 stopSelf();
             }

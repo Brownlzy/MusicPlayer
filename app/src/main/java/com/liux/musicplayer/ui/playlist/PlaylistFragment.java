@@ -93,11 +93,20 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
     });
     private boolean isWebPlaylist;
 
+    /**
+     * 添加手机内所有音乐
+     * @return void
+     */
     private void addAllMusic() {
         List<MusicUtils.Song> songList = MusicUtils.getMusicData(requireContext());
         ((MainActivity) requireActivity()).getMusicService().addMusicList(songList);
     }
 
+    /**
+     * 按文件添加音乐
+     * @param uri
+     * @return void
+     */
     private void addFolder(Uri uri) {
         Log.e("AddFolder000000000000", uri.toString());
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
@@ -106,6 +115,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         refreshList();
     }
 
+    /**
+     * 搜索文件
+     * @param filePath 文件路径
+     * @return void
+     */
     private void searchFile(String filePath) {
         File file = new File(filePath);
         List<File> folderList = new ArrayList<File>();
@@ -127,6 +141,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 检查文件是否符合要求
+     * @param childFile 所选文件夹的子文件
+     * @return void
+     */
     private void checkChild(File childFile) {
         String fileType=FileUtils.getFileExtension(childFile);
         if (fileType.equalsIgnoreCase("mp3")
@@ -148,6 +167,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 安卓生命周期中的创造界面
+     * @return
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         initView(view);
@@ -158,12 +181,21 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    /**
+     * 安卓生命周期中的开始界面
+     * @return void
+     */
     @Override
     public void onStart() {
         super.onStart();
         initData();
     }
 
+    /**
+     * 按键点击之后的操作
+     * @param v 监视
+     * @return void
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -217,6 +249,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 展示权限未获取使的弹窗
+     * @return void
+     */
     private void showNoPermissionDialog() {
         AlertDialog alertInfoDialog = new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.no_permission)
@@ -237,6 +273,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         alertInfoDialog.show();
     }
 
+
+    /**
+     * 编辑列表
+     * @return void
+     */
     private void editList() {
         if (multipleChooseFlag) {
             editSongLayout.setVisibility(View.GONE);
@@ -251,6 +292,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 搜索状态切换
+     * @return void
+     */
     private void searchState() {
         if (searchFlag) {
             searchSongLayout.setVisibility(View.GONE);
@@ -270,6 +315,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         searchFlag = !searchFlag;
     }
 
+    /**
+     * 安卓生命周期里的暂停状态
+     * @return void
+     */
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
@@ -282,6 +331,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 安卓生命周期里的恢复状态
+     * @return void
+     */
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
@@ -293,11 +346,19 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
             lvData.setSelectionFromTop(listPosition, listPositionY - DisplayUtils.dip2px(requireContext(), 44));
     }
 
+    /**
+     * 安卓生命周期里的毁灭状态
+     * @return void
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
 
+    /**
+     * 取消多选状态
+     * @return void
+     */
     public void cancel() {
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         adapter.setShowCheckBox(false);//让CheckBox那个方框隐藏
@@ -305,6 +366,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         multipleChooseFlag = false;
     }
 
+    /**
+     * 列表歌曲的删除
+     * @return void
+     */
     private void delete() {
         if (mCheckedData.size() == 0) {
             Toast.makeText(requireContext(), "您还没有选中任何数据！", Toast.LENGTH_SHORT).show();
@@ -331,6 +396,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
+    /**
+     * 确定删除
+     * @return void
+     */
     private void beSureDelete() {
         //mSongList.removeAll(mCheckedData);//删除选中数据
         mSongList.removeIf(song -> mCheckedData.contains(song.source_uri));
@@ -359,6 +428,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 列表全选
+     * @return void
+     */
     private void selectAll() {
         mCheckedData.clear();//清空之前选中数据
         if (isSelectedAll) {
@@ -374,6 +447,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 设置播放列表监听器
+     * @return void
+     */
     private void setOnListViewItemClickListener() {
         lvData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -406,6 +483,12 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    /**
+     * 更新勾选列的状态
+     * @param view
+     * @param position 确定行数
+     * @return void
+     */
     private void updateCheckBoxStatus(View view, int position) {
         PlaylistAdapter.ViewHolder holder = (PlaylistAdapter.ViewHolder) view.getTag();
         holder.checkBox.toggle();//反转CheckBox的选中状态
@@ -419,6 +502,12 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         adapter.notifyDataSetChanged();
     }
 
+
+    /**
+     * 描述一下方法的作用
+     * @param view
+     * @return void
+     */
     private void initView(View view) {
         playlistHeader = view.findViewById(R.id.playlist_header);
         view.findViewById(R.id.ll_delete).setOnClickListener(this);
@@ -489,6 +578,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    /**
+     * 从列表查询
+     * @return void
+     */
     private void searchFromList() {
         searchList.clear();
         for (MusicUtils.Song song : mSongList) {
@@ -500,6 +593,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 展示播放列表顶栏
+     * @param isShow 是否展示
+     * @return void
+     */
     private void showPlaylistHeaderBar(boolean isShow) {
         if (isShow) {
             if (!headerShowFlag) {
@@ -518,6 +616,10 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 刷新列表
+     * @return void
+     */
     private void refreshList() {
         if (multipleChooseFlag) editList();
         if (searchFlag) searchState();
@@ -542,6 +644,11 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         ((MainActivity) getActivity()).getMusicService().setPlayList(mSongList);
         setNowPlaying(((MainActivity) getActivity()).getMusicService().getNowId());
     }
+
+    /**
+     * 初始化数据
+     * @return void
+     */
 
     public void initData() {
         /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
@@ -614,10 +721,20 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         popup.show();
     }
 
+    /**
+     * 播放列里的第几行转换成真正的位置
+     * @param position 播放列表里的行数
+     * @return int
+     */
     private int positionToMusicId(int position) {
         return mSongList.indexOf(((MusicUtils.Song) adapter.getItem(position)));
     }
 
+    /**
+     * 展示歌曲信息
+     * @param musicId 真正播放列表的位置
+     * @return void
+     */
     private void showMusicDetails(int musicId) {
         MusicUtils.Metadata metadata = null;
         if (((MainActivity) requireActivity()).getMusicService().isWebPlayMode()) {
@@ -651,17 +768,31 @@ public class PlaylistFragment extends Fragment implements View.OnClickListener {
         dialog.create().show();
     }
 
+    /**
+     * 返回键
+     * @return int
+     */
     public int onBackPressed() {
         editList();
         return 0;
     }
 
+    /**
+     * 播放列表正在播放歌曲的定位
+     * @param listViewPosition 正在播放歌曲的位置
+     * @return
+     */
     public void setListViewPosition(int listViewPosition) {
         lvData.setSelectionFromTop(listViewPosition, 0);
         showPlaylistHeaderBar(true);
         lastVisibleItemPosition = listViewPosition;
     }
 
+    /**
+     * 设置正在播放歌曲的id
+     * @param musicId 真正播放列表的位置
+     * @return void
+     */
     public void setNowPlaying(int musicId) {
         if (adapter != null && !searchFlag) {
             adapter.setNowPlay(musicId);

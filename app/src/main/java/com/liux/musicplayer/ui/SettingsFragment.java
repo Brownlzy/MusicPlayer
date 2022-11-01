@@ -218,7 +218,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         //选择主文件目录
         MainFolder.setSummary(prefs.getString("mainFolder", "/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"));
         //MainFolder.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
-        playingList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+        //playingList.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
         setMainFolder.setSummary(MainFolder.getSummary());
         //获取当前是否在倒计时
         myViewModel.getmMediaController().sendCommand("IS_TIMING", null, timingResult);

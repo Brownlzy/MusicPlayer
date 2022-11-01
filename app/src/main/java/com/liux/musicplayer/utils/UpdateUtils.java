@@ -36,20 +36,14 @@ import okhttp3.Response;
 public class UpdateUtils {
     private static String TAG="UpdateUtils";
     private static Handler updateHandler;
-    private static Handler newsHandler;
     private static UpdateInfo updateInfo;
 
     static class UpdateInfo {
-        String crc;
         String lastVersionName;
         int lastVersionCode;
         String filename;
         String size;
         String changLog;
-    }
-    static class News{
-        int id;
-        String ct;
     }
     public static void checkUpdate(Context context,boolean isShowStateInfo) {
         if(isShowStateInfo)
@@ -60,7 +54,6 @@ public class UpdateUtils {
                 super.handleMessage(msg);
                 if(msg.arg1==200){
                     updateHandle(context, String.valueOf(msg.obj),isShowStateInfo);
-                    SharedPrefs.putLastCheckUpdateTime(TimeUtils.getNowMills());
                 }else if(isShowStateInfo)
                     Toast.makeText(context, (String)msg.obj, Toast.LENGTH_SHORT).show();
             }

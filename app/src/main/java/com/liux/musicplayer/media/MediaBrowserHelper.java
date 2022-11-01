@@ -19,7 +19,6 @@ package com.liux.musicplayer.media;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -31,6 +30,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
+
+import com.liux.musicplayer.services.MusicService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +163,7 @@ public class MediaBrowserHelper {
 
     /**
      * The internal state of the app needs to revert to what it looks like when it started before
-     * any connections to the {@link SimpleMusicService} happens via the {@link MediaSessionCompat}.
+     * any connections to the {@link MusicService} happens via the {@link MediaSessionCompat}.
      */
     private void resetState() {
         performOnAllCallbacks(new CallbackCommand() {

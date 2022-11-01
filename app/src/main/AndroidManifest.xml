@@ -30,7 +30,7 @@
          MediaBrowser (for browsing) and MediaController (for playback control)
         -->
         <service
-            android:name=".media.SimpleMusicService"
+            android:name=".services.MusicService"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
-import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.utils.SharedPrefs;
 
@@ -29,7 +29,7 @@ public class SplashActivity  extends FragmentActivity {
         if(User.isLogin)
             ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                     User.userData.userName)));
-        startService(new Intent(SplashActivity.this,SimpleMusicService.class));
+        startService(new Intent(SplashActivity.this, MusicService.class));
     }
 
 

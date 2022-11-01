@@ -4,14 +4,10 @@ import static androidx.annotation.Dimension.SP;
 
 import android.app.Activity;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
-import android.hardware.input.InputManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -19,7 +15,6 @@ import android.os.Message;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -34,17 +29,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.internal.SafeIterableMap;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaBrowserHelper;
-import com.liux.musicplayer.media.SimpleMusicService;
-import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
-import com.liux.musicplayer.utils.MusicUtils;
-import com.liux.musicplayer.viewmodels.MyViewModel;
 import com.liux.musicplayer.views.StrokeTextView;
 
 import java.util.List;
@@ -385,7 +375,7 @@ private LyricUtils nowLyric=new LyricUtils();
      */
     private class MediaBrowserConnection extends MediaBrowserHelper {
         private MediaBrowserConnection(Context context) {
-            super(context, SimpleMusicService.class);
+            super(context, MusicService.class);
         }
 
 

@@ -17,12 +17,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaBrowserHelper;
-import com.liux.musicplayer.media.MusicLibrary;
-import com.liux.musicplayer.media.SimpleMusicService;
-import com.liux.musicplayer.media.SongProvider;
+import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
@@ -347,7 +344,7 @@ public class MyViewModel extends AndroidViewModel {
      */
     private class MediaBrowserConnection extends MediaBrowserHelper {
         private MediaBrowserConnection(Context context) {
-            super(context, SimpleMusicService.class);
+            super(context, MusicService.class);
         }
 
 

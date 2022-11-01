@@ -19,6 +19,8 @@ package com.liux.musicplayer.media;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import com.liux.musicplayer.services.MusicService;
+
 /**
  * Listener to provide state updates from {@link MediaPlayerAdapter} (the media player)
  * to {@link MusicService} (the service that holds our {@link MediaSessionCompat}.

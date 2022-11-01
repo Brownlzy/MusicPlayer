@@ -21,20 +21,16 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.liux.musicplayer.activities.MainActivity;
-import com.liux.musicplayer.media.MusicLibrary;
 
-import com.liux.musicplayer.utils.MusicUtils;
-import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UploadDownloadUtils;
 
@@ -50,7 +46,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     private static final long DURATION_DELAY = 500;
     private final Context mContext;
     private final PlaybackInfoListener mPlaybackInfoListener;
-    SimpleMusicService musicService;
+    MusicService musicService;
     Handler handler = new Handler();
     Handler sleepHandler = new Handler();
     private MediaPlayer mMediaPlayer;
@@ -65,7 +61,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     private int mSeekWhileNotPlaying = -1;
     private String TAG="MediaPlayerAdaptar";
 
-    public MediaPlayerAdapter(SimpleMusicService musicService, PlaybackInfoListener listener) {
+    public MediaPlayerAdapter(MusicService musicService, PlaybackInfoListener listener) {
         super(musicService.getApplicationContext());
         this.musicService = musicService;
         mContext = musicService.getApplicationContext();

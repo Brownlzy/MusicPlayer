@@ -23,7 +23,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -36,12 +35,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
-import com.liux.musicplayer.media.SimpleMusicService;
+import com.liux.musicplayer.services.MusicService;
 
 
 /**
@@ -57,7 +55,7 @@ public class MediaNotificationManager {
     private static final int REQUEST_CODE = 501;
 
 //    private final MusicService mService;
-    private final SimpleMusicService mService;
+    private final MusicService mService;
 
     private final NotificationCompat.Action mPlayAction;
     private final NotificationCompat.Action mPauseAction;
@@ -68,7 +66,7 @@ public class MediaNotificationManager {
     private final NotificationCompat.Action mHlyricAction;
     private final NotificationManager mNotificationManager;
 
-    public MediaNotificationManager(SimpleMusicService service) {
+    public MediaNotificationManager(MusicService service) {
         mService = service;
 
         mNotificationManager =

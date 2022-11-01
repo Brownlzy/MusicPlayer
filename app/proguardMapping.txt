@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: 7829ba1
-# pg_map_hash: SHA-256 7829ba11b75adfd04dde47d624554f75f8b80dca65dc9b4c3a076d5707892a4e
+# pg_map_id: 73c0c31
+# pg_map_hash: SHA-256 73c0c3105ba177ba711628c8a8d09e61563a12f19b296816e8b172e29a89e92a
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -35385,39 +35385,42 @@ com.liux.musicplayer.utils.UpdateUtils -> com.liux.musicplayer.utils.UpdateUtils
     36:36:android.os.Handler access$400() -> access$400
     36:36:com.liux.musicplayer.utils.UpdateUtils$UpdateInfo access$500() -> access$500
     36:36:boolean access$600(android.content.Context,java.lang.String) -> access$600
-    220:276:boolean acquireDownload(android.content.Context,java.lang.String) -> acquireDownload
-    103:150:void checkNews(android.content.Context,boolean) -> checkNews
-    55:101:void checkUpdate(android.content.Context,boolean) -> checkUpdate
-    194:211:void newsHandle(android.content.Context,java.lang.String,boolean) -> newsHandle
-    154:192:void updateHandle(android.content.Context,java.lang.String,boolean) -> updateHandle
+    234:290:boolean acquireDownload(android.content.Context,java.lang.String) -> acquireDownload
+    106:153:void checkNews(android.content.Context,boolean) -> checkNews
+    57:103:void checkUpdate(android.content.Context,boolean) -> checkUpdate
+    208:225:void newsHandle(android.content.Context,java.lang.String,boolean) -> newsHandle
+    157:205:void updateHandle(android.content.Context,java.lang.String,boolean) -> updateHandle
 com.liux.musicplayer.utils.UpdateUtils$1 -> com.liux.musicplayer.utils.UpdateUtils$1:
-    57:57:void <init>(android.os.Looper,android.content.Context,boolean) -> <init>
-    60:66:void handleMessage(android.os.Message) -> handleMessage
+    59:59:void <init>(android.os.Looper,android.content.Context,boolean) -> <init>
+    62:68:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.utils.UpdateUtils$2 -> com.liux.musicplayer.utils.UpdateUtils$2:
-    75:75:void <init>() -> <init>
-    78:83:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
-    87:99:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
+    77:77:void <init>() -> <init>
+    80:85:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
+    89:101:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
 com.liux.musicplayer.utils.UpdateUtils$3 -> com.liux.musicplayer.utils.UpdateUtils$3:
-    105:105:void <init>(android.os.Looper,android.content.Context,boolean) -> <init>
-    108:114:void handleMessage(android.os.Message) -> handleMessage
+    108:108:void <init>(android.os.Looper,android.content.Context,boolean) -> <init>
+    111:117:void handleMessage(android.os.Message) -> handleMessage
 com.liux.musicplayer.utils.UpdateUtils$4 -> com.liux.musicplayer.utils.UpdateUtils$4:
-    123:123:void <init>() -> <init>
-    126:131:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
-    135:148:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
+    126:126:void <init>() -> <init>
+    129:134:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
+    138:151:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
 com.liux.musicplayer.utils.UpdateUtils$5 -> com.liux.musicplayer.utils.UpdateUtils$5:
-    181:181:void <init>() -> <init>
-    184:184:void onClick(android.content.DialogInterface,int) -> onClick
+    177:177:void <init>() -> <init>
+    180:180:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.utils.UpdateUtils$6 -> com.liux.musicplayer.utils.UpdateUtils$6:
-    174:174:void <init>(android.content.Context) -> <init>
-    177:179:void onClick(android.content.DialogInterface,int) -> onClick
+    190:190:void <init>(android.content.Context) -> <init>
+    193:197:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.utils.UpdateUtils$7 -> com.liux.musicplayer.utils.UpdateUtils$7:
-    202:202:void <init>(com.liux.musicplayer.utils.UpdateUtils$News) -> <init>
-    205:206:void onClick(android.content.DialogInterface,int) -> onClick
+    183:183:void <init>(android.content.Context) -> <init>
+    186:188:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.utils.UpdateUtils$8 -> com.liux.musicplayer.utils.UpdateUtils$8:
-    247:247:void <init>(java.lang.Long,android.app.DownloadManager) -> <init>
-    250:271:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    216:216:void <init>(com.liux.musicplayer.utils.UpdateUtils$News) -> <init>
+    219:220:void onClick(android.content.DialogInterface,int) -> onClick
+com.liux.musicplayer.utils.UpdateUtils$9 -> com.liux.musicplayer.utils.UpdateUtils$9:
+    261:261:void <init>(java.lang.Long,android.app.DownloadManager) -> <init>
+    264:285:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.liux.musicplayer.utils.UpdateUtils$News -> com.liux.musicplayer.utils.UpdateUtils$News:
-    50:50:void <init>() -> <init>
+    51:51:void <init>() -> <init>
 com.liux.musicplayer.utils.UpdateUtils$UpdateInfo -> com.liux.musicplayer.utils.UpdateUtils$UpdateInfo:
     42:42:void <init>() -> <init>
 com.liux.musicplayer.utils.UploadDownloadUtils -> com.liux.musicplayer.utils.UploadDownloadUtils:

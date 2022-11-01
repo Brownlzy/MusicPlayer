@@ -26,7 +26,7 @@
     <string name="switch_layer_permission_on">MusicPlayer has obtained floating window permission</string>
     <string name="isShowLyric">Show Desktop Lyric</string>
     <string name="isShowLyric_summary">This settings need overlay permision</string>
-    <string name="appInfo">This software is the major assignment (music player) of Embedded Mobile Phone Terminal Development Technology in the first semester of the 2022 academic year of the computer science and technology major of Nanjing University of Posts and Telecommunications, which was developed by the linux team. \\nProject address: https://github.com/Brownlzy/MusicPlayer \\nCurrent version:</string>
+    <string name="appInfo">This software is developed by the linux team. \\nProject address: https://github.com/Brownlzy/MusicPlayer \\nCurrent version:</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
@@ -140,4 +140,5 @@
     <string name="sort_name_down">Sort by name down</string>
     <string name="sort_amount_up">Sort by amount up</string>
     <string name="sort_amount_down">Sort by amount down</string>
+    <string name="manual_download">Manual Download</string>
 </resources>

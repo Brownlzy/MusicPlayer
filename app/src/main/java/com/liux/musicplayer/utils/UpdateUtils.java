@@ -34,7 +34,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class UpdateUtils {
-    private static String TAG="UpdateUtils";
+    private static String TAG = "UpdateUtils";
     private static Handler updateHandler;
     private static Handler newsHandler;
     private static UpdateInfo updateInfo;
@@ -47,22 +47,24 @@ public class UpdateUtils {
         String size;
         String changLog;
     }
-    static class News{
+
+    static class News {
         int id;
         String ct;
     }
-    public static void checkUpdate(Context context,boolean isShowStateInfo) {
-        if(isShowStateInfo)
+
+    public static void checkUpdate(Context context, boolean isShowStateInfo) {
+        if (isShowStateInfo)
             Toast.makeText(context, "正在检查更新，请稍候", Toast.LENGTH_SHORT).show();
         updateHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.arg1==200){
-                    updateHandle(context, String.valueOf(msg.obj),isShowStateInfo);
+                if (msg.arg1 == 200) {
+                    updateHandle(context, String.valueOf(msg.obj), isShowStateInfo);
                     SharedPrefs.putLastCheckUpdateTime(TimeUtils.getNowMills());
-                }else if(isShowStateInfo)
-                    Toast.makeText(context, (String)msg.obj, Toast.LENGTH_SHORT).show();
+                } else if (isShowStateInfo)
+                    Toast.makeText(context, (String) msg.obj, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -77,7 +79,7 @@ public class UpdateUtils {
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure: ");
                 Message message = Message.obtain();
-                message.arg1=0;
+                message.arg1 = 0;
                 message.obj = "获取更新信息失败（无法连接服务器）";
                 updateHandler.sendMessage(message);
             }
@@ -89,27 +91,28 @@ public class UpdateUtils {
                 Log.d(TAG, "onResponse: " + result);
                 Message message = Message.obtain();
                 if (id == 200) {
-                    message.arg1=200;
+                    message.arg1 = 200;
                     message.obj = result;
                 } else {
-                    message.arg1=0;
-                    message.obj = "获取更新信息失败（" + id +"）";
+                    message.arg1 = 0;
+                    message.obj = "获取更新信息失败（" + id + "）";
                 }
                 updateHandler.sendMessage(message);
             }
         });
     }
-    public static void checkNews(Context context,boolean isManual) {
-        if(isManual)
+
+    public static void checkNews(Context context, boolean isManual) {
+        if (isManual)
             Toast.makeText(context, "正在读取公告板", Toast.LENGTH_SHORT).show();
         newsHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.arg1==200){
-                    newsHandle(context, String.valueOf(msg.obj),isManual);
+                if (msg.arg1 == 200) {
+                    newsHandle(context, String.valueOf(msg.obj), isManual);
                     SharedPrefs.putLastNewsUpdateTime(TimeUtils.getNowMills());
-                }else if(isManual)
+                } else if (isManual)
                     Toast.makeText(context, String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
             }
         };
@@ -125,7 +128,7 @@ public class UpdateUtils {
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure: 获取信息失败（无法连接服务器）");
                 Message message = Message.obtain();
-                message.arg1=0;
+                message.arg1 = 0;
                 message.obj = "获取失败（无法连接服务器）";
                 newsHandler.sendMessage(message);
             }
@@ -137,10 +140,10 @@ public class UpdateUtils {
                 Log.d(TAG, "onResponse: " + result);
                 Message message = Message.obtain();
                 if (id == 200) {
-                    message.arg1=200;
+                    message.arg1 = 200;
                     message.obj = result;
                 } else {
-                    message.arg1=0;
+                    message.arg1 = 0;
                     message.obj = "获取失败";
                     Log.d(TAG, "onResponse: " + id);
                 }
@@ -150,7 +153,7 @@ public class UpdateUtils {
     }
 
 
-    private static void updateHandle(Context context, String result,boolean isShowStateInfo) {
+    private static void updateHandle(Context context, String result, boolean isShowStateInfo) {
         int versionCode = 0;
         try {
             versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
@@ -162,8 +165,8 @@ public class UpdateUtils {
 
         if (updateInfo == null || versionCode == 0)
             Toast.makeText(context, "获取更新信息失败:" + versionCode, Toast.LENGTH_SHORT).show();
-        else if (updateInfo.lastVersionCode > versionCode) {
-            AlertDialog alertInfoDialog = null;
+        else {
+            AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_update)
                     .setMessage(context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + "\n"
@@ -171,29 +174,40 @@ public class UpdateUtils {
                             + context.getString(R.string.title_changlog) + "\n"
                             + updateInfo.changLog.replace("\\n", "\n"))
                     .setIcon(R.mipmap.ic_launcher)
-                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(context, "安装包下载中", Toast.LENGTH_SHORT).show();
-                            acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/apk/" + updateInfo.filename);
-                        }
-                    })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }
-                    })
-                    .create();
+                    });
+            if (updateInfo.lastVersionCode > versionCode) {
+                alertInfoDialog.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(context, "安装包下载中", Toast.LENGTH_SHORT).show();
+                                acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/apk/" + updateInfo.filename);
+                            }
+                        })
+                        .setNeutralButton(R.string.manual_download, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                Uri uri = Uri.parse("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/manual.html");
+                                intent.setData(uri);
+                                context.startActivity(intent);
+                            }
+                        });
+            }
+            alertInfoDialog.create();
             alertInfoDialog.show();
-        } else {
-            if(isShowStateInfo)
+            if (isShowStateInfo)
                 Toast.makeText(context, "当前已是最新版", Toast.LENGTH_SHORT).show();
         }
     }
-    private static void newsHandle(Context context, String result,boolean isManual) {
+
+    private static void newsHandle(Context context, String result, boolean isManual) {
         Gson gson = new Gson();
         News news = gson.fromJson(result, News.class);
-        if(isManual||news.id>SharedPrefs.getLastNewsId()){
+        if (isManual || news.id > SharedPrefs.getLastNewsId()) {
             AlertDialog alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.newsBoard)
@@ -218,7 +232,7 @@ public class UpdateUtils {
      */
     private static boolean acquireDownload(Context context, String url) {
         Log.i(TAG + "//acquireDownload()", "Download requested");
-        String fileName = url.substring(url.lastIndexOf('/') + 1)+".apk";
+        String fileName = url.substring(url.lastIndexOf('/') + 1) + ".apk";
         File localFile = new File(context.getExternalCacheDir() + "/apk", fileName);
         //if (localFile.exists()&&checkCRC(localFile.getAbsolutePath())) {
         if (localFile.exists()) {
@@ -277,22 +291,19 @@ public class UpdateUtils {
     }
 
 
-
-
-    private static boolean checkCRC(String apkPath){
+    private static boolean checkCRC(String apkPath) {
         //Long dexCrc = Long.parseLong(updateInfo.crc);
-        Long dexCrc = Long.parseLong("3E1BC558",16);
+        Long dexCrc = Long.parseLong("3E1BC558", 16);
         //建议将dexCrc值放在服务器做校验
-        try
-        {
+        try {
             ZipFile zipfile = new ZipFile(apkPath);
             ZipEntry dexentry = zipfile.getEntry("classes.dex");
-            Log.i("verification","classes.dexcrc="+dexentry.getCrc());
-            if(dexentry.getCrc() != dexCrc){
-                Log.i("verification","Dexhas been modified!");
+            Log.i("verification", "classes.dexcrc=" + dexentry.getCrc());
+            if (dexentry.getCrc() != dexCrc) {
+                Log.i("verification", "Dexhas been modified!");
                 return false;
-            }else{
-                Log.i("verification","Dex hasn't been modified!");
+            } else {
+                Log.i("verification", "Dex hasn't been modified!");
                 return true;
             }
         } catch (IOException e) {

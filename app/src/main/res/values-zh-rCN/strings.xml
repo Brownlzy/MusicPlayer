@@ -27,7 +27,7 @@
     <string name="switch_layer_permission_on">音乐播放器已获得悬浮窗权限</string>
     <string name="isShowLyric">显示桌面歌词</string>
     <string name="isShowLyric_summary">此设置需要悬浮窗权限</string>
-    <string name="appInfo">本软件为南京邮电大学计算机科学与技术专业2020级2022学年上学期《嵌入式手机终端开发技术》大作业（音乐播放器），由liux团队开发。 \\n项目地址：https://github.com/Brownlzy/MusicPlayer \\n当前版本：</string>
+    <string name="appInfo">本软件由Brownlzy开发。 \\n项目地址：https://github.com/Brownlzy/MusicPlayer \\n当前版本：</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="delete">删除</string>
@@ -141,4 +141,5 @@
     <string name="sort_name_down">按歌单名称降序排列</string>
     <string name="sort_amount_up">按歌曲数量升序排列</string>
     <string name="sort_amount_down">按歌曲数量降序排列</string>
+    <string name="manual_download">手动下载</string>
 </resources>

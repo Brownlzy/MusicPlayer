@@ -218,8 +218,6 @@ public class CrashHandlers implements UncaughtExceptionHandler {
         int second = calendar.get(Calendar.SECOND);
         String time = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         sb.append("\r\n");
-        sb.append("\r\n");
-        sb.append("\r\n");
         sb.append("************************************************" + time + "****************************************" + "\r\n");
         sb.append("\r\n");
         for (Map.Entry<String, String> entry : infos.entrySet()) {

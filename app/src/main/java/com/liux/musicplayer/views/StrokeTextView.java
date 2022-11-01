@@ -13,13 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+ /**
+  * 带有描边的Textview，防止文字颜色与背景相近导致难以区分
+  * @author         Brownlzy
+  */
 public class StrokeTextView extends AppCompatTextView {
     private AppCompatTextView borderText;///用于描边的TextView
     TextPaint tp1; //borderText的Paint
 
     private int mStrokeColor = Color.DKGRAY;
     private int strokeWidth = 2;
-
+//三个构造函数，需要同时初始化得到一个参数完全相同的Textview（borderText）
     public StrokeTextView(Context context) {
         super(context);
         borderText = new AppCompatTextView(context);
@@ -37,7 +41,9 @@ public class StrokeTextView extends AppCompatTextView {
         borderText = new AppCompatTextView(context, attrs, defStyleAttr);
         init();
     }
-
+ /**
+  * 初始化描边颜色和其他信息
+  */
     public void init() {
         borderText.setTextColor(this.mStrokeColor);  //设置描边颜色
         borderText.setGravity(getGravity());
@@ -52,7 +58,7 @@ public class StrokeTextView extends AppCompatTextView {
         tp1.setStrokeWidth(strokeWidth);
         borderText.setTextColor(color);  //设置描边颜色
     }
-
+//以下几个重写方法保证了在对上层TextView修改的同时同步修改borderText
     @Override
     public void setLineSpacing(float add, float mult) {
         super.setLineSpacing(add, mult);

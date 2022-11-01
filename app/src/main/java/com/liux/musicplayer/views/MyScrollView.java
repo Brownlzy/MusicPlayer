@@ -7,6 +7,10 @@ import android.widget.ScrollView;
 
 import com.liux.musicplayer.utils.DisplayUtils;
 
+ /**
+  * 带有点击穿透的ScrollView，上半部分始终不接受触摸事件，以实现透过点击事件到歌词显示区域
+  * @author         Brownlzy
+  */
 public class MyScrollView extends ScrollView {
 
     public MyScrollView(Context context) {

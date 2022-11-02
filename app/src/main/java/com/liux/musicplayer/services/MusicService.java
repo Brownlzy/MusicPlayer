@@ -148,14 +148,14 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
         //mPlaylist=MusicLibrary.getPlayingMediaItemList();
-        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO 继承MediaButton
         MediaButtonReceiver.handleIntent(mSession, intent);
-        return super.onStartCommand(intent, flags, startId);
+        //return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
@@ -183,6 +183,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         Log.d(TAG, "SimpleMusicService onLoadChildren called: ");
         Log.d(TAG, "SimpleMusicService onLoadChildren parentId: " + parentId);
         Log.d(TAG, "SimpleMusicService onLoadChildren result: " + result);
+        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
 
         result.sendResult(mPlaylist);
     }
@@ -363,15 +364,16 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onCommand(String command, Bundle extras, ResultReceiver cb) {
             Log.e(TAG,command);
             Bundle bundle=new Bundle();
-            switch (command){
+            switch (command) {
                 case "GET_LYRIC":
-                    bundle.putSerializable("lyric",lyric);
+                    bundle.putSerializable("lyric", lyric);
                     break;
                 case "IS_TIMING":
-                    bundle.putBoolean("IS_TIMING",timingThread.isTiming);
+                    bundle.putBoolean("IS_TIMING", timingThread.isTiming);
                     break;
             }
-            cb.send(0,bundle);
+            if(cb!=null)
+                cb.send(0,bundle);
         }
 
         @Override
@@ -512,7 +514,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                 onPlay();
             }else if(mRepeatMode==PlaybackStateCompat.REPEAT_MODE_NONE){
                 if(mQueueIndex==mPlaylist.size()-1)
-                    onStop();
+                    onPause();
                 else {
                     mQueueIndex++;
                     mPreparedMedia = null;
@@ -664,7 +666,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                 onPlay();
             }else if(mRepeatMode==PlaybackStateCompat.REPEAT_MODE_NONE){
                 if(mQueueIndex<=0)
-                    onStop();
+                    onPause();
                 else {
                     mQueueIndex--;
                     mPreparedMedia = null;

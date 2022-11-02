@@ -444,6 +444,7 @@ public class FloatLyricService extends Service {
         public void onServiceDisconnected(ComponentName componentName) {
             musicService = null;
             Log.i("binding is fail", "binding is fail");
+            stopSelf();
         }
     }
  /**

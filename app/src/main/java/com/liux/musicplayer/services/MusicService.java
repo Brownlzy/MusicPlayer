@@ -12,6 +12,7 @@ import android.os.ResultReceiver;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -67,7 +68,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                 case "com.liux.musicplayer.OPEN_LYRIC":
                     SharedPrefs.putIsDeskLyric(true);
                     if(!mainActivityState&&mSession.isActive()) {
-                        intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                        deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
                     break;
@@ -82,7 +83,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                 case "com.liux.musicplayer.BACKGROUND":
                     mainActivityState=false;
                     if(SharedPrefs.getIsDeskLyric()&&mSession.isActive()&&hasPlayedOnce) {
-                        intent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                        deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
                     break;
@@ -143,8 +144,8 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         mCallback = new MediaSessionCallback();
         mSession.setCallback(mCallback);
-
         mMediaNotificationManager = new MediaNotificationManager(this);
+        mSession.setSessionActivity(mMediaNotificationManager.createContentIntent());
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
         //mPlaylist=MusicLibrary.getPlayingMediaItemList();
@@ -678,6 +679,27 @@ public class MusicService extends MediaBrowserServiceCompat {
         @Override
         public void onSeekTo(long pos) {
             mPlayback.seekTo(pos);
+        }
+
+        @Override
+        public void onSetRating(RatingCompat rating) {
+            mPreparedMedia=MusicLibrary.getMetadata(mPreparedMedia.getDescription().getMediaUri(),rating);
+            mSession.setMetadata(mPreparedMedia);
+        }
+
+        @Override
+        public void onSetCaptioningEnabled(boolean enabled) {
+            Intent deskLyricIntent = new Intent(MusicService.this, FloatLyricService.class);
+            if(enabled){
+                SharedPrefs.putIsDeskLyric(true);
+                if(!mainActivityState&&mSession.isActive()) {
+                    deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                    startService(deskLyricIntent);
+                }
+            }else {
+                SharedPrefs.putIsDeskLyric(false);
+                stopService(deskLyricIntent);
+            }
         }
 
         private boolean isReadyToPlay() {

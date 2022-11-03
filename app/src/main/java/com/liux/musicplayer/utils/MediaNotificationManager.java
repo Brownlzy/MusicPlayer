@@ -104,7 +104,7 @@ public class MediaNotificationManager {
         mStopAction =
                 new NotificationCompat.Action(
                         R.drawable.ic_round_stop_24,
-                        "Previous",
+                        "Stop",
                         MediaButtonReceiver.buildMediaButtonPendingIntent(
                                 mService,
                                 PlaybackStateCompat.ACTION_STOP));
@@ -262,7 +262,7 @@ public class MediaNotificationManager {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
-    private PendingIntent createContentIntent() {
+    public PendingIntent createContentIntent() {
         Intent openUI = new Intent(mService, MainActivity.class);
         openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return PendingIntent.getActivity(

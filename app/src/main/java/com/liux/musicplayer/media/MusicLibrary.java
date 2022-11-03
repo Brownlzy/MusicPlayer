@@ -21,8 +21,11 @@ import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
+
+import android.media.Rating;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.models.Song;
@@ -142,7 +145,28 @@ public class MusicLibrary {
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getSongTitle())
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
                 .putString("LYRIC_URI", song.getLyricPath())
+                .putRating(MediaMetadataCompat.METADATA_KEY_RATING, RatingCompat.newHeartRating(true))
+                .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, RatingCompat.newHeartRating(true))
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, MusicUtils.getAlbumImage(song.getSongPath()))
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,"test")
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
+        return metaDataBuilder.build();
+    }
+    public static MediaMetadataCompat getMetadata(Uri mediaUri,RatingCompat Rating) {
+        Log.e("MusicPlayer", mediaUri.toString());
+        Song song = allListSongsTreeMap.get(mediaUri.toString());
+//        Log.d(Constants.TAG, "getMetadata: song " + song);
+        MediaMetadataCompat.Builder metaDataBuilder = new MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getmId())
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.getAlbumName())
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.getArtistName())
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getSongTitle())
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getSongPath())
+                .putString("LYRIC_URI", song.getLyricPath())
+                .putRating(MediaMetadataCompat.METADATA_KEY_RATING, Rating)
+                .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, Rating)
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, MusicUtils.getAlbumImage(song.getSongPath()))
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,"test")
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getSongDuration());
         return metaDataBuilder.build();
     }

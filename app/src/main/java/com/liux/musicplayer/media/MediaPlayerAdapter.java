@@ -295,6 +295,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     private long getAvailableActions() {
         long actions = PlaybackStateCompat.ACTION_PLAY_FROM_URI
                 | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
+                | PlaybackStateCompat.ACTION_SET_RATING
+                | PlaybackStateCompat.ACTION_SET_CAPTIONING_ENABLED
                 | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                 | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState) {

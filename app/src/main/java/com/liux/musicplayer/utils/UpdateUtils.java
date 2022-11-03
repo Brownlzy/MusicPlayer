@@ -197,10 +197,12 @@ public class UpdateUtils {
                             }
                         });
             }
-            alertInfoDialog.create();
-            alertInfoDialog.show();
-            if (isShowStateInfo)
-                Toast.makeText(context, "当前已是最新版", Toast.LENGTH_SHORT).show();
+            if (isShowStateInfo||updateInfo.lastVersionCode > versionCode) {
+                if (updateInfo.lastVersionCode <= versionCode)
+                    Toast.makeText(context, "当前已是最新版", Toast.LENGTH_SHORT).show();
+                alertInfoDialog.create();
+                alertInfoDialog.show();
+            }
         }
     }
 

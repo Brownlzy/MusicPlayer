@@ -150,7 +150,6 @@ public class MainActivity extends FragmentActivity {
                     listPosition = playingList.getFirstVisiblePosition();
                     listPositionY = playingList.getChildAt(0).getTop();
                 } catch (NullPointerException e) {
-                    e.printStackTrace();
                     listPosition = -1;
                     listPositionY = 0;
                 }

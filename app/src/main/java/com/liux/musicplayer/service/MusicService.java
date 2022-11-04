@@ -57,6 +57,7 @@ import java.util.List;
 public class MusicService extends Service implements MediaButtonReceiver.IKeyDownListener {
     public static final String PLAY = "play";
     public static final String PREV = "prev";
+    public static final String STOP = "stop";
     public static final String NEXT = "next";
     public static final String CLOSE = "close";
     public static final String LYRIC = "lyric";
@@ -115,7 +116,9 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
      private HeadsetPlugReceiver mHeadsetPlugReceiver;
      private MediaButtonReceiver mediaButtonReceiver;
      private boolean webPlayMode;
-//各种播放状态信息的读取与设置============================================
+     private int lastPosition=-1;
+
+     //各种播放状态信息的读取与设置============================================
     public boolean isWebPlayMode() {
         return webPlayMode;
     }
@@ -361,7 +364,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         manager.createNotificationChannel(channel);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
-                this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         //初始化通知
         notification = new NotificationCompat.Builder(this, "play_control")
@@ -381,12 +384,13 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     private void updateNotificationShow(int position) {
         //封面专辑
         Bitmap bitmap = albumImage;
-        if (bitmap == null) {
+        if (bitmap == null&&position!=lastPosition) {
             remoteViewsSmall.setImageViewResource(R.id.iv_album_cover, R.drawable.ic_baseline_music_note_24);
             remoteViewsLarge.setImageViewResource(R.id.iv_album_cover, R.drawable.ic_baseline_music_note_24);
         } else {
-            remoteViewsSmall.setImageViewBitmap(R.id.iv_album_cover, bitmap);
-            remoteViewsLarge.setImageViewBitmap(R.id.iv_album_cover, bitmap);
+            //remoteViewsSmall.setImageViewBitmap(R.id.iv_album_cover, bitmap);
+            //remoteViewsLarge.setImageViewBitmap(R.id.iv_album_cover, bitmap);
+            lastPosition=position;
         }
         //歌曲名
         remoteViewsSmall.setTextViewText(R.id.tv_notification_song_name, songList.get(position).title);
@@ -439,36 +443,43 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         remoteViewsSmall = new RemoteViews(this.getPackageName(), R.layout.notification_small);
         remoteViewsLarge = new RemoteViews(this.getPackageName(), R.layout.notification_large);
         //通知栏控制器上一首按钮广播操作
+        Intent intentStop = new Intent(STOP);
+        PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, intentStop, PendingIntent.FLAG_MUTABLE);
+        //为prev控件注册事件
+        remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_stop, stopPendingIntent);
+        remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_stop, stopPendingIntent);
+
+        //通知栏控制器上一首按钮广播操作
         Intent intentPrev = new Intent(PREV);
-        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, PendingIntent.FLAG_MUTABLE);
         //为prev控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
 
         //通知栏控制器播放暂停按钮广播操作  //用于接收广播时过滤意图信息
         Intent intentPlay = new Intent(PLAY);
-        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, PendingIntent.FLAG_MUTABLE);
         //为play控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
 
         //通知栏控制器下一首按钮广播操作
         Intent intentNext = new Intent(NEXT);
-        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, PendingIntent.FLAG_MUTABLE);
         //为next控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
 
         //通知栏控制器关闭按钮广播操作
         Intent intentClose = new Intent(CLOSE);
-        PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, PendingIntent.FLAG_MUTABLE);
         //为close控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
 
         //通知栏控制器切换歌词开关操作
         Intent intentLyric = new Intent(LYRIC);
-        PendingIntent lyricPendingIntent = PendingIntent.getBroadcast(this, 0, intentLyric, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent lyricPendingIntent = PendingIntent.getBroadcast(this, 0, intentLyric, PendingIntent.FLAG_MUTABLE);
         //为lyric控件注册事件
         remoteViewsSmall.setOnClickPendingIntent(R.id.btn_notification_lyric, lyricPendingIntent);
         remoteViewsLarge.setOnClickPendingIntent(R.id.btn_notification_lyric, lyricPendingIntent);
@@ -552,6 +563,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PLAY);
         intentFilter.addAction(PREV);
+        intentFilter.addAction(STOP);
         intentFilter.addAction(NEXT);
         intentFilter.addAction(CLOSE);
         intentFilter.addAction(LYRIC);
@@ -780,13 +792,13 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             lyric.LoadLyric(songList.get(id));
             if (FileUtils.isFileExists(songList.get(id).source_uri)) {  //如果path是本地文件且文件存在
                 //加载资源信息
-                albumImage = MusicUtils.getAlbumImage(songList.get(id).source_uri);
+                //albumImage = MusicUtils.getAlbumImage(songList.get(id).source_uri);
                 metadata = MusicUtils.getMetadata(songList.get(id).source_uri);
                 startPlay(songList.get(id).source_uri);
                 reId = 0;
             } else if (songList.get(id).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
                 //如果path的格式符合HTTP URL
-                albumImage = null;
+                //albumImage = null;
                 metadata = MusicUtils.getMetadataFromSong(songList.get(id));
                 //开始下载音乐文件
                 UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(this);
@@ -832,8 +844,8 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
     private void startPlay(String path) {
         try {
             Log.e(TAG, path);
-            albumImage = MusicUtils.getAlbumImage( path);
-            metadata = MusicUtils.getMetadata( path);
+            albumImage = MusicUtils.getAlbumImage(path);
+            metadata = MusicUtils.getMetadata(path);
             mediaPlayer.reset();
             mediaPlayer.setDataSource(this, Uri.parse(path));
             mediaPlayer.prepare();
@@ -947,10 +959,14 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 case LYRIC:
                     showDesktopLyric();
                     break;
+                case STOP:
+                    stopForeground(true);
+                    System.exit(0);
+                    break;
                 default:
                     break;
             }
-            updateNotificationShow(getNowId());
+            //updateNotificationShow(getNowId());
         }
     }
 

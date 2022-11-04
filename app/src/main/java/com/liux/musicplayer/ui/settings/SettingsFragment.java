@@ -209,7 +209,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         } catch (Exception ignored) {
         }
     }
-
+//设置页所有按钮绑定监听事件
     private void initPreferenceListener() {
         crashMe.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -220,9 +220,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
+//        设置错误日志监听
         lastErrorLog.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
+//            点击事件
             public boolean onPreferenceClick(@NonNull Preference preference) {
+//                判断日志文件是否存在
                 if (lastErrorLog.getSummary() != null && !lastErrorLog.getSummary().equals("null")) {
                     if (FileUtils.isFileExists(requireContext().getExternalCacheDir() + "/log/" + lastErrorLog.getSummary()))
                         CrashHandlers.shareErrorLog((String) lastErrorLog.getSummary(), requireActivity());
@@ -244,6 +247,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             }
         });
+//        设置桌面歌词监听
         switch_desk_lyric.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
@@ -251,6 +255,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             }
         });
+
         Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -259,6 +264,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
+//        设置详情页监听
         clickGotoAppDetails.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -294,6 +300,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 }
             }
         });
+//        设置选择在线播放列表监听
         switch_web_playlist.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
@@ -363,6 +370,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
+//        设置关于页监听
         About.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -382,15 +390,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             }
         });
     }
-
+//关于页
     private void popInfo() {
         String versionName = "";
         try {
+//            获取版本号
             versionName = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         AlertDialog alertInfoDialog = null;
+//        展示关于页内容
         alertInfoDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.app_name)
                 .setMessage(getString(R.string.appInfo).replace("\\n", "\n")
@@ -462,7 +472,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             return false;
         }
     }
-
+//切换不同功能组件
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {

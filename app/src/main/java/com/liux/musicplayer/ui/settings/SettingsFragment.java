@@ -102,8 +102,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     //注册Activity回调，用于处理权限申请
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+//            判断是否拿到权限
                 if (isGranted) {
                     Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
+//                    判断外部存储是否为空
                     if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
                         switch_storage_permission.setChecked(true);
                 } else {
@@ -133,6 +135,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         public void onActivityResult(ActivityResult result) {
             int resultCode = result.getResultCode();
             if (resultCode == -1) {
+//                获取返回结果中的数据
                 Intent data = result.getData();
                 assert data != null;
                 Uri uri = data.getData();

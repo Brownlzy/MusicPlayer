@@ -61,7 +61,7 @@ public class UpdateUtils {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/updateinfo2.json")
+                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/forteachcher.json")
                 .get()//default
                 .build();
         Call call = client.newCall(request);

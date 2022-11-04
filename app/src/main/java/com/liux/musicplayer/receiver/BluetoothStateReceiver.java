@@ -12,6 +12,9 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+/**
+ * 监听蓝牙设备连接状态
+ */
 public class BluetoothStateReceiver extends BroadcastReceiver {
     private final int PROFILE_HEADSET = 0;
     private final int PROFILE_A2DP = 1;

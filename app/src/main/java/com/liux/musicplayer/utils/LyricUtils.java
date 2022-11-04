@@ -115,7 +115,7 @@ public class LyricUtils {
 //歌词信息是url时会尝试获取在线歌词
     public void LyricFromUrl(MusicUtils.Song song) {
         UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(mContext);
-        uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
+        uploadDownloadUtils.set0nDownloadListener(new UploadDownloadUtils.OnDownloadListener() {
 //            歌词下载完成时加载
             @Override
             public void onFileDownloadCompleted(ArrayList<String> array) {

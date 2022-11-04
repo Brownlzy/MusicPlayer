@@ -296,8 +296,13 @@ public class FloatLyricService extends Service {
                 }
             }
         } else if (lyric.lyricList.size() == 1) {   //歌词数量为1
-            firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);  //第一行显示正在播放的歌曲名
-            secondLyric.setText(lyric.lyricList.get(0));    //第二行显示歌词
+            if (lyric.lyricList.get(0).contains("\n")) { //该行歌词包括换行，说明它为带翻译的歌词
+                firstLyric.setText(lyric.lyricList.get(0).split("\n")[0]);   //第一个TextView显示原文
+                secondLyric.setText(lyric.lyricList.get(0).split("\n")[1]);  //第二行TextView显示翻译
+            } else {    //不包含换行
+                firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);  //第一行显示正在播放的歌曲名
+                secondLyric.setText(lyric.lyricList.get(0));    //第二行显示歌词
+            }
         } else {
             firstLyric.setText(getString(R.string.nowPlaying) + nowTitle);  //第一行显示正在播放的歌曲名
             secondLyric.setText(getString(R.string.lyricFileIsEmpty));  //第二行显示歌词文件为空
@@ -559,7 +564,6 @@ public class FloatLyricService extends Service {
                 default:
                     break;
             }
-
             //如果是移动事件不触发OnClick事件，防止移动的时候一放手形成点击事件
             return isMove;
         }
@@ -586,11 +590,12 @@ public class FloatLyricService extends Service {
          wmParams.alpha=0.8f;
          wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
          if(!isLock){
-             //设置可以显示在状态栏上
+             //设置可触摸
              wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                      WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
                      WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
          }else {
+             //设置不可触摸
              wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                      | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                      | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE

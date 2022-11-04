@@ -115,7 +115,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
      private HeadsetPlugReceiver mHeadsetPlugReceiver;
      private MediaButtonReceiver mediaButtonReceiver;
      private boolean webPlayMode;
-//各种播放状态信息的读取与设置
+//各种播放状态信息的读取与设置============================================
     public boolean isWebPlayMode() {
         return webPlayMode;
     }
@@ -204,6 +204,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
              return timingThread.isTiming;
          else return false;
      }
+//各种播放状态信息的读取与设置============================================
 
      @Override
      public void onCreate() {
@@ -492,6 +493,10 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         editor.apply();
     }
 
+     /**
+      * 显示或因此桌面歌词
+      * @param isHide 是否隐藏桌面歌词
+      */
     public void hideDesktopLyric(boolean isHide) {
         Intent intent = new Intent(MusicService.this, FloatLyricService.class);
         if (isHide) {
@@ -501,29 +506,36 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         }
     }
 
+     /**
+      * 更新桌面歌词的播放信息
+      */
     public void updateDeskLyricPlayInfo() {
         if (deskLyricCallback != null)
             deskLyricCallback.updateNowPlaying(getNowId());
     }
 
+     /**
+      * 设置暂停或播放
+      * @param isPlay 是否播放
+      */
     public void setPlayOrPause(boolean isPlay) {
-        if (enabled && !prepared)
+        if (enabled && !prepared)//播放器还在准备
             return;
-        if (isPlay) {
+        if (isPlay) {//要切换成播放
             waitForDevice = false;
-            if (!isEnabled()) {
+            if (!isEnabled()) {//处于停止状态
                 setEnabled(true);
                 startToPrepare(getNowId());
-            } else if (isPrepared()) {
+            } else if (isPrepared()) {//处于准备完毕状态
                 start();
                 if (musicServiceCallback != null)
                     musicServiceCallback.updatePlayStateThis();
                 if (deskLyricCallback != null)
                     deskLyricCallback.updatePlayState();
-            } else {
+            } else {//处于空闲
                 startToPrepare(getNowId());
             }
-        } else {
+        } else {//要切换为暂停
             pause();
             if (musicServiceCallback != null)
                 musicServiceCallback.updatePlayStateThis();
@@ -557,7 +569,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         int order = getPlayOrder();
         switch (order) {
             case SHUFFLE_PLAY:  //随机播放
-                if (isNext) {
+                if (isNext) {//列表内循环
                     if (shuffleId < shuffleOrder.size() - 1) {
                         shuffleId += 1;
                     } else {
@@ -779,7 +791,7 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
                 //开始下载音乐文件
                 UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(this);
                 //设置下载状态监听器
-                uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
+                uploadDownloadUtils.set0nDownloadListener(new UploadDownloadUtils.OnDownloadListener() {
                     @Override
                     public void onFileDownloadCompleted(ArrayList<String> array) {
                         if (!array.get(0).equals(songList.get(id).source_uri))
@@ -836,6 +848,10 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
         }
     }
 
+     /**
+      * 处理线控点击事件
+      * @param keyAction
+      */
     @Override
     public void onKeyDown(int keyAction) {
         switch (keyAction) {

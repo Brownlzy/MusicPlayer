@@ -35,7 +35,7 @@ public class MyScrollView extends ScrollView {
         float y = ev.getY() + getScrollY();
         if (y < getWidth() - DisplayUtils.dip2px(getContext(), 20)
                 && x > DisplayUtils.dip2px(getContext(), 25)
-                && x < getWidth() - DisplayUtils.dip2px(getContext(), 25)) {//y是你透明区域的高度
+                && x < getWidth() - DisplayUtils.dip2px(getContext(), 25)) {//y是透明区域的高度
             return false;//穿透点击
         }
         return super.onTouchEvent(ev);//ScrollView 的正常滚动

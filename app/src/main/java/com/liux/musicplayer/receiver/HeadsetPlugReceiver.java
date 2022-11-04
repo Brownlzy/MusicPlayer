@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * 监听有线耳机连接状态
+ */
 public class HeadsetPlugReceiver extends BroadcastReceiver {
 
     @Override

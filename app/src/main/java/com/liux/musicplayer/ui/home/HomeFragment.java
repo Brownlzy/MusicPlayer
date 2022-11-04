@@ -65,22 +65,20 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViewCompat() {
-        //绑定歌词列表
+        //绑定专辑图片
         mView.findViewById(R.id.albumImageView).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onLongClick(View v) {//长按显示歌词
                 ((MainActivity) getActivity()).setIsLyric();
                 return false;
             }
         });
+        //绑定歌词列表
         lyricList = mView.findViewById(R.id.lyricList);
         lyricList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         lyricList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // OnScrollListener.SCROLL_STATE_FLING; //屏幕处于甩动状态
-                // OnScrollListener.SCROLL_STATE_IDLE; //停止滑动状态
-                // OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;// 手指接触状态
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     //手指接触时设置停止歌词居中标志
                     isSetLyricPosition = false;
@@ -98,13 +96,14 @@ public class HomeFragment extends Fragment {
         lyricList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
                 //定位播放进度至点击的歌词处
                 ((MainActivity) getActivity()).getMusicService().setProgress(lyric.startMillionTime.get(position).intValue());
             }
         });
     }
-
+     /**
+      * 播放页初始化完毕，通知父窗体设置正在播放的歌曲信息
+      */
     private void callMainActivityForInfo() {
         ((MainActivity) getActivity()).setChildFragment();
     }
@@ -194,7 +193,10 @@ public class HomeFragment extends Fragment {
         startLyric();
     }
 
-    //根据当前歌词位置设置歌词高亮居中
+    /**
+     * 根据当前歌词位置设置歌词高亮居中
+     * @param lyricPosition 歌词位置
+     */
     public void setLyricPosition(int lyricPosition) {
         if (lyricPosition != lastLyricId) { //判断高亮歌词是否需要改变
             nowLyricMap.clear();    //清除之前数据
@@ -213,6 +215,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * 初始化歌词
+     * @param song 正在播放的歌曲
+     */
     public void initLyric(MusicUtils.Song song) {
         //刷新歌词
         lastLyricId = -1;
@@ -229,6 +235,9 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * 歌词更新子线程
+     */
     private class LyricThread extends Thread {
         private final Object lock = new Object();
         private boolean pause = false;
@@ -272,6 +281,7 @@ public class HomeFragment extends Fragment {
                 }
                 try {
                     if (((MainActivity) getActivity()).getMusicService().isPlaying() && ((MainActivity) getActivity()).getMusicService().getLyric().isCompleted) {
+                        //歌词加载完毕
                         int currentLyricId = lyric.getNowLyric(((MainActivity) getActivity()).getMusicService().getCurrentPosition());
                         if (currentLyricId >= 0) {
                             Message msg = new Message();

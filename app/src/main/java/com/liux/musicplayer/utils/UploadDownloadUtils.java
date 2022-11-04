@@ -3,7 +3,6 @@ package com.liux.musicplayer.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,11 +36,9 @@ import okhttp3.ResponseBody;
  */
 public class UploadDownloadUtils {
     private static final String TAG = UploadDownloadUtils.class.getSimpleName();
-    private static UploadDownloadUtils mInstance;
-    public final static String DOCUMENT_PATH = Environment.getExternalStorageDirectory() + "/RecorderGuide/";
     private final Context mContext;
     public SharedPreferences prefs = null;
-    private OnImageLoadListener mOnImageLoadListener;
+    private OnDownloadListener mOnDownloadListener;
     private static List<MyCache> cacheList;
 
     public UploadDownloadUtils(Context context) {
@@ -52,28 +47,17 @@ public class UploadDownloadUtils {
         LoadCacheList();
     }
 
-    public void set0nImageLoadListener(OnImageLoadListener mOnImageLoadListener) {
-        this.mOnImageLoadListener = mOnImageLoadListener;
+    public void set0nDownloadListener(OnDownloadListener mOnDownloadListener) {
+        this.mOnDownloadListener = mOnDownloadListener;
     }
 
-    public interface OnImageLoadListener {
+    public interface OnDownloadListener {
         void onFileDownloadCompleted(ArrayList<String> array);
 
         default void onFileDownloading(ArrayList<String> array) {
         }
 
         void onFileDownloadError(ArrayList<String> array);
-    }
-
-    public static UploadDownloadUtils getInstance(Context mContext) {
-        if (mInstance == null) {
-            synchronized (UploadDownloadUtils.class) {
-                if (mInstance == null) {
-                    mInstance = new UploadDownloadUtils(mContext);
-                }
-            }
-        }
-        return mInstance;
     }
 
     /**
@@ -209,18 +193,18 @@ public class UploadDownloadUtils {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 2: //下载完成
-                    if (mOnImageLoadListener != null) {
-                        mOnImageLoadListener.onFileDownloadCompleted((ArrayList<String>) msg.obj);
+                    if (mOnDownloadListener != null) {
+                        mOnDownloadListener.onFileDownloadCompleted((ArrayList<String>) msg.obj);
                     }
                     break;
                 case 3: //下载失败
-                    if (mOnImageLoadListener != null) {
-                        mOnImageLoadListener.onFileDownloadError((ArrayList<String>) msg.obj);
+                    if (mOnDownloadListener != null) {
+                        mOnDownloadListener.onFileDownloadError((ArrayList<String>) msg.obj);
                     }
                     break;
                 case 6: //正在下载
-                    if (mOnImageLoadListener != null) {
-                        mOnImageLoadListener.onFileDownloading((ArrayList<String>) msg.obj);
+                    if (mOnDownloadListener != null) {
+                        mOnDownloadListener.onFileDownloading((ArrayList<String>) msg.obj);
                     }
                     break;
             }
@@ -231,8 +215,7 @@ public class UploadDownloadUtils {
      * 销毁
      */
     public void onDestroy() {
-        mOnImageLoadListener = null;
-        mInstance = null;
+        mOnDownloadListener = null;
     }
  /**
   * 缓存类

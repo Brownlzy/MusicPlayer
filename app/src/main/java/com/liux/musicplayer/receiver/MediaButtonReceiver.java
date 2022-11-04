@@ -8,6 +8,9 @@ import android.view.KeyEvent;
 
 import androidx.annotation.NonNull;
 
+/**
+ * 监听musicButton事件（线控播放）
+ */
 public class MediaButtonReceiver extends BroadcastReceiver {
     private MediaSession mMediaSession;
 
@@ -38,7 +41,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
             public boolean onMediaButtonEvent(@NonNull Intent mediaButtonIntent) {
                 KeyEvent keyEvent = mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
                 if (keyEvent != null) {
-                    mKeyDownListener.onKeyDown(keyEvent.getKeyCode());
+                    mKeyDownListener.onKeyDown(keyEvent.getKeyCode());//把请求传给注册的监听器
                     return true;
                 } else return false;
             }

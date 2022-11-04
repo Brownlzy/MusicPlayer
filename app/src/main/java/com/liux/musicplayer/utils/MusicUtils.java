@@ -44,6 +44,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MusicUtils {
+    /**
+     * 主要存储MusicTag内信息
+     */
     public static class Metadata {
         public boolean isValid = false;
         public String title = "null";
@@ -56,6 +59,9 @@ public class MusicUtils {
         public Long sizeLong = 0L;
     }
 
+    /**
+     * 播放列表使用的歌曲存储类型
+     */
     public static class Song {
         public String title;
         public String artist;

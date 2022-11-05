@@ -17,6 +17,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 歌词存储实例
+ */
 public class LyricUtils {
     public boolean isCompleted = false;
     public List<String> lyricList;

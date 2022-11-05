@@ -792,13 +792,11 @@ public class MusicService extends Service implements MediaButtonReceiver.IKeyDow
             lyric.LoadLyric(songList.get(id));
             if (FileUtils.isFileExists(songList.get(id).source_uri)) {  //如果path是本地文件且文件存在
                 //加载资源信息
-                //albumImage = MusicUtils.getAlbumImage(songList.get(id).source_uri);
                 metadata = MusicUtils.getMetadata(songList.get(id).source_uri);
                 startPlay(songList.get(id).source_uri);
                 reId = 0;
             } else if (songList.get(id).source_uri.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
                 //如果path的格式符合HTTP URL
-                //albumImage = null;
                 metadata = MusicUtils.getMetadataFromSong(songList.get(id));
                 //开始下载音乐文件
                 UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(this);

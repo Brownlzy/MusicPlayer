@@ -436,17 +436,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
     //判断是否开启悬浮窗权限   context可以用你的Activity.或者this
     public static boolean checkFloatPermission(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            AppOpsManager appOpsMgr = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-            if (appOpsMgr == null)
-                return false;
-            int mode = appOpsMgr.checkOpNoThrow("android:system_alert_window", android.os.Process.myUid(), context
-                    .getPackageName());
-            return mode == AppOpsManager.MODE_ALLOWED || mode == AppOpsManager.MODE_IGNORED;
-        } else {
-            return Settings.canDrawOverlays(context);
-        }
-
+        AppOpsManager appOpsMgr = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        if (appOpsMgr == null)
+            return false;
+        int mode = appOpsMgr.checkOpNoThrow("android:system_alert_window", android.os.Process.myUid(), context
+                .getPackageName());
+        return mode == AppOpsManager.MODE_ALLOWED;
     }
 
     //请求权限

@@ -33,6 +33,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * 更新功能模块
+ * @author Brownlzy
+ */
 public class UpdateUtils {
     private static String TAG="UpdateUtils";
     private static Handler updateHandler;

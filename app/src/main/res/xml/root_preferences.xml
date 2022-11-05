@@ -162,16 +162,19 @@
         <Preference
             app:icon="@drawable/ic_baseline_folder_24"
             app:key="setMainFolder"
+            app:isPreferenceVisible="false"
             app:title="@string/mainfolder" />
 
         <CheckBoxPreference
             app:key="isMoveMusic"
             app:title="@string/isMoveMusic"
+            app:isPreferenceVisible="false"
             app:summary="@string/isMoveMusic_summary" />
 
         <EditTextPreference
             android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
             app:key="mainFolder"
+            app:isPreferenceVisible="false"
             app:title="@string/mainfolder" />
 
     </PreferenceCategory>

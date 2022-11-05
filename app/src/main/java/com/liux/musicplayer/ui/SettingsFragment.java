@@ -626,7 +626,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return false;
             int mode = appOpsMgr.checkOpNoThrow("android:system_alert_window", android.os.Process.myUid(), context
                     .getPackageName());
-            return mode == AppOpsManager.MODE_ALLOWED || mode == AppOpsManager.MODE_IGNORED;
+            return mode == AppOpsManager.MODE_ALLOWED;
         } else {
             return Settings.canDrawOverlays(context);
         }

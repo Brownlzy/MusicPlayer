@@ -180,7 +180,7 @@ public class MediaNotificationManager {
         builder.setStyle(
                 new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(token)
-                        .setShowActionsInCompactView(1, 2, 4)
+                        .setShowActionsInCompactView(2, 3, 4)
                         // For backwards compatibility with Android L and earlier.
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(
@@ -204,6 +204,8 @@ public class MediaNotificationManager {
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
+        builder.addAction(mStopAction);
+
         // If skip to next action is enabled.
         if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
             builder.addAction(mPrevAction);
@@ -216,7 +218,6 @@ public class MediaNotificationManager {
             builder.addAction(mNextAction);
         }
 
-        builder.addAction(mStopAction);
         Intent floatLyricIntent = new Intent("com.liux.musicplayer.CLOSE_LYRIC");
         PendingIntent floatLyricPendingIntent = PendingIntent.getBroadcast(mService, 0, floatLyricIntent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Action mHlyricAction =

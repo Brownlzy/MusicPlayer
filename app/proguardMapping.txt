@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: d32bb5b
-# pg_map_hash: SHA-256 d32bb5bde4c426629cda78bed0df6d68a64c61f5d09ab7eb462ab80b92d5bbf4
+# pg_map_id: b048ba6
+# pg_map_hash: SHA-256 b048ba6ec8b264f7e330220539b986eddb83d80cbbe3492f353f5bfddc15f71b
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -34605,12 +34605,12 @@ com.liux.musicplayer.models.User -> com.liux.musicplayer.models.User:
     44:44:android.os.Handler access$100() -> access$100
     44:44:com.liux.musicplayer.models.User$UserDataJson access$202(com.liux.musicplayer.models.User$UserDataJson) -> access$202
     44:44:boolean access$300(android.content.Context,boolean) -> access$300
-    213:255:boolean acquireDownload(android.content.Context,java.lang.String) -> acquireDownload
+    220:262:boolean acquireDownload(android.content.Context,java.lang.String) -> acquireDownload
     140:157:boolean checkResult(android.content.Context,boolean) -> checkResult
-    185:185:java.lang.String getUserHash(java.lang.String) -> getUserHash
+    192:192:java.lang.String getUserHash(java.lang.String) -> getUserHash
     53:76:void init(android.content.Context) -> init
     79:136:void login(android.content.Context,java.lang.String,boolean) -> login
-    161:182:void logout(android.content.Context) -> logout
+    161:189:void logout(android.content.Context) -> logout
 com.liux.musicplayer.models.User$1 -> com.liux.musicplayer.models.User$1:
     83:83:void <init>(android.os.Looper,android.content.Context) -> <init>
     86:88:void handleMessage(android.os.Message) -> handleMessage
@@ -34619,18 +34619,21 @@ com.liux.musicplayer.models.User$2 -> com.liux.musicplayer.models.User$2:
     100:104:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
     108:132:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
 com.liux.musicplayer.models.User$3 -> com.liux.musicplayer.models.User$3:
-    175:175:void <init>() -> <init>
-    178:178:void onClick(android.content.DialogInterface,int) -> onClick
+    182:182:void <init>() -> <init>
+    185:185:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.models.User$4 -> com.liux.musicplayer.models.User$4:
     166:166:void <init>(android.content.Context) -> <init>
-    169:173:void onClick(android.content.DialogInterface,int) -> onClick
+    169:180:void onClick(android.content.DialogInterface,int) -> onClick
+com.liux.musicplayer.models.User$4$1 -> com.liux.musicplayer.models.User$4$1:
+    174:174:void <init>(com.liux.musicplayer.models.User$4) -> <init>
+    177:178:void run() -> run
 com.liux.musicplayer.models.User$5 -> com.liux.musicplayer.models.User$5:
-    230:230:void <init>(java.lang.Long,android.app.DownloadManager) -> <init>
-    233:250:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    237:237:void <init>(java.lang.Long,android.app.DownloadManager) -> <init>
+    240:257:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.liux.musicplayer.models.User$UserData -> com.liux.musicplayer.models.User$UserData:
-    188:195:void <init>() -> <init>
+    195:202:void <init>() -> <init>
 com.liux.musicplayer.models.User$UserDataJson -> com.liux.musicplayer.models.User$UserDataJson:
-    198:199:void <init>() -> <init>
+    205:206:void <init>() -> <init>
 com.liux.musicplayer.services.FloatLyricService -> com.liux.musicplayer.services.FloatLyricService:
     43:361:void <init>() -> <init>
     180:189:void LockLyric() -> LockLyric
@@ -35315,12 +35318,12 @@ com.liux.musicplayer.utils.LyricUtils$1 -> com.liux.musicplayer.utils.LyricUtils
 com.liux.musicplayer.utils.MediaNotificationManager -> com.liux.musicplayer.utils.MediaNotificationManager:
     53:53:void <clinit>() -> <clinit>
     69:134:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
-    175:232:androidx.core.app.NotificationCompat$Builder buildNotification(android.support.v4.media.session.PlaybackStateCompat,android.support.v4.media.session.MediaSessionCompat$Token,boolean,android.support.v4.media.MediaDescriptionCompat) -> buildNotification
-    238:259:void createChannel() -> createChannel
-    266:268:android.app.PendingIntent createContentIntent() -> createContentIntent
+    175:233:androidx.core.app.NotificationCompat$Builder buildNotification(android.support.v4.media.session.PlaybackStateCompat,android.support.v4.media.session.MediaSessionCompat$Token,boolean,android.support.v4.media.MediaDescriptionCompat) -> buildNotification
+    239:260:void createChannel() -> createChannel
+    267:269:android.app.PendingIntent createContentIntent() -> createContentIntent
     149:153:android.app.Notification getNotification(android.support.v4.media.MediaMetadataCompat,android.support.v4.media.session.PlaybackStateCompat,android.support.v4.media.session.MediaSessionCompat$Token) -> getNotification
     143:143:android.app.NotificationManager getNotificationManager() -> getNotificationManager
-    262:262:boolean isAndroidOOrHigher() -> isAndroidOOrHigher
+    263:263:boolean isAndroidOOrHigher() -> isAndroidOOrHigher
     137:140:void onDestroy() -> onDestroy
 com.liux.musicplayer.utils.MusicUtils -> com.liux.musicplayer.utils.MusicUtils:
     77:95:android.graphics.Bitmap getAlbumImage(android.content.Context,java.lang.String) -> getAlbumImage

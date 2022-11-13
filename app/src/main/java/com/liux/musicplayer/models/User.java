@@ -170,6 +170,13 @@ public class User {
                         FileUtils.delete(new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), userData.userName));
                         userData=new UserData();
                         SharedPrefs.saveUserData(userData);
+                        new Handler()
+                                .postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        System.exit(0);
+                                    }
+                                },1000);
                     }
                 })
                 .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {

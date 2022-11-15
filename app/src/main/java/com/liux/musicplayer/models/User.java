@@ -22,9 +22,12 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.activities.SplashActivity;
 import com.liux.musicplayer.utils.RSAUtils;
 import com.liux.musicplayer.utils.SHA256Util;
 import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -113,10 +116,20 @@ public class User {
                     userDataJson = gson.fromJson(result, UserDataJson.class);
                     if(checkResult(context,isReLogin)){
                         Message message = Message.obtain();
-                        if(isReLogin)
-                            message.obj = "重新登录成功！请重启本应用";
-                        else
-                            message.obj = "登录成功！请等待通知栏下载进度完成后重启本应用";
+                        if(isReLogin){
+                            message.obj = "重新登录成功！正在重启...";
+                        new Handler()
+                                .postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent restartIntent = new Intent(context,SplashActivity.class);
+                                        MainActivity.mainActivity.finish();
+                                        context.startActivity(restartIntent);
+                                        //System.exit(0);
+                                    }
+                                },1000);
+                        } else
+                            message.obj = "登录成功，正在加载专属开屏图...";
                         handler.sendMessage(message);
                     }else {
                         Message message = Message.obtain();
@@ -174,7 +187,10 @@ public class User {
                                 .postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        System.exit(0);
+                                        Intent restartIntent = new Intent(context,SplashActivity.class);
+                                        MainActivity.mainActivity.finish();
+                                        context.startActivity(restartIntent);
+                                        //System.exit(0);
                                     }
                                 },1000);
                     }
@@ -248,8 +264,17 @@ public class User {
                                 if (downloadFileName != null) {
                                     downloadFileName = downloadFileName.substring(downloadFileName.lastIndexOf('/') + 1);
                                     //Toast.makeText(context, downloadFileName, Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(context, "专属开屏页图片下载完成，现在可以重启！", Toast.LENGTH_SHORT).show();
-
+                                    Toast.makeText(context, "专属开屏页图片下载完成，即将重启！", Toast.LENGTH_SHORT).show();
+                                    new Handler()
+                                            .postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent restartIntent = new Intent(context,SplashActivity.class);
+                                                    MainActivity.mainActivity.finish();
+                                                    context.startActivity(restartIntent);
+                                                    //System.exit(0);
+                                                }
+                                            },1000);
                                     //android.os.Process.killProcess(android.os.Process.myPid());
                                 }
                             }
@@ -261,7 +286,6 @@ public class User {
         }
         return false;
     }
-
 
     private static Handler handler;
 }

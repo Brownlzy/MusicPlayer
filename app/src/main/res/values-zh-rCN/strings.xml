@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">音乐播放器</string>
+    <string name="app_name">综音</string>
     <string name="title_home">主页</string>
     <string name="title_allSongList">曲库</string>
     <string name="title_settings">设置</string>
@@ -89,7 +89,7 @@
     <string name="title_lastVersion">最新版本：</string>
     <string name="title_changlog">更新日志：</string>
     <string name="update">更新</string>
-    <string name="title_size">安装包大小：</string>
+    <string name="title_size">下载大小：</string>
     <string name="notification_downloading_latest_version">正在下载最新版</string>
     <string name="title_crashed">糟糕，我崩溃了！</string>
     <string name="crashed_info">刚才，在一股神秘力量的影响下，我崩溃了！现在我急需你的配合以帮助我反击！幸好我已经把敌人的行踪记录下来了，点击下面的发送错误报告，等我好消息！</string>
@@ -142,4 +142,8 @@
     <string name="sort_amount_up">按歌曲数量升序排列</string>
     <string name="sort_amount_down">按歌曲数量降序排列</string>
     <string name="manual_download">手动下载</string>
+    <string name="title_nowVersion">当前版本：</string>
+    <string name="autoRun">启动管理</string>
+    <string name="autoRun_summary">为避免系统自动结束后台播放服务，需要您设置音乐播放器的启动管理为手动管理并允许后台运行</string>
+    <string name="newUser">新增用户</string>
 </resources>

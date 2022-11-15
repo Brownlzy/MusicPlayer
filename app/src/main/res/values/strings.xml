@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MusicPlayer</string>
+    <string name="app_name">BrownMusic</string>
     <string name="title_home">Home</string>
     <string name="title_allSongList">Playlist</string>
     <string name="title_settings">Settings</string>
@@ -141,4 +141,8 @@
     <string name="sort_amount_up">Sort by amount up</string>
     <string name="sort_amount_down">Sort by amount down</string>
     <string name="manual_download">Manual Download</string>
+    <string name="title_nowVersion">Now Version: </string>
+    <string name="autoRun">Auto Run</string>
+    <string name="autoRun_summary">To avoid the system killing the background playback service, you need to set the music player to be manually managed and allow background permission.</string>
+    <string name="newUser">Add User</string>
 </resources>

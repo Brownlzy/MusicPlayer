@@ -50,6 +50,7 @@ import com.google.gson.Gson;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.models.User;
+import com.liux.musicplayer.utils.AutoRunUtils;
 import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.RSAUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
@@ -77,6 +78,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private CheckBoxPreference switch_desk_lyric;
     private CheckBoxPreference switch_desk_lyric_lock;
     private CheckBoxPreference switch_new_appearance;
+    private CheckBoxPreference switch_fast_start;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private Preference lastErrorLog;
@@ -85,6 +87,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private Preference About;
     private Preference userLogin;
     private Preference Close;
+    private Preference autoRun;
+    private EditTextPreference newUser;
     private EditTextPreference rsaPublicKey;
     private EditTextPreference rsaDecodeTest;
     private EditTextPreference rsaPrivateKey;
@@ -182,11 +186,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         findPreference("rsa").setVisible(false);
         //绑定控件
         switch_new_appearance = findPreference("isNewAppearance");
+        switch_fast_start = findPreference("isNeedFastStart");
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
+        autoRun= findPreference("autoRun");
         switch_web_playlist = findPreference("isUseWebPlayList");
         switch_desk_lyric = findPreference("isShowLyric");
         switch_desk_lyric_lock = findPreference("deskLyricLock");
+        newUser = findPreference("newUser");
         rsaPublicKey = findPreference("rsa_public_key");
         rsaDecodeTest = findPreference("rsa_decode_test");
         rsaPrivateKey = findPreference("rsa_private_key");
@@ -252,6 +259,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     };
 
     private void initPreferenceListener() {
+        autoRun.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                AutoRunUtils.startToAutoStartSetting(getContext());
+                return false;
+            }
+        });
         findPreference("newsBoard").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -280,6 +294,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "RSA Test Failed", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+        newUser.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                try {
+                    rsaEncodeTest.setText(RSAUtils.privateKeyEncrypt((String) newValue, rsaPrivateKey.getText()));
+                    rsaDecodeTest.setText(RSAUtils.publicKeyDecrypt(rsaEncodeTest.getText(), rsaPublicKey.getText()));
+                    if(rsaDecodeTest.getText().equals((String) newValue)) {
+                        newUser.setText("{\"publicKey\":\"" + rsaPublicKey.getText().replace("\n", "").replace(" ", "")
+                                + "\",\"userHashRSA\":\"" + rsaEncodeTest.getText().replace("\n", "").replace(" ", "")
+                                + "\",\"expired\":\"\",\"level\":2,\"userSplash\":\"\"}");
+                    }else throw new Exception("Decode Failed");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
@@ -352,6 +384,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if(User.isLogin) {
                     ((MainActivity) getActivity()).setNewAppearance((boolean) newValue);
+                    return true;
+                }else {
+                    Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+        });
+        switch_fast_start.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                if(User.isLogin|| !((boolean) newValue)) {
                     return true;
                 }else {
                     Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();

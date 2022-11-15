@@ -46,11 +46,15 @@ public class UpdateUtils {
         String filename;
         String size;
         String changLog;
+        String manual;
     }
 
     static class News {
         int id;
         String ct;
+        int fun=0;
+        String ag;
+        String bn;
     }
 
     public static void checkUpdate(Context context, boolean isShowStateInfo) {
@@ -155,7 +159,9 @@ public class UpdateUtils {
 
     private static void updateHandle(Context context, String result, boolean isShowStateInfo) {
         int versionCode = 0;
+        String versionName = "";
         try {
+            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
             versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -169,7 +175,8 @@ public class UpdateUtils {
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_update)
-                    .setMessage(context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + "\n"
+                    .setMessage(context.getString(R.string.title_nowVersion) + versionName + "\n"
+                            + context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + "\n"
                             + context.getString(R.string.title_size) + updateInfo.size + "\n"
                             + context.getString(R.string.title_changlog) + "\n"
                             + updateInfo.changLog.replace("\\n", "\n"))
@@ -191,7 +198,7 @@ public class UpdateUtils {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                                Uri uri = Uri.parse("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/manual.html");
+                                Uri uri = Uri.parse(updateInfo.manual);
                                 intent.setData(uri);
                                 context.startActivity(intent);
                             }
@@ -210,18 +217,39 @@ public class UpdateUtils {
         Gson gson = new Gson();
         News news = gson.fromJson(result, News.class);
         if (isManual || news.id > SharedPrefs.getLastNewsId()) {
-            AlertDialog alertInfoDialog = null;
-            alertInfoDialog = new AlertDialog.Builder(context)
-                    .setTitle(R.string.newsBoard)
-                    .setMessage(news.ct)
-                    .setIcon(R.mipmap.ic_launcher)
-                    .setPositiveButton(R.string.readed, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            SharedPrefs.putLastNewsId(news.id);
-                        }
-                    })
-                    .create();
+            AlertDialog.Builder alertInfoDialog = null;
+            alertInfoDialog = new AlertDialog.Builder(context);
+            alertInfoDialog.setTitle(R.string.newsBoard);
+            alertInfoDialog.setMessage(news.ct);
+            alertInfoDialog.setIcon(R.mipmap.ic_launcher);
+            if(news.fun==1) {
+                alertInfoDialog.setPositiveButton(news.bn, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        Uri uri = Uri.parse(news.ag);
+                        intent.setData(uri);
+                        context.startActivity(intent);
+                        SharedPrefs.putLastNewsId(news.id);
+                    }
+                });
+            }else if(news.fun==2){
+                alertInfoDialog.setPositiveButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkUpdate(context,true);
+                        SharedPrefs.putLastNewsId(news.id);
+                    }
+                });
+            }else {
+                alertInfoDialog.setPositiveButton(R.string.readed, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPrefs.putLastNewsId(news.id);
+                    }
+                });
+            }
+            alertInfoDialog.create();
             alertInfoDialog.show();
         }
     }

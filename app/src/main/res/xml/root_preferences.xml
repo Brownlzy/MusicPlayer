@@ -24,7 +24,12 @@
             app:summaryOff="@string/switch_layer_permission_off"
             app:summaryOn="@string/switch_layer_permission_on"
             app:title="@string/give_layer_permission" />
-
+        <Preference
+            android:persistent="false"
+            app:key="autoRun"
+            app:icon="@drawable/ic_baseline_miscellaneous_services_24"
+            app:title="@string/autoRun"
+            app:summary="@string/autoRun_summary"/>
 
     </PreferenceCategory>
 
@@ -57,6 +62,11 @@
             app:icon="@drawable/ic_round_photo_album_24"
             app:summary="@string/newAppearance_summary" />
 
+        <CheckBoxPreference
+            app:key="isNeedFastStart"
+            app:title="@string/isNeedFastStart"
+            app:summary="@string/isNeedFastStart_summary"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -74,11 +84,6 @@
             app:key="WebPlayListUrl"
             app:title="@string/WebPlayListUrl"
             app:useSimpleSummaryProvider="true" />
-
-        <CheckBoxPreference
-            app:key="isNeedFastStart"
-            app:title="@string/isNeedFastStart"
-            app:summary="@string/isNeedFastStart_summary"/>
 
     </PreferenceCategory>
 
@@ -181,6 +186,12 @@
     <PreferenceCategory
         app:key="rsa"
         app:title="@string/title_rsa">
+
+        <EditTextPreference
+            app:key="newUser"
+            app:icon="@drawable/ic_round_account_circle_24"
+            app:title="@string/newUser"
+            android:persistent="false"/>
 
         <EditTextPreference
             app:key="rsa_private_key"

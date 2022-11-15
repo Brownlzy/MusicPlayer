@@ -148,7 +148,8 @@ public class MusicService extends MediaBrowserServiceCompat {
         mSession.setSessionActivity(mMediaNotificationManager.createContentIntent());
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
-        //mPlaylist=MusicLibrary.getPlayingMediaItemList();
+        mPlaylist=MusicLibrary.getPlayingMediaItemList();
+        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
     }
 
     @Override
@@ -184,7 +185,8 @@ public class MusicService extends MediaBrowserServiceCompat {
         Log.d(TAG, "SimpleMusicService onLoadChildren called: ");
         Log.d(TAG, "SimpleMusicService onLoadChildren parentId: " + parentId);
         Log.d(TAG, "SimpleMusicService onLoadChildren result: " + result);
-        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
+        //if(mPlaylist==null||mPlaylist.size()==0)
+        //mCallback.onCustomAction("REFRESH_PLAYLIST",null);
 
         result.sendResult(mPlaylist);
     }

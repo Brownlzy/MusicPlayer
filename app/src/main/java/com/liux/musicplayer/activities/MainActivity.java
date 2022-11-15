@@ -318,7 +318,7 @@ public class MainActivity extends FragmentActivity {
         CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
         if(Math.abs(SharedPrefs.getLastCheckUpdateTime()- TimeUtils.getNowMills())>86400000L)
             UpdateUtils.checkUpdate(this,false);
-        if(Math.abs(SharedPrefs.getLastNewsUpdateTime()- TimeUtils.getNowMills())>14400000L)
+        if(Math.abs(SharedPrefs.getLastNewsUpdateTime()- TimeUtils.getNowMills())>7200000L)
             UpdateUtils.checkNews(this,false);
         new Handler().post(new Runnable() {
             @Override

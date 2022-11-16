@@ -72,6 +72,8 @@ public class SonglistAdapter extends BaseAdapter {
         //设置数据
         if(data.get(position).n.equals("allSongList"))
             holder.mItemTitle.setText(R.string.allSongList);
+        else if(data.get(position).n.equals("webAllSongList"))
+            holder.mItemTitle.setText(R.string.webAllSongList);
         else
             holder.mItemTitle.setText(data.get(position).n);
         holder.mItemId.setText(String.valueOf(position + 1));

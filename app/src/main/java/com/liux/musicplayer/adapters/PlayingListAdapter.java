@@ -34,6 +34,8 @@ public class PlayingListAdapter extends BaseAdapter {
     public void setNowPlay(String path) {
         if(data==null) return;
         nowPlay=data.stream().map(t -> t.getDescription().getMediaUri().getPath()).distinct().collect(Collectors.toList()).indexOf(path);
+        if(nowPlay==-1)
+            nowPlay=data.stream().map(t -> t.getDescription().getMediaUri().toString()).distinct().collect(Collectors.toList()).indexOf(path);
     }
 
     public int getNowPlay() {

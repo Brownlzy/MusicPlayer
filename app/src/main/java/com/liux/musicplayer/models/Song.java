@@ -96,27 +96,7 @@ public class Song implements Cloneable {
     }
 
     public static MusicUtils.Metadata getMetadata(String path) {
-        try {
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            mediaMetadataRetriever.setDataSource(path);
-            MusicUtils.Metadata md = new MusicUtils.Metadata();
-            md.sizeLong = FileUtils.getLength(path);
-            md.sizeByte = ConvertUtils.byte2FitMemorySize(md.sizeLong);
-            md.title = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            md.album = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-            md.artist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            md.duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            md.mimetype = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
-            md.bitrate = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
-            mediaMetadataRetriever.release();
-            md.isValid = true;
-            return md;
-        } catch (Exception e) {
-            e.printStackTrace();
-            //Toast.makeText(context, "专辑图片读取发生未知错误", Toast.LENGTH_SHORT).show();
-            //return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_music_note_24);
-        }
-        return new MusicUtils.Metadata();
+        return MusicUtils.getMetadata(path);
     }
 
     public Song(@NonNull final String id, String title, final int trackNumber, final int year, final int duration, final String path, final String albumName, final int artistId, final String artistName) {
@@ -279,6 +259,10 @@ public class Song implements Cloneable {
 
     public void setSize(Long sizeLong) {
         this.mSize=sizeLong;
+    }
+
+    public Long getSize() {
+        return mSize;
     }
 }
 

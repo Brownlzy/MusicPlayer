@@ -45,7 +45,14 @@ public class SharedPrefs {
             list=new ArrayList<>();
             list.add(0,new MusicLibrary.SongList("allSongList","",0));
         }
+        if(!getIsUseWebPlayList()){
+            list.removeIf(songList -> songList.n.equals("webAllSongList"));
+        }
         return list;
+    }
+
+    public static boolean getIsUseWebPlayList() {
+        return sharedPreferences.getBoolean("isUseWebPlayList",false);
     }
 
     public static void putAllSonglistList(List<MusicLibrary.SongList> list){
@@ -236,5 +243,9 @@ public class SharedPrefs {
 
     public static void cleanOldData() {
         sharedPreferencesEditor.putString("playList","").apply();
+    }
+
+    public static void putIsUseWebPlayList(boolean b) {
+        sharedPreferencesEditor.putBoolean("isUseWebPlayList",false);
     }
 }

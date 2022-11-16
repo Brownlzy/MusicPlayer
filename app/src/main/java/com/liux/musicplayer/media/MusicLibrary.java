@@ -42,6 +42,10 @@ import java.util.stream.Collectors;
 
 
 public class MusicLibrary {
+    public static Song querySong(String path) {
+        return allListSongsTreeMap.get(path);
+    }
+
     public static class SongList {
         public String n;
         public String s;
@@ -235,7 +239,7 @@ public class MusicLibrary {
             return SongLists.get(name);
         else {
             List<Song> newSongList = SharedPrefs.getSongListByName(name);
-            if (!name.equals("allSongList")) {
+            if (!name.equals("allSongList")&&!name.equals("webAllSongList")) {
                 newSongList.removeIf(song -> !allListSongsTreeMap.containsKey(song.getSongPath()));
             } else {
                 for (Song song : newSongList) {
@@ -304,6 +308,12 @@ public class MusicLibrary {
             }
         }
         return allSongListList;
+    }
+    public static void refreshAllSongListList() {
+        allSongListList = SharedPrefs.getAllSonglistList();
+        for (SongList s : allSongListList) {
+            SongListHash.put(s.n, s);
+        }
     }
 
     public static boolean addNewSongList(String name, String summary) {

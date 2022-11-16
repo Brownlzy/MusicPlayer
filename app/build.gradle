@@ -10,8 +10,8 @@ android {
         applicationId "com.liux.musicplayer"
         minSdkVersion 26
         targetSdkVersion 32
-        versionCode 46
-        versionName "3.0.12"
+        versionCode 47
+        versionName "3.0.13"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
     implementation "androidx.media:media:1.6.0"
+    implementation 'com.danikula:videocache:2.7.1'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

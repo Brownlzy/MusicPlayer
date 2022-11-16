@@ -146,4 +146,5 @@
     <string name="autoRun">启动管理</string>
     <string name="autoRun_summary">为避免系统自动结束后台播放服务，需要您设置音乐播放器的启动管理为手动管理并允许后台运行</string>
     <string name="newUser">新增用户</string>
+    <string name="webAllSongList">在线列表</string>
 </resources>

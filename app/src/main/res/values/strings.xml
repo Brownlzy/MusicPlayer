@@ -145,4 +145,5 @@
     <string name="autoRun">Auto Run</string>
     <string name="autoRun_summary">To avoid the system killing the background playback service, you need to set the music player to be manually managed and allow background permission.</string>
     <string name="newUser">Add User</string>
+    <string name="webAllSongList">Web List</string>
 </resources>

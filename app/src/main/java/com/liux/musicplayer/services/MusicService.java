@@ -24,6 +24,8 @@ import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
+import com.danikula.videocache.CacheListener;
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.liux.musicplayer.media.MediaPlayerAdapter;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.PlaybackInfoListener;
@@ -31,6 +33,7 @@ import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MediaNotificationManager;
 import com.liux.musicplayer.utils.SharedPrefs;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +60,20 @@ public class MusicService extends MediaBrowserServiceCompat {
     public LyricReceiver lyricReceiver;
     private LyricUtils lyric=new LyricUtils();
     private boolean hasPlayedOnce=false;
+    private HttpProxyCacheServer proxy;
+
+    public HttpProxyCacheServer getProxy() {
+        if(proxy==null) {
+            proxy = new HttpProxyCacheServer(this);
+        }
+        return proxy;
+    }
+    public CacheListener cacheListener=new CacheListener() {
+        @Override
+        public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
+            Log.e(TAG,percentsAvailable+"%,url="+url);
+        }
+    };
 
     public class LyricReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";

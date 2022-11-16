@@ -34,6 +34,7 @@ import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UploadDownloadUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -110,6 +111,12 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                     play();
                 }
             });
+            mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                @Override
+                public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                    Log.e("mMediaPlayer/onBufferingUpdat", String.valueOf(percent));
+                }
+            });
         }
     }
 
@@ -154,40 +161,15 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                 mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + mFilename, e));
             }
         } else if (mFilename.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
-            UploadDownloadUtils uploadDownloadUtils = new UploadDownloadUtils(mContext);
-            uploadDownloadUtils.set0nImageLoadListener(new UploadDownloadUtils.OnImageLoadListener() {
-                @Override
-                public void onFileDownloadCompleted(ArrayList<String> array) {
-                    if (!array.get(0).equals(mFilename))
-                        return;
-                    try {
-                        //TODO 更新信息
-                        initializeMediaPlayer();
-                        mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(array.get(1)));
-                        mMediaPlayer.prepare();
-                    } catch (Exception e) {
-                        //throw new RuntimeException("Failed to open file: " + Uri.parse(array.get(1)), e);
-                        onStop();
-                        mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + Uri.parse(array.get(1)), e));
-                    }
-                }
-
-                @Override
-                public void onFileDownloading(ArrayList<String> array) {
-                    if (!array.get(0).equals(mFilename))
-                        return;
-                    //Log.e("Downloading",array.get(1));
-                }
-
-                @Override
-                public void onFileDownloadError(ArrayList<String> array) {
-                    if (!array.get(0).equals(mFilename))
-                        return;
-                    onStop();
-                    mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + Uri.parse(array.get(1))));
-                }
-            });
-            uploadDownloadUtils.downloadFile(PathUtils.getExternalAppCachePath(), TimeUtils.getNowMills() + ".tmp", mFilename);
+            try {
+                String proxyUrl = musicService.getProxy().getProxyUrl(mFilename);
+                musicService.getProxy().registerCacheListener(musicService.cacheListener, mFilename);
+                initializeMediaPlayer();
+                mMediaPlayer.setDataSource(proxyUrl);
+                mMediaPlayer.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             setNewState(PlaybackStateCompat.STATE_BUFFERING);
         } else {
             throw new RuntimeException("Failed to open file: " + mFilename);

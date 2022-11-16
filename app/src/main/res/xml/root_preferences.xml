@@ -145,7 +145,7 @@
 <!--            app:useSimpleSummaryProvider="true" />-->
 
         <EditTextPreference
-            app:key="webAllSongList"
+            app:key="SONGLIST_webAllSongList"
             app:title="@string/title_webPlayList"
             app:useSimpleSummaryProvider="true" />
 

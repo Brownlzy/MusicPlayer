@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.0"}
-# pg_map_id: a12da4d
-# pg_map_hash: SHA-256 a12da4ddb171c253f72014d51c0ced61b1b152cc545f799ec04acaab5e5dffc1
+# pg_map_id: d342a1e
+# pg_map_hash: SHA-256 d342a1ee8a0e20eef924f027c1b8e3352a8478cdb9c674eef07796ff3f85dc80
 android.support.v4.app.INotificationSideChannel$Default -> android.support.v4.app.INotificationSideChannel$Default:
     14:14:void <init>() -> <init>
     36:36:android.os.IBinder asBinder() -> asBinder
@@ -25536,6 +25536,222 @@ com.blankj.utilcode.util.UtilsTransActivity$TransActivityDelegate -> com.blankj.
     173:173:void onStopped(com.blankj.utilcode.util.UtilsTransActivity) -> onStopped
 com.blankj.utilcode.util.UtilsTransActivity4MainProcess -> com.blankj.utilcode.util.UtilsTransActivity4MainProcess:
     14:14:void <init>() -> <init>
+com.danikula.videocache.Config -> com.danikula.videocache.Config:
+    23:29:void <init>(java.io.File,com.danikula.videocache.file.FileNameGenerator,com.danikula.videocache.file.DiskUsage,com.danikula.videocache.sourcestorage.SourceInfoStorage,com.danikula.videocache.headers.HeaderInjector) -> <init>
+    32:33:java.io.File generateCacheFile(java.lang.String) -> generateCacheFile
+com.danikula.videocache.GetRequest -> com.danikula.videocache.GetRequest:
+    21:22:void <clinit>() -> <clinit>
+    28:34:void <init>(java.lang.String) -> <init>
+    47:52:long findRangeOffset(java.lang.String) -> findRangeOffset
+    56:60:java.lang.String findUri(java.lang.String) -> findUri
+    37:43:com.danikula.videocache.GetRequest read(java.io.InputStream) -> read
+    65:65:java.lang.String toString() -> toString
+com.danikula.videocache.HttpProxyCache -> com.danikula.videocache.HttpProxyCache:
+    29:32:void <init>(com.danikula.videocache.HttpUrlSource,com.danikula.videocache.file.FileCache) -> <init>
+    103:103:java.lang.String format(java.lang.String,java.lang.Object[]) -> format
+    52:56:boolean isUseCache(com.danikula.videocache.GetRequest) -> isUseCache
+    60:73:java.lang.String newResponseHeaders(com.danikula.videocache.GetRequest) -> newResponseHeaders
+    108:111:void onCachePercentsAvailableChanged(int) -> onCachePercentsAvailableChanged
+    39:49:void processRequest(com.danikula.videocache.GetRequest,java.net.Socket) -> processRequest
+    35:36:void registerCacheListener(com.danikula.videocache.CacheListener) -> registerCacheListener
+    77:84:void responseWithCache(java.io.OutputStream,long) -> responseWithCache
+    87:100:void responseWithoutCache(java.io.OutputStream,long) -> responseWithoutCache
+com.danikula.videocache.HttpProxyCacheServer -> com.danikula.videocache.HttpProxyCacheServer:
+    56:56:void <clinit>() -> <clinit>
+    69:70:void <init>(android.content.Context) -> <init>
+    59:89:void <init>(com.danikula.videocache.Config) -> <init>
+    54:54:void access$100(com.danikula.videocache.HttpProxyCacheServer) -> access$100
+    54:54:void access$200(com.danikula.videocache.HttpProxyCacheServer,java.net.Socket) -> access$200
+    189:189:java.lang.String appendToProxyUrl(java.lang.String) -> appendToProxyUrl
+    303:309:void closeSocket(java.net.Socket) -> closeSocket
+    279:289:void closeSocketInput(java.net.Socket) -> closeSocketInput
+    293:299:void closeSocketOutput(java.net.Socket) -> closeSocketOutput
+    193:195:java.io.File getCacheFile(java.lang.String) -> getCacheFile
+    251:258:com.danikula.videocache.HttpProxyCacheServerClients getClients(java.lang.String) -> getClients
+    262:268:int getClientsCount() -> getClientsCount
+    103:103:java.lang.String getProxyUrl(java.lang.String) -> getProxyUrl
+    117:122:java.lang.String getProxyUrl(java.lang.String,boolean) -> getProxyUrl
+    185:185:boolean isAlive() -> isAlive
+    163:164:boolean isCached(java.lang.String) -> isCached
+    312:313:void onError(java.lang.Throwable) -> onError
+    229:248:void processSocket(java.net.Socket) -> processSocket
+    126:134:void registerCacheListener(com.danikula.videocache.CacheListener,java.lang.String) -> registerCacheListener
+    272:275:void releaseSocket(java.net.Socket) -> releaseSocket
+    200:204:void touchFileSafely(java.io.File) -> touchFileSafely
+    217:225:void waitForRequest() -> waitForRequest
+com.danikula.videocache.HttpProxyCacheServer$Builder -> com.danikula.videocache.HttpProxyCacheServer$Builder:
+    357:363:void <init>(android.content.Context) -> <init>
+    347:347:com.danikula.videocache.Config access$000(com.danikula.videocache.HttpProxyCacheServer$Builder) -> access$000
+    455:455:com.danikula.videocache.Config buildConfig() -> buildConfig
+com.danikula.videocache.HttpProxyCacheServer$SocketProcessorRunnable -> com.danikula.videocache.HttpProxyCacheServer$SocketProcessorRunnable:
+    334:336:void <init>(com.danikula.videocache.HttpProxyCacheServer,java.net.Socket) -> <init>
+    340:341:void run() -> run
+com.danikula.videocache.HttpProxyCacheServer$WaitRequestsRunnable -> com.danikula.videocache.HttpProxyCacheServer$WaitRequestsRunnable:
+    319:321:void <init>(com.danikula.videocache.HttpProxyCacheServer,java.util.concurrent.CountDownLatch) -> <init>
+    325:327:void run() -> run
+com.danikula.videocache.HttpProxyCacheServerClients -> com.danikula.videocache.HttpProxyCacheServerClients:
+    25:36:void <init>(java.lang.String,com.danikula.videocache.Config) -> <init>
+    52:57:void finishProcessRequest() -> finishProcessRequest
+    78:78:int getClientsCount() -> getClientsCount
+    82:86:com.danikula.videocache.HttpProxyCache newHttpProxyCache() -> newHttpProxyCache
+    39:46:void processRequest(com.danikula.videocache.GetRequest,java.net.Socket) -> processRequest
+    60:61:void registerCacheListener(com.danikula.videocache.CacheListener) -> registerCacheListener
+    48:50:void startProcessRequest() -> startProcessRequest
+com.danikula.videocache.HttpProxyCacheServerClients$UiListenerHandler -> com.danikula.videocache.HttpProxyCacheServerClients$UiListenerHandler:
+    95:98:void <init>(java.lang.String,java.util.List) -> <init>
+    110:113:void handleMessage(android.os.Message) -> handleMessage
+    102:106:void onCacheAvailable(java.io.File,java.lang.String,int) -> onCacheAvailable
+com.danikula.videocache.HttpUrlSource -> com.danikula.videocache.HttpUrlSource:
+    36:36:void <clinit>() -> <clinit>
+    46:47:void <init>(java.lang.String) -> <init>
+    50:51:void <init>(java.lang.String,com.danikula.videocache.sourcestorage.SourceInfoStorage) -> <init>
+    53:59:void <init>(java.lang.String,com.danikula.videocache.sourcestorage.SourceInfoStorage,com.danikula.videocache.headers.HeaderInjector) -> <init>
+    61:65:void <init>(com.danikula.videocache.HttpUrlSource) -> <init>
+    102:117:void close() -> close
+    134:153:void fetchContentInfo() -> fetchContentInfo
+    96:97:long getContentLength(java.net.HttpURLConnection) -> getContentLength
+    192:196:java.lang.String getMime() -> getMime
+    200:200:java.lang.String getUrl() -> getUrl
+    186:190:void injectCustomHeaders(java.net.HttpURLConnection,java.lang.String) -> injectCustomHeaders
+    68:72:long length() -> length
+    78:87:void open(long) -> open
+    158:182:java.net.HttpURLConnection openConnection(long,int) -> openConnection
+    121:129:int read(byte[]) -> read
+    90:91:long readSourceAvailableBytes(java.net.HttpURLConnection,long,int) -> readSourceAvailableBytes
+    205:205:java.lang.String toString() -> toString
+com.danikula.videocache.IgnoreHostProxySelector -> com.danikula.videocache.IgnoreHostProxySelector:
+    22:22:void <clinit>() -> <clinit>
+    28:32:void <init>(java.net.ProxySelector,java.lang.String,int) -> <init>
+    48:49:void connectFailed(java.net.URI,java.net.SocketAddress,java.io.IOException) -> connectFailed
+    35:38:void install(java.lang.String,int) -> install
+    42:43:java.util.List select(java.net.URI) -> select
+com.danikula.videocache.InterruptedProxyCacheException -> com.danikula.videocache.InterruptedProxyCacheException:
+    11:12:void <init>(java.lang.String) -> <init>
+    15:16:void <init>(java.lang.String,java.lang.Throwable) -> <init>
+    19:20:void <init>(java.lang.Throwable) -> <init>
+com.danikula.videocache.Pinger -> com.danikula.videocache.Pinger:
+    35:35:void <clinit>() -> <clinit>
+    39:46:void <init>(java.lang.String,int) -> <init>
+    33:33:boolean access$100(com.danikula.videocache.Pinger) -> access$100
+    79:82:java.util.List getDefaultProxies() -> getDefaultProxies
+    116:116:java.lang.String getPingUrl() -> getPingUrl
+    87:87:boolean isPingRequest(java.lang.String) -> isPingRequest
+    49:74:boolean ping(int,int) -> ping
+    97:112:boolean pingServer() -> pingServer
+    91:94:void responseToPing(java.net.Socket) -> responseToPing
+com.danikula.videocache.Pinger$PingCallable -> com.danikula.videocache.Pinger$PingCallable:
+    119:119:void <init>(com.danikula.videocache.Pinger) -> <init>
+    119:119:void <init>(com.danikula.videocache.Pinger,com.danikula.videocache.Pinger$1) -> <init>
+    119:119:java.lang.Object call() -> call
+    123:123:java.lang.Boolean call() -> call
+com.danikula.videocache.Preconditions -> com.danikula.videocache.Preconditions:
+    13:18:void checkAllNotNull(java.lang.Object[]) -> checkAllNotNull
+    28:31:void checkArgument(boolean) -> checkArgument
+    34:37:void checkArgument(boolean,java.lang.String) -> checkArgument
+    6:9:java.lang.Object checkNotNull(java.lang.Object) -> checkNotNull
+    21:24:java.lang.Object checkNotNull(java.lang.Object,java.lang.String) -> checkNotNull
+com.danikula.videocache.ProxyCache -> com.danikula.videocache.ProxyCache:
+    21:21:void <clinit>() -> <clinit>
+    26:37:void <init>(com.danikula.videocache.Source,com.danikula.videocache.Cache) -> <init>
+    19:19:void access$100(com.danikula.videocache.ProxyCache) -> access$100
+    56:61:void checkReadSourceErrorsCount() -> checkReadSourceErrorsCount
+    168:172:void closeSource() -> closeSource
+    163:163:boolean isStopped() -> isStopped
+    97:102:void notifyNewCacheDataAvailable(long,long) -> notifyNewCacheDataAvailable
+    105:113:void onCacheAvailable(long,long) -> onCacheAvailable
+    175:181:void onError(java.lang.Throwable) -> onError
+    150:152:void onSourceRead() -> onSourceRead
+    40:52:int read(byte[],long,int) -> read
+    119:146:void readSource() -> readSource
+    78:84:void readSourceAsync() -> readSourceAsync
+    64:76:void shutdown() -> shutdown
+    155:160:void tryComplete() -> tryComplete
+    87:94:void waitForSourceData() -> waitForSourceData
+com.danikula.videocache.ProxyCache$SourceReaderRunnable -> com.danikula.videocache.ProxyCache$SourceReaderRunnable:
+    183:183:void <init>(com.danikula.videocache.ProxyCache) -> <init>
+    183:183:void <init>(com.danikula.videocache.ProxyCache,com.danikula.videocache.ProxyCache$1) -> <init>
+    187:188:void run() -> run
+com.danikula.videocache.ProxyCacheException -> com.danikula.videocache.ProxyCacheException:
+    13:14:void <init>(java.lang.String) -> <init>
+    17:18:void <init>(java.lang.String,java.lang.Throwable) -> <init>
+    21:22:void <init>(java.lang.Throwable) -> <init>
+com.danikula.videocache.ProxyCacheUtils -> com.danikula.videocache.ProxyCacheUtils:
+    28:28:void <clinit>() -> <clinit>
+    39:42:void assertBuffer(byte[],long,int) -> assertBuffer
+    91:95:java.lang.String bytesToHexString(byte[]) -> bytesToHexString
+    71:78:void close(java.io.Closeable) -> close
+    82:86:java.lang.String computeMD5(java.lang.String) -> computeMD5
+    64:66:java.lang.String decode(java.lang.String) -> decode
+    56:58:java.lang.String encode(java.lang.String) -> encode
+    33:35:java.lang.String getSupposablyMime(java.lang.String) -> getSupposablyMime
+com.danikula.videocache.SourceInfo -> com.danikula.videocache.SourceInfo:
+    14:18:void <init>(java.lang.String,long,java.lang.String) -> <init>
+    22:22:java.lang.String toString() -> toString
+com.danikula.videocache.StorageUtils -> com.danikula.videocache.StorageUtils:
+    23:23:void <clinit>() -> <clinit>
+    51:69:java.io.File getCacheDirectory(android.content.Context,boolean) -> getCacheDirectory
+    73:81:java.io.File getExternalCacheDir(android.content.Context) -> getExternalCacheDir
+    35:36:java.io.File getIndividualCacheDirectory(android.content.Context) -> getIndividualCacheDirectory
+com.danikula.videocache.file.FileCache -> com.danikula.videocache.file.FileCache:
+    27:41:void <init>(java.io.File,com.danikula.videocache.file.DiskUsage) -> <init>
+    65:75:void append(byte[],int) -> append
+    45:48:long available() -> available
+    79:85:void close() -> close
+    88:107:void complete() -> complete
+    111:111:boolean isCompleted() -> isCompleted
+    124:124:boolean isTempFile(java.io.File) -> isTempFile
+    54:59:int read(byte[],long,int) -> read
+com.danikula.videocache.file.Files -> com.danikula.videocache.file.Files:
+    23:23:void <clinit>() -> <clinit>
+    39:45:java.util.List getLruListFiles(java.io.File) -> getLruListFiles
+    26:36:void makeDir(java.io.File) -> makeDir
+    63:75:void modify(java.io.File) -> modify
+    78:81:void recreateZeroSizeFile(java.io.File) -> recreateZeroSizeFile
+    49:60:void setLastModifiedNow(java.io.File) -> setLastModifiedNow
+com.danikula.videocache.file.Files$LastModifiedComparator -> com.danikula.videocache.file.Files$LastModifiedComparator:
+    83:83:void <init>() -> <init>
+    83:83:void <init>(com.danikula.videocache.file.Files$1) -> <init>
+    83:83:int compare(java.lang.Object,java.lang.Object) -> compare
+    87:87:int compare(java.io.File,java.io.File) -> compare
+    91:91:int compareLong(long,long) -> compareLong
+com.danikula.videocache.file.LruDiskUsage -> com.danikula.videocache.file.LruDiskUsage:
+    20:20:void <clinit>() -> <clinit>
+    18:21:void <init>() -> <init>
+    18:18:void access$000(com.danikula.videocache.file.LruDiskUsage,java.io.File) -> access$000
+    56:60:long countTotalSize(java.util.List) -> countTotalSize
+    25:26:void touch(java.io.File) -> touch
+    29:32:void touchInBackground(java.io.File) -> touchInBackground
+    37:53:void trim(java.util.List) -> trim
+com.danikula.videocache.file.LruDiskUsage$TouchCallable -> com.danikula.videocache.file.LruDiskUsage$TouchCallable:
+    67:69:void <init>(com.danikula.videocache.file.LruDiskUsage,java.io.File) -> <init>
+    63:63:java.lang.Object call() -> call
+    73:74:java.lang.Void call() -> call
+com.danikula.videocache.file.Md5FileNameGenerator -> com.danikula.videocache.file.Md5FileNameGenerator:
+    12:12:void <init>() -> <init>
+    18:20:java.lang.String generate(java.lang.String) -> generate
+    24:27:java.lang.String getExtension(java.lang.String) -> getExtension
+com.danikula.videocache.file.TotalSizeLruDiskUsage -> com.danikula.videocache.file.TotalSizeLruDiskUsage:
+    14:19:void <init>(long) -> <init>
+    23:23:boolean accept(java.io.File,long,int) -> accept
+com.danikula.videocache.headers.EmptyHeadersInjector -> com.danikula.videocache.headers.EmptyHeadersInjector:
+    11:11:void <init>() -> <init>
+    15:15:java.util.Map addHeaders(java.lang.String) -> addHeaders
+com.danikula.videocache.sourcestorage.DatabaseSourceInfoStorage -> com.danikula.videocache.sourcestorage.DatabaseSourceInfoStorage:
+    26:26:void <clinit>() -> <clinit>
+    36:38:void <init>(android.content.Context) -> <init>
+    84:87:com.danikula.videocache.SourceInfo convert(android.database.Cursor) -> convert
+    92:96:android.content.ContentValues convert(com.danikula.videocache.SourceInfo) -> convert
+    53:62:com.danikula.videocache.SourceInfo get(java.lang.String) -> get
+    42:44:void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
+    48:48:void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
+    67:76:void put(java.lang.String,com.danikula.videocache.SourceInfo) -> put
+com.danikula.videocache.sourcestorage.NoSourceInfoStorage -> com.danikula.videocache.sourcestorage.NoSourceInfoStorage:
+    10:10:void <init>() -> <init>
+    14:14:com.danikula.videocache.SourceInfo get(java.lang.String) -> get
+    19:19:void put(java.lang.String,com.danikula.videocache.SourceInfo) -> put
+com.danikula.videocache.sourcestorage.SourceInfoStorageFactory -> com.danikula.videocache.sourcestorage.SourceInfoStorageFactory:
+    17:17:com.danikula.videocache.sourcestorage.SourceInfoStorage newEmptySourceInfoStorage() -> newEmptySourceInfoStorage
+    13:13:com.danikula.videocache.sourcestorage.SourceInfoStorage newSourceInfoStorage(android.content.Context) -> newSourceInfoStorage
 com.github.mmin18.widget.AndroidStockBlurImpl -> com.github.mmin18.widget.AndroidStockBlurImpl:
     73:73:void <clinit>() -> <clinit>
     14:14:void <init>() -> <init>
@@ -34070,6 +34286,8 @@ com.google.gson.stream.MalformedJsonException -> com.google.gson.stream.Malforme
     29:30:void <init>(java.lang.String) -> <init>
     33:34:void <init>(java.lang.String,java.lang.Throwable) -> <init>
     37:38:void <init>(java.lang.Throwable) -> <init>
+com.liux.musicplayer.MusicPlayer -> com.liux.musicplayer.MusicPlayer:
+    8:8:void <init>() -> <init>
 com.liux.musicplayer.activities.MainActivity -> com.liux.musicplayer.activities.MainActivity:
     71:959:void <init>() -> <init>
     202:231:void HideSplash(int) -> HideSplash
@@ -34258,18 +34476,31 @@ com.liux.musicplayer.adapters.LyricAdapter -> com.liux.musicplayer.adapters.Lyri
 com.liux.musicplayer.adapters.LyricAdapter$ViewHolder -> com.liux.musicplayer.adapters.LyricAdapter$ViewHolder:
     79:79:void <init>(com.liux.musicplayer.adapters.LyricAdapter) -> <init>
 com.liux.musicplayer.adapters.PlayingListAdapter -> com.liux.musicplayer.adapters.PlayingListAdapter:
+    java.lang.String $r8$lambda$ABRMuNHDJ6bSt6HwU5eRCUDVKY4(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> $r8$lambda$ABRMuNHDJ6bSt6HwU5eRCUDVKY4
+      # {"id":"com.android.tools.r8.synthesized"}
     java.lang.String $r8$lambda$JD5o5gpnHZ-N0drwvHfLrpWpF14(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> $r8$lambda$JD5o5gpnHZ-N0drwvHfLrpWpF14
       # {"id":"com.android.tools.r8.synthesized"}
-    48:52:void <init>(com.liux.musicplayer.activities.MainActivity,java.util.List,com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener) -> <init>
+    50:54:void <init>(com.liux.musicplayer.activities.MainActivity,java.util.List,com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener) -> <init>
     26:26:com.liux.musicplayer.adapters.PlayingListAdapter$RefreshListener access$000(com.liux.musicplayer.adapters.PlayingListAdapter) -> access$000
-    56:59:int getCount() -> getCount
-    64:64:java.lang.Object getItem(int) -> getItem
-    69:69:long getItemId(int) -> getItemId
-    40:40:int getNowPlay() -> getNowPlay
-    74:119:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    58:61:int getCount() -> getCount
+    66:66:java.lang.Object getItem(int) -> getItem
+    71:71:long getItemId(int) -> getItemId
+    42:42:int getNowPlay() -> getNowPlay
+    76:121:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     36:36:java.lang.String lambda$setNowPlay$0(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> lambda$setNowPlay$0
-    35:37:void setNowPlay(java.lang.String) -> setNowPlay
+    38:38:java.lang.String lambda$setNowPlay$1(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> lambda$setNowPlay$1
+    35:39:void setNowPlay(java.lang.String) -> setNowPlay
 com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda0 -> com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$1 com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$1.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$1.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$1.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.Object com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$1.apply(java.lang.Object) -> apply
+      # {"id":"com.android.tools.r8.synthesized"}
+com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda1 -> com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda1:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
     com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$0 com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$0.INSTANCE -> INSTANCE
@@ -34280,13 +34511,13 @@ com.liux.musicplayer.adapters.PlayingListAdapter$$ExternalSyntheticLambda0 -> co
     java.lang.Object com.liux.musicplayer.adapters.PlayingListAdapter$$InternalSyntheticLambda$0$0b9d4bddf419ba3a980946397fb493d6f4d63aeb10c667f53b6352184da78aa4$0.apply(java.lang.Object) -> apply
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.adapters.PlayingListAdapter$1 -> com.liux.musicplayer.adapters.PlayingListAdapter$1:
-    107:107:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
-    110:111:void onClick(android.view.View) -> onClick
+    109:109:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
+    112:113:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.adapters.PlayingListAdapter$2 -> com.liux.musicplayer.adapters.PlayingListAdapter$2:
-    113:113:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
-    116:117:void onClick(android.view.View) -> onClick
+    115:115:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter,int) -> <init>
+    118:119:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.adapters.PlayingListAdapter$ViewHolder -> com.liux.musicplayer.adapters.PlayingListAdapter$ViewHolder:
-    122:122:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter) -> <init>
+    124:124:void <init>(com.liux.musicplayer.adapters.PlayingListAdapter) -> <init>
 com.liux.musicplayer.adapters.SongAdapter -> com.liux.musicplayer.adapters.SongAdapter:
     23:37:void <init>(android.content.Context,java.util.List,android.util.SparseBooleanArray,com.liux.musicplayer.adapters.SongAdapter$PopUpMenuListener) -> <init>
     18:18:com.liux.musicplayer.adapters.SongAdapter$PopUpMenuListener access$000(com.liux.musicplayer.adapters.SongAdapter) -> access$000
@@ -34308,13 +34539,13 @@ com.liux.musicplayer.adapters.SonglistAdapter -> com.liux.musicplayer.adapters.S
     41:43:int getCount() -> getCount
     48:48:java.lang.Object getItem(int) -> getItem
     53:53:long getItemId(int) -> getItemId
-    58:90:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-    102:109:void showAndHideCheckBox() -> showAndHideCheckBox
+    58:92:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    104:111:void showAndHideCheckBox() -> showAndHideCheckBox
 com.liux.musicplayer.adapters.SonglistAdapter$1 -> com.liux.musicplayer.adapters.SonglistAdapter$1:
-    84:84:void <init>(com.liux.musicplayer.adapters.SonglistAdapter,int) -> <init>
-    87:88:void onClick(android.view.View) -> onClick
+    86:86:void <init>(com.liux.musicplayer.adapters.SonglistAdapter,int) -> <init>
+    89:90:void onClick(android.view.View) -> onClick
 com.liux.musicplayer.adapters.SonglistAdapter$ViewHolder -> com.liux.musicplayer.adapters.SonglistAdapter$ViewHolder:
-    93:93:void <init>(com.liux.musicplayer.adapters.SonglistAdapter) -> <init>
+    95:95:void <init>(com.liux.musicplayer.adapters.SonglistAdapter) -> <init>
 com.liux.musicplayer.databinding.ActivityMainBinding -> com.liux.musicplayer.databinding.ActivityMainBinding:
     150:186:void <init>(androidx.constraintlayout.widget.ConstraintLayout,android.widget.LinearLayout,android.widget.LinearLayout,android.widget.ImageView,android.widget.TextView,com.google.android.material.card.MaterialCardView,com.google.android.material.imageview.ShapeableImageView,android.widget.ImageView,com.github.mmin18.widget.RealtimeBlurView,androidx.constraintlayout.widget.ConstraintLayout,android.widget.ImageView,android.widget.ImageView,android.widget.LinearLayout,android.widget.ListView,com.liux.musicplayer.views.AlwaysFocusTextView,android.widget.LinearLayout,com.google.android.material.bottomnavigation.BottomNavigationView,android.widget.TextView,androidx.viewpager2.widget.ViewPager2,com.google.android.material.imageview.ShapeableImageView,com.google.android.material.imageview.ShapeableImageView,com.google.android.material.card.MaterialCardView,android.widget.ImageView,android.widget.ImageView,android.widget.ImageView,android.widget.ImageView,android.widget.ImageView,android.widget.LinearLayout,com.google.android.material.card.MaterialCardView,com.github.mmin18.widget.RealtimeBlurView,android.widget.SeekBar,com.google.android.material.card.MaterialCardView,android.widget.LinearLayout,android.widget.TextView,android.widget.TextView) -> <init>
     215:423:com.liux.musicplayer.databinding.ActivityMainBinding bind(android.view.View) -> bind
@@ -34427,40 +34658,34 @@ com.liux.musicplayer.media.MediaBrowserHelper$MediaControllerCallback$8 -> com.l
     354:354:void <init>(com.liux.musicplayer.media.MediaBrowserHelper$MediaControllerCallback,java.lang.String,android.os.Bundle) -> <init>
     357:358:void perform(android.support.v4.media.session.MediaControllerCompat$Callback) -> perform
 com.liux.musicplayer.media.MediaPlayerAdapter -> com.liux.musicplayer.media.MediaPlayerAdapter:
-    50:69:void <init>(com.liux.musicplayer.services.MusicService,com.liux.musicplayer.media.PlaybackInfoListener) -> <init>
-    44:44:com.liux.musicplayer.media.PlaybackInfoListener access$000(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$000
-    44:44:void access$100(com.liux.musicplayer.media.MediaPlayerAdapter,int) -> access$100
-    44:44:boolean access$200(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$200
-    44:44:java.lang.String access$300(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$300
-    44:44:java.lang.String access$302(com.liux.musicplayer.media.MediaPlayerAdapter,java.lang.String) -> access$302
-    44:44:void access$400(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$400
-    44:44:android.content.Context access$500(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$500
-    44:44:android.media.MediaPlayer access$600(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$600
-    296:324:long getAvailableActions() -> getAvailableActions
-    125:125:android.support.v4.media.MediaMetadataCompat getCurrentMedia() -> getCurrentMedia
-    79:114:void initializeMediaPlayer() -> initializeMediaPlayer
-    231:231:boolean isPlaying() -> isPlaying
-    247:255:void onPause() -> onPause
-    236:243:void onPlay() -> onPlay
-    218:220:void onStop() -> onStop
-    129:195:void playFile(java.lang.String) -> playFile
-    119:121:void playFromMedia(android.support.v4.media.MediaMetadataCompat) -> playFromMedia
-    223:227:void release() -> release
-    329:339:void seekTo(long) -> seekTo
-    259:286:void setNewState(int) -> setNewState
-    349:350:void setRepeating(boolean) -> setRepeating
-    343:346:void setVolume(float) -> setVolume
+    51:70:void <init>(com.liux.musicplayer.services.MusicService,com.liux.musicplayer.media.PlaybackInfoListener) -> <init>
+    45:45:com.liux.musicplayer.media.PlaybackInfoListener access$000(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$000
+    45:45:void access$100(com.liux.musicplayer.media.MediaPlayerAdapter,int) -> access$100
+    45:45:boolean access$200(com.liux.musicplayer.media.MediaPlayerAdapter) -> access$200
+    45:45:java.lang.String access$302(com.liux.musicplayer.media.MediaPlayerAdapter,java.lang.String) -> access$302
+    278:306:long getAvailableActions() -> getAvailableActions
+    132:132:android.support.v4.media.MediaMetadataCompat getCurrentMedia() -> getCurrentMedia
+    80:121:void initializeMediaPlayer() -> initializeMediaPlayer
+    213:213:boolean isPlaying() -> isPlaying
+    229:237:void onPause() -> onPause
+    218:225:void onPlay() -> onPlay
+    200:202:void onStop() -> onStop
+    136:177:void playFile(java.lang.String) -> playFile
+    126:128:void playFromMedia(android.support.v4.media.MediaMetadataCompat) -> playFromMedia
+    205:209:void release() -> release
+    311:321:void seekTo(long) -> seekTo
+    241:268:void setNewState(int) -> setNewState
+    331:332:void setRepeating(boolean) -> setRepeating
+    325:328:void setVolume(float) -> setVolume
 com.liux.musicplayer.media.MediaPlayerAdapter$1 -> com.liux.musicplayer.media.MediaPlayerAdapter$1:
-    81:81:void <init>(com.liux.musicplayer.media.MediaPlayerAdapter) -> <init>
-    84:105:void onCompletion(android.media.MediaPlayer) -> onCompletion
+    82:82:void <init>(com.liux.musicplayer.media.MediaPlayerAdapter) -> <init>
+    85:106:void onCompletion(android.media.MediaPlayer) -> onCompletion
 com.liux.musicplayer.media.MediaPlayerAdapter$2 -> com.liux.musicplayer.media.MediaPlayerAdapter$2:
-    107:107:void <init>(com.liux.musicplayer.media.MediaPlayerAdapter) -> <init>
-    110:111:void onPrepared(android.media.MediaPlayer) -> onPrepared
+    108:108:void <init>(com.liux.musicplayer.media.MediaPlayerAdapter) -> <init>
+    111:112:void onPrepared(android.media.MediaPlayer) -> onPrepared
 com.liux.musicplayer.media.MediaPlayerAdapter$3 -> com.liux.musicplayer.media.MediaPlayerAdapter$3:
-    158:158:void <init>(com.liux.musicplayer.media.MediaPlayerAdapter) -> <init>
-    161:173:void onFileDownloadCompleted(java.util.ArrayList) -> onFileDownloadCompleted
-    184:188:void onFileDownloadError(java.util.ArrayList) -> onFileDownloadError
-    177:178:void onFileDownloading(java.util.ArrayList) -> onFileDownloading
+    114:114:void <init>(com.liux.musicplayer.media.MediaPlayerAdapter) -> <init>
+    117:118:void onBufferingUpdate(android.media.MediaPlayer,int) -> onBufferingUpdate
 com.liux.musicplayer.media.MusicLibrary -> com.liux.musicplayer.media.MusicLibrary:
     boolean $r8$lambda$7EwQchpBscINhhFQfHwuZSyEvx8(java.util.List,com.liux.musicplayer.models.Song) -> $r8$lambda$7EwQchpBscINhhFQfHwuZSyEvx8
       # {"id":"com.android.tools.r8.synthesized"}
@@ -34474,30 +34699,32 @@ com.liux.musicplayer.media.MusicLibrary -> com.liux.musicplayer.media.MusicLibra
       # {"id":"com.android.tools.r8.synthesized"}
     boolean $r8$lambda$sSL_8MMrJ40IUXot7nmjiYRGcd0(java.lang.String,com.liux.musicplayer.models.Song) -> $r8$lambda$sSL_8MMrJ40IUXot7nmjiYRGcd0
       # {"id":"com.android.tools.r8.synthesized"}
-    57:66:void <clinit>() -> <clinit>
-    202:218:void addMusicListToList(java.util.List,java.lang.String) -> addMusicListToList
-    310:317:boolean addNewSongList(java.lang.String,java.lang.String) -> addNewSongList
-    349:361:void deleteMusicFromList(java.lang.String,java.lang.String) -> deleteMusicFromList
-    332:346:void deleteMusicListFromList(java.util.List,java.lang.String) -> deleteMusicListFromList
-    322:329:void deleteSongList(java.lang.String) -> deleteSongList
-    300:306:java.util.List getAllSongListList() -> getAllSongListList
-    264:272:android.support.v4.media.MediaDescriptionCompat getMediaItemDescription(com.liux.musicplayer.models.Song) -> getMediaItemDescription
-    138:153:android.support.v4.media.MediaMetadataCompat getMetadata(android.net.Uri) -> getMetadata
-    156:171:android.support.v4.media.MediaMetadataCompat getMetadata(android.net.Uri,android.support.v4.media.RatingCompat) -> getMetadata
-    253:260:java.util.List getNewPlayingList(java.lang.String) -> getNewPlayingList
-    276:283:java.util.List getPlayingList() -> getPlayingList
-    74:74:java.util.List getPlayingMediaItemList() -> getPlayingMediaItemList
-    234:248:java.util.List getSongListByName(java.lang.String) -> getSongListByName
-    175:176:void init() -> init
-    206:206:java.lang.String lambda$addMusicListToList$2(com.liux.musicplayer.models.Song) -> lambda$addMusicListToList$2
-    207:207:java.lang.String lambda$addMusicListToList$3(com.liux.musicplayer.models.Song) -> lambda$addMusicListToList$3
-    350:350:boolean lambda$deleteMusicFromList$7(java.lang.String,com.liux.musicplayer.models.Song) -> lambda$deleteMusicFromList$7
-    333:333:boolean lambda$deleteMusicListFromList$6(java.util.List,com.liux.musicplayer.models.Song) -> lambda$deleteMusicListFromList$6
-    324:324:boolean lambda$deleteSongList$5(java.lang.String,com.liux.musicplayer.media.MusicLibrary$SongList) -> lambda$deleteSongList$5
-    239:239:boolean lambda$getSongListByName$4(com.liux.musicplayer.models.Song) -> lambda$getSongListByName$4
-    364:372:boolean renameSongList(java.lang.String,java.lang.String) -> renameSongList
-    287:297:void savePlayingList(java.util.List) -> savePlayingList
-    223:231:void updateSongListInfo(java.lang.String) -> updateSongListInfo
+    61:70:void <clinit>() -> <clinit>
+    206:222:void addMusicListToList(java.util.List,java.lang.String) -> addMusicListToList
+    320:327:boolean addNewSongList(java.lang.String,java.lang.String) -> addNewSongList
+    359:371:void deleteMusicFromList(java.lang.String,java.lang.String) -> deleteMusicFromList
+    342:356:void deleteMusicListFromList(java.util.List,java.lang.String) -> deleteMusicListFromList
+    332:339:void deleteSongList(java.lang.String) -> deleteSongList
+    304:310:java.util.List getAllSongListList() -> getAllSongListList
+    268:276:android.support.v4.media.MediaDescriptionCompat getMediaItemDescription(com.liux.musicplayer.models.Song) -> getMediaItemDescription
+    142:157:android.support.v4.media.MediaMetadataCompat getMetadata(android.net.Uri) -> getMetadata
+    160:175:android.support.v4.media.MediaMetadataCompat getMetadata(android.net.Uri,android.support.v4.media.RatingCompat) -> getMetadata
+    257:264:java.util.List getNewPlayingList(java.lang.String) -> getNewPlayingList
+    280:287:java.util.List getPlayingList() -> getPlayingList
+    78:78:java.util.List getPlayingMediaItemList() -> getPlayingMediaItemList
+    238:252:java.util.List getSongListByName(java.lang.String) -> getSongListByName
+    179:180:void init() -> init
+    210:210:java.lang.String lambda$addMusicListToList$2(com.liux.musicplayer.models.Song) -> lambda$addMusicListToList$2
+    211:211:java.lang.String lambda$addMusicListToList$3(com.liux.musicplayer.models.Song) -> lambda$addMusicListToList$3
+    360:360:boolean lambda$deleteMusicFromList$7(java.lang.String,com.liux.musicplayer.models.Song) -> lambda$deleteMusicFromList$7
+    343:343:boolean lambda$deleteMusicListFromList$6(java.util.List,com.liux.musicplayer.models.Song) -> lambda$deleteMusicListFromList$6
+    334:334:boolean lambda$deleteSongList$5(java.lang.String,com.liux.musicplayer.media.MusicLibrary$SongList) -> lambda$deleteSongList$5
+    243:243:boolean lambda$getSongListByName$4(com.liux.musicplayer.models.Song) -> lambda$getSongListByName$4
+    46:46:com.liux.musicplayer.models.Song querySong(java.lang.String) -> querySong
+    313:317:void refreshAllSongListList() -> refreshAllSongListList
+    374:382:boolean renameSongList(java.lang.String,java.lang.String) -> renameSongList
+    291:301:void savePlayingList(java.util.List) -> savePlayingList
+    227:235:void updateSongListInfo(java.lang.String) -> updateSongListInfo
 com.liux.musicplayer.media.MusicLibrary$$ExternalSyntheticLambda0 -> com.liux.musicplayer.media.MusicLibrary$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
@@ -34553,7 +34780,7 @@ com.liux.musicplayer.media.MusicLibrary$$ExternalSyntheticLambda5 -> com.liux.mu
     boolean com.liux.musicplayer.media.MusicLibrary$$InternalSyntheticLambda$0$8b9c5de72730088866af4ec25e47dc8feebcb53a814ff7bc3a025a7cb752a8d2$0.test(java.lang.Object) -> test
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.media.MusicLibrary$SongList -> com.liux.musicplayer.media.MusicLibrary$SongList:
-    50:54:void <init>(java.lang.String,java.lang.String,int) -> <init>
+    54:58:void <init>(java.lang.String,java.lang.String,int) -> <init>
 com.liux.musicplayer.media.PlaybackInfoListener -> com.liux.musicplayer.media.PlaybackInfoListener:
     28:28:void <init>() -> <init>
 com.liux.musicplayer.media.PlayerAdapter -> com.liux.musicplayer.media.PlayerAdapter:
@@ -34584,22 +34811,23 @@ com.liux.musicplayer.models.Song -> com.liux.musicplayer.models.Song:
     43:50:void <init>(java.lang.String,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> <init>
     58:85:void <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.Long) -> <init>
     87:96:void <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> <init>
-    134:144:void <init>(java.lang.String,int,int,int,java.lang.String,java.lang.String,java.lang.String,int,java.lang.String) -> <init>
+    114:124:void <init>(java.lang.String,int,int,int,java.lang.String,java.lang.String,java.lang.String,int,java.lang.String) -> <init>
     15:15:java.lang.Object clone() -> clone
-    173:183:com.liux.musicplayer.models.Song clone() -> clone
-    225:225:java.lang.String getAlbumName() -> getAlbumName
-    234:234:java.lang.String getArtistName() -> getArtistName
-    220:220:java.lang.String getLyricPath() -> getLyricPath
-    100:119:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata(java.lang.String) -> getMetadata
-    211:211:int getSongDuration() -> getSongDuration
-    216:216:java.lang.String getSongPath() -> getSongPath
-    203:203:java.lang.String getSongTitle() -> getSongTitle
-    243:243:java.lang.String getmId() -> getmId
-    267:271:void setLyricPath(java.lang.String) -> setLyricPath
-    192:194:void setmAlbumName(java.lang.String) -> setmAlbumName
-    197:199:void setmArtistName(java.lang.String) -> setmArtistName
-    188:189:void setmTitle(java.lang.String) -> setmTitle
-    252:252:java.lang.String toString() -> toString
+    153:163:com.liux.musicplayer.models.Song clone() -> clone
+    205:205:java.lang.String getAlbumName() -> getAlbumName
+    214:214:java.lang.String getArtistName() -> getArtistName
+    200:200:java.lang.String getLyricPath() -> getLyricPath
+    99:99:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata(java.lang.String) -> getMetadata
+    265:265:java.lang.Long getSize() -> getSize
+    191:191:int getSongDuration() -> getSongDuration
+    196:196:java.lang.String getSongPath() -> getSongPath
+    183:183:java.lang.String getSongTitle() -> getSongTitle
+    223:223:java.lang.String getmId() -> getmId
+    247:251:void setLyricPath(java.lang.String) -> setLyricPath
+    172:174:void setmAlbumName(java.lang.String) -> setmAlbumName
+    177:179:void setmArtistName(java.lang.String) -> setmArtistName
+    168:169:void setmTitle(java.lang.String) -> setmTitle
+    232:232:java.lang.String toString() -> toString
 com.liux.musicplayer.models.User -> com.liux.musicplayer.models.User:
     51:53:void <clinit>() -> <clinit>
     47:47:java.lang.String access$000() -> access$000
@@ -34755,73 +34983,77 @@ com.liux.musicplayer.services.FloatLyricService$MediaBrowserListener -> com.liux
     427:441:void onPlaybackStateChanged(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChanged
     460:461:void onSessionDestroyed() -> onSessionDestroyed
 com.liux.musicplayer.services.MusicService -> com.liux.musicplayer.services.MusicService:
-    41:59:void <init>() -> <init>
-    41:41:boolean access$000(com.liux.musicplayer.services.MusicService) -> access$000
-    41:41:boolean access$002(com.liux.musicplayer.services.MusicService,boolean) -> access$002
-    41:41:android.support.v4.media.session.MediaSessionCompat access$100(com.liux.musicplayer.services.MusicService) -> access$100
-    41:41:com.liux.musicplayer.utils.MediaNotificationManager access$1100(com.liux.musicplayer.services.MusicService) -> access$1100
-    41:41:boolean access$1200(com.liux.musicplayer.services.MusicService) -> access$1200
-    41:41:boolean access$1202(com.liux.musicplayer.services.MusicService,boolean) -> access$1202
-    41:41:boolean access$200(com.liux.musicplayer.services.MusicService) -> access$200
-    41:41:boolean access$202(com.liux.musicplayer.services.MusicService,boolean) -> access$202
-    41:41:com.liux.musicplayer.media.MediaPlayerAdapter access$300(com.liux.musicplayer.services.MusicService) -> access$300
-    41:41:com.liux.musicplayer.utils.LyricUtils access$700(com.liux.musicplayer.services.MusicService) -> access$700
-    135:153:void onCreate() -> onCreate
-    196:197:void onCustomAction(java.lang.String,android.os.Bundle,androidx.media.MediaBrowserServiceCompat$Result) -> onCustomAction
-    166:173:void onDestroy() -> onDestroy
-    178:179:androidx.media.MediaBrowserServiceCompat$BrowserRoot onGetRoot(java.lang.String,int,android.os.Bundle) -> onGetRoot
-    185:192:void onLoadChildren(java.lang.String,androidx.media.MediaBrowserServiceCompat$Result) -> onLoadChildren
-    158:160:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    119:131:void registerLyricReceiver() -> registerLyricReceiver
+    44:71:void <init>() -> <init>
+    44:44:boolean access$000(com.liux.musicplayer.services.MusicService) -> access$000
+    44:44:boolean access$002(com.liux.musicplayer.services.MusicService,boolean) -> access$002
+    44:44:android.support.v4.media.session.MediaSessionCompat access$100(com.liux.musicplayer.services.MusicService) -> access$100
+    44:44:com.liux.musicplayer.utils.MediaNotificationManager access$1100(com.liux.musicplayer.services.MusicService) -> access$1100
+    44:44:boolean access$1200(com.liux.musicplayer.services.MusicService) -> access$1200
+    44:44:boolean access$1202(com.liux.musicplayer.services.MusicService,boolean) -> access$1202
+    44:44:boolean access$200(com.liux.musicplayer.services.MusicService) -> access$200
+    44:44:boolean access$202(com.liux.musicplayer.services.MusicService,boolean) -> access$202
+    44:44:com.liux.musicplayer.media.MediaPlayerAdapter access$300(com.liux.musicplayer.services.MusicService) -> access$300
+    44:44:com.liux.musicplayer.utils.LyricUtils access$700(com.liux.musicplayer.services.MusicService) -> access$700
+    66:69:com.danikula.videocache.HttpProxyCacheServer getProxy() -> getProxy
+    152:170:void onCreate() -> onCreate
+    213:214:void onCustomAction(java.lang.String,android.os.Bundle,androidx.media.MediaBrowserServiceCompat$Result) -> onCustomAction
+    183:190:void onDestroy() -> onDestroy
+    195:196:androidx.media.MediaBrowserServiceCompat$BrowserRoot onGetRoot(java.lang.String,int,android.os.Bundle) -> onGetRoot
+    202:209:void onLoadChildren(java.lang.String,androidx.media.MediaBrowserServiceCompat$Result) -> onLoadChildren
+    175:177:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    136:148:void registerLyricReceiver() -> registerLyricReceiver
+com.liux.musicplayer.services.MusicService$1 -> com.liux.musicplayer.services.MusicService$1:
+    71:71:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
+    74:75:void onCacheAvailable(java.io.File,java.lang.String,int) -> onCacheAvailable
 com.liux.musicplayer.services.MusicService$LyricReceiver -> com.liux.musicplayer.services.MusicService$LyricReceiver:
-    61:61:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
-    65:116:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    78:78:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
+    82:133:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.liux.musicplayer.services.MusicService$MediaPlayerListener -> com.liux.musicplayer.services.MusicService$MediaPlayerListener:
-    735:738:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
-    730:730:com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager access$400(com.liux.musicplayer.services.MusicService$MediaPlayerListener) -> access$400
-    743:743:void onPlaybackCompleted() -> onPlaybackCompleted
-    757:772:void onPlaybackStateChange(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChange
-    747:750:void onPlayingError(java.lang.Exception) -> onPlayingError
+    752:755:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
+    747:747:com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager access$400(com.liux.musicplayer.services.MusicService$MediaPlayerListener) -> access$400
+    760:760:void onPlaybackCompleted() -> onPlaybackCompleted
+    774:789:void onPlaybackStateChange(android.support.v4.media.session.PlaybackStateCompat) -> onPlaybackStateChange
+    764:767:void onPlayingError(java.lang.Exception) -> onPlayingError
 com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager -> com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager:
-    774:774:void <init>(com.liux.musicplayer.services.MusicService$MediaPlayerListener) -> <init>
-    774:774:void access$1000(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$1000
-    774:774:void access$500(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$500
-    774:774:void access$800(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$800
-    774:774:void access$900(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$900
-    811:816:void moveServiceOutOfStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceOutOfStartedState
-    777:790:void moveServiceToStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceToStartedState
-    801:808:void updateNotificationForLyric(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForLyric
-    793:799:void updateNotificationForPause(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForPause
+    791:791:void <init>(com.liux.musicplayer.services.MusicService$MediaPlayerListener) -> <init>
+    791:791:void access$1000(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$1000
+    791:791:void access$500(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$500
+    791:791:void access$800(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$800
+    791:791:void access$900(com.liux.musicplayer.services.MusicService$MediaPlayerListener$ServiceManager,android.support.v4.media.session.PlaybackStateCompat) -> access$900
+    828:833:void moveServiceOutOfStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceOutOfStartedState
+    794:807:void moveServiceToStartedState(android.support.v4.media.session.PlaybackStateCompat) -> moveServiceToStartedState
+    818:825:void updateNotificationForLyric(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForLyric
+    810:816:void updateNotificationForPause(android.support.v4.media.session.PlaybackStateCompat) -> updateNotificationForPause
 com.liux.musicplayer.services.MusicService$MediaSessionCallback -> com.liux.musicplayer.services.MusicService$MediaSessionCallback:
     java.lang.String $r8$lambda$s1C7bGj70cPFIwrYBm5xxAIVSW8(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> $r8$lambda$s1C7bGj70cPFIwrYBm5xxAIVSW8
       # {"id":"com.android.tools.r8.synthesized"}
-    200:210:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
-    708:708:boolean isReadyToPlay() -> isReadyToPlay
-    632:632:java.lang.String lambda$onCustomAction$0(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> lambda$onCustomAction$0
-    240:252:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onAddQueueItem
-    256:294:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat,int) -> onAddQueueItem
-    368:380:void onCommand(java.lang.String,android.os.Bundle,android.os.ResultReceiver) -> onCommand
-    569:662:void onCustomAction(java.lang.String,android.os.Bundle) -> onCustomAction
-    384:387:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
-    499:501:void onPause() -> onPause
-    415:439:void onPlay() -> onPlay
-    466:467:void onPlayFromSearch(java.lang.String,android.os.Bundle) -> onPlayFromSearch
-    471:486:void onPlayFromUri(android.net.Uri,android.os.Bundle) -> onPlayFromUri
-    392:411:void onPrepare() -> onPrepare
-    345:346:void onPrepareFromSearch(java.lang.String,android.os.Bundle) -> onPrepareFromSearch
-    350:364:void onPrepareFromUri(android.net.Uri,android.os.Bundle) -> onPrepareFromUri
-    298:324:void onRemoveQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onRemoveQueueItem
-    683:684:void onSeekTo(long) -> onSeekTo
-    694:705:void onSetCaptioningEnabled(boolean) -> onSetCaptioningEnabled
-    688:690:void onSetRating(android.support.v4.media.RatingCompat) -> onSetRating
-    531:535:void onSetRepeatMode(int) -> onSetRepeatMode
-    539:565:void onSetShuffleMode(int) -> onSetShuffleMode
-    513:527:void onSkipToNext() -> onSkipToNext
-    666:679:void onSkipToPrevious() -> onSkipToPrevious
-    490:495:void onSkipToQueueItem(long) -> onSkipToQueueItem
-    506:509:void onStop() -> onStop
-    712:720:void startTiming() -> startTiming
-    723:725:void stopTiming() -> stopTiming
+    217:227:void <init>(com.liux.musicplayer.services.MusicService) -> <init>
+    725:725:boolean isReadyToPlay() -> isReadyToPlay
+    649:649:java.lang.String lambda$onCustomAction$0(android.support.v4.media.session.MediaSessionCompat$QueueItem) -> lambda$onCustomAction$0
+    257:269:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onAddQueueItem
+    273:311:void onAddQueueItem(android.support.v4.media.MediaDescriptionCompat,int) -> onAddQueueItem
+    385:397:void onCommand(java.lang.String,android.os.Bundle,android.os.ResultReceiver) -> onCommand
+    586:679:void onCustomAction(java.lang.String,android.os.Bundle) -> onCustomAction
+    401:404:boolean onMediaButtonEvent(android.content.Intent) -> onMediaButtonEvent
+    516:518:void onPause() -> onPause
+    432:456:void onPlay() -> onPlay
+    483:484:void onPlayFromSearch(java.lang.String,android.os.Bundle) -> onPlayFromSearch
+    488:503:void onPlayFromUri(android.net.Uri,android.os.Bundle) -> onPlayFromUri
+    409:428:void onPrepare() -> onPrepare
+    362:363:void onPrepareFromSearch(java.lang.String,android.os.Bundle) -> onPrepareFromSearch
+    367:381:void onPrepareFromUri(android.net.Uri,android.os.Bundle) -> onPrepareFromUri
+    315:341:void onRemoveQueueItem(android.support.v4.media.MediaDescriptionCompat) -> onRemoveQueueItem
+    700:701:void onSeekTo(long) -> onSeekTo
+    711:722:void onSetCaptioningEnabled(boolean) -> onSetCaptioningEnabled
+    705:707:void onSetRating(android.support.v4.media.RatingCompat) -> onSetRating
+    548:552:void onSetRepeatMode(int) -> onSetRepeatMode
+    556:582:void onSetShuffleMode(int) -> onSetShuffleMode
+    530:544:void onSkipToNext() -> onSkipToNext
+    683:696:void onSkipToPrevious() -> onSkipToPrevious
+    507:512:void onSkipToQueueItem(long) -> onSkipToQueueItem
+    523:526:void onStop() -> onStop
+    729:737:void startTiming() -> startTiming
+    740:742:void stopTiming() -> stopTiming
 com.liux.musicplayer.services.MusicService$MediaSessionCallback$$ExternalSyntheticLambda0 -> com.liux.musicplayer.services.MusicService$MediaSessionCallback$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
@@ -34833,9 +35065,9 @@ com.liux.musicplayer.services.MusicService$MediaSessionCallback$$ExternalSynthet
     java.lang.Object com.liux.musicplayer.services.MusicService$MediaSessionCallback$$InternalSyntheticLambda$0$9ca4ef73c4c01e9f3faa698df046dfa765df84cf4c422ba2650bcb73af9f2d1b$0.apply(java.lang.Object) -> apply
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.services.MusicService$MediaSessionCallback$TimingThread -> com.liux.musicplayer.services.MusicService$MediaSessionCallback$TimingThread:
-    211:212:void <init>(com.liux.musicplayer.services.MusicService$MediaSessionCallback) -> <init>
-    211:211:void <init>(com.liux.musicplayer.services.MusicService$MediaSessionCallback,com.liux.musicplayer.services.MusicService$1) -> <init>
-    216:235:void run() -> run
+    228:229:void <init>(com.liux.musicplayer.services.MusicService$MediaSessionCallback) -> <init>
+    228:228:void <init>(com.liux.musicplayer.services.MusicService$MediaSessionCallback,com.liux.musicplayer.services.MusicService$1) -> <init>
+    233:252:void run() -> run
 com.liux.musicplayer.ui.HomeFragment -> com.liux.musicplayer.ui.HomeFragment:
     42:393:void <init>() -> <init>
     42:42:boolean access$002(com.liux.musicplayer.ui.HomeFragment,boolean) -> access$002
@@ -34893,42 +35125,45 @@ com.liux.musicplayer.ui.HomeFragment$LyricThread -> com.liux.musicplayer.ui.Home
     333:337:void resumeThread() -> resumeThread
     352:374:void run() -> run
 com.liux.musicplayer.ui.SettingsFragment -> com.liux.musicplayer.ui.SettingsFragment:
+    boolean $r8$lambda$BsnQu2m5rDKQz8277SAaeihD3m8(com.liux.musicplayer.media.MusicLibrary$SongList) -> $r8$lambda$BsnQu2m5rDKQz8277SAaeihD3m8
+      # {"id":"com.android.tools.r8.synthesized"}
     void $r8$lambda$HNLHVJe4zTapuaJekgg47ctnW7U(com.liux.musicplayer.ui.SettingsFragment,java.lang.Boolean) -> $r8$lambda$HNLHVJe4zTapuaJekgg47ctnW7U
       # {"id":"com.android.tools.r8.synthesized"}
     void $r8$lambda$LnySgzsdcLZD26FgaaQqz2w3t_M(com.liux.musicplayer.ui.SettingsFragment,androidx.activity.result.ActivityResult) -> $r8$lambda$LnySgzsdcLZD26FgaaQqz2w3t_M
       # {"id":"com.android.tools.r8.synthesized"}
-    73:73:void <clinit>() -> <clinit>
-    73:253:void <init>() -> <init>
-    73:73:androidx.preference.CheckBoxPreference access$000(com.liux.musicplayer.ui.SettingsFragment) -> access$000
-    73:73:androidx.preference.CheckBoxPreference access$100(com.liux.musicplayer.ui.SettingsFragment) -> access$100
-    73:73:androidx.preference.Preference access$1000(com.liux.musicplayer.ui.SettingsFragment) -> access$1000
-    73:73:androidx.preference.Preference access$1100(com.liux.musicplayer.ui.SettingsFragment) -> access$1100
-    73:73:boolean access$1200(com.liux.musicplayer.ui.SettingsFragment) -> access$1200
-    73:73:androidx.preference.CheckBoxPreference access$1300(com.liux.musicplayer.ui.SettingsFragment) -> access$1300
-    73:73:void access$1400(com.liux.musicplayer.ui.SettingsFragment) -> access$1400
-    73:73:com.liux.musicplayer.viewmodels.MyViewModel access$1500(com.liux.musicplayer.ui.SettingsFragment) -> access$1500
-    73:73:void access$1600(com.liux.musicplayer.ui.SettingsFragment,java.lang.String) -> access$1600
-    73:73:androidx.preference.EditTextPreference access$200(com.liux.musicplayer.ui.SettingsFragment) -> access$200
-    73:73:androidx.preference.Preference access$300(com.liux.musicplayer.ui.SettingsFragment) -> access$300
-    73:73:androidx.preference.SeekBarPreference access$400(com.liux.musicplayer.ui.SettingsFragment) -> access$400
-    73:73:androidx.preference.EditTextPreference access$500(com.liux.musicplayer.ui.SettingsFragment) -> access$500
-    73:73:androidx.preference.EditTextPreference access$600(com.liux.musicplayer.ui.SettingsFragment) -> access$600
-    73:73:androidx.preference.EditTextPreference access$700(com.liux.musicplayer.ui.SettingsFragment) -> access$700
-    73:73:androidx.preference.EditTextPreference access$800(com.liux.musicplayer.ui.SettingsFragment) -> access$800
-    73:73:androidx.preference.EditTextPreference access$900(com.liux.musicplayer.ui.SettingsFragment) -> access$900
-    681:687:boolean askPermission(java.lang.String) -> askPermission
-    666:672:boolean checkFloatPermission(android.content.Context) -> checkFloatPermission
-    661:661:boolean checkPermission(java.lang.String) -> checkPermission
-    742:750:void httpResultHandle(java.lang.String,int) -> httpResultHandle
-    262:565:void initPreferenceListener() -> initPreferenceListener
-    119:134:void lambda$new$0(java.lang.Boolean) -> lambda$new$0
-    137:143:void lambda$new$1(androidx.activity.result.ActivityResult) -> lambda$new$1
-    180:251:void onCreatePreferences(android.os.Bundle,java.lang.String) -> onCreatePreferences
-    705:739:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    568:603:void popInfo() -> popInfo
-    693:699:boolean requestSettingCanDrawOverlays() -> requestSettingCanDrawOverlays
-    608:640:void showLoginDialog() -> showLoginDialog
-    643:656:void showRegisterDialog(java.lang.String) -> showRegisterDialog
+    77:77:void <clinit>() -> <clinit>
+    77:257:void <init>() -> <init>
+    77:77:androidx.preference.CheckBoxPreference access$000(com.liux.musicplayer.ui.SettingsFragment) -> access$000
+    77:77:androidx.preference.CheckBoxPreference access$100(com.liux.musicplayer.ui.SettingsFragment) -> access$100
+    77:77:androidx.preference.Preference access$1000(com.liux.musicplayer.ui.SettingsFragment) -> access$1000
+    77:77:androidx.preference.Preference access$1100(com.liux.musicplayer.ui.SettingsFragment) -> access$1100
+    77:77:boolean access$1200(com.liux.musicplayer.ui.SettingsFragment) -> access$1200
+    77:77:androidx.preference.CheckBoxPreference access$1300(com.liux.musicplayer.ui.SettingsFragment) -> access$1300
+    77:77:void access$1400(com.liux.musicplayer.ui.SettingsFragment) -> access$1400
+    77:77:com.liux.musicplayer.viewmodels.MyViewModel access$1500(com.liux.musicplayer.ui.SettingsFragment) -> access$1500
+    77:77:void access$1600(com.liux.musicplayer.ui.SettingsFragment,java.lang.String) -> access$1600
+    77:77:androidx.preference.EditTextPreference access$200(com.liux.musicplayer.ui.SettingsFragment) -> access$200
+    77:77:androidx.preference.Preference access$300(com.liux.musicplayer.ui.SettingsFragment) -> access$300
+    77:77:androidx.preference.SeekBarPreference access$400(com.liux.musicplayer.ui.SettingsFragment) -> access$400
+    77:77:androidx.preference.EditTextPreference access$500(com.liux.musicplayer.ui.SettingsFragment) -> access$500
+    77:77:androidx.preference.EditTextPreference access$600(com.liux.musicplayer.ui.SettingsFragment) -> access$600
+    77:77:androidx.preference.EditTextPreference access$700(com.liux.musicplayer.ui.SettingsFragment) -> access$700
+    77:77:androidx.preference.EditTextPreference access$800(com.liux.musicplayer.ui.SettingsFragment) -> access$800
+    77:77:androidx.preference.EditTextPreference access$900(com.liux.musicplayer.ui.SettingsFragment) -> access$900
+    694:700:boolean askPermission(java.lang.String) -> askPermission
+    679:685:boolean checkFloatPermission(android.content.Context) -> checkFloatPermission
+    674:674:boolean checkPermission(java.lang.String) -> checkPermission
+    755:775:boolean httpResultHandle(java.lang.String,int) -> httpResultHandle
+    266:578:void initPreferenceListener() -> initPreferenceListener
+    765:765:boolean lambda$httpResultHandle$2(com.liux.musicplayer.media.MusicLibrary$SongList) -> lambda$httpResultHandle$2
+    123:138:void lambda$new$0(java.lang.Boolean) -> lambda$new$0
+    141:147:void lambda$new$1(androidx.activity.result.ActivityResult) -> lambda$new$1
+    184:255:void onCreatePreferences(android.os.Bundle,java.lang.String) -> onCreatePreferences
+    718:752:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    581:616:void popInfo() -> popInfo
+    706:712:boolean requestSettingCanDrawOverlays() -> requestSettingCanDrawOverlays
+    621:653:void showLoginDialog() -> showLoginDialog
+    656:669:void showRegisterDialog(java.lang.String) -> showRegisterDialog
 com.liux.musicplayer.ui.SettingsFragment$$ExternalSyntheticLambda0 -> com.liux.musicplayer.ui.SettingsFragment$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
@@ -34945,122 +35180,139 @@ com.liux.musicplayer.ui.SettingsFragment$$ExternalSyntheticLambda1 -> com.liux.m
       # {"id":"com.android.tools.r8.synthesized"}
     void com.liux.musicplayer.ui.SettingsFragment$$InternalSyntheticLambda$0$411b68c6269f8dc38cd4a3afdd9751ccc1d868464feea40c584a7d68558a9502$0.onActivityResult(java.lang.Object) -> onActivityResult
       # {"id":"com.android.tools.r8.synthesized"}
+com.liux.musicplayer.ui.SettingsFragment$$ExternalSyntheticLambda2 -> com.liux.musicplayer.ui.SettingsFragment$$ExternalSyntheticLambda2:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.ui.SettingsFragment$$InternalSyntheticLambda$0$66f87f76d4e9dae4beff803120569abc324edcfed148db65e9bfbafb04e03971$0 com.liux.musicplayer.ui.SettingsFragment$$InternalSyntheticLambda$0$66f87f76d4e9dae4beff803120569abc324edcfed148db65e9bfbafb04e03971$0.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.ui.SettingsFragment$$InternalSyntheticLambda$0$66f87f76d4e9dae4beff803120569abc324edcfed148db65e9bfbafb04e03971$0.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.ui.SettingsFragment$$InternalSyntheticLambda$0$66f87f76d4e9dae4beff803120569abc324edcfed148db65e9bfbafb04e03971$0.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean com.liux.musicplayer.ui.SettingsFragment$$InternalSyntheticLambda$0$66f87f76d4e9dae4beff803120569abc324edcfed148db65e9bfbafb04e03971$0.test(java.lang.Object) -> test
+      # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.ui.SettingsFragment$1 -> com.liux.musicplayer.ui.SettingsFragment$1:
-    105:105:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    105:105:void onActivityResult(java.lang.Object) -> onActivityResult
-    108:114:void onActivityResult(androidx.activity.result.ActivityResult) -> onActivityResult
+    109:109:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    109:109:void onActivityResult(java.lang.Object) -> onActivityResult
+    112:118:void onActivityResult(androidx.activity.result.ActivityResult) -> onActivityResult
 com.liux.musicplayer.ui.SettingsFragment$10 -> com.liux.musicplayer.ui.SettingsFragment$10:
-    356:356:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    360:362:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    360:360:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    364:366:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$11 -> com.liux.musicplayer.ui.SettingsFragment$11:
-    365:365:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    368:379:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    369:369:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    372:383:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$12 -> com.liux.musicplayer.ui.SettingsFragment$12:
-    382:382:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    385:390:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    386:386:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    389:394:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$13 -> com.liux.musicplayer.ui.SettingsFragment$13:
-    394:394:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    397:401:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    398:398:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    401:405:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$14 -> com.liux.musicplayer.ui.SettingsFragment$14:
-    405:405:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    409:414:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    409:409:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    413:418:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$15 -> com.liux.musicplayer.ui.SettingsFragment$15:
-    417:417:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    421:426:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    421:421:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    425:430:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$16 -> com.liux.musicplayer.ui.SettingsFragment$16:
-    429:429:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    433:434:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    433:433:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    437:438:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$17 -> com.liux.musicplayer.ui.SettingsFragment$17:
-    437:437:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    440:448:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    441:441:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    444:452:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$18 -> com.liux.musicplayer.ui.SettingsFragment$18:
-    452:452:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    455:458:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    456:456:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    459:462:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$19 -> com.liux.musicplayer.ui.SettingsFragment$19:
-    462:462:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    465:468:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    466:466:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    469:472:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$2 -> com.liux.musicplayer.ui.SettingsFragment$2:
-    145:145:void <clinit>() -> <clinit>
-    145:145:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    145:145:void onActivityResult(java.lang.Object) -> onActivityResult
-    148:155:void onActivityResult(androidx.activity.result.ActivityResult) -> onActivityResult
-    159:174:void setNewMainFolder(android.net.Uri) -> setNewMainFolder
+    149:149:void <clinit>() -> <clinit>
+    149:149:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    149:149:void onActivityResult(java.lang.Object) -> onActivityResult
+    152:159:void onActivityResult(androidx.activity.result.ActivityResult) -> onActivityResult
+    163:178:void setNewMainFolder(android.net.Uri) -> setNewMainFolder
 com.liux.musicplayer.ui.SettingsFragment$20 -> com.liux.musicplayer.ui.SettingsFragment$20:
-    472:472:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    475:524:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    476:476:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    479:537:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$20$1 -> com.liux.musicplayer.ui.SettingsFragment$20$1:
-    489:489:void <init>(com.liux.musicplayer.ui.SettingsFragment$20) -> <init>
-    492:500:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
-    504:518:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
+    493:493:void <init>(com.liux.musicplayer.ui.SettingsFragment$20) -> <init>
+    496:504:void onFailure(okhttp3.Call,java.io.IOException) -> onFailure
+    508:525:void onResponse(okhttp3.Call,okhttp3.Response) -> onResponse
 com.liux.musicplayer.ui.SettingsFragment$20$1$1 -> com.liux.musicplayer.ui.SettingsFragment$20$1$1:
-    493:493:void <init>(com.liux.musicplayer.ui.SettingsFragment$20$1) -> <init>
-    496:498:void run() -> run
+    497:497:void <init>(com.liux.musicplayer.ui.SettingsFragment$20$1) -> <init>
+    500:502:void run() -> run
 com.liux.musicplayer.ui.SettingsFragment$20$1$2 -> com.liux.musicplayer.ui.SettingsFragment$20$1$2:
-    507:507:void <init>(com.liux.musicplayer.ui.SettingsFragment$20$1,int,java.lang.String) -> <init>
-    510:516:void run() -> run
+    511:511:void <init>(com.liux.musicplayer.ui.SettingsFragment$20$1,int,java.lang.String) -> <init>
+    514:523:void run() -> run
+com.liux.musicplayer.ui.SettingsFragment$20$2 -> com.liux.musicplayer.ui.SettingsFragment$20$2:
+    531:531:void <init>(com.liux.musicplayer.ui.SettingsFragment$20) -> <init>
+    534:535:void run() -> run
 com.liux.musicplayer.ui.SettingsFragment$21 -> com.liux.musicplayer.ui.SettingsFragment$21:
-    529:529:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    534:538:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    542:542:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    547:551:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$22 -> com.liux.musicplayer.ui.SettingsFragment$22:
-    541:541:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    544:545:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    554:554:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    557:558:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$23 -> com.liux.musicplayer.ui.SettingsFragment$23:
-    548:548:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    551:562:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    561:561:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    564:575:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$24 -> com.liux.musicplayer.ui.SettingsFragment$24:
-    580:580:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    584:584:void onClick(android.content.DialogInterface,int) -> onClick
+    593:593:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    597:597:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$25 -> com.liux.musicplayer.ui.SettingsFragment$25:
-    587:587:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    590:593:void onClick(android.content.DialogInterface,int) -> onClick
+    600:600:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    603:606:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$26 -> com.liux.musicplayer.ui.SettingsFragment$26:
-    596:596:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    599:600:void onClick(android.content.DialogInterface,int) -> onClick
+    609:609:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    612:613:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$27 -> com.liux.musicplayer.ui.SettingsFragment$27:
-    613:613:void <init>(com.liux.musicplayer.ui.SettingsFragment,android.widget.EditText) -> <init>
-    616:620:void onClick(android.content.DialogInterface,int) -> onClick
+    626:626:void <init>(com.liux.musicplayer.ui.SettingsFragment,android.widget.EditText) -> <init>
+    629:633:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$28 -> com.liux.musicplayer.ui.SettingsFragment$28:
-    623:623:void <init>(com.liux.musicplayer.ui.SettingsFragment,android.widget.EditText) -> <init>
-    626:630:void onClick(android.content.DialogInterface,int) -> onClick
+    636:636:void <init>(com.liux.musicplayer.ui.SettingsFragment,android.widget.EditText) -> <init>
+    639:643:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$29 -> com.liux.musicplayer.ui.SettingsFragment$29:
-    633:633:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    636:637:void onClick(android.content.DialogInterface,int) -> onClick
+    646:646:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    649:650:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$3 -> com.liux.musicplayer.ui.SettingsFragment$3:
-    253:253:void <init>(com.liux.musicplayer.ui.SettingsFragment,android.os.Handler) -> <init>
-    256:258:void onReceiveResult(int,android.os.Bundle) -> onReceiveResult
+    257:257:void <init>(com.liux.musicplayer.ui.SettingsFragment,android.os.Handler) -> <init>
+    260:262:void onReceiveResult(int,android.os.Bundle) -> onReceiveResult
 com.liux.musicplayer.ui.SettingsFragment$30 -> com.liux.musicplayer.ui.SettingsFragment$30:
-    650:650:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    653:653:void onClick(android.content.DialogInterface,int) -> onClick
+    663:663:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    666:666:void onClick(android.content.DialogInterface,int) -> onClick
+com.liux.musicplayer.ui.SettingsFragment$31 -> com.liux.musicplayer.ui.SettingsFragment$31:
+    759:759:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
 com.liux.musicplayer.ui.SettingsFragment$4 -> com.liux.musicplayer.ui.SettingsFragment$4:
-    262:262:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    265:266:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    266:266:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    269:270:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$5 -> com.liux.musicplayer.ui.SettingsFragment$5:
-    269:269:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    272:273:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    273:273:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    276:277:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$6 -> com.liux.musicplayer.ui.SettingsFragment$6:
-    276:276:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    280:285:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    280:280:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    284:289:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$7 -> com.liux.musicplayer.ui.SettingsFragment$7:
-    288:288:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    293:298:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    292:292:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    297:302:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$8 -> com.liux.musicplayer.ui.SettingsFragment$8:
-    301:301:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    305:316:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
+    305:305:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    309:320:boolean onPreferenceChange(androidx.preference.Preference,java.lang.Object) -> onPreferenceChange
 com.liux.musicplayer.ui.SettingsFragment$9 -> com.liux.musicplayer.ui.SettingsFragment$9:
-    319:319:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
-    322:353:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
+    323:323:void <init>(com.liux.musicplayer.ui.SettingsFragment) -> <init>
+    326:357:boolean onPreferenceClick(androidx.preference.Preference) -> onPreferenceClick
 com.liux.musicplayer.ui.SettingsFragment$9$1 -> com.liux.musicplayer.ui.SettingsFragment$9$1:
-    338:338:void <init>(com.liux.musicplayer.ui.SettingsFragment$9) -> <init>
-    341:342:void onClick(android.content.DialogInterface,int) -> onClick
+    342:342:void <init>(com.liux.musicplayer.ui.SettingsFragment$9) -> <init>
+    345:346:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SettingsFragment$9$2 -> com.liux.musicplayer.ui.SettingsFragment$9$2:
-    332:332:void <init>(com.liux.musicplayer.ui.SettingsFragment$9) -> <init>
-    336:336:void onClick(android.content.DialogInterface,int) -> onClick
+    336:336:void <init>(com.liux.musicplayer.ui.SettingsFragment$9) -> <init>
+    340:340:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SongListFragment -> com.liux.musicplayer.ui.SongListFragment:
+    java.lang.String $r8$lambda$0DDDiy-SiOuwUzhg6tRX1vHl18c(com.liux.musicplayer.media.MusicLibrary$SongList) -> $r8$lambda$0DDDiy-SiOuwUzhg6tRX1vHl18c
+      # {"id":"com.android.tools.r8.synthesized"}
     void $r8$lambda$6VsohkfzbuXi1B9M3v3J_0xq-ZY(com.liux.musicplayer.ui.SongListFragment,androidx.activity.result.ActivityResult) -> $r8$lambda$6VsohkfzbuXi1B9M3v3J_0xq-ZY
       # {"id":"com.android.tools.r8.synthesized"}
-    java.lang.String $r8$lambda$VowKA-KUV6sndc248dfxFONKoLU(com.liux.musicplayer.utils.MusicUtils$Song) -> $r8$lambda$VowKA-KUV6sndc248dfxFONKoLU
+    java.lang.String $r8$lambda$RcX6rbKV_hPxF1SSA7ivFoKDTug(com.liux.musicplayer.media.MusicLibrary$SongList) -> $r8$lambda$RcX6rbKV_hPxF1SSA7ivFoKDTug
       # {"id":"com.android.tools.r8.synthesized"}
-    java.lang.String $r8$lambda$xpoBOoWnGpLn_CwHRtCyG_kPD1s(com.liux.musicplayer.models.Song) -> $r8$lambda$xpoBOoWnGpLn_CwHRtCyG_kPD1s
+    java.lang.String $r8$lambda$kr9wjX3lUl8z2lcXCWHAXGUbLAM(com.liux.musicplayer.models.Song) -> $r8$lambda$kr9wjX3lUl8z2lcXCWHAXGUbLAM
       # {"id":"com.android.tools.r8.synthesized"}
     65:65:void <clinit>() -> <clinit>
     65:404:void <init>() -> <init>
@@ -35099,42 +35351,43 @@ com.liux.musicplayer.ui.SongListFragment -> com.liux.musicplayer.ui.SongListFrag
     265:271:void addFolder(android.net.Uri) -> addFolder
     432:453:void addNewList() -> addNewList
     456:486:void addNewListFromFolder() -> addNewListFromFolder
-    677:685:void beSureDelete() -> beSureDelete
-    642:646:void cancel() -> cancel
+    682:690:void beSureDelete() -> beSureDelete
+    647:651:void cancel() -> cancel
     297:315:boolean checkChild(java.io.File) -> checkChild
-    649:672:void delete() -> delete
+    654:677:void delete() -> delete
     580:591:void editList() -> editList
-    931:938:void initData() -> initData
-    941:952:void initSongData(java.lang.String) -> initSongData
-    789:877:void initView(android.view.View) -> initView
-    691:702:void inverse() -> inverse
-    260:260:java.lang.String lambda$addAllMusic$1(com.liux.musicplayer.utils.MusicUtils$Song) -> lambda$addAllMusic$1
+    936:943:void initData() -> initData
+    946:957:void initSongData(java.lang.String) -> initSongData
+    794:882:void initView(android.view.View) -> initView
+    696:707:void inverse() -> inverse
     103:110:void lambda$new$0(androidx.activity.result.ActivityResult) -> lambda$new$0
-    710:710:java.lang.String lambda$selectAll$2(com.liux.musicplayer.models.Song) -> lambda$selectAll$2
-    1022:1032:int onBackPressed() -> onBackPressed
+    633:633:java.lang.String lambda$onResume$1(com.liux.musicplayer.media.MusicLibrary$SongList) -> lambda$onResume$1
+    634:634:java.lang.String lambda$onResume$2(com.liux.musicplayer.media.MusicLibrary$SongList) -> lambda$onResume$2
+    715:715:java.lang.String lambda$selectAll$3(com.liux.musicplayer.models.Song) -> lambda$selectAll$3
+    1027:1037:int onBackPressed() -> onBackPressed
     319:327:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
-    638:639:void onDestroyView() -> onDestroyView
-    615:623:void onPause() -> onPause
-    627:634:void onResume() -> onResume
+    643:644:void onDestroyView() -> onDestroyView
+    615:622:void onPause() -> onPause
+    626:639:void onResume() -> onResume
     332:333:void onStart() -> onStart
     549:557:void playThisList() -> playThisList
-    985:985:int positionToMusicId(int) -> positionToMusicId
-    909:926:void refreshList() -> refreshList
+    990:990:int positionToMusicId(int) -> positionToMusicId
+    914:931:void refreshList() -> refreshList
     274:294:void searchFile(java.util.List,java.lang.String) -> searchFile
-    880:888:void searchFromList() -> searchFromList
+    885:893:void searchFromList() -> searchFromList
     594:611:void searchState() -> searchState
-    705:717:void selectAll() -> selectAll
-    720:754:void setOnListViewItemClickListener() -> setOnListViewItemClickListener
-    762:773:void setOnListViewItemLongClickListener() -> setOnListViewItemLongClickListener
-    978:982:void setStateCheckedMap(boolean) -> setStateCheckedMap
-    989:1019:void showMusicDetails(int) -> showMusicDetails
+    710:722:void selectAll() -> selectAll
+    725:759:void setOnListViewItemClickListener() -> setOnListViewItemClickListener
+    767:778:void setOnListViewItemLongClickListener() -> setOnListViewItemLongClickListener
+    983:987:void setStateCheckedMap(boolean) -> setStateCheckedMap
+    994:1024:void showMusicDetails(int) -> showMusicDetails
     560:577:void showNoPermissionDialog() -> showNoPermissionDialog
-    891:906:void showPlaylistHeaderBar(boolean) -> showPlaylistHeaderBar
-    961:972:void showSonglistList(boolean) -> showSonglistList
+    896:911:void showPlaylistHeaderBar(boolean) -> showPlaylistHeaderBar
+    966:977:void showSonglistList(boolean) -> showSonglistList
     489:512:void sortSongPopMenu() -> sortSongPopMenu
     514:537:void sortSonglistPopMenu() -> sortSonglistPopMenu
-    954:958:void unInitSongData() -> unInitSongData
-    776:786:void updateCheckBoxStatus(android.view.View,int) -> updateCheckBoxStatus
+    959:963:void unInitSongData() -> unInitSongData
+    781:791:void updateCheckBoxStatus(android.view.View,int) -> updateCheckBoxStatus
 com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda0 -> com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda0:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
@@ -35146,14 +35399,24 @@ com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda0 -> com.liux.m
 com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda1 -> com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda1:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
-    com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0 com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.INSTANCE -> INSTANCE
-    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.<clinit>() -> <clinit>
+    com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$0 com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$0.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$0.<clinit>() -> <clinit>
       # {"id":"com.android.tools.r8.synthesized"}
-    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.<init>() -> <init>
+    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$0.<init>() -> <init>
       # {"id":"com.android.tools.r8.synthesized"}
-    java.lang.Object com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.apply(java.lang.Object) -> apply
+    java.lang.Object com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$0.apply(java.lang.Object) -> apply
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda2 -> com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda2:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$1 com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$1.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$1.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$1.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.Object com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$0$8baadbbb2e900f7dc5fff5fc908ca668a21055a3c9e249951f7f55b2867ab292$1.apply(java.lang.Object) -> apply
+      # {"id":"com.android.tools.r8.synthesized"}
+com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda3 -> com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda3:
 # {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
 # {"id":"com.android.tools.r8.synthesized"}
     com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f7f836baabed100b9c9a86b00b822a07471b6514312a7dc56e22b173d7545645$0 com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f7f836baabed100b9c9a86b00b822a07471b6514312a7dc56e22b173d7545645$0.INSTANCE -> INSTANCE
@@ -35162,6 +35425,16 @@ com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda2 -> com.liux.m
     void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f7f836baabed100b9c9a86b00b822a07471b6514312a7dc56e22b173d7545645$0.<init>() -> <init>
       # {"id":"com.android.tools.r8.synthesized"}
     java.lang.Object com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f7f836baabed100b9c9a86b00b822a07471b6514312a7dc56e22b173d7545645$0.apply(java.lang.Object) -> apply
+      # {"id":"com.android.tools.r8.synthesized"}
+com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda4 -> com.liux.musicplayer.ui.SongListFragment$$ExternalSyntheticLambda4:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0 com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.Object com.liux.musicplayer.ui.SongListFragment$$InternalSyntheticLambda$1$f16885b727757da9c018e72e92cb355b15d14cb8656d908c343169d1e87bfd0a$0.apply(java.lang.Object) -> apply
       # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.ui.SongListFragment$1 -> com.liux.musicplayer.ui.SongListFragment$1:
     112:112:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
@@ -35189,27 +35462,27 @@ com.liux.musicplayer.ui.SongListFragment$12 -> com.liux.musicplayer.ui.SongListF
     564:564:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
     567:567:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SongListFragment$13 -> com.liux.musicplayer.ui.SongListFragment$13:
-    664:664:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    667:668:void onClick(android.content.DialogInterface,int) -> onClick
+    669:669:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    672:673:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SongListFragment$14 -> com.liux.musicplayer.ui.SongListFragment$14:
-    657:657:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    660:662:void onClick(android.content.DialogInterface,int) -> onClick
+    662:662:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    665:667:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SongListFragment$15 -> com.liux.musicplayer.ui.SongListFragment$15:
-    720:720:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    723:746:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    725:725:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    728:751:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.liux.musicplayer.ui.SongListFragment$16 -> com.liux.musicplayer.ui.SongListFragment$16:
-    748:748:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    751:752:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    753:753:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    756:757:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.liux.musicplayer.ui.SongListFragment$17 -> com.liux.musicplayer.ui.SongListFragment$17:
-    762:762:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    765:770:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
+    767:767:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    770:775:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
 com.liux.musicplayer.ui.SongListFragment$18 -> com.liux.musicplayer.ui.SongListFragment$18:
-    814:814:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    817:818:boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
+    819:819:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    822:823:boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
 com.liux.musicplayer.ui.SongListFragment$19 -> com.liux.musicplayer.ui.SongListFragment$19:
-    825:825:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    856:868:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-    829:851:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
+    830:830:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    861:873:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
+    834:856:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
 com.liux.musicplayer.ui.SongListFragment$2 -> com.liux.musicplayer.ui.SongListFragment$2:
     174:174:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
     177:256:void PopUpMenu(int,android.view.View) -> PopUpMenu
@@ -35229,12 +35502,12 @@ com.liux.musicplayer.ui.SongListFragment$2$1$4 -> com.liux.musicplayer.ui.SongLi
     233:233:void <init>(com.liux.musicplayer.ui.SongListFragment$2$1) -> <init>
     236:239:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SongListFragment$20 -> com.liux.musicplayer.ui.SongListFragment$20:
-    870:870:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    870:870:void onChanged(java.lang.Object) -> onChanged
-    873:875:void onChanged(java.util.List) -> onChanged
+    875:875:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    875:875:void onChanged(java.lang.Object) -> onChanged
+    878:880:void onChanged(java.util.List) -> onChanged
 com.liux.musicplayer.ui.SongListFragment$21 -> com.liux.musicplayer.ui.SongListFragment$21:
-    1008:1008:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
-    1011:1011:void onClick(android.content.DialogInterface,int) -> onClick
+    1013:1013:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
+    1016:1016:void onClick(android.content.DialogInterface,int) -> onClick
 com.liux.musicplayer.ui.SongListFragment$3 -> com.liux.musicplayer.ui.SongListFragment$3:
     335:335:void <init>(com.liux.musicplayer.ui.SongListFragment) -> <init>
     338:402:void onClick(android.view.View) -> onClick
@@ -35349,15 +35622,14 @@ com.liux.musicplayer.utils.MediaNotificationManager -> com.liux.musicplayer.util
     263:263:boolean isAndroidOOrHigher() -> isAndroidOOrHigher
     137:140:void onDestroy() -> onDestroy
 com.liux.musicplayer.utils.MusicUtils -> com.liux.musicplayer.utils.MusicUtils:
-    77:95:android.graphics.Bitmap getAlbumImage(android.content.Context,java.lang.String) -> getAlbumImage
-    100:110:android.graphics.Bitmap getAlbumImage(java.lang.String) -> getAlbumImage
-    116:144:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata(java.lang.String) -> getMetadata
-    176:215:java.util.List getMusicData(android.content.Context) -> getMusicData
-    162:168:java.lang.String millis2FitTimeSpan(long) -> millis2FitTimeSpan
+    79:91:android.graphics.Bitmap getAlbumImage(java.lang.String) -> getAlbumImage
+    101:122:com.liux.musicplayer.utils.MusicUtils$Metadata getMetadata(java.lang.String) -> getMetadata
+    172:210:java.util.List getMusicData(android.content.Context) -> getMusicData
+    96:96:android.graphics.Bitmap getWebAlbumImage(java.lang.String) -> getWebAlbumImage
+    126:140:com.liux.musicplayer.utils.MusicUtils$Metadata getWebMetadata(java.lang.String) -> getWebMetadata
+    158:164:java.lang.String millis2FitTimeSpan(long) -> millis2FitTimeSpan
 com.liux.musicplayer.utils.MusicUtils$Metadata -> com.liux.musicplayer.utils.MusicUtils$Metadata:
-    47:56:void <init>() -> <init>
-com.liux.musicplayer.utils.MusicUtils$Song -> com.liux.musicplayer.utils.MusicUtils$Song:
-    59:67:void <init>() -> <init>
+    49:58:void <init>() -> <init>
 com.liux.musicplayer.utils.RSAUtils -> com.liux.musicplayer.utils.RSAUtils:
     27:41:java.util.Map genKeyPair() -> genKeyPair
     97:104:java.lang.String privateKeyEncrypt(java.lang.String,java.lang.String) -> privateKeyEncrypt
@@ -35366,45 +35638,59 @@ com.liux.musicplayer.utils.SHA256Util -> com.liux.musicplayer.utils.SHA256Util:
     42:52:java.lang.String byte2Hex(byte[]) -> byte2Hex
     22:32:java.lang.String getSHA256StrJava(java.lang.String) -> getSHA256StrJava
 com.liux.musicplayer.utils.SharedPrefs -> com.liux.musicplayer.utils.SharedPrefs:
-    238:239:void cleanOldData() -> cleanOldData
-    39:48:java.util.List getAllSonglistList() -> getAllSonglistList
-    159:159:java.lang.String getCacheList(java.lang.String) -> getCacheList
-    144:144:boolean getIsDeskLyric() -> getIsDeskLyric
-    147:147:boolean getIsDeskLyricLock() -> getIsDeskLyricLock
-    231:231:boolean getIsNeedFastStart() -> getIsNeedFastStart
-    212:212:long getLastCheckUpdateTime() -> getLastCheckUpdateTime
-    227:227:int getLastNewsId() -> getLastNewsId
-    221:221:long getLastNewsUpdateTime() -> getLastNewsUpdateTime
-    167:167:int getNowPlayId() -> getNowPlayId
-    155:155:int getPlayOrder() -> getPlayOrder
-    199:199:java.lang.CharSequence getQueueTitle() -> getQueueTitle
-    180:188:java.util.List getSongListByName(java.lang.String) -> getSongListByName
-    206:206:int getTiming() -> getTiming
-    104:106:com.liux.musicplayer.models.User$UserData getUserData() -> getUserData
-    60:60:int getVersionCode() -> getVersionCode
+    boolean $r8$lambda$iPQ2mb7b_5I2A1ndchi5v1V8Ozg(com.liux.musicplayer.media.MusicLibrary$SongList) -> $r8$lambda$iPQ2mb7b_5I2A1ndchi5v1V8Ozg
+      # {"id":"com.android.tools.r8.synthesized"}
+    245:246:void cleanOldData() -> cleanOldData
+    39:51:java.util.List getAllSonglistList() -> getAllSonglistList
+    166:166:java.lang.String getCacheList(java.lang.String) -> getCacheList
+    151:151:boolean getIsDeskLyric() -> getIsDeskLyric
+    154:154:boolean getIsDeskLyricLock() -> getIsDeskLyricLock
+    238:238:boolean getIsNeedFastStart() -> getIsNeedFastStart
+    55:55:boolean getIsUseWebPlayList() -> getIsUseWebPlayList
+    219:219:long getLastCheckUpdateTime() -> getLastCheckUpdateTime
+    234:234:int getLastNewsId() -> getLastNewsId
+    228:228:long getLastNewsUpdateTime() -> getLastNewsUpdateTime
+    174:174:int getNowPlayId() -> getNowPlayId
+    162:162:int getPlayOrder() -> getPlayOrder
+    206:206:java.lang.CharSequence getQueueTitle() -> getQueueTitle
+    187:195:java.util.List getSongListByName(java.lang.String) -> getSongListByName
+    213:213:int getTiming() -> getTiming
+    111:113:com.liux.musicplayer.models.User$UserData getUserData() -> getUserData
+    67:67:int getVersionCode() -> getVersionCode
     33:36:void init(android.app.Application) -> init
-    52:57:void putAllSonglistList(java.util.List) -> putAllSonglistList
-    163:164:void putCacheList(java.lang.String) -> putCacheList
-    141:142:void putIsDeskLyric(boolean) -> putIsDeskLyric
-    151:152:void putIsDeskLyricLock(boolean) -> putIsDeskLyricLock
-    215:216:void putLastCheckUpdateTime(long) -> putLastCheckUpdateTime
-    224:225:void putLastNewsId(int) -> putLastNewsId
-    218:219:void putLastNewsUpdateTime(long) -> putLastNewsUpdateTime
-    209:210:void putTiming(int) -> putTiming
-    64:71:void putVersionCode() -> putVersionCode
-    175:176:void saveNowPlayId(int) -> saveNowPlayId
-    171:172:void savePlayOrder(int) -> savePlayOrder
-    202:203:void saveQueueTitle(java.lang.String) -> saveQueueTitle
-    192:196:void saveSongListByName(java.util.List,java.lang.String) -> saveSongListByName
-    110:113:void saveUserData(com.liux.musicplayer.models.User$UserData) -> saveUserData
+    49:49:boolean lambda$getAllSonglistList$0(com.liux.musicplayer.media.MusicLibrary$SongList) -> lambda$getAllSonglistList$0
+    59:64:void putAllSonglistList(java.util.List) -> putAllSonglistList
+    170:171:void putCacheList(java.lang.String) -> putCacheList
+    148:149:void putIsDeskLyric(boolean) -> putIsDeskLyric
+    158:159:void putIsDeskLyricLock(boolean) -> putIsDeskLyricLock
+    222:223:void putLastCheckUpdateTime(long) -> putLastCheckUpdateTime
+    231:232:void putLastNewsId(int) -> putLastNewsId
+    225:226:void putLastNewsUpdateTime(long) -> putLastNewsUpdateTime
+    216:217:void putTiming(int) -> putTiming
+    71:78:void putVersionCode() -> putVersionCode
+    182:183:void saveNowPlayId(int) -> saveNowPlayId
+    178:179:void savePlayOrder(int) -> savePlayOrder
+    209:210:void saveQueueTitle(java.lang.String) -> saveQueueTitle
+    199:203:void saveSongListByName(java.util.List,java.lang.String) -> saveSongListByName
+    117:120:void saveUserData(com.liux.musicplayer.models.User$UserData) -> saveUserData
+com.liux.musicplayer.utils.SharedPrefs$$ExternalSyntheticLambda0 -> com.liux.musicplayer.utils.SharedPrefs$$ExternalSyntheticLambda0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    com.liux.musicplayer.utils.SharedPrefs$$InternalSyntheticLambda$0$b3ed8fb5f6276e3d728b197b7e6d390da070b5e4e6e8452d1c31334e6178ae0d$0 com.liux.musicplayer.utils.SharedPrefs$$InternalSyntheticLambda$0$b3ed8fb5f6276e3d728b197b7e6d390da070b5e4e6e8452d1c31334e6178ae0d$0.INSTANCE -> INSTANCE
+    void com.liux.musicplayer.utils.SharedPrefs$$InternalSyntheticLambda$0$b3ed8fb5f6276e3d728b197b7e6d390da070b5e4e6e8452d1c31334e6178ae0d$0.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    void com.liux.musicplayer.utils.SharedPrefs$$InternalSyntheticLambda$0$b3ed8fb5f6276e3d728b197b7e6d390da070b5e4e6e8452d1c31334e6178ae0d$0.<init>() -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean com.liux.musicplayer.utils.SharedPrefs$$InternalSyntheticLambda$0$b3ed8fb5f6276e3d728b197b7e6d390da070b5e4e6e8452d1c31334e6178ae0d$0.test(java.lang.Object) -> test
+      # {"id":"com.android.tools.r8.synthesized"}
 com.liux.musicplayer.utils.SharedPrefs$1 -> com.liux.musicplayer.utils.SharedPrefs$1:
     40:40:void <init>() -> <init>
 com.liux.musicplayer.utils.SharedPrefs$2 -> com.liux.musicplayer.utils.SharedPrefs$2:
-    53:53:void <init>() -> <init>
+    60:60:void <init>() -> <init>
 com.liux.musicplayer.utils.SharedPrefs$3 -> com.liux.musicplayer.utils.SharedPrefs$3:
-    182:182:void <init>() -> <init>
+    189:189:void <init>() -> <init>
 com.liux.musicplayer.utils.SharedPrefs$4 -> com.liux.musicplayer.utils.SharedPrefs$4:
-    193:193:void <init>() -> <init>
+    200:200:void <init>() -> <init>
 com.liux.musicplayer.utils.UpdateUtils -> com.liux.musicplayer.utils.UpdateUtils:
     37:37:void <clinit>() -> <clinit>
     36:36:void access$000(android.content.Context,java.lang.String,boolean) -> access$000
@@ -46039,3 +46325,413 @@ okio.internal._SegmentedByteStringKt -> okio.internal._SegmentedByteStringKt:
 # {"id":"sourceFile","fileName":"-SegmentedByteString.kt"}
     31:46:int binarySearch(int[],int,int,int) -> binarySearch
     52:53:int segment(okio.SegmentedByteString,int) -> segment
+org.slf4j.LoggerFactory -> org.slf4j.LoggerFactory:
+    85:290:void <clinit>() -> <clinit>
+    105:106:void <init>() -> <init>
+    142:181:void bind() -> bind
+    219:226:void emitReplayOrSubstituionWarning(org.slf4j.event.SubstituteLoggingEvent,int) -> emitReplayOrSubstituionWarning
+    256:259:void emitReplayWarning(int) -> emitReplayWarning
+    248:253:void emitSubstitutionWarning() -> emitSubstitutionWarning
+    195:197:void failedBinding(java.lang.Throwable) -> failedBinding
+    296:312:java.util.Set findPossibleStaticLoggerBinderPathSet() -> findPossibleStaticLoggerBinderPathSet
+    184:192:void fixSubstituteLoggers() -> fixSubstituteLoggers
+    408:428:org.slf4j.ILoggerFactory getILoggerFactory() -> getILoggerFactory
+    357:358:org.slf4j.Logger getLogger(java.lang.String) -> getLogger
+    316:316:boolean isAmbiguousStaticLoggerBinderPathSet(java.util.Set) -> isAmbiguousStaticLoggerBinderPathSet
+    335:338:boolean isAndroid() -> isAndroid
+    131:137:boolean messageContainsOrgSlf4jImplStaticLoggerBinder(java.lang.String) -> messageContainsOrgSlf4jImplStaticLoggerBinder
+    124:128:void performInitialization() -> performInitialization
+    200:216:void replayEvents() -> replayEvents
+    229:245:void replaySingleEvent(org.slf4j.event.SubstituteLoggingEvent) -> replaySingleEvent
+    343:346:void reportActualBinding(java.util.Set) -> reportActualBinding
+    325:332:void reportMultipleBindingAmbiguity(java.util.Set) -> reportMultipleBindingAmbiguity
+    263:285:void versionSanityCheck() -> versionSanityCheck
+org.slf4j.event.EventRecodingLogger -> org.slf4j.event.EventRecodingLogger:
+    15:19:void <init>(org.slf4j.helpers.SubstituteLogger,java.util.Queue) -> <init>
+    99:100:void debug(java.lang.String) -> debug
+    248:249:void error(java.lang.String) -> error
+    267:268:void error(java.lang.String,java.lang.Throwable) -> error
+    149:150:void info(java.lang.String) -> info
+    26:27:void recordEvent(org.slf4j.event.Level,java.lang.String,java.lang.Object[],java.lang.Throwable) -> recordEvent
+    31:42:void recordEvent(org.slf4j.event.Level,org.slf4j.Marker,java.lang.String,java.lang.Object[],java.lang.Throwable) -> recordEvent
+    198:199:void warn(java.lang.String) -> warn
+    202:204:void warn(java.lang.String,java.lang.Object) -> warn
+    207:208:void warn(java.lang.String,java.lang.Object,java.lang.Object) -> warn
+    215:216:void warn(java.lang.String,java.lang.Throwable) -> warn
+org.slf4j.event.Level -> org.slf4j.event.Level:
+    14:16:void <clinit>() -> <clinit>
+    21:24:void <init>(java.lang.String,int,int,java.lang.String) -> <init>
+    27:27:int toInt() -> toInt
+    34:34:java.lang.String toString() -> toString
+    14:14:org.slf4j.event.Level valueOf(java.lang.String) -> valueOf
+    14:14:org.slf4j.event.Level[] values() -> values
+org.slf4j.event.SubstituteLoggingEvent -> org.slf4j.event.SubstituteLoggingEvent:
+    6:6:void <init>() -> <init>
+    43:43:org.slf4j.helpers.SubstituteLogger getLogger() -> getLogger
+    63:64:void setArgumentArray(java.lang.Object[]) -> setArgumentArray
+    23:24:void setLevel(org.slf4j.event.Level) -> setLevel
+    47:48:void setLogger(org.slf4j.helpers.SubstituteLogger) -> setLogger
+    39:40:void setLoggerName(java.lang.String) -> setLoggerName
+    55:56:void setMessage(java.lang.String) -> setMessage
+    79:80:void setThreadName(java.lang.String) -> setThreadName
+    87:88:void setThrowable(java.lang.Throwable) -> setThrowable
+    71:72:void setTimeStamp(long) -> setTimeStamp
+org.slf4j.helpers.FormattingTuple -> org.slf4j.helpers.FormattingTuple:
+    34:34:void <clinit>() -> <clinit>
+    41:42:void <init>(java.lang.String) -> <init>
+    44:48:void <init>(java.lang.String,java.lang.Object[],java.lang.Throwable) -> <init>
+    51:51:java.lang.String getMessage() -> getMessage
+    59:59:java.lang.Throwable getThrowable() -> getThrowable
+org.slf4j.helpers.MarkerIgnoringBase -> org.slf4j.helpers.MarkerIgnoringBase:
+    38:38:void <init>() -> <init>
+    void debug(java.lang.String) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Object) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Object,java.lang.Object) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Throwable) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Object[]) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    71:72:void debug(org.slf4j.Marker,java.lang.String) -> debug
+    75:76:void debug(org.slf4j.Marker,java.lang.String,java.lang.Object) -> debug
+    79:80:void debug(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> debug
+    83:84:void debug(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> debug
+    87:88:void debug(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> debug
+    void error(java.lang.String) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Object) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Object,java.lang.Object) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Throwable) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Object[]) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    143:144:void error(org.slf4j.Marker,java.lang.String) -> error
+    147:148:void error(org.slf4j.Marker,java.lang.String,java.lang.Object) -> error
+    151:152:void error(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> error
+    155:156:void error(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> error
+    159:160:void error(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> error
+    38:38:java.lang.String getName() -> getName
+    void info(java.lang.String) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Object) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Object,java.lang.Object) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Throwable) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Object[]) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    95:96:void info(org.slf4j.Marker,java.lang.String) -> info
+    99:100:void info(org.slf4j.Marker,java.lang.String,java.lang.Object) -> info
+    103:104:void info(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> info
+    107:108:void info(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> info
+    111:112:void info(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> info
+    boolean isDebugEnabled() -> isDebugEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    67:67:boolean isDebugEnabled(org.slf4j.Marker) -> isDebugEnabled
+    boolean isErrorEnabled() -> isErrorEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    139:139:boolean isErrorEnabled(org.slf4j.Marker) -> isErrorEnabled
+    boolean isInfoEnabled() -> isInfoEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    91:91:boolean isInfoEnabled(org.slf4j.Marker) -> isInfoEnabled
+    boolean isTraceEnabled() -> isTraceEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    43:43:boolean isTraceEnabled(org.slf4j.Marker) -> isTraceEnabled
+    boolean isWarnEnabled() -> isWarnEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    115:115:boolean isWarnEnabled(org.slf4j.Marker) -> isWarnEnabled
+    163:163:java.lang.String toString() -> toString
+    void trace(java.lang.String) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Object) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Object,java.lang.Object) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Throwable) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Object[]) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    47:48:void trace(org.slf4j.Marker,java.lang.String) -> trace
+    51:52:void trace(org.slf4j.Marker,java.lang.String,java.lang.Object) -> trace
+    55:56:void trace(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> trace
+    59:60:void trace(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> trace
+    63:64:void trace(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> trace
+    void warn(java.lang.String) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Object) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Object,java.lang.Object) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Throwable) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Object[]) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    119:120:void warn(org.slf4j.Marker,java.lang.String) -> warn
+    123:124:void warn(org.slf4j.Marker,java.lang.String,java.lang.Object) -> warn
+    127:128:void warn(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> warn
+    131:132:void warn(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> warn
+    135:136:void warn(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> warn
+org.slf4j.helpers.MessageFormatter -> org.slf4j.helpers.MessageFormatter:
+    168:173:org.slf4j.helpers.FormattingTuple arrayFormat(java.lang.String,java.lang.Object[]) -> arrayFormat
+    188:240:org.slf4j.helpers.FormattingTuple arrayFormat(java.lang.String,java.lang.Object[],java.lang.Throwable) -> arrayFormat
+    327:335:void booleanArrayAppend(java.lang.StringBuilder,boolean[]) -> booleanArrayAppend
+    338:346:void byteArrayAppend(java.lang.StringBuilder,byte[]) -> byteArrayAppend
+    349:357:void charArrayAppend(java.lang.StringBuilder,char[]) -> charArrayAppend
+    266:295:void deeplyAppendParameter(java.lang.StringBuilder,java.lang.Object,java.util.Map) -> deeplyAppendParameter
+    404:412:void doubleArrayAppend(java.lang.StringBuilder,double[]) -> doubleArrayAppend
+    393:401:void floatArrayAppend(java.lang.StringBuilder,float[]) -> floatArrayAppend
+    156:164:java.lang.Throwable getThrowableCandidate(java.lang.Object[]) -> getThrowableCandidate
+    371:379:void intArrayAppend(java.lang.StringBuilder,int[]) -> intArrayAppend
+    257:260:boolean isDoubleEscaped(java.lang.String,int) -> isDoubleEscaped
+    245:252:boolean isEscapedDelimeter(java.lang.String,int) -> isEscapedDelimeter
+    382:390:void longArrayAppend(java.lang.StringBuilder,long[]) -> longArrayAppend
+    309:324:void objectArrayAppend(java.lang.StringBuilder,java.lang.Object[],java.util.Map) -> objectArrayAppend
+    299:306:void safeObjectAppend(java.lang.StringBuilder,java.lang.Object) -> safeObjectAppend
+    360:368:void shortArrayAppend(java.lang.StringBuilder,short[]) -> shortArrayAppend
+    177:183:java.lang.Object[] trimmedCopy(java.lang.Object[]) -> trimmedCopy
+org.slf4j.helpers.NOPLogger -> org.slf4j.helpers.NOPLogger:
+    42:42:void <clinit>() -> <clinit>
+    48:49:void <init>() -> <init>
+    102:102:void debug(java.lang.String) -> debug
+    107:107:void debug(java.lang.String,java.lang.Object) -> debug
+    112:112:void debug(java.lang.String,java.lang.Object,java.lang.Object) -> debug
+    117:117:void debug(java.lang.String,java.lang.Object[]) -> debug
+    122:122:void debug(java.lang.String,java.lang.Throwable) -> debug
+    199:199:void error(java.lang.String) -> error
+    204:204:void error(java.lang.String,java.lang.Object) -> error
+    209:209:void error(java.lang.String,java.lang.Object,java.lang.Object) -> error
+    214:214:void error(java.lang.String,java.lang.Object[]) -> error
+    219:219:void error(java.lang.String,java.lang.Throwable) -> error
+    55:55:java.lang.String getName() -> getName
+    136:136:void info(java.lang.String) -> info
+    141:141:void info(java.lang.String,java.lang.Object) -> info
+    146:146:void info(java.lang.String,java.lang.Object,java.lang.Object) -> info
+    151:151:void info(java.lang.String,java.lang.Object[]) -> info
+    156:156:void info(java.lang.String,java.lang.Throwable) -> info
+    96:96:boolean isDebugEnabled() -> isDebugEnabled
+    193:193:boolean isErrorEnabled() -> isErrorEnabled
+    130:130:boolean isInfoEnabled() -> isInfoEnabled
+    63:63:boolean isTraceEnabled() -> isTraceEnabled
+    163:163:boolean isWarnEnabled() -> isWarnEnabled
+    69:69:void trace(java.lang.String) -> trace
+    74:74:void trace(java.lang.String,java.lang.Object) -> trace
+    79:79:void trace(java.lang.String,java.lang.Object,java.lang.Object) -> trace
+    84:84:void trace(java.lang.String,java.lang.Object[]) -> trace
+    89:89:void trace(java.lang.String,java.lang.Throwable) -> trace
+    169:169:void warn(java.lang.String) -> warn
+    174:174:void warn(java.lang.String,java.lang.Object) -> warn
+    179:179:void warn(java.lang.String,java.lang.Object,java.lang.Object) -> warn
+    184:184:void warn(java.lang.String,java.lang.Object[]) -> warn
+    189:189:void warn(java.lang.String,java.lang.Throwable) -> warn
+org.slf4j.helpers.NOPLoggerFactory -> org.slf4j.helpers.NOPLoggerFactory:
+    40:42:void <init>() -> <init>
+    45:45:org.slf4j.Logger getLogger(java.lang.String) -> getLogger
+org.slf4j.helpers.NamedLoggerBase -> org.slf4j.helpers.NamedLoggerBase:
+    40:40:void <init>() -> <init>
+    void debug(java.lang.String) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Object) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Object,java.lang.Object) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Throwable) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(java.lang.String,java.lang.Object[]) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(org.slf4j.Marker,java.lang.String) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(org.slf4j.Marker,java.lang.String,java.lang.Object) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void debug(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> debug
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Object) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Object,java.lang.Object) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Throwable) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(java.lang.String,java.lang.Object[]) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(org.slf4j.Marker,java.lang.String) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(org.slf4j.Marker,java.lang.String,java.lang.Object) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    void error(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> error
+      # {"id":"com.android.tools.r8.synthesized"}
+    47:47:java.lang.String getName() -> getName
+    void info(java.lang.String) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Object) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Object,java.lang.Object) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Throwable) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(java.lang.String,java.lang.Object[]) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(org.slf4j.Marker,java.lang.String) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(org.slf4j.Marker,java.lang.String,java.lang.Object) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    void info(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> info
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isDebugEnabled() -> isDebugEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isDebugEnabled(org.slf4j.Marker) -> isDebugEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isErrorEnabled() -> isErrorEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isErrorEnabled(org.slf4j.Marker) -> isErrorEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isInfoEnabled() -> isInfoEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isInfoEnabled(org.slf4j.Marker) -> isInfoEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isTraceEnabled() -> isTraceEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isTraceEnabled(org.slf4j.Marker) -> isTraceEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isWarnEnabled() -> isWarnEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    boolean isWarnEnabled(org.slf4j.Marker) -> isWarnEnabled
+      # {"id":"com.android.tools.r8.synthesized"}
+    67:67:java.lang.Object readResolve() -> readResolve
+    void trace(java.lang.String) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Object) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Object,java.lang.Object) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Throwable) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(java.lang.String,java.lang.Object[]) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(org.slf4j.Marker,java.lang.String) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(org.slf4j.Marker,java.lang.String,java.lang.Object) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void trace(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> trace
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Object) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Object,java.lang.Object) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Throwable) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(java.lang.String,java.lang.Object[]) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(org.slf4j.Marker,java.lang.String) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(org.slf4j.Marker,java.lang.String,java.lang.Object) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(org.slf4j.Marker,java.lang.String,java.lang.Object,java.lang.Object) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(org.slf4j.Marker,java.lang.String,java.lang.Throwable) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+    void warn(org.slf4j.Marker,java.lang.String,java.lang.Object[]) -> warn
+      # {"id":"com.android.tools.r8.synthesized"}
+org.slf4j.helpers.SubstituteLogger -> org.slf4j.helpers.SubstituteLogger:
+    58:62:void <init>(java.lang.String,java.util.Queue,boolean) -> <init>
+    121:122:void debug(java.lang.String) -> debug
+    333:339:org.slf4j.Logger delegate() -> delegate
+    310:320:boolean equals(java.lang.Object) -> equals
+    265:266:void error(java.lang.String) -> error
+    281:282:void error(java.lang.String,java.lang.Throwable) -> error
+    344:347:org.slf4j.Logger getEventRecordingLogger() -> getEventRecordingLogger
+    65:65:java.lang.String getName() -> getName
+    325:325:int hashCode() -> hashCode
+    169:170:void info(java.lang.String) -> info
+    359:368:boolean isDelegateEventAware() -> isDelegateEventAware
+    388:388:boolean isDelegateNOP() -> isDelegateNOP
+    384:384:boolean isDelegateNull() -> isDelegateNull
+    372:380:void log(org.slf4j.event.LoggingEvent) -> log
+    355:356:void setDelegate(org.slf4j.Logger) -> setDelegate
+    217:218:void warn(java.lang.String) -> warn
+    221:222:void warn(java.lang.String,java.lang.Object) -> warn
+    225:226:void warn(java.lang.String,java.lang.Object,java.lang.Object) -> warn
+    233:234:void warn(java.lang.String,java.lang.Throwable) -> warn
+org.slf4j.helpers.SubstituteLoggerFactory -> org.slf4j.helpers.SubstituteLoggerFactory:
+    43:49:void <init>() -> <init>
+    77:79:void clear() -> clear
+    69:69:java.util.concurrent.LinkedBlockingQueue getEventQueue() -> getEventQueue
+    51:57:org.slf4j.Logger getLogger(java.lang.String) -> getLogger
+    65:65:java.util.List getLoggers() -> getLoggers
+    73:74:void postInitialization() -> postInitialization
+org.slf4j.helpers.Util -> org.slf4j.helpers.Util:
+    71:71:void <clinit>() -> <clinit>
+    121:124:void report(java.lang.String,java.lang.Throwable) -> report
+    127:128:void report(java.lang.String) -> report
+    52:56:boolean safeGetBooleanSystemProperty(java.lang.String) -> safeGetBooleanSystemProperty
+    39:48:java.lang.String safeGetSystemProperty(java.lang.String) -> safeGetSystemProperty
+org.slf4j.impl.AndroidLoggerAdapter -> org.slf4j.impl.AndroidLoggerAdapter:
+    88:90:void <init>(java.lang.String) -> <init>
+    195:196:void debug(java.lang.String) -> debug
+    212:213:void debug(java.lang.String,java.lang.Object) -> debug
+    232:233:void debug(java.lang.String,java.lang.Object,java.lang.Object) -> debug
+    250:251:void debug(java.lang.String,java.lang.Object[]) -> debug
+    262:263:void debug(java.lang.String,java.lang.Throwable) -> debug
+    457:458:void error(java.lang.String) -> error
+    475:476:void error(java.lang.String,java.lang.Object) -> error
+    495:496:void error(java.lang.String,java.lang.Object,java.lang.Object) -> error
+    513:514:void error(java.lang.String,java.lang.Object[]) -> error
+    526:527:void error(java.lang.String,java.lang.Throwable) -> error
+    530:534:void formatAndLog(int,java.lang.String,java.lang.Object[]) -> formatAndLog
+    281:282:void info(java.lang.String) -> info
+    298:299:void info(java.lang.String,java.lang.Object) -> info
+    318:319:void info(java.lang.String,java.lang.Object,java.lang.Object) -> info
+    336:337:void info(java.lang.String,java.lang.Object[]) -> info
+    349:350:void info(java.lang.String,java.lang.Throwable) -> info
+    185:185:boolean isDebugEnabled() -> isDebugEnabled
+    447:447:boolean isErrorEnabled() -> isErrorEnabled
+    271:271:boolean isInfoEnabled() -> isInfoEnabled
+    543:543:boolean isLoggable(int) -> isLoggable
+    98:98:boolean isTraceEnabled() -> isTraceEnabled
+    359:359:boolean isWarnEnabled() -> isWarnEnabled
+    537:540:void log(int,java.lang.String,java.lang.Throwable) -> log
+    547:551:void logInternal(int,java.lang.String,java.lang.Throwable) -> logInternal
+    108:109:void trace(java.lang.String) -> trace
+    126:127:void trace(java.lang.String,java.lang.Object) -> trace
+    146:147:void trace(java.lang.String,java.lang.Object,java.lang.Object) -> trace
+    164:165:void trace(java.lang.String,java.lang.Object[]) -> trace
+    176:177:void trace(java.lang.String,java.lang.Throwable) -> trace
+    369:370:void warn(java.lang.String) -> warn
+    387:388:void warn(java.lang.String,java.lang.Object) -> warn
+    407:408:void warn(java.lang.String,java.lang.Object,java.lang.Object) -> warn
+    425:426:void warn(java.lang.String,java.lang.Object[]) -> warn
+    438:439:void warn(java.lang.String,java.lang.Throwable) -> warn
+org.slf4j.impl.AndroidLoggerFactory -> org.slf4j.impl.AndroidLoggerFactory:
+    39:43:void <init>() -> <init>
+    49:56:org.slf4j.Logger getLogger(java.lang.String) -> getLogger
+    118:120:java.lang.String getSimpleName(java.lang.String) -> getSimpleName
+    74:113:java.lang.String loggerNameToTag(java.lang.String) -> loggerNameToTag
+org.slf4j.impl.StaticLoggerBinder -> org.slf4j.impl.StaticLoggerBinder:
+    43:61:void <clinit>() -> <clinit>
+    69:71:void <init>() -> <init>
+    74:74:org.slf4j.ILoggerFactory getLoggerFactory() -> getLoggerFactory
+    78:78:java.lang.String getLoggerFactoryClassStr() -> getLoggerFactoryClassStr
+    51:51:org.slf4j.impl.StaticLoggerBinder getSingleton() -> getSingleton

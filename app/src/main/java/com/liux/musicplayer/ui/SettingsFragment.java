@@ -47,8 +47,11 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.media.MusicLibrary;
+import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.models.User;
 import com.liux.musicplayer.utils.AutoRunUtils;
 import com.liux.musicplayer.utils.CrashHandlers;
@@ -59,6 +62,7 @@ import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -206,7 +210,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         crashMe = findPreference("crashMe");
         playingList = findPreference("playingList");
         setMainFolder = findPreference("setMainFolder");
-        webAllSongList = findPreference("webAllSongList");
+        webAllSongList = findPreference("SONGLIST_webAllSongList");
         allSongList = findPreference("allSongList");
         About = findPreference("info");
         Close = findPreference("exit");
@@ -241,8 +245,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 || prefs.getString("rsa_public_key", "").equals("")) {
             try {
                 Map<String, String> keMap = RSAUtils.genKeyPair();
-                rsaPublicKey.setText(keMap.get("publicKey"));
-                rsaPrivateKey.setText(keMap.get("privateKey"));
+                rsaPublicKey.setText(keMap.get("publicKey").replace("\n", "").replace(" ", ""));
+                rsaPrivateKey.setText(keMap.get("privateKey").replace("\n", "").replace(" ", ""));
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
@@ -508,7 +512,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                                     @Override
                                     public void run() {
                                         if (id == 200) {
-                                            httpResultHandle(result, 0);
+                                            if(!httpResultHandle(result, 0)){
+                                                Toast.makeText(requireActivity(), "解析播放列表失败:" + id, Toast.LENGTH_SHORT).show();
+                                                switch_web_playlist.setChecked(false);
+                                            }
                                         } else {
                                             Toast.makeText(requireActivity(), "获取播放列表失败:" + id, Toast.LENGTH_SHORT).show();
                                             switch_web_playlist.setChecked(false);
@@ -520,7 +527,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                         return true;
                     }
                 } else {
-                    //((MainActivity) getActivity()).getMusicService().setWebPlayMode(false);
+                    new Handler()
+                            .postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MusicLibrary.refreshAllSongListList();
+                                }
+                            },(User.isLogin&&SharedPrefs.getIsNeedFastStart())?100:2100);
                     return true;
                 }
             }
@@ -712,8 +725,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "playingList":
                 playingList.setText(sharedPreferences.getString("playingList", ""));
                 break;
-            case "webAllSongList":
-                webAllSongList.setText(sharedPreferences.getString("webAllSongList", ""));
+            case "SONGLIST_webAllSongList":
+                webAllSongList.setText(sharedPreferences.getString("SONGLIST_webAllSongList", ""));
                 break;
             case "allSongList":
                 allSongList.setText(sharedPreferences.getString("allSongList", ""));
@@ -738,15 +751,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
     }
 
-    public void httpResultHandle(String result, int funId) {
+    public boolean httpResultHandle(String result, int funId) {
         switch (funId) {
             case 0:
-                webAllSongList.setText(result);
-                //((MainActivity) getActivity()).getMusicService().setWebPlayMode(true);
+                //webAllSongList.setText(result);
+                Gson gson = new Gson();
+                Type songListType = new TypeToken<ArrayList<Song>>() {
+                }.getType();
+                List<Song> aList=gson.fromJson(result, songListType);
+                if(aList!=null) {
+                    SharedPrefs.saveSongListByName(aList,"webAllSongList");
+                    List<MusicLibrary.SongList> songLists=SharedPrefs.getAllSonglistList();
+                    songLists.removeIf(songList -> songList.n.equals("webAllSongList"));
+                    songLists.add(1,new MusicLibrary.SongList("webAllSongList","",aList.size()));
+                    SharedPrefs.putAllSonglistList(songLists);
+                    MusicLibrary.refreshAllSongListList();
+                    return true;
+                }
                 break;
             default:
                 break;
         }
+        return false;
     }
 
 }

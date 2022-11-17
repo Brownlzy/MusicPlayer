@@ -55,7 +55,7 @@ import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.models.User;
+import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.ui.SongListFragment;
@@ -492,9 +492,10 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.add_all_to_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(User.isLogin)
+                if(User.isLogin) {
+                    viewPager.setCurrentItem(1);
                     genSonglistFromPlaylist();
-                else
+                }else
                     Toast.makeText(MainActivity.this, "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
             }
         });

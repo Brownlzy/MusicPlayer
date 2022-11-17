@@ -381,4 +381,7 @@ public class MusicLibrary {
         }else
             return false;
     }
+    public static void putSongToTreeMap(Song song){
+        allListSongsTreeMap.put(song.getSongPath(), song);
+    }
 }

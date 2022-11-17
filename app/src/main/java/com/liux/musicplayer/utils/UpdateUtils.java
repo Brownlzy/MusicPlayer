@@ -21,6 +21,8 @@ import androidx.core.content.FileProvider;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.models.News;
+import com.liux.musicplayer.models.UpdateInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,24 +40,6 @@ public class UpdateUtils {
     private static Handler updateHandler;
     private static Handler newsHandler;
     private static UpdateInfo updateInfo;
-
-    static class UpdateInfo {
-        String crc;
-        String lastVersionName;
-        int lastVersionCode;
-        String filename;
-        String size;
-        String changLog;
-        String manual;
-    }
-
-    static class News {
-        int id;
-        String ct;
-        int fun=0;
-        String ag;
-        String bn;
-    }
 
     public static void checkUpdate(Context context, boolean isShowStateInfo) {
         if (isShowStateInfo)
@@ -181,6 +165,15 @@ public class UpdateUtils {
                             + context.getString(R.string.title_changlog) + "\n"
                             + updateInfo.changLog.replace("\\n", "\n"))
                     .setIcon(R.mipmap.ic_launcher)
+                    .setNeutralButton(R.string.manual_download, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            Uri uri = Uri.parse(updateInfo.manual);
+                            intent.setData(uri);
+                            context.startActivity(intent);
+                        }
+                    })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -192,15 +185,6 @@ public class UpdateUtils {
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(context, "安装包下载中", Toast.LENGTH_SHORT).show();
                                 acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/apk/" + updateInfo.filename);
-                            }
-                        })
-                        .setNeutralButton(R.string.manual_download, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                Uri uri = Uri.parse(updateInfo.manual);
-                                intent.setData(uri);
-                                context.startActivity(intent);
                             }
                         });
             }

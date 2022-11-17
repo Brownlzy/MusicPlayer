@@ -48,7 +48,7 @@ import com.liux.musicplayer.R;
 import com.liux.musicplayer.adapters.SonglistAdapter;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.models.User;
+import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.utils.CustomDialogUtils;
 import com.liux.musicplayer.utils.DisplayUtils;
 import com.liux.musicplayer.utils.MusicUtils;

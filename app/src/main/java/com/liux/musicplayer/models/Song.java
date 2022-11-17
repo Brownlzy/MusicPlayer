@@ -52,10 +52,13 @@ public class Song implements Cloneable {
     public Song(String mSongPath) {
         this.mPath = mSongPath;
         MusicUtils.Metadata metadata = getMetadata(mSongPath);
-        this.mTitle = metadata.title;
+        initSong(mSongPath,metadata.title,metadata.artist,metadata.album, metadata.duration, metadata.sizeLong);
     }
 
     public Song(String path, String title, String artist, String album, String duration, Long sizeLong) {
+        initSong(path,title,artist,album,duration,sizeLong);
+    }
+    public void initSong(String path, String title, String artist, String album, String duration, Long sizeLong) {
         this.mPath=path;
         this.mTitle=title;
         this.mArtistName=artist;

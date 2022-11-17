@@ -141,10 +141,12 @@
     <string name="sort_name_down">按歌单名称降序排列</string>
     <string name="sort_amount_up">按歌曲数量升序排列</string>
     <string name="sort_amount_down">按歌曲数量降序排列</string>
-    <string name="manual_download">手动下载</string>
+    <string name="manual_download">官网下载</string>
     <string name="title_nowVersion">当前版本：</string>
     <string name="autoRun">启动管理</string>
     <string name="autoRun_summary">为避免系统自动结束后台播放服务，需要您设置音乐播放器的启动管理为手动管理并允许后台运行</string>
     <string name="newUser">新增用户</string>
     <string name="webAllSongList">在线列表</string>
+    <string name="clearCache">清理缓存</string>
+    <string name="title_activity_open_music_file">使用综音播放</string>
 </resources>

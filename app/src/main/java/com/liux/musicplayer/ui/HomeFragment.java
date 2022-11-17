@@ -32,11 +32,9 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.adapters.LyricAdapter;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
-import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 public class HomeFragment extends Fragment {
@@ -69,13 +67,8 @@ public class HomeFragment extends Fragment {
         mView = view;
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         initViewCompat();
-        initData();
         initObserver();
         return view;
-    }
-
-    private void initData() {
-        //initMusicInfo(MusicLibrary.getPlayingSongsList().get(SharedPrefs.getNowPlayId()));
     }
 
     @SuppressLint("SetTextI18n")
@@ -303,8 +296,7 @@ public class HomeFragment extends Fragment {
         lastLyricId = -1;
         //lyric = myViewModel.getMusicService().getLyric();    //从歌词文件中读取歌词
         lyric=myViewModel.getLyric();
-        HomeFragment homeFragment = this;
-        adapter = new LyricAdapter(homeFragment, getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
+        adapter = new LyricAdapter(getContext(), lyric, nowLyricMap); //构造LyricAdapter对象
         lyricList.setAdapter(adapter);  //将adapter与ListView绑定
         adapter.notifyDataSetChanged();
         lyric.setOnLyricLoadCallback(new LyricUtils.OnLyricLoadCallback() {

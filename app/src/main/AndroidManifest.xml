@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.liux.musicplayer" >
+    package="com.liux.musicplayer">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -13,6 +13,7 @@
     <uses-permission android:name="com.android.keyguard.permission.SHOW_LYRICS" />
 
     <application
+        android:name=".MusicPlayer"
         android:allowBackup="true"
         android:appCategory="audio"
         android:icon="@mipmap/ic_launcher"
@@ -21,8 +22,40 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".MusicPlayer"
-        android:theme="@style/Theme.MusicPlayer" >
+        android:theme="@style/Theme.MusicPlayer">
+        <activity
+            android:name=".activities.OpenMusicFile"
+            android:exported="true"
+            android:label="@string/title_activity_open_music_file"
+            android:theme="@style/Theme.MusicPlayer.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="audio/flac"/>
+                <data android:mimeType="audio/mpeg"/>
+                <data android:mimeType="audio/x-wav"/>
+                <data android:mimeType="audio/mp4"/>
+                <data android:mimeType="audio/midi"/>
+                <data android:mimeType="audio/mp4a-latm"/>
+                <data android:mimeType="audio/ogg"/>
+                <data android:mimeType="audio/aac"/>
+                <data android:mimeType="audio/x-aac"/>
+                <data android:mimeType="audio/x-ms-wma"/>
+                <data android:mimeType="audio/opus"/>
+<!--                <data android:mimeType="audio/ape"/>-->
+<!--                <data android:mimeType="audio/x-ape"/>-->
+<!--                <data android:mimeType="audio/x-aiff"/>-->
+<!--                <data android:mimeType="audio/x-musepack"/>-->
+<!--                <data android:mimeType="audio/x-wavpack"/>-->
+<!--                <data android:mimeType="audio/x-tta"/>-->
+<!--                <data android:mimeType="audio/dsf"/>-->
+<!--                <data android:mimeType="audio/x-dsf"/>-->
+<!--                <data android:mimeType="audio/dff"/>-->
+<!--                <data android:mimeType="audio/x-dff"/>-->
+            </intent-filter>
+        </activity>
         <!--
          Main music service, provides media browsing and media playback services to
          consumers through MediaBrowserService and MediaSession. Consumers connect to it through
@@ -31,14 +64,15 @@
         <service
             android:name=".services.MusicService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -51,10 +85,9 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:screenOrientation="portrait"
             android:exported="true"
-            android:launchMode="singleTask" >
-        </activity>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <!--
             intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -63,8 +96,8 @@
         -->
         <activity
             android:name=".activities.SplashActivity"
-            android:screenOrientation="portrait"
-            android:exported="true" >
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -76,7 +109,7 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.liux.musicplayer"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

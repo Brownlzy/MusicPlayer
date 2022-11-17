@@ -19,7 +19,6 @@ import androidx.preference.PreferenceManager;
 import com.blankj.utilcode.util.TimeUtils;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
-import com.liux.musicplayer.models.User;
 
 import java.io.File;
 import java.io.FileWriter;

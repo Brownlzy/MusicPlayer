@@ -30,6 +30,9 @@
             app:icon="@drawable/ic_baseline_miscellaneous_services_24"
             app:title="@string/autoRun"
             app:summary="@string/autoRun_summary"/>
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
 
     </PreferenceCategory>
 
@@ -111,8 +114,8 @@
             app:key="info"
             app:title="@string/aboutApp" />
         <Preference
-            app:key="gotoAppDetails"
-            app:title="@string/gotoAppDetails" />
+            app:key="clearCache"
+            app:title="@string/clearCache" />
         <Preference
             app:icon="@drawable/ic_round_exit_to_app_24"
             app:key="exit"

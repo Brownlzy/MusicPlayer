@@ -6,22 +6,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.widget.Toast;
 
-import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.models.User;
+import com.liux.musicplayer.models.UserData;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class SharedPrefs {
     @SuppressLint("StaticFieldLeak")
@@ -106,16 +101,16 @@ public class SharedPrefs {
         return gson.fromJson(songListJson, songListType);
     }*/
 
-    public static User.UserData getUserData() {
+    public static UserData getUserData() {
         String userDataJson;
         userDataJson = sharedPreferences.getString("user","");
         Gson gson = new Gson();
-        return gson.fromJson(userDataJson, User.UserData.class);
+        return gson.fromJson(userDataJson, UserData.class);
     }
 
-    public static void saveUserData(User.UserData userData) {
+    public static void saveUserData(UserData userData) {
         Gson gson = new Gson();
-        String userDataJson = gson.toJson(userData, User.UserData.class);
+        String userDataJson = gson.toJson(userData, UserData.class);
         sharedPreferencesEditor.putString("user",userDataJson).apply();
     }
 /*

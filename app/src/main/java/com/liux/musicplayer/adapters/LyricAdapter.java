@@ -19,13 +19,11 @@ public class LyricAdapter extends BaseAdapter {
     LyricUtils lyricData;
     private final Context mContext;
     ViewHolder holder;
-    private final HomeFragment mHomeFragment;
     private final SparseBooleanArray mNowLyricMap;
 
-    public LyricAdapter(HomeFragment homeFragment, Context context, LyricUtils lyric, SparseBooleanArray nowLyricMap) {
+    public LyricAdapter(Context context, LyricUtils lyric, SparseBooleanArray nowLyricMap) {
         lyricData = lyric;
         mContext = context;
-        mHomeFragment = homeFragment;
         mNowLyricMap = nowLyricMap;
     }
 

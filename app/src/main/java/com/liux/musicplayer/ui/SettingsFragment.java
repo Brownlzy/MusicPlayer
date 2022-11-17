@@ -4,25 +4,18 @@ import static com.liux.musicplayer.utils.UriTransform.getPath;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AppOpsManager;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ResultReceiver;
 import android.provider.DocumentsContract;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,8 +26,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -48,19 +39,20 @@ import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.models.User;
-import com.liux.musicplayer.utils.AutoRunUtils;
+import com.liux.musicplayer.utils.CleanDataUtils;
+import com.liux.musicplayer.utils.User;
+import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.RSAUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UpdateUtils;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.security.NoSuchAlgorithmException;
@@ -111,9 +103,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         public void onActivityResult(ActivityResult result) {
             int resultCode = result.getResultCode();
             if (resultCode == -1) {
-                if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+                if (PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE))
                     switch_storage_permission.setChecked(true);
-                if (checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
+                if (PermissionUtils.checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
             }
         }
     });
@@ -122,7 +114,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
-                    if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+                    if (PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE))
                         switch_storage_permission.setChecked(true);
                 } else {
                     //准备前往信息页的Intent
@@ -138,7 +130,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             });
     private final ActivityResultLauncher<Intent> requestOverlayPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), isGranted -> {
-                if (checkFloatPermission(getContext())) {
+                if (PermissionUtils.checkFloatPermission(getContext())) {
                     Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
                     switch_layer_permission.setChecked(true);
                 } else {
@@ -219,9 +211,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
         prefs.registerOnSharedPreferenceChangeListener(this); // 注册
 
-        if (checkFloatPermission(getContext()))
+        if (PermissionUtils.checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
-        if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+        if (PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
         //错误日志
         lastCrash.setSummary(String.valueOf(prefs.getBoolean("lastCrash", false)));
@@ -263,10 +255,19 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     };
 
     private void initPreferenceListener() {
+        findPreference("clearCache").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                CleanDataUtils.clearAllCache(requireContext());
+                String clearSize = CleanDataUtils.getTotalCacheSize(requireContext());
+                findPreference("clearCache").setSummary(clearSize);
+                return true;
+            }
+        });
         autoRun.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                AutoRunUtils.startToAutoStartSetting(getContext());
+                PermissionUtils.startToAutoStartSetting(getContext());
                 return false;
             }
         });
@@ -457,9 +458,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if (newValue == Boolean.TRUE) {
-                    return askPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    return PermissionUtils.askPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE,requestPermissionLauncher);
                 } else {
-                    return !checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    return !PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE);
                 }
             }
         });
@@ -467,9 +468,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if (newValue == Boolean.TRUE) {
-                    return requestSettingCanDrawOverlays();
+                    return PermissionUtils.requestSettingCanDrawOverlays(getContext(),requestOverlayPermissionLauncher);
                 } else {
-                    return !checkFloatPermission(getContext());
+                    return !PermissionUtils.checkFloatPermission(getContext());
                 }
             }
         });
@@ -584,6 +585,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        if(BuildConfig.DEBUG) versionName=versionName+"_debug";
         AlertDialog.Builder alertInfoDialog = null;
         alertInfoDialog = new AlertDialog.Builder(getContext());
         alertInfoDialog.setTitle(R.string.app_name);
@@ -668,51 +670,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         inputDialog.show();
     }
 
-    //检查权限是否获取成功
-    public boolean checkPermission(String permission) {
-        //拒绝修改开关
-        return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    //判断是否开启悬浮窗权限   context可以用你的Activity.或者this
-    public static boolean checkFloatPermission(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            AppOpsManager appOpsMgr = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-            if (appOpsMgr == null)
-                return false;
-            int mode = appOpsMgr.checkOpNoThrow("android:system_alert_window", android.os.Process.myUid(), context
-                    .getPackageName());
-            return mode == AppOpsManager.MODE_ALLOWED;
-        } else {
-            return Settings.canDrawOverlays(context);
-        }
-
-    }
-
-    //请求权限
-    public boolean askPermission(String permission) {
-        if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
-            //Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
-            return true;
-        } else {
-            requestPermissionLauncher.launch(permission);
-            //Toast.makeText(getActivity(), R.string.asking_permission, Toast.LENGTH_LONG).show();
-            return false;
-        }
-    }
-
-    //权限打开
-    private boolean requestSettingCanDrawOverlays() {
-        if (checkFloatPermission(getContext()))
-            return true;
-        else {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            intent.setData(Uri.parse("package:com.liux.musicplayer"));
-            requestOverlayPermissionLauncher.launch(intent);
-            return false;
-        }
-    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
@@ -775,4 +732,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         return false;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        String totalCacheSize = CleanDataUtils.getTotalCacheSize(requireContext());
+        findPreference("clearCache").setSummary(totalCacheSize);
+    }
 }

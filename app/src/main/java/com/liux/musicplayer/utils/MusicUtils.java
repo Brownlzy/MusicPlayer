@@ -203,6 +203,7 @@ public class MusicUtils {
 //                    }
 //                    list.add(song);
 //                }
+                list.add(song);
             }
             // 释放资源
             cursor.close();

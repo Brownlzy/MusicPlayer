@@ -9,6 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -41,6 +44,7 @@ import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.liux.musicplayer.adapters.SongAdapter;
 import com.liux.musicplayer.activities.MainActivity;
@@ -55,6 +59,7 @@ import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UriTransform;
 import com.liux.musicplayer.viewmodels.MyViewModel;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -256,18 +261,87 @@ public class SongListFragment extends Fragment{
         }
     };
     private void addAllMusic() {
-        List<Song> songList = MusicUtils.getMusicData(requireContext());
-        List<String> pathList=songList.stream().map(Song::getSongPath).distinct().collect(Collectors.toList());
-        MusicLibrary.addMusicListToList(pathList,nowSongListName);
+        LoadingDialog ld = new LoadingDialog(getContext());
+        ld.setLoadingText("加载中")
+                .setSuccessText("加载成功")//显示加载成功时的文字
+                .setFailedText("加载失败")
+                .closeSuccessAnim()
+                .closeFailedAnim()
+                .show();
+        try {
+            Handler addHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.arg1 == 0) {
+                        refreshList();
+                        ld.loadSuccess();
+                    } else{
+                        ld.loadFailed();
+                    }
+                }
+            };
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    List<Song> songList = MusicUtils.getMusicData(requireContext());
+                    List<String> pathList=songList.stream().map(Song::getSongPath).distinct().collect(Collectors.toList());
+                    MusicLibrary.addMusicListToList(pathList,nowSongListName);
+                    Message message=Message.obtain();
+                    message.arg1=0;
+                    addHandler.sendMessage(message);
+                }
+            }).start();
+            refreshList();
+        }catch (Exception e){
+            ld.loadFailed();
+        }
     }
 
     private void addFolder(Uri uri) {
+        LoadingDialog ld = new LoadingDialog(getContext());
+        ld.setLoadingText("加载中")
+                .setSuccessText("加载成功")//显示加载成功时的文字
+                .setFailedText("加载失败")
+                .closeSuccessAnim()
+                .closeFailedAnim()
+                .show();
         Log.e("AddFolder", uri.toString());
-        Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
-        List<String> pathList=new ArrayList<>();
-        searchFile(pathList,UriTransform.getPath(requireContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
-        MusicLibrary.addMusicListToList(pathList,nowSongListName);
-        refreshList();
+        try {
+            Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+            List<String> pathList = new ArrayList<>();
+            Handler addHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.arg1 == 0) {
+                        refreshList();
+                        ld.loadSuccess();
+                    } else{
+                        ld.loadFailed();
+                    }
+                }
+            };
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        searchFile(pathList, UriTransform.getPath(requireContext(), docUri).replace("/storage/emulated/0", "/sdcard"));
+                        MusicLibrary.addMusicListToList(pathList, nowSongListName);
+                        Message message = Message.obtain();
+                        message.arg1 = 0;
+                        addHandler.sendMessage(message);
+                    }catch (Exception e){
+                        Message message = Message.obtain();
+                        message.arg1 = 1;
+                        addHandler.sendMessage(message);
+                    }
+                }
+            }).start();
+            refreshList();
+        }catch (Exception e){
+            ld.loadFailed();
+        }
     }
 
     private void searchFile(List<String>pathList,String filePath) {

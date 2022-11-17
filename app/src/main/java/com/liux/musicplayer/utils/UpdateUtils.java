@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.models.News;
 import com.liux.musicplayer.models.UpdateInfo;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +41,19 @@ public class UpdateUtils {
     private static Handler updateHandler;
     private static Handler newsHandler;
     private static UpdateInfo updateInfo;
+    private static LoadingDialog ld;
+    private static LoadingDialog ldn;
 
     public static void checkUpdate(Context context, boolean isShowStateInfo) {
-        if (isShowStateInfo)
-            Toast.makeText(context, "正在检查更新，请稍候", Toast.LENGTH_SHORT).show();
+        if (isShowStateInfo) {
+            ld = new LoadingDialog(context);
+            ld.setLoadingText("正在检查更新，请稍候")
+                    .setSuccessText("检查更新成功")//显示加载成功时的文字
+                    .setFailedText("检查更新失败")
+                    .closeSuccessAnim()
+                    .closeFailedAnim()
+                    .show();
+        }
         updateHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -51,8 +61,10 @@ public class UpdateUtils {
                 if (msg.arg1 == 200) {
                     updateHandle(context, String.valueOf(msg.obj), isShowStateInfo);
                     SharedPrefs.putLastCheckUpdateTime(TimeUtils.getNowMills());
-                } else if (isShowStateInfo)
+                } else if (isShowStateInfo) {
                     Toast.makeText(context, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                    ld.loadFailed();
+                }
             }
         };
 
@@ -91,8 +103,15 @@ public class UpdateUtils {
     }
 
     public static void checkNews(Context context, boolean isManual) {
-        if (isManual)
-            Toast.makeText(context, "正在读取公告板", Toast.LENGTH_SHORT).show();
+        if (isManual) {
+            ldn = new LoadingDialog(context);
+            ldn.setLoadingText("正在读取公告板")
+                    .setSuccessText("检查公告板成功")//显示加载成功时的文字
+                    .setFailedText("检查公告板失败")
+                    .closeSuccessAnim()
+                    .closeFailedAnim()
+                    .show();
+        }
         newsHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -100,8 +119,10 @@ public class UpdateUtils {
                 if (msg.arg1 == 200) {
                     newsHandle(context, String.valueOf(msg.obj), isManual);
                     SharedPrefs.putLastNewsUpdateTime(TimeUtils.getNowMills());
-                } else if (isManual)
+                } else if (isManual) {
                     Toast.makeText(context, String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
+                    ldn.loadFailed();
+                }
             }
         };
 
@@ -153,9 +174,11 @@ public class UpdateUtils {
         Gson gson = new Gson();
         updateInfo = gson.fromJson(result, UpdateInfo.class);
 
-        if (updateInfo == null || versionCode == 0)
+        if (updateInfo == null || versionCode == 0) {
             Toast.makeText(context, "获取更新信息失败:" + versionCode, Toast.LENGTH_SHORT).show();
-        else {
+            if(isShowStateInfo) ld.loadFailed();
+        }else {
+            if(isShowStateInfo) ld.loadSuccess();
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_update)
@@ -201,6 +224,7 @@ public class UpdateUtils {
         Gson gson = new Gson();
         News news = gson.fromJson(result, News.class);
         if (isManual || news.id > SharedPrefs.getLastNewsId()) {
+            if(isManual) ldn.loadSuccess();
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context);
             alertInfoDialog.setTitle(R.string.newsBoard);

@@ -25,6 +25,7 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.activities.SplashActivity;
 import com.liux.musicplayer.models.UserData;
 import com.liux.musicplayer.models.UserDataJson;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class User {
     private static String TAG = "User";
     private static String userHash;
     public static boolean isLogin = false;
+    private static LoadingDialog ld;
 
     public static void init(Context context) {
         userData = SharedPrefs.getUserData();
@@ -70,6 +72,13 @@ public class User {
     }
 
     public static void login(Context context, String userName,boolean isReLogin) {
+        ld = new LoadingDialog(context);
+        ld.setLoadingText("正在登录")
+                .setSuccessText("登录成功")//显示加载成功时的文字
+                .setFailedText("登录失败")
+                .closeSuccessAnim()
+                .closeFailedAnim()
+                .show();
         userData.userName = userName;
         userHash = SHA256Util.getSHA256StrJava(userName + HASH_SALT);
         Log.e(TAG, userName + "  " + userHash);
@@ -78,6 +87,11 @@ public class User {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+                if(msg.arg1==0){
+                    ld.loadSuccess();
+                }else {
+                    ld.loadFailed();
+                }
                 Toast.makeText(context, (String)msg.obj, Toast.LENGTH_SHORT).show();
             }
         };
@@ -93,6 +107,7 @@ public class User {
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "失败");
                 Message message = Message.obtain();
+                message.arg1=1;
                 message.obj = "登录失败（无法连接服务器）";
                 handler.sendMessage(message);
             }
@@ -108,6 +123,7 @@ public class User {
                     if(checkResult(context,isReLogin)){
                         Message message = Message.obtain();
                         if(isReLogin){
+                            message.arg1=0;
                             message.obj = "重新登录成功！正在重启...";
                         new Handler()
                                 .postDelayed(new Runnable() {
@@ -119,17 +135,21 @@ public class User {
                                         //System.exit(0);
                                     }
                                 },1000);
-                        } else
+                        } else{
+                            message.arg1=0;
                             message.obj = "登录成功，正在加载专属开屏图...";
+                        }
                         handler.sendMessage(message);
                     }else {
                         Message message = Message.obtain();
+                        message.arg1=1;
                         message.obj = "登录失败（鉴权失败）";
                         handler.sendMessage(message);
                     }
                 } else {
                     Log.e(TAG,"response.code失败");
                     Message message = Message.obtain();
+                    message.arg1=1;
                     message.obj = "登录失败（无当前用户："+id+"）";
                     handler.sendMessage(message);
                 }

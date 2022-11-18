@@ -372,56 +372,19 @@ private LyricUtils nowLyric=new LyricUtils();
     };
 
     private class AllShowThread extends Thread {
-        private final Object lock = new Object();
-        private boolean pause = false;
-
-        //调用这个方法实现暂停线程
-        void pauseThread() {
-            pause = true;
-        }
-
-        boolean isPaused() {
-            return pause;
-        }
-
-        //调用这个方法实现恢复线程的运行
-        void resumeThread() {
-            pause = false;
-            synchronized (lock) {
-                lock.notifyAll();
-            }
-        }
-
-        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
-        void onPause() {
-            synchronized (lock) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
+        public boolean isWaiting=false;
         @Override
         public void run() {
-            super.run();
-            while (true) {
-                // 让线程处于暂停等待状态
-                while (pause) {
-                    onPause();
-                }
-                try {
-                    Thread.sleep(5000);
-                    Message msg = new Message();
-                    msg.what = 200;  //消息发送的标志
-                    allShowHandler.sendMessage(msg);
-                } catch (InterruptedException | NullPointerException e) {
-                    e.printStackTrace();
-                }
+            try {
+                isWaiting=true;
+                Thread.sleep(5000);  //延迟400ms等待下一个输入
+                Message msg = new Message();
+                msg.what = 200;  //消息发送的标志
+                allShowHandler.sendMessage(msg);
+                isWaiting=false;
+            } catch (InterruptedException ignored) {
             }
         }
-
     }
 
     private final Handler allShowHandler = new Handler(Looper.getMainLooper()) {
@@ -596,15 +559,9 @@ private LyricUtils nowLyric=new LyricUtils();
             mFloatingLayout.findViewById(R.id.background).setVisibility(View.VISIBLE);
             mFloatingLayout.findViewById(R.id.lyricHeader).setVisibility(View.VISIBLE);
             mFloatingLayout.findViewById(R.id.lyricCtrlBar).setVisibility(View.VISIBLE);
-            if(allShowThread==null){
-                allShowThread=new AllShowThread();
-                allShowThread.start();
-            }else if(allShowThread.isPaused()) {
-                allShowThread.resumeThread();
-            }
+            startAllShowThread();
         } else {
-            if(allShowThread!=null&& !allShowThread.isPaused())
-                allShowThread.pauseThread();
+            stopAllShowThread();
             mFloatingLayout.findViewById(R.id.background).setVisibility(View.INVISIBLE);
             mFloatingLayout.findViewById(R.id.lyricCtrlBar).setVisibility(View.GONE);
             mFloatingLayout.findViewById(R.id.lyricHeader).setVisibility(View.INVISIBLE);
@@ -654,8 +611,11 @@ private LyricUtils nowLyric=new LyricUtils();
                 default:
                     break;
             }
-
             //如果是移动事件不触发OnClick事件，防止移动的时候一放手形成点击事件
+            if(isAllShow&&!isMove) {
+                //stopAllShowThread();
+                startAllShowThread();
+            }
             return isMove;
         }
     }
@@ -742,6 +702,19 @@ private LyricUtils nowLyric=new LyricUtils();
     private void stopLyricThread() {
         if (lyricThread != null && !lyricThread.isPaused())
             lyricThread.pauseThread();
+    }
+
+    private void startAllShowThread() {
+        if(allShowThread!=null&&allShowThread.isWaiting) {
+            allShowThread.interrupt();
+        }
+        allShowThread=new AllShowThread();
+        allShowThread.start();
+    }
+
+    private void stopAllShowThread() {
+        if(allShowThread!=null&& allShowThread.isWaiting)
+            allShowThread.interrupt();
     }
 
     public void updatePlayInfo(String nowPlaying) {

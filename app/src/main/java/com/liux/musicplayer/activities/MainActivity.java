@@ -7,8 +7,11 @@ import static com.liux.musicplayer.services.MusicService.SHUFFLE_PLAY;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,6 +23,7 @@ import android.os.Message;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -111,6 +115,16 @@ public class MainActivity extends FragmentActivity {
     private MaterialCardView splashCard;
     private boolean isPlayList = false;
     private boolean isHome = false;
+
+    public static boolean isExits(String pkg, String cls, Context context) {
+            ActivityManager am =(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+            ActivityManager.RunningTaskInfo task = tasks.get(0);
+            if (task != null) {
+                return TextUtils.equals(task.topActivity.getPackageName(), pkg) && TextUtils.equals(task.topActivity.getClassName(), cls);
+            }
+            return false;
+    }
 
     private void nowLoading(int musicId) {
         prepareInfo(musicId);
@@ -205,15 +219,18 @@ public class MainActivity extends FragmentActivity {
             TotalCount.setText(getString(R.string.totalCount).replace("%d", String.valueOf(myViewModel.getmMediaController().getQueue().size())));
             adapter = new PlayingListAdapter(this, myViewModel.getmMediaController().getQueue(), refreshListener);
             playingList.setAdapter(adapter);
-            adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
+            if(myViewModel.getmMediaController().getMetadata()!=null)
+                adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
             splashCard = findViewById(R.id.splash_view);
-            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
-            splashCard.startAnimation(animation);
+            if(splashCard.getVisibility()!= View.GONE) {
+                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
+                splashCard.startAnimation(animation);
+            }
             splashCard.setVisibility(View.GONE);
             return;
         }
         if (where == 1) isPlayList = true;
-        if (where == 2) isHome = true;
+        if (where == 2&&myViewModel.isSplash) isHome = true;
         if (myViewModel.isSplash && isHome && isPlayList) {
             isSplash = false;
             myViewModel.isSplash = false;
@@ -224,8 +241,10 @@ public class MainActivity extends FragmentActivity {
                 adapter.setNowPlay(myViewModel.getmMediaController().getMetadata().getDescription().getMediaUri().getPath());
             myViewModel.getPlayOrder();
             splashCard = findViewById(R.id.splash_view);
+            if(splashCard.getVisibility()!= View.GONE) {
             Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.gradually_movedown_hide);
             splashCard.startAnimation(animation);
+            }
             splashCard.setVisibility(View.GONE);
         }
     }
@@ -310,6 +329,12 @@ public class MainActivity extends FragmentActivity {
         intent.setClass(MainActivity.this, MusicService.class);
         //startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);*/
+        if(getIntent().getExtras()!=null&&getIntent().getExtras().getBoolean("splash")) {
+            findViewById(R.id.splash_view).setVisibility(View.VISIBLE);
+        }else {
+            findViewById(R.id.splash_view).setVisibility(View.GONE);
+        }
+        Log.e("TAG","onCreate");
     }
 
     @Override
@@ -320,11 +345,6 @@ public class MainActivity extends FragmentActivity {
             UpdateUtils.checkUpdate(this,false);
         if(Math.abs(SharedPrefs.getLastNewsUpdateTime()- TimeUtils.getNowMills())>7200000L)
             UpdateUtils.checkNews(this,false);
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
     }
 
     private void initBackgroundCallBack() {
@@ -394,6 +414,16 @@ public class MainActivity extends FragmentActivity {
         //stopProgressBar();
         removeObserver();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(getIntent().getExtras()!=null&&viewPager!=null) {
+            viewPager.setCurrentItem(getIntent().getExtras().getInt("pageId",0),false);
+        }
+        findViewById(R.id.splash_view).setVisibility(View.GONE);
+        Log.e("TAG","onNewIntent");
     }
 
     @Override

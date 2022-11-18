@@ -51,7 +51,7 @@ public class MediaNotificationManager {
     public static final int NOTIFICATION_ID = 412;
 
     private static final String TAG = MediaNotificationManager.class.getSimpleName();
-    private static final String CHANNEL_ID = "com.example.android.musicplayer.channel";
+    private static final String CHANNEL_ID = "MediaController";
     private static final int REQUEST_CODE = 501;
 
 //    private final MusicService mService;
@@ -109,8 +109,10 @@ public class MediaNotificationManager {
                                 mService,
                                 PlaybackStateCompat.ACTION_STOP));
 
-        Intent floatLyricIntent =new Intent("com.liux.musicplayer.OPEN_LYRIC");
+        Intent floatLyricIntent;
         PendingIntent floatLyricPendingIntent;
+
+        floatLyricIntent = new Intent("com.liux.musicplayer.OPEN_LYRIC");
         floatLyricPendingIntent= PendingIntent.getBroadcast(mService, 0, floatLyricIntent,  PendingIntent.FLAG_IMMUTABLE);
         mSlyricAction =
                 new NotificationCompat.Action(
@@ -257,6 +259,14 @@ public class MediaNotificationManager {
         } else {
             //Log.d(TAG, "createChannel: Existing channel reused");
         }
+        String channelId = "权限通知"; // 通知渠道
+        NotificationManager mNotificationManager =
+                (NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(
+                channelId,
+                "权限通知",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        mNotificationManager.createNotificationChannel(channel);
     }
 
     private boolean isAndroidOOrHigher() {

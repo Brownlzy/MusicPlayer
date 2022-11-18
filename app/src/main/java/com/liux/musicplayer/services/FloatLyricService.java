@@ -47,6 +47,7 @@ public class FloatLyricService extends Service {
     private WindowManager.LayoutParams wmParams;
     private LayoutInflater inflater;
     private LyricThread lyricThread;
+    private AllShowThread allShowThread;
     private StrokeTextView firstLyric;
     private StrokeTextView secondLyric;
     private HorizontalScrollView firstScroll;
@@ -370,6 +371,69 @@ private LyricUtils nowLyric=new LyricUtils();
         }
     };
 
+    private class AllShowThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
+
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            while (true) {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
+                try {
+                    Thread.sleep(5000);
+                    Message msg = new Message();
+                    msg.what = 200;  //消息发送的标志
+                    allShowHandler.sendMessage(msg);
+                } catch (InterruptedException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private final Handler allShowHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 200) {
+                setAllShow(false);
+                isAllShow=false;
+            }
+        }
+    };
+
     /**
      * and implement our app specific desires.
      */
@@ -527,17 +591,28 @@ private LyricUtils nowLyric=new LyricUtils();
         mFloatingLayout.findViewById(R.id.smallerText).setOnClickListener(lyricSettingListener);
     }
 
-    public void setAllShow() {
-        if (isAllShow) {
-            mFloatingLayout.findViewById(R.id.background).setVisibility(View.INVISIBLE);
-            mFloatingLayout.findViewById(R.id.lyricCtrlBar).setVisibility(View.GONE);
-            mFloatingLayout.findViewById(R.id.lyricHeader).setVisibility(View.INVISIBLE);
-        } else {
+    public void setAllShow(boolean isShow) {
+        if (isShow) {
             mFloatingLayout.findViewById(R.id.background).setVisibility(View.VISIBLE);
             mFloatingLayout.findViewById(R.id.lyricHeader).setVisibility(View.VISIBLE);
             mFloatingLayout.findViewById(R.id.lyricCtrlBar).setVisibility(View.VISIBLE);
+            if(allShowThread==null){
+                allShowThread=new AllShowThread();
+                allShowThread.start();
+            }else if(allShowThread.isPaused()) {
+                allShowThread.resumeThread();
+            }
+        } else {
+            if(allShowThread!=null&& !allShowThread.isPaused())
+                allShowThread.pauseThread();
+            mFloatingLayout.findViewById(R.id.background).setVisibility(View.INVISIBLE);
+            mFloatingLayout.findViewById(R.id.lyricCtrlBar).setVisibility(View.GONE);
+            mFloatingLayout.findViewById(R.id.lyricHeader).setVisibility(View.INVISIBLE);
         }
+    }
+    public void setAllShow() {
         isAllShow = !isAllShow;
+        setAllShow(isAllShow);
     }
 
     //开始触控的坐标，移动时的坐标（相对于屏幕左上角的坐标）

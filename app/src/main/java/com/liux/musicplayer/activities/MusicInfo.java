@@ -1,15 +1,17 @@
 package com.liux.musicplayer.activities;
 
 import android.Manifest;
+import android.app.ActivityOptions;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.media.MediaBrowserCompat;
+import android.os.Handler;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -17,10 +19,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.R;
@@ -33,11 +35,9 @@ import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UriTransform;
-import com.liux.musicplayer.viewmodels.MyViewModel;
+import com.liux.musicplayer.utils.User;
 
-import java.util.List;
-
-public class OpenMusicFile extends FragmentActivity {
+public class MusicInfo extends FragmentActivity {
     private static final String TAG = "OpenMusicFile";
     private Song song;
     InfoFragment infoFragment;
@@ -48,7 +48,7 @@ public class OpenMusicFile extends FragmentActivity {
         public void onActivityResult(ActivityResult result) {
             int resultCode = result.getResultCode();
             Log.e(TAG, String.valueOf(resultCode));
-            if (PermissionUtils.checkPermission(OpenMusicFile.this,Manifest.permission.READ_EXTERNAL_STORAGE))
+            if (PermissionUtils.checkPermission(MusicInfo.this,Manifest.permission.READ_EXTERNAL_STORAGE))
                 showInfo();
             else
                 finish();
@@ -107,7 +107,7 @@ public class OpenMusicFile extends FragmentActivity {
                 finish();
             }
         }
-        startService(new Intent(OpenMusicFile.this, MusicService.class));
+        startService(new Intent(MusicInfo.this, MusicService.class));
         setContentView(R.layout.activity_open_music_file);
         infoFragment =new InfoFragment();
         infoFragment.setArguments(bundle);
@@ -139,8 +139,9 @@ public class OpenMusicFile extends FragmentActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, 0);
+        //overridePendingTransition(0, 0);
     }
+
     private class MediaBrowserConnection extends MediaBrowserHelper {
         private MediaBrowserConnection(Context context) {
             super(context, MusicService.class);
@@ -148,8 +149,19 @@ public class OpenMusicFile extends FragmentActivity {
         @Override
         protected void onConnected(@NonNull MediaControllerCompat mediaController) {
             mediaController.addQueueItem(MusicLibrary.getMediaItemDescription(song), -2);
-            startActivity(new Intent(OpenMusicFile.this,MainActivity.class));
-            finish();
+            Intent intent=new Intent(MusicInfo.this,MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("pageId",0);
+            ImageView playButton=findViewById(R.id.play);
+            ActivityOptions optionsCompat=ActivityOptions.makeSceneTransitionAnimation(MusicInfo.this,playButton,"playButton");
+            startActivity(intent,optionsCompat.toBundle());
+            new Handler()
+                    .postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    },1000);
         }
     }
 }

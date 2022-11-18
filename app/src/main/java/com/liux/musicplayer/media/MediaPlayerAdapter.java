@@ -90,7 +90,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                     // to "stop".
                     // Paused allows: seekTo(), start(), pause(), stop()
                     // Stop allows: stop()
-                    setNewState(PlaybackStateCompat.STATE_PAUSED);
+                    // 避免切歌时后台启动前台服务
+                    setNewState(PlaybackStateCompat.STATE_BUFFERING);
                     if (isRepeating) {
                         //musicService.mCallback.onSkipToThis();
                         //mMediaPlayer.seekTo(0);
@@ -231,8 +232,6 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                 && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setNewState(PlaybackStateCompat.STATE_PAUSED);
-            //handler.removeCallbacks(runnable);
-            //sleepHandler.removeCallbacks(sleepTimerRunnable);
         }
     }
 

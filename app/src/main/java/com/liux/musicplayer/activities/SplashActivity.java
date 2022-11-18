@@ -56,7 +56,10 @@ public class SplashActivity  extends FragmentActivity {
             }
             if(verCode==-1) SharedPrefs.cleanOldData();
             SharedPrefs.putVersionCode();
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            Intent intent =new Intent(SplashActivity.this, MainActivity.class);
+            intent.putExtra("splash", true);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
             finish();
         }
     }

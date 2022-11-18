@@ -1,5 +1,7 @@
 package com.liux.musicplayer.utils;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -142,6 +145,17 @@ public class CustomDialogUtils {
         void clickPositive(Song song);
 
         void clickNegative();
+    }
+
+    public static void editTextDialog(Context context,DialogInterface.OnClickListener pos,DialogInterface.OnClickListener neg,DialogInterface.OnClickListener normal){
+//        EditText editText = new EditText(getContext());
+//        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
+//        inputDialog.setTitle(R.string.inputUserName).setView(editText);
+//        inputDialog.setIcon(R.drawable.ic_round_account_circle_24);
+//        inputDialog.setPositiveButton("登录",pos);
+//        inputDialog.setNeutralButton("注册",normal);
+//        inputDialog.setNegativeButton("取消",neg);
+//        inputDialog.show();
     }
 
 }

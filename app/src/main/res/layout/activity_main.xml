@@ -35,6 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
+        android:visibility="gone"
         tools:src="@drawable/ic_baseline_music_note_24"
         app:layout_constraintBottom_toBottomOf="@+id/playBarCard"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
@@ -305,6 +306,7 @@
 
                         <ImageView
                             android:id="@+id/playPause"
+                            android:transitionName="playButton"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:layout_weight="1"

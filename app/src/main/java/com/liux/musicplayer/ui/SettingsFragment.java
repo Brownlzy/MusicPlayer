@@ -620,7 +620,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void showLoginDialog() {
         /*@setView 装入一个EditView
          */
-        final EditText editText = new EditText(getContext());
+        EditText editText = new EditText(getContext());
         AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
         inputDialog.setTitle(R.string.inputUserName).setView(editText);
         inputDialog.setIcon(R.drawable.ic_round_account_circle_24);

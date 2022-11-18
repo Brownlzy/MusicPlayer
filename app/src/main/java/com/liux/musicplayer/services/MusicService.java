@@ -1,6 +1,10 @@
 package com.liux.musicplayer.services;
 
+import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.provider.Settings;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -17,7 +22,10 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -26,11 +34,14 @@ import androidx.media.session.MediaButtonReceiver;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.liux.musicplayer.R;
+import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaPlayerAdapter;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.PlaybackInfoListener;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MediaNotificationManager;
+import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.io.File;
@@ -83,10 +94,34 @@ public class MusicService extends MediaBrowserServiceCompat {
             Intent deskLyricIntent = new Intent(MusicService.this, FloatLyricService.class);
             switch (intent.getAction()){
                 case "com.liux.musicplayer.OPEN_LYRIC":
-                    SharedPrefs.putIsDeskLyric(true);
-                    if(!mainActivityState&&mSession.isActive()) {
-                        deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
-                        startService(deskLyricIntent);
+                    if(!PermissionUtils.checkFloatPermission(MusicService.this)) {
+                        //Toast.makeText(context, "请先在设置页授予悬浮窗权限", Toast.LENGTH_SHORT).show();
+//                        Intent intent1 = new Intent(MusicService.this,MainActivity.class);
+//                        intent1.putExtra("pageId",2);
+//                        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent1);
+//                        PendingIntent contentIntent = PendingIntent.getActivity(
+//                                MusicService.this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE);
+                        String channelId = "权限通知"; // 通知渠道
+                        Notification notification = new Notification.Builder(MusicService.this,channelId)
+                                .setContentTitle("综音无悬浮窗权限")
+                                .setContentText("请先在设置页授予悬浮窗权限后再开启桌面歌词")
+                                .setSmallIcon(R.mipmap.ic_launcher)
+//                                .setContentIntent(contentIntent)
+                                .build();
+                        NotificationManager mNotificationManager =
+                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        mNotificationManager.notify(411,notification);
+                    }else {
+                        NotificationManager mNotificationManager =
+                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        mNotificationManager.cancel(411);
+
+                        SharedPrefs.putIsDeskLyric(true);
+                        if (!mainActivityState && mSession.isActive()) {
+                            deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                            startService(deskLyricIntent);
+                        }
                     }
                     break;
                 case "com.liux.musicplayer.CLOSE_LYRIC":
@@ -292,6 +327,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                 queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
                 if (index == -2) {
                     mPlaylist.add(++mQueueIndex, queueItem);
+                    mPlaylistOriginal.add(queueItem);
                     mSession.setQueue(mPlaylist);
                     mPreparedMedia = null;
                     onPlay();
@@ -321,7 +357,6 @@ public class MusicService extends MediaBrowserServiceCompat {
                 mPlaylistOriginal.remove(toDelete);
                 queueItemHashMap.remove(description.getMediaUri().getPath());
                 mSession.setQueue(mPlaylist);
-                MusicLibrary.savePlayingList(mPlaylist);
                 if(mQueueIndex==toDeleteId){
                     //onStop();
                     mPreparedMedia=null;
@@ -337,6 +372,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                 if(mQueueIndex>=mPlaylist.size()){
                     mQueueIndex=mPlaylist.size()-1;
                 }
+                MusicLibrary.savePlayingList(mPlaylist);
             }
         }
 
@@ -802,8 +838,13 @@ public class MusicService extends MediaBrowserServiceCompat {
                             new Intent(MusicService.this, MusicService.class));
                     mServiceInStartedState = true;
                 }
-
-                startForeground(MediaNotificationManager.NOTIFICATION_ID, notification);
+                try {
+                    startForeground(MediaNotificationManager.NOTIFICATION_ID, notification);
+                }catch (Exception e){
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(MediaNotificationManager.NOTIFICATION_ID,notification);
+                }
             }
 
             private void updateNotificationForPause(PlaybackStateCompat state) {

@@ -188,6 +188,7 @@ public class UpdateUtils {
                             + context.getString(R.string.title_changlog) + "\n"
                             + updateInfo.changLog.replace("\\n", "\n"))
                     .setIcon(R.mipmap.ic_launcher)
+                    .setCancelable(false)
                     .setNeutralButton(R.string.manual_download, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -230,6 +231,7 @@ public class UpdateUtils {
             alertInfoDialog.setTitle(R.string.newsBoard);
             alertInfoDialog.setMessage(news.ct);
             alertInfoDialog.setIcon(R.mipmap.ic_launcher);
+            alertInfoDialog.setCancelable(false);
             if(news.fun==1) {
                 alertInfoDialog.setPositiveButton(news.bn, new DialogInterface.OnClickListener() {
                     @Override

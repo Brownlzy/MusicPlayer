@@ -211,7 +211,7 @@ public class PermissionUtils {
             return true;
         else {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            intent.setData(Uri.parse("package:com.liux.musicplayer"));
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
             requestOverlayPermissionLauncher.launch(intent);
             return false;
         }

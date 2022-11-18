@@ -149,4 +149,5 @@
     <string name="webAllSongList">在线列表</string>
     <string name="clearCache">清理缓存</string>
     <string name="title_activity_open_music_file">使用综音播放</string>
+    <string name="Copied">已复制</string>
 </resources>

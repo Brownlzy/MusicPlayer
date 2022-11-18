@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -54,18 +53,20 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.ui.SongListFragment;
 import com.liux.musicplayer.utils.CrashHandlers;
+import com.liux.musicplayer.utils.CustomDialogUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.UpdateUtils;
+import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.File;
@@ -100,6 +101,7 @@ public class MainActivity extends FragmentActivity {
     private ListView playingList;
     private TextView playProgressNowText;
     private TextView playProgressAllText;
+    private TextView debugText;
     private ProgressThread progressThread;
     private ShapeableImageView shapeableImageView;
     private ShapeableImageView backImageView;
@@ -488,6 +490,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initViewCompat() {
+        debugText=findViewById(R.id.tabDebugText);
         splashCard = findViewById(R.id.splash_view);
         playProgressBar = findViewById(R.id.seekBar);
         playProgressLayout = findViewById(R.id.playProgress);
@@ -519,6 +522,7 @@ public class MainActivity extends FragmentActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setOnListViewItemClickListener();
         setNewAppearance(prefs.getBoolean("isNewAppearance", false));
+        if(BuildConfig.DEBUG) debugText.setVisibility(View.VISIBLE);
         findViewById(R.id.add_all_to_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -622,37 +626,42 @@ public class MainActivity extends FragmentActivity {
         if(adapter.getCount()==0){
             Toast.makeText(MainActivity.this, "播放列表为空", Toast.LENGTH_SHORT).show();
         }else {
-            final EditText editText = new EditText(this);
-            AlertDialog.Builder inputDialog = new AlertDialog.Builder(this);
-            inputDialog.setTitle(R.string.inputListName).setView(editText);
-            inputDialog.setIcon(R.drawable.ic_round_add_to_new_list_24);
-            inputDialog.setPositiveButton(R.string.confirm,
+            DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
+                        if (MusicLibrary.addNewSongList(CustomDialogUtils.editText.getText().toString().trim(), "")) {
+                            List<String> pathList = new ArrayList<>();
+                            for (int i = 0; i < adapter.getCount(); i++) {
+                                pathList.add(((MediaSessionCompat.QueueItem) adapter.getItem(i)).getDescription().getMediaUri().getPath());
+                            }
+                            MusicLibrary.addMusicListToList(pathList, CustomDialogUtils.editText.getText().toString().trim());
+                            songListFragment.initData();
+                            songListFragment.initSongData(CustomDialogUtils.editText.getText().toString().trim());
+                            setViewPagerToId(1);
+                        } else {
+                            Toast.makeText(MainActivity.this, "添加歌单失败，可能该名称已被使用", Toast.LENGTH_SHORT).show();
+                        }
+                    } else
+                        Toast.makeText(MainActivity.this, "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+                }
+            };
+
+            CustomDialogUtils.editTextDialog(this,
+                    getString(R.string.inputListName),
+                    R.drawable.ic_round_add_to_new_list_24,
+                    getString(R.string.confirm),
+                    null,
+                    getString(R.string.cancel),
+                    pos,
+                    null,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (editText.getText().toString().trim().length() >= 1) {
-                                if (MusicLibrary.addNewSongList(editText.getText().toString().trim(), "")) {
-                                    List<String> pathList = new ArrayList<>();
-                                    for (int i = 0; i < adapter.getCount(); i++) {
-                                        pathList.add(((MediaSessionCompat.QueueItem) adapter.getItem(i)).getDescription().getMediaUri().getPath());
-                                    }
-                                    MusicLibrary.addMusicListToList(pathList, editText.getText().toString().trim());
-                                    songListFragment.initData();
-                                    songListFragment.initSongData(editText.getText().toString().trim());
-                                    setViewPagerToId(1);
-                                } else {
-                                    Toast.makeText(MainActivity.this, "添加歌单失败，可能该名称已被使用", Toast.LENGTH_SHORT).show();
-                                }
-                            } else
-                                Toast.makeText(MainActivity.this, "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+
                         }
-                    });
-            inputDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            inputDialog.show();
+                    }
+            );
         }
     }
 

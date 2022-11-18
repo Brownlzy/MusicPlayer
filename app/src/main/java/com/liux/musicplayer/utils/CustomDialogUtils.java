@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AlertDialog;
 
 import com.liux.musicplayer.R;
@@ -146,16 +147,29 @@ public class CustomDialogUtils {
 
         void clickNegative();
     }
-
-    public static void editTextDialog(Context context,DialogInterface.OnClickListener pos,DialogInterface.OnClickListener neg,DialogInterface.OnClickListener normal){
-//        EditText editText = new EditText(getContext());
-//        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
-//        inputDialog.setTitle(R.string.inputUserName).setView(editText);
-//        inputDialog.setIcon(R.drawable.ic_round_account_circle_24);
-//        inputDialog.setPositiveButton("登录",pos);
-//        inputDialog.setNeutralButton("注册",normal);
-//        inputDialog.setNegativeButton("取消",neg);
-//        inputDialog.show();
+    public static EditText editText;
+    public static void editTextDialog(Context context,
+                                      String title,
+                                      @DrawableRes int iconId,
+                                      String strPos,
+                                      String strNeg,
+                                      String strNormal,
+                                      DialogInterface.OnClickListener pos,
+                                      DialogInterface.OnClickListener neg,
+                                      DialogInterface.OnClickListener normal){
+        View view = LayoutInflater.from(context).inflate(R.layout.oneline_edittext,null,false);
+        editText = view.findViewById(R.id.editText);
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(context);
+        inputDialog.setTitle(title).setView(view);
+        inputDialog.setCancelable(false);
+        inputDialog.setIcon(iconId);
+        if(pos!=null)
+        inputDialog.setPositiveButton(strPos,pos);
+        if(normal!=null)
+        inputDialog.setNeutralButton(strNormal,normal);
+        if(neg!=null)
+        inputDialog.setNegativeButton(strNeg,neg);
+        inputDialog.show();
     }
 
 }

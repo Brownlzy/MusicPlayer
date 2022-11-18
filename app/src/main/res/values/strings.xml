@@ -148,5 +148,6 @@
     <string name="webAllSongList">Web List</string>
     <string name="clearCache">Clear Cache</string>
     <string name="title_activity_open_music_file">OpenMusicFile</string>
+    <string name="Copied">Copied</string>
 
 </resources>

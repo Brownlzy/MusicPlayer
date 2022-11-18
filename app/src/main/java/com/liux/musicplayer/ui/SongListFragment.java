@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class SongListFragment extends Fragment{
+public class SongListFragment extends Fragment {
 
     private ListView songListView;
     private ListView songlistListView;
@@ -114,7 +114,7 @@ public class SongListFragment extends Fragment{
         }
     });
     private boolean isWebPlaylist;
-    private SongAdapter.PopUpMenuListener popUpMenuListener=new SongAdapter.PopUpMenuListener() {
+    private SongAdapter.PopUpMenuListener popUpMenuListener = new SongAdapter.PopUpMenuListener() {
         @Override
         public void PopUpMenu(int position, View v) {
             PopupMenu popup = new PopupMenu(requireContext(), v);
@@ -124,10 +124,10 @@ public class SongListFragment extends Fragment{
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.item_menu_play:
-                            myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
+                            myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))), -2);
                             break;
                         case R.id.item_menu_next_play:
-                            myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-1);
+                            myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))), -1);
                             break;
                         case R.id.item_menu_moreInfo:
                             showMusicDetails(positionToMusicId(position));
@@ -138,7 +138,7 @@ public class SongListFragment extends Fragment{
                                         @Override
                                         public void clickPositive(Song song) {
                                             mSongList.set(positionToMusicId(position), song);
-                                            SharedPrefs.saveSongListByName(mSongList,"allSongList");
+                                            SharedPrefs.saveSongListByName(mSongList, "allSongList");
                                         }
 
                                         @Override
@@ -155,7 +155,7 @@ public class SongListFragment extends Fragment{
                                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            MusicLibrary.deleteMusicFromList(((Song)songAdapter.getItem(position)).getSongPath(),nowSongListName);
+                                            MusicLibrary.deleteMusicFromList(((Song) songAdapter.getItem(position)).getSongPath(), nowSongListName);
                                             initSongData(nowSongListName);
                                             dialog.dismiss();
                                         }
@@ -176,7 +176,7 @@ public class SongListFragment extends Fragment{
             popup.show();
         }
     };
-    private SonglistAdapter.PopUpMenuListener popUpMenuListListener=new SonglistAdapter.PopUpMenuListener() {
+    private SonglistAdapter.PopUpMenuListener popUpMenuListListener = new SonglistAdapter.PopUpMenuListener() {
         @Override
         public void PopUpMenu(int position, View v) {
             PopupMenu popup = new PopupMenu(requireContext(), v);
@@ -186,9 +186,9 @@ public class SongListFragment extends Fragment{
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.item_menu_play:
-                            Log.e("SongPlaylistFragment","newPlaylist");
-                            if(User.isLogin) {
-                                if(!MusicLibrary.getSongListByName((String) songlistAdapter.getItem(position)).isEmpty()) {
+                            Log.e("SongPlaylistFragment", "newPlaylist");
+                            if (User.isLogin) {
+                                if (!MusicLibrary.getSongListByName((String) songlistAdapter.getItem(position)).isEmpty()) {
                                     Bundle bundle = new Bundle();
                                     bundle.putString("QueueTitle", (String) songlistAdapter.getItem(position));
                                     //bundle.putString("Path", mSongList.get(0).getSongPath());
@@ -201,34 +201,38 @@ public class SongListFragment extends Fragment{
                             //showMusicDetails(positionToMusicId(position));
                             break;
                         case R.id.item_menu_edit:
-                            if((songlistAdapter.getItem(position)).equals("allSongList")||(songlistAdapter.getItem(position)).equals("webAllSongList"))
+                            if ((songlistAdapter.getItem(position)).equals("allSongList") || (songlistAdapter.getItem(position)).equals("webAllSongList"))
                                 Toast.makeText(getContext(), "此歌单不允许编辑", Toast.LENGTH_SHORT).show();
                             else {
-                                final EditText editText = new EditText(getContext());
-                                AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
-                                inputDialog.setTitle(R.string.inputListName).setView(editText);
-                                inputDialog.setIcon(R.drawable.ic_outline_create_24);
-                                inputDialog.setPositiveButton(R.string.confirm,
+                                DialogInterface.OnClickListener pos = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
+                                            MusicLibrary.renameSongList((String) songlistAdapter.getItem(position), CustomDialogUtils.editText.getText().toString().trim());
+                                            initData();
+                                        } else
+                                            Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+                                    }
+                                };
+                                CustomDialogUtils.editTextDialog(getContext(),
+                                        getString(R.string.inputListName),
+                                        R.drawable.ic_outline_create_24,
+                                        getString(R.string.confirm),
+                                        null,
+                                        getString(R.string.cancel),
+                                        pos,
+                                        null,
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                if (editText.getText().toString().trim().length() >= 1) {
-                                                    MusicLibrary.renameSongList((String) songlistAdapter.getItem(position), editText.getText().toString().trim());
-                                                    initData();
-                                                } else
-                                                    Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+
                                             }
-                                        });
-                                inputDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                });
-                                inputDialog.show();
+                                        }
+                                );
                             }
                             break;
                         case R.id.item_menu_delete:
-                            if((songlistAdapter.getItem(position)).equals("allSongList")||(songlistAdapter.getItem(position)).equals("webAllSongList"))
+                            if ((songlistAdapter.getItem(position)).equals("allSongList") || (songlistAdapter.getItem(position)).equals("webAllSongList"))
                                 Toast.makeText(getContext(), "此歌单不允许删除", Toast.LENGTH_SHORT).show();
                             else {
                                 AlertDialog dialog = new AlertDialog.Builder(requireContext())
@@ -260,6 +264,7 @@ public class SongListFragment extends Fragment{
             popup.show();
         }
     };
+
     private void addAllMusic() {
         LoadingDialog ld = new LoadingDialog(getContext());
         ld.setLoadingText("加载中")
@@ -276,7 +281,7 @@ public class SongListFragment extends Fragment{
                     if (msg.arg1 == 0) {
                         refreshList();
                         ld.loadSuccess();
-                    } else{
+                    } else {
                         ld.loadFailed();
                     }
                 }
@@ -285,15 +290,15 @@ public class SongListFragment extends Fragment{
                 @Override
                 public void run() {
                     List<Song> songList = MusicUtils.getMusicData(requireContext());
-                    List<String> pathList=songList.stream().map(Song::getSongPath).distinct().collect(Collectors.toList());
-                    MusicLibrary.addMusicListToList(pathList,nowSongListName);
-                    Message message=Message.obtain();
-                    message.arg1=0;
+                    List<String> pathList = songList.stream().map(Song::getSongPath).distinct().collect(Collectors.toList());
+                    MusicLibrary.addMusicListToList(pathList, nowSongListName);
+                    Message message = Message.obtain();
+                    message.arg1 = 0;
                     addHandler.sendMessage(message);
                 }
             }).start();
             refreshList();
-        }catch (Exception e){
+        } catch (Exception e) {
             ld.loadFailed();
         }
     }
@@ -317,7 +322,7 @@ public class SongListFragment extends Fragment{
                     if (msg.arg1 == 0) {
                         refreshList();
                         ld.loadSuccess();
-                    } else{
+                    } else {
                         ld.loadFailed();
                     }
                 }
@@ -331,7 +336,7 @@ public class SongListFragment extends Fragment{
                         Message message = Message.obtain();
                         message.arg1 = 0;
                         addHandler.sendMessage(message);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Message message = Message.obtain();
                         message.arg1 = 1;
                         addHandler.sendMessage(message);
@@ -339,12 +344,12 @@ public class SongListFragment extends Fragment{
                 }
             }).start();
             refreshList();
-        }catch (Exception e){
+        } catch (Exception e) {
             ld.loadFailed();
         }
     }
 
-    private void searchFile(List<String>pathList,String filePath) {
+    private void searchFile(List<String> pathList, String filePath) {
         File file = new File(filePath);
         List<File> folderList = new ArrayList<File>();
         if (file.isDirectory()) {
@@ -353,17 +358,17 @@ public class SongListFragment extends Fragment{
                     if (childFile.isDirectory()) {
                         folderList.add(childFile);
                     } else {
-                        if(checkChild(childFile))
+                        if (checkChild(childFile))
                             pathList.add(childFile.getAbsolutePath());//筛选结果返回
                     }
                 }
             }
         } else {
-            if(checkChild(file))
+            if (checkChild(file))
                 pathList.add(file.getAbsolutePath());
         }
         for (File folder : folderList) {
-            searchFile(pathList,folder.getPath());
+            searchFile(pathList, folder.getPath());
         }
     }
 
@@ -406,7 +411,7 @@ public class SongListFragment extends Fragment{
         super.onStart();
     }
 
-    private View.OnClickListener songToolsListener=new View.OnClickListener() {
+    private View.OnClickListener songToolsListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -466,16 +471,16 @@ public class SongListFragment extends Fragment{
                     sortSongPopMenu();
                     break;
                 case R.id.playThisList:
-                    if(User.isLogin) {
+                    if (User.isLogin) {
                         playThisList();
-                    }else {
+                    } else {
                         Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
         }
     };
-    private View.OnClickListener songlistToolsListener=new View.OnClickListener() {
+    private View.OnClickListener songlistToolsListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -486,7 +491,7 @@ public class SongListFragment extends Fragment{
                     addNewList();
                     break;
                 case R.id.addFolderList:
-                    if(User.isLogin) {
+                    if (User.isLogin) {
                         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                             addNewListFromFolder();
                         else {
@@ -503,111 +508,120 @@ public class SongListFragment extends Fragment{
     };
 
     private void addNewList() {
-        final EditText editText = new EditText(getContext());
-        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
-        inputDialog.setTitle(R.string.inputListName).setView(editText);
-        inputDialog.setIcon(R.drawable.ic_round_add_to_new_list_24);
-        inputDialog.setPositiveButton(R.string.confirm,
+        DialogInterface.OnClickListener pos= new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
+                    MusicLibrary.addNewSongList(CustomDialogUtils.editText.getText().toString().trim(), "");
+                    initData();
+                } else
+                    Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+            }
+        };
+        CustomDialogUtils.editTextDialog(getContext(),
+                getString(R.string.inputListName),
+                R.drawable.ic_round_add_to_new_list_24,
+                getString(R.string.confirm),
+                null,
+                getString(R.string.cancel),
+                pos,
+                null,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(editText.getText().toString().trim().length()>=1) {
-                            MusicLibrary.addNewSongList(editText.getText().toString().trim(),"");
-                            initData();
-                        }else
-                            Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+
                     }
-                });
-        inputDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        inputDialog.show();
+                }
+        );
     }
 
     private void addNewListFromFolder() {
-        final EditText editText = new EditText(getContext());
-        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
-        inputDialog.setTitle(R.string.inputListName).setView(editText);
-        inputDialog.setIcon(R.drawable.ic_round_add_to_new_list_24);
-        inputDialog.setPositiveButton(R.string.confirm,
+        DialogInterface.OnClickListener pos= new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if ( CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
+                    if (MusicLibrary.addNewSongList( CustomDialogUtils.editText.getText().toString().trim(), "")) {
+                        initData();
+                        initSongData( CustomDialogUtils.editText.getText().toString().trim());
+                        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                            getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+                        else {
+                            showNoPermissionDialog();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "添加歌单失败，可能该名称已被使用", Toast.LENGTH_SHORT).show();
+                    }
+                } else
+                    Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+            }
+        };
+        CustomDialogUtils.editTextDialog(getContext(),
+                getString(R.string.inputListName),
+                R.drawable.ic_baseline_create_new_folder_24,
+                getString(R.string.confirm),
+                null,
+                getString(R.string.cancel),
+                pos,
+                null,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(editText.getText().toString().trim().length()>=1) {
-                            if(MusicLibrary.addNewSongList(editText.getText().toString().trim(),"")) {
-                                initData();
-                                initSongData(editText.getText().toString().trim());
-                                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                                    getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
-                                else {
-                                    showNoPermissionDialog();
-                                }
-                            }else {
-                                Toast.makeText(getContext(), "添加歌单失败，可能该名称已被使用", Toast.LENGTH_SHORT).show();
-                            }
-                        }else
-                            Toast.makeText(getContext(), "歌单名称最小长度为1", Toast.LENGTH_SHORT).show();
+
                     }
-                });
-        inputDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        inputDialog.show();
+                }
+        );
     }
 
     private void sortSongPopMenu() {
-            PopupMenu popup = new PopupMenu(requireContext(), sortWay);
-            popup.getMenuInflater().inflate(R.menu.sort_way_menu, popup.getMenu());
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.sort_title_up:
-                            break;
-                        case R.id.sort_title_down:
-                            break;
-                        case R.id.sort_artist_up:
-                            break;
-                        case R.id.sort_artist_down:
-                            break;
-                        case R.id.sort_album_up:
-                            break;
-                        case R.id.sort_album_down:
-                            break;
-                    }
-                    return true;
+        PopupMenu popup = new PopupMenu(requireContext(), sortWay);
+        popup.getMenuInflater().inflate(R.menu.sort_way_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.sort_title_up:
+                        break;
+                    case R.id.sort_title_down:
+                        break;
+                    case R.id.sort_artist_up:
+                        break;
+                    case R.id.sort_artist_down:
+                        break;
+                    case R.id.sort_album_up:
+                        break;
+                    case R.id.sort_album_down:
+                        break;
                 }
-            });
-            popup.show();
+                return true;
+            }
+        });
+        popup.show();
     }
+
     private void sortSonglistPopMenu() {
-            PopupMenu popup = new PopupMenu(requireContext(), sortWayList);
-            popup.getMenuInflater().inflate(R.menu.sort_list_way_menu, popup.getMenu());
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.sort_title_up:
-                            break;
-                        case R.id.sort_title_down:
-                            break;
-                        case R.id.sort_artist_up:
-                            break;
-                        case R.id.sort_artist_down:
-                            break;
-                        case R.id.sort_album_up:
-                            break;
-                        case R.id.sort_album_down:
-                            break;
-                    }
-                    return true;
+        PopupMenu popup = new PopupMenu(requireContext(), sortWayList);
+        popup.getMenuInflater().inflate(R.menu.sort_list_way_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.sort_title_up:
+                        break;
+                    case R.id.sort_title_down:
+                        break;
+                    case R.id.sort_artist_up:
+                        break;
+                    case R.id.sort_artist_down:
+                        break;
+                    case R.id.sort_album_up:
+                        break;
+                    case R.id.sort_album_down:
+                        break;
                 }
-            });
-            popup.show();
+                return true;
+            }
+        });
+        popup.show();
     }
 
     private void playThisList() {
@@ -620,14 +634,14 @@ public class SongListFragment extends Fragment{
                                 .indexOf(mSongList.get(positionToMusicId(position)).getSongPath());
                         myViewModel.getmMediaController().getTransportControls().skipToQueueItem(myViewModel.getmMediaController().getQueue().get(qid).getQueueId());
                     }else{*/
-                        Log.e("SongPlaylistFragment","newPlaylist");
-                        if(!mSongList.isEmpty()) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("QueueTitle", nowSongListName);
-                            //bundle.putString("Path", mSongList.get(0).getSongPath());
-                            myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
-                        }
-                   /* }*/
+        Log.e("SongPlaylistFragment", "newPlaylist");
+        if (!mSongList.isEmpty()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("QueueTitle", nowSongListName);
+            //bundle.putString("Path", mSongList.get(0).getSongPath());
+            myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
+        }
+        /* }*/
     }
 
     private void showNoPermissionDialog() {
@@ -669,7 +683,7 @@ public class SongListFragment extends Fragment{
             searchSongLayout.setVisibility(View.GONE);
             sortSongLayout.setVisibility(View.VISIBLE);
             searchEditText.setText("");
-            songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
+            songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap, popUpMenuListener);
             songListView.setAdapter(songAdapter);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
             songAdapter.setNowPlay(Integer.parseInt(prefs.getString("nowId", "0")));
@@ -677,7 +691,7 @@ public class SongListFragment extends Fragment{
             sortSongLayout.setVisibility(View.GONE);
             searchSongLayout.setVisibility(View.VISIBLE);
             searchList = new ArrayList<>();
-            songAdapter = new SongAdapter(requireContext(),searchList, stateCheckedMap,popUpMenuListener);
+            songAdapter = new SongAdapter(requireContext(), searchList, stateCheckedMap, popUpMenuListener);
             songListView.setAdapter(songAdapter);
             songAdapter.setNowPlay(-1);
         }
@@ -689,7 +703,7 @@ public class SongListFragment extends Fragment{
         super.onPause();  // Always call the superclass method first
         try {
             myViewModel.setListPosition(songListView.getFirstVisiblePosition());
-            myViewModel.setListPositionY ( songListView.getChildAt(0).getTop());
+            myViewModel.setListPositionY(songListView.getChildAt(0).getTop());
         } catch (NullPointerException e) {
             myViewModel.setListPosition(-1);
         }
@@ -699,13 +713,13 @@ public class SongListFragment extends Fragment{
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         if (getActivity() != null)
-                //&& myViewModel.getMusicService() != null
-                //&& isWebPlaylist != myViewModel.getMusicService().isWebPlayMode())
+            //&& myViewModel.getMusicService() != null
+            //&& isWebPlaylist != myViewModel.getMusicService().isWebPlayMode())
             //initData();
-        if (myViewModel.getListPosition() != -1)
-            songListView.setSelectionFromTop(myViewModel.getListPosition(), myViewModel.getListPositionY() - DisplayUtils.dip2px(requireContext(), 44));
-        if(!SharedPrefs.getIsUseWebPlayList()&&mSonglistList.stream().map(t -> t.n).distinct().collect(Collectors.toList()).contains("webAllSongList")
-        ||SharedPrefs.getIsUseWebPlayList()&&!mSonglistList.stream().map(t -> t.n).distinct().collect(Collectors.toList()).contains("webAllSongList")){
+            if (myViewModel.getListPosition() != -1)
+                songListView.setSelectionFromTop(myViewModel.getListPosition(), myViewModel.getListPositionY() - DisplayUtils.dip2px(requireContext(), 44));
+        if (!SharedPrefs.getIsUseWebPlayList() && mSonglistList.stream().map(t -> t.n).distinct().collect(Collectors.toList()).contains("webAllSongList")
+                || SharedPrefs.getIsUseWebPlayList() && !mSonglistList.stream().map(t -> t.n).distinct().collect(Collectors.toList()).contains("webAllSongList")) {
             unInitSongData();
             initData();
             MainActivity.mainActivity.setSongListFragmentTitle();
@@ -753,7 +767,7 @@ public class SongListFragment extends Fragment{
     private void beSureDelete() {
         //mSongList.removeAll(mCheckedData);//删除选中数据
         //mSongList.removeIf(song -> mCheckedData.contains(song.getSongPath()));
-        MusicLibrary.deleteMusicListFromList(mCheckedData,nowSongListName);
+        MusicLibrary.deleteMusicListFromList(mCheckedData, nowSongListName);
         setStateCheckedMap(false);//将CheckBox的所有选中状态变成未选中
         mCheckedData.clear();//清空选中数据
         songAdapter.notifyDataSetChanged();
@@ -799,7 +813,7 @@ public class SongListFragment extends Fragment{
         songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position>=mSongList.size()) return;
+                if (position >= mSongList.size()) return;
                 if (multipleChooseFlag) {
                     updateCheckBoxStatus(view, position);
                 } else {
@@ -820,7 +834,7 @@ public class SongListFragment extends Fragment{
                         myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
                     }*/
 
-                    myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))),-2);
+                    myViewModel.getmMediaController().addQueueItem(MusicLibrary.getMediaItemDescription(mSongList.get(positionToMusicId(position))), -2);
                 }
             }
         });
@@ -867,7 +881,7 @@ public class SongListFragment extends Fragment{
     private void initView(View view) {
         view.findViewById(R.id.addNewList).setOnClickListener(songlistToolsListener);
         view.findViewById(R.id.refresh_list_list).setOnClickListener(songlistToolsListener);
-        sortWayList=view.findViewById(R.id.sortWayList);
+        sortWayList = view.findViewById(R.id.sortWayList);
         sortWayList.setOnClickListener(songlistToolsListener);
         view.findViewById(R.id.addFolderList).setOnClickListener(songlistToolsListener);
 
@@ -883,7 +897,7 @@ public class SongListFragment extends Fragment{
         view.findViewById(R.id.refresh_list).setOnClickListener(songToolsListener);
         view.findViewById(R.id.search_list).setOnClickListener(songToolsListener);
         view.findViewById(R.id.playThisList).setOnClickListener(songToolsListener);
-        sortWay=view.findViewById(R.id.sortWay);
+        sortWay = view.findViewById(R.id.sortWay);
         sortWay.setOnClickListener(songToolsListener);
         addSongLayout = view.findViewById(R.id.ll_addBar);
         editSongLayout = view.findViewById(R.id.ll_editBar);
@@ -949,7 +963,7 @@ public class SongListFragment extends Fragment{
         myViewModel.getSongsMutableLiveData().observeForever(new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {
-                songAdapter = new SongAdapter(requireContext(), songs, stateCheckedMap,popUpMenuListener);
+                songAdapter = new SongAdapter(requireContext(), songs, stateCheckedMap, popUpMenuListener);
                 songListView.setAdapter(songAdapter);
             }
         });
@@ -1006,43 +1020,44 @@ public class SongListFragment extends Fragment{
 
     public void initData() {
         //if (myViewModel!=null && myViewModel.getMusicService() != null) {
-            //isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
-        mSonglistList=MusicLibrary.getAllSongListList();
-        songlistAdapter = new SonglistAdapter(requireContext(), mSonglistList, stateCheckedMap,popUpMenuListListener);
+        //isWebPlaylist = myViewModel.getMusicService().isWebPlayMode();
+        mSonglistList = MusicLibrary.getAllSongListList();
+        songlistAdapter = new SonglistAdapter(requireContext(), mSonglistList, stateCheckedMap, popUpMenuListListener);
         songlistListView.setAdapter(songlistAdapter);
         songlistAdapter.notifyDataSetChanged();
         showPlaylistHeaderBar(false);
-            //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         //}
     }
 
-    public void initSongData(String name){
-        songlistFlag=true;
+    public void initSongData(String name) {
+        songlistFlag = true;
         showPlaylistHeaderBar(true);
         songListView.setVisibility(View.VISIBLE);
         mSongList = MusicLibrary.getSongListByName(name);
-        nowSongListName=name;
+        nowSongListName = name;
         setStateCheckedMap(false);
-        songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap,popUpMenuListener);
+        songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap, popUpMenuListener);
         songListView.setAdapter(songAdapter);
         songAdapter.notifyDataSetChanged();
         showSonglistList(false);
         MainActivity.mainActivity.setSongListFragmentTitle();
     }
-    public void unInitSongData(){
+
+    public void unInitSongData() {
         showSonglistList(true);
         showPlaylistHeaderBar(false);
         songListView.setVisibility(View.INVISIBLE);
-        songlistFlag=false;
+        songlistFlag = false;
     }
 
     private void showSonglistList(boolean b) {
-        if(b){
+        if (b) {
             songlistListView.setVisibility(View.VISIBLE);
             Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_show);
             playlistListHeader.startAnimation(animation);
             playlistListHeader.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             songlistListView.setVisibility(View.GONE);
             Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_hide);
             playlistListHeader.startAnimation(animation);
@@ -1069,7 +1084,7 @@ public class SongListFragment extends Fragment{
         //if (myViewModel.getMusicService().isWebPlayMode()) {
         ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
         //} else {
-            metadata = MusicUtils.getMetadata(mSongList.get(musicId).getSongPath());
+        metadata = MusicUtils.getMetadata(mSongList.get(musicId).getSongPath());
         //}
         Bitmap bitmap = MusicUtils.getAlbumImage(mSongList.get(musicId).getSongPath());
         AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
@@ -1098,12 +1113,12 @@ public class SongListFragment extends Fragment{
     }
 
     public int onBackPressed() {
-        if(multipleChooseFlag||searchFlag) {
+        if (multipleChooseFlag || searchFlag) {
             if (multipleChooseFlag)
                 editList();
             if (searchFlag)
                 searchState();
-        }else if(songlistFlag){
+        } else if (songlistFlag) {
             unInitSongData();
             initData();
             MainActivity.mainActivity.setSongListFragmentTitle();

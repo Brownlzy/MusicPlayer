@@ -45,6 +45,8 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.CleanDataUtils;
+import com.liux.musicplayer.utils.ClipboardUtils;
+import com.liux.musicplayer.utils.CustomDialogUtils;
 import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.CrashHandlers;
@@ -618,56 +620,64 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     public void showLoginDialog() {
-        /*@setView 装入一个EditView
-         */
-        EditText editText = new EditText(getContext());
-        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
-        inputDialog.setTitle(R.string.inputUserName).setView(editText);
-        inputDialog.setIcon(R.drawable.ic_round_account_circle_24);
-        inputDialog.setPositiveButton("登录",
-                new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(editText.getText().toString().trim().length()>=4)
-                            User.login(getContext(),editText.getText().toString().trim(),false);
+                        if(CustomDialogUtils.editText.getText().toString().trim().length()>=4)
+                            User.login(getContext(),CustomDialogUtils.editText.getText().toString().trim(),false);
                         else
                             Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
                     }
-                });
-        inputDialog.setNeutralButton("注册",
-                new DialogInterface.OnClickListener() {
+                };
+        DialogInterface.OnClickListener normal=new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(editText.getText().toString().trim().length()>=4){
-                            showRegisterDialog(editText.getText().toString().trim());
+                        if(CustomDialogUtils.editText.getText().toString().trim().length()>=4){
+                            showRegisterDialog(CustomDialogUtils.editText.getText().toString().trim());
                         } else
                             Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
                     }
-                });
-        inputDialog.setNegativeButton("取消",
+                };
+        CustomDialogUtils.editTextDialog(getContext(),
+                getString(R.string.inputUserName),
+                R.drawable.ic_round_account_circle_24,
+                "登录",
+                getString(R.string.cancel),
+                "注册",
+                pos,
                 new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        inputDialog.show();
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        },
+                normal);
+
     }
 
     private void showRegisterDialog(String userName) {
-        final EditText editText = new EditText(getContext());
-        editText.setOnClickListener(null);
-        editText.setText(User.getUserHash(userName));
-        AlertDialog.Builder inputDialog = new AlertDialog.Builder(getContext());
-        inputDialog.setTitle(R.string.copyToRegister).setView(editText);
-        inputDialog.setIcon(R.drawable.ic_round_account_circle_24);
-        inputDialog.setPositiveButton(R.string.confirm,
+        String userHash=User.getUserHash(userName);
+        AlertDialog.Builder codeDialog = new AlertDialog.Builder(getContext());
+        codeDialog.setTitle(R.string.copyToRegister);
+        codeDialog.setMessage(userHash);
+        codeDialog.setCancelable(false);
+        codeDialog.setIcon(R.drawable.ic_round_account_circle_24);
+        codeDialog.setPositiveButton(R.string.copy,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ClipboardUtils.copyText(getContext(),userHash);
+                    }
+                });
+        codeDialog.setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-        inputDialog.show();
+        codeDialog.show();
+
+
     }
 
     @Override

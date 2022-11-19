@@ -19,6 +19,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaBrowserHelper;
+import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.LyricUtils;
@@ -437,7 +438,8 @@ public class MyViewModel extends AndroidViewModel {
                 String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
                 String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
                 String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
-                String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
+                //String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
+                String LYRIC_URI = MusicLibrary.getLyricPath(MEDIA_URI);
                 int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
                 Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID, MEDIA_URI, LYRIC_URI);
                 nowLyric.setValue(new LyricUtils(song));

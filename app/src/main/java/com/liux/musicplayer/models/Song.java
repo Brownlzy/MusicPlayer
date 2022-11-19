@@ -200,6 +200,10 @@ public class Song implements Cloneable {
     }
 
     public final String getLyricPath() {
+        if(!FileUtils.isFileExists(mLyricPath)) {
+            if (FileUtils.isFileExists(mPath.replace(FileUtils.getFileExtension(mPath), "lrc")))
+                mLyricPath = mPath.replace(FileUtils.getFileExtension(mPath), "lrc");
+        }
         return mLyricPath;
     }
 

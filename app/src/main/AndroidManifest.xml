@@ -28,6 +28,7 @@
             android:exported="true"
             android:label="@string/title_activity_open_music_file"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MusicPlayer.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

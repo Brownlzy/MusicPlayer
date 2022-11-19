@@ -46,6 +46,13 @@ public class MusicLibrary {
         return allListSongsTreeMap.get(path);
     }
 
+    public static String getLyricPath(String media_uri) {
+        if(allListSongsTreeMap.get(media_uri)!=null)
+            return allListSongsTreeMap.get(media_uri).getLyricPath();
+        else
+            return "null";
+    }
+
     public static class SongList {
         public String n;
         public String s;
@@ -191,8 +198,8 @@ public class MusicLibrary {
                 theList.set(0, newSong);
             } else {
                 theList.add(newSong);
-                allListSongsTreeMap.put(path,newSong);
             }
+            allListSongsTreeMap.put(path,newSong);
         }
         SharedPrefs.saveSongListByName(theList, listName);
         SongLists.put(listName, theList);
@@ -211,8 +218,8 @@ public class MusicLibrary {
                 theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
             } else {
                 theList.add(newSong);
-                allListSongsTreeMap.put(path,newSong);
             }
+            allListSongsTreeMap.put(path,newSong);
         }
         SharedPrefs.saveSongListByName(theList, listName);
         SongLists.put(listName, theList);

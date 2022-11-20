@@ -15,10 +15,20 @@ import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SongAdapter extends BaseAdapter {
 
+    public static final int TITLEUP = 0;
+    public static final int TITLEDW = 1;
+    public static final int ARTISTUP = 2;
+    public static final int ARTISTDW = 3;
+    public static final int ALBUMUP = 4;
+    public static final int ALBUMDW = 5;
+    public static final int TIMEUP = 6;
+    public static final int TIMEDW = 7;
     List<Song> data;
     private final Context mContext;
     ViewHolder holder;
@@ -26,6 +36,68 @@ public class SongAdapter extends BaseAdapter {
     private final SparseBooleanArray stateCheckedMap;//用来存放CheckBox的选中状态，true为选中,false为没有选中
     private final PopUpMenuListener mPopUpMenuListener;
     private int nowPlay;
+
+    public void setSortWay(int sortWay) {
+        List<Song> newList=new ArrayList<>(data.size());
+        newList.addAll(data);
+        switch (sortWay){
+            case TITLEUP:
+                newList.sort(new Comparator<Song>() {
+                    @Override
+                    public int compare(Song o1, Song o2) {
+                        return o1.getSongTitle().compareTo(o2.getSongTitle());
+                    }
+                });
+                break;
+            case TITLEDW:
+                newList.sort(new Comparator<Song>() {
+                    @Override
+                    public int compare(Song o1, Song o2) {
+                        return -o1.getSongTitle().compareTo(o2.getSongTitle());
+                    }
+                });
+                break;
+            case ARTISTUP:
+                newList.sort(new Comparator<Song>() {
+                    @Override
+                    public int compare(Song o1, Song o2) {
+                        return o1.getArtistName().compareTo(o2.getArtistName());
+                    }
+                });
+                break;
+            case ARTISTDW:
+                newList.sort(new Comparator<Song>() {
+                    @Override
+                    public int compare(Song o1, Song o2) {
+                        return -o1.getArtistName().compareTo(o2.getArtistName());
+                    }
+                });
+                break;
+            case ALBUMUP:
+                newList.sort(new Comparator<Song>() {
+                    @Override
+                    public int compare(Song o1, Song o2) {
+                        return o1.getAlbumName().compareTo(o2.getAlbumName());
+                    }
+                });
+                break;
+            case ALBUMDW:
+                newList.sort(new Comparator<Song>() {
+                    @Override
+                    public int compare(Song o1, Song o2) {
+                        return -o1.getAlbumName().compareTo(o2.getAlbumName());
+                    }
+                });
+                break;
+            default:
+//            case TIMEUP:
+//                break;
+//            case TIMEDW:
+//                Collections.reverse(newList);
+                break;
+        }
+        this.data=newList;
+    }
 
     public interface PopUpMenuListener{
         void PopUpMenu(int position,View v);
@@ -131,8 +203,8 @@ public class SongAdapter extends BaseAdapter {
         isShowCheckBox = showCheckBox;
     }
 
-    public void setNowPlay(int musicId) {
-        nowPlay = musicId;
-    }
-
+//    public void setNowPlay(int musicId) {
+//        nowPlay = musicId;
+//    }
+//
 }

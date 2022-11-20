@@ -19,5 +19,10 @@
     <item
         android:id="@+id/sort_album_down"
         android:title="@string/sort_album_down" />
-
+<!--    <item-->
+<!--        android:id="@+id/sort_time_up"-->
+<!--        android:title="@string/sort_time_up" />-->
+<!--    <item-->
+<!--        android:id="@+id/sort_time_down"-->
+<!--        android:title="@string/sort_time_down" />-->
 </menu>

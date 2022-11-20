@@ -14,9 +14,16 @@ import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class SonglistAdapter extends BaseAdapter {
+
+    public static final int NAMEUP = 0;
+    public static final int NAMEDW = 1;
+    public static final int AMOUNTUP = 2;
+    public static final int AMOUNTDW = 3;
 
     List<MusicLibrary.SongList> data;
     private final Context mContext;
@@ -34,6 +41,51 @@ public class SonglistAdapter extends BaseAdapter {
         mContext = context;
         this.stateCheckedMap = stateCheckedMap;
         mPopUpMenuListener=playlistFragment;
+    }
+    public void setSortWay(int sortWay) {
+        List<MusicLibrary.SongList> newList=new ArrayList<>(data.size());
+        newList.addAll(data);
+        switch (sortWay){
+            case NAMEUP:
+                newList.sort(new Comparator<MusicLibrary.SongList>() {
+                    @Override
+                    public int compare(MusicLibrary.SongList o1, MusicLibrary.SongList o2) {
+                        return o1.n.compareTo(o2.n);
+                    }
+                });
+                break;
+            case NAMEDW:
+                newList.sort(new Comparator<MusicLibrary.SongList>() {
+                    @Override
+                    public int compare(MusicLibrary.SongList o1, MusicLibrary.SongList o2) {
+                        return -o1.n.compareTo(o2.n);
+                    }
+                });
+                break;
+            case AMOUNTUP:
+                newList.sort(new Comparator<MusicLibrary.SongList>() {
+                    @Override
+                    public int compare(MusicLibrary.SongList o1, MusicLibrary.SongList o2) {
+                        return o1.c-o2.c;
+                    }
+                });
+                break;
+            case AMOUNTDW:
+                newList.sort(new Comparator<MusicLibrary.SongList>() {
+                    @Override
+                    public int compare(MusicLibrary.SongList o1, MusicLibrary.SongList o2) {
+                        return o2.c-o1.c;
+                    }
+                });
+                break;
+            default:
+//            case TIMEUP:
+//                break;
+//            case TIMEDW:
+//                Collections.reverse(newList);
+                break;
+        }
+        this.data=newList;
     }
 
     @Override

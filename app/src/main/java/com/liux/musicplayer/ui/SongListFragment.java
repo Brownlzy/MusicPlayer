@@ -509,7 +509,7 @@ public class SongListFragment extends Fragment {
     };
 
     private void addNewList() {
-        DialogInterface.OnClickListener pos= new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener pos = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
@@ -537,13 +537,13 @@ public class SongListFragment extends Fragment {
     }
 
     private void addNewListFromFolder() {
-        DialogInterface.OnClickListener pos= new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener pos = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if ( CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
-                    if (MusicLibrary.addNewSongList( CustomDialogUtils.editText.getText().toString().trim(), "")) {
+                if (CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {
+                    if (MusicLibrary.addNewSongList(CustomDialogUtils.editText.getText().toString().trim(), "")) {
                         initData();
-                        initSongData( CustomDialogUtils.editText.getText().toString().trim());
+                        initSongData(CustomDialogUtils.editText.getText().toString().trim());
                         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                             getFolderIntent.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
                         else {
@@ -581,18 +581,31 @@ public class SongListFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.sort_title_up:
+                        songAdapter.setSortWay(SongAdapter.TITLEUP);
                         break;
                     case R.id.sort_title_down:
+                        songAdapter.setSortWay(SongAdapter.TITLEDW);
                         break;
                     case R.id.sort_artist_up:
+                        songAdapter.setSortWay(SongAdapter.ARTISTUP);
                         break;
                     case R.id.sort_artist_down:
+                        songAdapter.setSortWay(SongAdapter.ARTISTDW);
                         break;
                     case R.id.sort_album_up:
+                        songAdapter.setSortWay(SongAdapter.ALBUMUP);
                         break;
                     case R.id.sort_album_down:
+                        songAdapter.setSortWay(SongAdapter.ALBUMDW);
                         break;
+//                    case R.id.sort_time_up:
+//                        songAdapter.setSortWay(SongAdapter.TIMEUP);
+//                        break;
+//                    case R.id.sort_time_down:
+//                        songAdapter.setSortWay(SongAdapter.TIMEDW);
+//                        break;
                 }
+                songAdapter.notifyDataSetChanged();
                 return true;
             }
         });
@@ -606,19 +619,26 @@ public class SongListFragment extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.sort_title_up:
+                    case R.id.sort_name_up:
+                        songlistAdapter.setSortWay(SonglistAdapter.NAMEUP);
                         break;
-                    case R.id.sort_title_down:
+                    case R.id.sort_name_down:
+                        songlistAdapter.setSortWay(SonglistAdapter.NAMEDW);
                         break;
-                    case R.id.sort_artist_up:
+                    case R.id.sort_amount_up:
+                        songlistAdapter.setSortWay(SonglistAdapter.AMOUNTUP);
                         break;
-                    case R.id.sort_artist_down:
+                    case R.id.sort_amount_down:
+                        songlistAdapter.setSortWay(SonglistAdapter.AMOUNTDW);
                         break;
-                    case R.id.sort_album_up:
-                        break;
-                    case R.id.sort_album_down:
-                        break;
+//                    case R.id.sort_time_up:
+//                        songAdapter.setSortWay(SongAdapter.TIMEUP);
+//                        break;
+//                    case R.id.sort_time_down:
+//                        songAdapter.setSortWay(SongAdapter.TIMEDW);
+//                        break;
                 }
+                songlistAdapter.notifyDataSetChanged();
                 return true;
             }
         });
@@ -687,14 +707,14 @@ public class SongListFragment extends Fragment {
             songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap, popUpMenuListener);
             songListView.setAdapter(songAdapter);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            songAdapter.setNowPlay(Integer.parseInt(prefs.getString("nowId", "0")));
+//            songAdapter.setNowPlay(Integer.parseInt(prefs.getString("nowId", "0")));
         } else {
             sortSongLayout.setVisibility(View.GONE);
             searchSongLayout.setVisibility(View.VISIBLE);
             searchList = new ArrayList<>();
             songAdapter = new SongAdapter(requireContext(), searchList, stateCheckedMap, popUpMenuListener);
             songListView.setAdapter(songAdapter);
-            songAdapter.setNowPlay(-1);
+//            songAdapter.setNowPlay(-1);
         }
         searchFlag = !searchFlag;
     }
@@ -1032,11 +1052,11 @@ public class SongListFragment extends Fragment {
     }
 
     public void initSongData(String name) {
-        songlistFlag = true;
         showPlaylistHeaderBar(true);
+        songlistFlag = true;
         songListView.setVisibility(View.VISIBLE);
         mSongList = new ArrayList<>();
-        for (Song s:MusicLibrary.getSongListByName(name)) {
+        for (Song s : MusicLibrary.getSongListByName(name)) {
             mSongList.add(MusicLibrary.querySong(s.getSongPath()));
         }
         nowSongListName = name;
@@ -1055,17 +1075,19 @@ public class SongListFragment extends Fragment {
         songlistFlag = false;
     }
 
-    private void showSonglistList(boolean b) {
-        if (b) {
+    private void showSonglistList(boolean isShow) {
+        if (isShow) {
             songlistListView.setVisibility(View.VISIBLE);
             Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_show);
             playlistListHeader.startAnimation(animation);
             playlistListHeader.setVisibility(View.VISIBLE);
         } else {
             songlistListView.setVisibility(View.GONE);
-            Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_hide);
-            playlistListHeader.startAnimation(animation);
-            playlistListHeader.setVisibility(View.GONE);
+            if(!songlistFlag) {
+                Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.gradually_moveup_hide);
+                playlistListHeader.startAnimation(animation);
+            }
+                playlistListHeader.setVisibility(View.GONE);
         }
     }
 
@@ -1141,7 +1163,7 @@ public class SongListFragment extends Fragment {
 
     public void setNowPlaying(int musicId) {
         if (songAdapter != null && !searchFlag) {
-            songAdapter.setNowPlay(musicId);
+//            songAdapter.setNowPlay(musicId);
             songAdapter.notifyDataSetChanged();
         }
     }

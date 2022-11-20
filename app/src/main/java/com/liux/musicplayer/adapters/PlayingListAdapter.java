@@ -45,6 +45,7 @@ public class PlayingListAdapter extends BaseAdapter {
     public interface RefreshListener{
         void deleteThis(MediaDescriptionCompat description);
         void skipToThis(long id);
+        void popMenu(int position, View v);
     }
 
     public PlayingListAdapter(MainActivity context, List<MediaSessionCompat.QueueItem> data, RefreshListener refreshListener) {
@@ -116,6 +117,13 @@ public class PlayingListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 mRefreshListener.skipToThis(position);
+            }
+        });
+        holder.mChoose.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mRefreshListener.popMenu(position,v);
+                return false;
             }
         });
         return convertView;

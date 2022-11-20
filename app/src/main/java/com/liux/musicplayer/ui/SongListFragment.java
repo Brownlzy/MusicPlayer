@@ -137,8 +137,9 @@ public class SongListFragment extends Fragment {
                                     new CustomDialogUtils.AlertDialogBtnClickListener() {
                                         @Override
                                         public void clickPositive(Song song) {
-                                            mSongList.set(positionToMusicId(position), song);
-                                            SharedPrefs.saveSongListByName(mSongList, "allSongList");
+//                                            mSongList.set(positionToMusicId(position), song);
+//                                            SharedPrefs.saveSongListByName(mSongList, nowSongListName);
+                                            MusicLibrary.editSongInfo(song);
                                         }
 
                                         @Override
@@ -1034,7 +1035,10 @@ public class SongListFragment extends Fragment {
         songlistFlag = true;
         showPlaylistHeaderBar(true);
         songListView.setVisibility(View.VISIBLE);
-        mSongList = MusicLibrary.getSongListByName(name);
+        mSongList = new ArrayList<>();
+        for (Song s:MusicLibrary.getSongListByName(name)) {
+            mSongList.add(MusicLibrary.querySong(s.getSongPath()));
+        }
         nowSongListName = name;
         setStateCheckedMap(false);
         songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap, popUpMenuListener);
@@ -1080,36 +1084,39 @@ public class SongListFragment extends Fragment {
     }
 
     private void showMusicDetails(int musicId) {
-        MusicUtils.Metadata metadata = null;
-        //if (myViewModel.getMusicService().isWebPlayMode()) {
-        ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
-        //} else {
-        metadata = MusicUtils.getMetadata(mSongList.get(musicId).getSongPath());
-        //}
-        Bitmap bitmap = MusicUtils.getAlbumImage(mSongList.get(musicId).getSongPath());
-        AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
-                .setTitle(mSongList.get(musicId).getSongTitle())
-                .setMessage(
-                        getString(R.string.title_artist) + metadata.artist + "\n" +
-                                getString(R.string.title_album) + metadata.album + "\n" +
-                                getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
-                                getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
-                                getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
-                                getString(R.string.file_size) + metadata.sizeByte + "\n" +
-                                getString(R.string.title_path) + mSongList.get(musicId).getSongPath() + "\n" +
-                                getString(R.string.title_lyric) + mSongList.get(musicId).getLyricPath()
-                )
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        if (bitmap == null) {   //获取图片失败，使用默认图片
-            dialog.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
-        } else {    //成功
-            dialog.setIcon(new BitmapDrawable(requireContext().getResources(), bitmap));
-        }
-        dialog.create().show();
+        CustomDialogUtils.showMusicDetails(getContext(),
+                mSongList.get(musicId).getSongPath());
+
+//        MusicUtils.Metadata metadata = null;
+//        //if (myViewModel.getMusicService().isWebPlayMode()) {
+//        ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
+//        //} else {
+//        metadata = MusicUtils.getMetadata(mSongList.get(musicId).getSongPath());
+//        //}
+//        Bitmap bitmap = MusicUtils.getAlbumImage(mSongList.get(musicId).getSongPath());
+//        AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext())
+//                .setTitle(mSongList.get(musicId).getSongTitle())
+//                .setMessage(
+//                        getString(R.string.title_artist) + metadata.artist + "\n" +
+//                                getString(R.string.title_album) + metadata.album + "\n" +
+//                                getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+//                                getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+//                                getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+//                                getString(R.string.file_size) + metadata.sizeByte + "\n" +
+//                                getString(R.string.title_path) + mSongList.get(musicId).getSongPath() + "\n" +
+//                                getString(R.string.title_lyric) + mSongList.get(musicId).getLyricPath()
+//                )
+//                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                });
+//        if (bitmap == null) {   //获取图片失败，使用默认图片
+//            dialog.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_music_note_24));
+//        } else {    //成功
+//            dialog.setIcon(new BitmapDrawable(requireContext().getResources(), bitmap));
+//        }
+//        dialog.create().show();
     }
 
     public int onBackPressed() {

@@ -190,6 +190,15 @@
                                     android:contentDescription="@string/playPrev"
                                     android:src="@drawable/ic_baseline_subtitles_24" />
 
+                                <ImageView
+                                    android:id="@+id/btnMore"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="?android:attr/selectableItemBackground"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/playPrev"
+                                    android:src="@drawable/ic_baseline_more_vert_24" />
+
                             </LinearLayout>
 
                             <TextView
@@ -197,7 +206,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="@string/fileInfo"
+                                tools:text="@string/fileInfo"
                                 android:textSize="14sp" />
 
                             <TextView

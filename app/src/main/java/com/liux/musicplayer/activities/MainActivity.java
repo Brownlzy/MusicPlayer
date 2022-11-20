@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -152,6 +153,50 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void skipToThis(long id) {
             myViewModel.getmMediaController().getTransportControls().skipToQueueItem(id);
+        }
+
+        @Override
+        public void popMenu(int position, View v) {
+            PopupMenu popup = new PopupMenu(MainActivity.this, v);
+            popup.getMenuInflater().inflate(R.menu.playlist_item_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.item_menu_play:
+                            skipToThis(position);
+                            break;
+                        case R.id.item_menu_next_play:
+                            myViewModel.getmMediaController().addQueueItem(myViewModel.getmMediaController().getQueue().get(position).getDescription(), -1);
+                            break;
+                        case R.id.item_menu_moreInfo:
+                            CustomDialogUtils.showMusicDetails(MainActivity.this,
+                                    myViewModel.getmMediaController().getQueue().get(position).getDescription().getMediaUri().toString());
+                            break;
+                        case R.id.item_menu_edit:
+                            Song song=MusicLibrary.querySong(myViewModel.getmMediaController().getQueue().get(position).getDescription().getMediaUri().toString());
+                            CustomDialogUtils.showSongInfoEditDialog(MainActivity.mainActivity,
+                                    song,
+                                    false,
+                                    new CustomDialogUtils.AlertDialogBtnClickListener() {
+                                        @Override
+                                        public void clickPositive(Song song) {
+                                            MusicLibrary.editSongInfo(song);
+                                        }
+                                        @Override
+                                        public void clickNegative() {
+
+                                        }
+                                    });
+                            break;
+                        case R.id.item_menu_delete:
+                            deleteThis(myViewModel.getmMediaController().getQueue().get(position).getDescription());
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
         }
     };
 
@@ -597,6 +642,12 @@ public class MainActivity extends FragmentActivity {
                         })
                         .create();
                 dialog.show();
+            }
+        });
+        findViewById(R.id.refresh_playing_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myViewModel.getmMediaController().getTransportControls().sendCustomAction("REFRESH_PLAYLIST", null);
             }
         });
         //根据音乐的时长设置进度条的最大进度

@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/playlist_list_header"
         android:layout_alignParentBottom="true"
+        android:divider="@null"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp" />
     <com.google.android.material.card.MaterialCardView

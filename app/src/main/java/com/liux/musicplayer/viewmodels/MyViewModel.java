@@ -432,16 +432,18 @@ public class MyViewModel extends AndroidViewModel {
                 );
 
             } else {
-                Log.d(TAG, "onMetadataChanged: called inside songsViewModel");
-                Log.d(TAG, "onMetadataChanged: Title " + mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-                String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
-                String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
-                String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+//                Log.d(TAG, "onMetadataChanged: called inside songsViewModel");
+//                Log.d(TAG, "onMetadataChanged: Title " + mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+//                String TITLE = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
+//                String ARTIST = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
+//                String ALBUM = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM);
+//                String MEDIA_ID = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
                 String MEDIA_URI = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
-                //String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
-                String LYRIC_URI = MusicLibrary.getLyricPath(MEDIA_URI);
-                int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
-                Song song = new Song(TITLE, DURATION, ARTIST, MEDIA_ID, MEDIA_URI, LYRIC_URI);
+//                //String LYRIC_URI = mediaMetadata.getBundle().getString("LYRIC_URI", "null");
+//                String LYRIC_URI = MusicLibrary.getLyricPath(MEDIA_URI);
+//                int DURATION = (int) mediaMetadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+//                Song song = new Song(TITLE, DURATION, ARTIST,ALBUM, MEDIA_ID, MEDIA_URI, LYRIC_URI);
+                Song song=MusicLibrary.querySong(MEDIA_URI);
                 nowLyric.setValue(new LyricUtils(song));
                 nowAlbum = MusicUtils.getAlbumImage(song.getSongPath());
                 nowPlaying.setValue(song);

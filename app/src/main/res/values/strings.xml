@@ -14,7 +14,7 @@
     <string name="switch_storage_permission_off">MusicPlayer must obtain storage permission to find and play music. Turning on this option will request to read external storage permission</string>
     <string name="example">Example</string>
     <string name="title_play">Play</string>
-    <string name="title_playersettings">Player Settings</string>
+    <string name="title_playsettings">Play Settings</string>
     <string name="mainfolder">Main Folder</string>
     <string name="isMoveMusic">Move music to main folder</string>
     <string name="isMoveMusic_summary">After opening, the music and lyrics files in the newly scanned directory will be automatically copied to the main folder</string>
@@ -65,7 +65,7 @@
     <string name="title_duration">"Duration : "</string>
     <string name="title_mimetype">"MimeType : "</string>
     <string name="title_bitrate">"Bitrate : "</string>
-    <string name="item_menu_edit">Edit</string>
+    <string name="item_menu_edit">EditInfo</string>
     <string name="no_permission">No Permission</string>
     <string name="no_permission_info">The music player needs storage permission to read music files under the folder and generate playlists. You cannot add music to the playlist until you go to the settings page to allow application and obtain storage permission.</string>
     <string name="item_btn_more">More</string>
@@ -149,5 +149,10 @@
     <string name="clearCache">Clear Cache</string>
     <string name="title_activity_open_music_file">OpenMusicFile</string>
     <string name="Copied">Copied</string>
+    <string name="item_menu_add_to_list">Add to List</string>
+    <string name="isUseMetaData">Use Metadata</string>
+    <string name="isUseMetaData_summary">The metadata of the music file takes precedence in the details card of the playback page</string>
+    <string name="fileMetaDataInfo">"Metadata Information:"</string>
+    <string name="title_custom">Custom</string>
 
 </resources>

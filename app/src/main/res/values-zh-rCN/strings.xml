@@ -15,7 +15,7 @@
     <string name="switch_storage_permission_off">音乐播放器必须获得存储权限才能查找并播放音乐，开启此选项将请求读取外部存储权限</string>
     <string name="example">示例</string>
     <string name="title_play">播放</string>
-    <string name="title_playersettings">播放器设置</string>
+    <string name="title_playsettings">播放设置</string>
     <string name="mainfolder">主文件夹</string>
     <string name="isMoveMusic">复制音乐至主文件夹</string>
     <string name="isMoveMusic_summary">开启后将自动把新扫描目录下的音乐及歌词文件复制至主文件夹</string>
@@ -66,7 +66,7 @@
     <string name="title_duration">　总　时　长：</string>
     <string name="title_mimetype">文件类型：</string>
     <string name="title_bitrate">　比 特 率：</string>
-    <string name="item_menu_edit">编辑</string>
+    <string name="item_menu_edit">编辑信息</string>
     <string name="no_permission">未获得权限</string>
     <string name="no_permission_info">音乐播放器需要存储权限才能读取文件夹下音乐文件并生成播放列表。在您前往设置页允许申请并获得存储权限前，无法向播放列表中添加音乐。</string>
     <string name="item_btn_more">更多</string>
@@ -150,4 +150,9 @@
     <string name="clearCache">清理缓存</string>
     <string name="title_activity_open_music_file">使用综音播放</string>
     <string name="Copied">已复制</string>
+    <string name="item_menu_add_to_list">添加到歌单</string>
+    <string name="isUseMetaData">使用元数据</string>
+    <string name="isUseMetaData_summary">在播放页的详细信息卡片中优先使用音乐文件的元数据</string>
+    <string name="fileMetaDataInfo">元数据信息：</string>
+    <string name="title_custom">个性化</string>
 </resources>

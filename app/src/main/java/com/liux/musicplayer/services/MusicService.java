@@ -307,6 +307,17 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onAddQueueItem(MediaDescriptionCompat description, int index) {
             if(queueItemHashMap.containsKey(description.getMediaUri().getPath())){
                 if(index==-2){
+//                    if(!description.equals(queueItemHashMap.get(description.getMediaUri().getPath()).getDescription())) {//描述信息不同
+                    if(!isSameDescription(description,queueItemHashMap.get(description.getMediaUri().getPath()).getDescription())) {//描述信息不同
+                        MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+                        int sid=mPlaylist.indexOf(queueItemHashMap.get(description.getMediaUri().getPath()));
+                        int id=mPlaylistOriginal.indexOf(queueItemHashMap.get(description.getMediaUri().getPath()));
+                        if(sid>=0) mPlaylist.set(sid,queueItem);
+                        if(id>=0) mPlaylistOriginal.set(id,queueItem);
+                        queueItemHashMap.put(description.getMediaUri().getPath(), queueItem);
+                        mSession.setQueue(mPlaylist);
+                        MusicLibrary.savePlayingList(mPlaylist);
+                    }
                     onSkipToQueueItem(mPlaylist.indexOf(queueItemHashMap.get(description.getMediaUri().getPath())));
                 }else {
                     onRemoveQueueItem(description);
@@ -344,6 +355,12 @@ public class MusicService extends MediaBrowserServiceCompat {
                 mSession.setQueue(mPlaylist);
                 MusicLibrary.savePlayingList(mPlaylist);
             }
+        }
+
+        private boolean isSameDescription(MediaDescriptionCompat description, MediaDescriptionCompat description1) {
+            return description.getMediaUri().equals(description1.getMediaUri())
+                    &&description.getTitle().equals(description1.getTitle())
+                    &&description.getSubtitle().equals(description1.getSubtitle());
         }
 
         @Override
@@ -654,10 +671,10 @@ public class MusicService extends MediaBrowserServiceCompat {
                     if(mQueueIndex>=mPlaylist.size()){
                         mQueueIndex=mPlaylist.size()-1;
                     }
-                    mSession.setQueue(mPlaylist);
-                    mSession.setQueueTitle(SharedPrefs.getQueueTitle());
                     onSetRepeatMode(mRepeatMode);
                     onSetShuffleMode(mShuffleMode);
+                    mSession.setQueue(mPlaylist);
+                    mSession.setQueueTitle(SharedPrefs.getQueueTitle());
                     break;
                 case "NEW_PLAYLIST":
                     List<MediaDescriptionCompat> PlayList=MusicLibrary.getNewPlayingList(extras.getString("QueueTitle","playingList"));

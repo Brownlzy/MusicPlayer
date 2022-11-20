@@ -3,11 +3,9 @@
 
     <PreferenceCategory app:title="@string/title_permission">
 
-        <!--
-                <SwitchPreferenceCompat
-                    android:persistent="false"
-                    app:key="bugfix"
-                    app:title="" />-->
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
 
         <CheckBoxPreference
             android:persistent="false"
@@ -30,13 +28,10 @@
             app:icon="@drawable/ic_baseline_miscellaneous_services_24"
             app:title="@string/autoRun"
             app:summary="@string/autoRun_summary"/>
-        <Preference
-            app:key="gotoAppDetails"
-            app:title="@string/gotoAppDetails" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/title_playersettings">
+    <PreferenceCategory app:title="@string/title_playsettings">
 
         <SeekBarPreference
             app:key="timing"
@@ -57,7 +52,19 @@
         <CheckBoxPreference
             app:key="deskLyricLock"
             app:title="@string/deskLyricLock"
+            app:icon="@drawable/ic_round_lock_24"
             app:dependency="layer_permission" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/title_custom">
+
+        <CheckBoxPreference
+            app:key="isUseMetaData"
+            app:title="@string/isUseMetaData"
+            app:defaultValue="true"
+            app:icon="@drawable/ic_round_local_offer_24"
+            app:summary="@string/isUseMetaData_summary"/>
 
         <CheckBoxPreference
             app:key="isNewAppearance"
@@ -68,6 +75,7 @@
         <CheckBoxPreference
             app:key="isNeedFastStart"
             app:title="@string/isNeedFastStart"
+            app:icon="@drawable/ic_round_label_important_24"
             app:summary="@string/isNeedFastStart_summary"/>
 
     </PreferenceCategory>
@@ -86,6 +94,7 @@
         <EditTextPreference
             app:key="WebPlayListUrl"
             app:title="@string/WebPlayListUrl"
+            app:icon="@drawable/ic_round_link_24"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
@@ -98,6 +107,7 @@
         <Preference
             app:key="newsBoard"
             app:title="@string/newsBoard"
+            app:icon="@drawable/ic_round_fiber_new_24"
             app:persistent="false" />
         <Preference
             app:key="lastErrorLog"
@@ -115,6 +125,7 @@
             app:title="@string/aboutApp" />
         <Preference
             app:key="clearCache"
+            app:icon="@drawable/ic_round_delete_forever_24"
             app:title="@string/clearCache" />
         <Preference
             app:icon="@drawable/ic_round_exit_to_app_24"

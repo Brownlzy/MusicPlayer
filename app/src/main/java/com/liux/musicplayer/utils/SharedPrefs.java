@@ -243,4 +243,8 @@ public class SharedPrefs {
     public static void putIsUseWebPlayList(boolean b) {
         sharedPreferencesEditor.putBoolean("isUseWebPlayList",false);
     }
+
+    public static boolean isUseMetaData() {
+        return sharedPreferences.getBoolean("isUseMetaData",true);
+    }
 }

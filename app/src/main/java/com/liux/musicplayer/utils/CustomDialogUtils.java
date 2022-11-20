@@ -2,6 +2,8 @@ package com.liux.musicplayer.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -13,9 +15,12 @@ import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 
 public class CustomDialogUtils {
@@ -172,4 +177,38 @@ public class CustomDialogUtils {
         inputDialog.show();
     }
 
+    public static void showMusicDetails(Context context,String path) {
+        MusicUtils.Metadata metadata = null;
+        //if (myViewModel.getMusicService().isWebPlayMode()) {
+        ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
+        //} else {
+        metadata = MusicUtils.getMetadata(path);
+        Song song= MusicLibrary.querySong(path);
+        //}
+        Bitmap bitmap = MusicUtils.getAlbumImage(path);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context)
+                .setTitle(song.getSongTitle()+" - "+song.getArtistName())
+                .setMessage(
+                context.getString(R.string.title_name) + metadata.title + "\n" +
+                context.getString(R.string.title_artist) + metadata.artist + "\n" +
+                        context.getString(R.string.title_album) + metadata.album + "\n" +
+                        context.getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+                        context.getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+                        context.getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+                        context.getString(R.string.file_size) + metadata.sizeByte + "\n" +
+                        context.getString(R.string.title_path) +path + "\n" +
+                        context.getString(R.string.title_lyric) + song.getLyricPath()
+                )
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        if (bitmap == null) {   //获取图片失败，使用默认图片
+            dialog.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_music_note_24));
+        } else {    //成功
+            dialog.setIcon(new BitmapDrawable(context.getResources(), bitmap));
+        }
+        dialog.create().show();
+    }
 }

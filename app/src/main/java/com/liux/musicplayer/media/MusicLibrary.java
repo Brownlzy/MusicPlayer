@@ -53,6 +53,26 @@ public class MusicLibrary {
             return "null";
     }
 
+    public static void editSongInfo(Song song) {
+        allListSongsTreeMap.put(song.getSongPath(),song);
+//        for (SongList sl:allSongListList) {
+//            if(SongLists.containsKey(sl.n)) {
+//                int id=SongLists.get(sl.n).stream().map(Song::getSongPath).distinct().collect(Collectors.toList()).indexOf(song.getSongPath());
+//                if(id>=0){
+//                    SongLists.get(sl.n).set(id,song);
+//                    SharedPrefs.saveSongListByName(theList, listName);
+//                }
+//            }
+//        }
+            if(SongLists.containsKey("allSongList")) {
+                int id=SongLists.get("allSongList").stream().map(Song::getSongPath).distinct().collect(Collectors.toList()).indexOf(song.getSongPath());
+                if(id>=0){
+                    SongLists.get("allSongList").set(id,song);
+                    SharedPrefs.saveSongListByName(SongLists.get("allSongList"), "allSongList");
+                }
+            }
+    }
+
     public static class SongList {
         public String n;
         public String s;
@@ -284,6 +304,7 @@ public class MusicLibrary {
     }
 
     public static List<MediaDescriptionCompat> getPlayingList() {
+        PlayingListOfDiscription.clear();
         if (PlayingListOfSong.isEmpty()) {
             PlayingListOfSong.addAll(SharedPrefs.getSongListByName("playingList"));
         }

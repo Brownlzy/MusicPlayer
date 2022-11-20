@@ -40,10 +40,11 @@ public class Song implements Cloneable {
         this.mId = mId;
     }
 
-    public Song(String mTitle, int mDuration, String mArtistName, String mId, String mPath, String mLyricPath) {
+    public Song(String mTitle, int mDuration, String mArtistName,String mAlbumName, String mId, String mPath, String mLyricPath) {
         this.mTitle = mTitle;
         this.mDuration = mDuration;
         this.mArtistName = mArtistName;
+        this.mAlbumName = mAlbumName;
         this.mId = mId;
         this.mPath = mPath;
         this.mLyricPath = mLyricPath;

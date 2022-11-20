@@ -132,7 +132,7 @@ public class MusicUtils {
         md.artist = song.getArtistName();
         md.duration = String.valueOf(song.getSongDuration());
         md.mimetype = "MUSIC/WEB";
-        md.bitrate = String.valueOf((long)((double)md.sizeLong/(song.getSongDuration()/1000)));
+        md.bitrate = String.valueOf((long)((double)song.getSize()/((double)song.getSongDuration()/8000)));
         Log.e("getWebMetadata","size:"+md.sizeLong);
         Log.e("getWebMetadata","duration:"+song.getSongDuration());
         Log.e("getWebMetadata","bitrate:"+md.bitrate);

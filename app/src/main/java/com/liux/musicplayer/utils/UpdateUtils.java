@@ -182,8 +182,8 @@ public class UpdateUtils {
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_update)
-                    .setMessage(context.getString(R.string.title_nowVersion) + versionName + "\n"
-                            + context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + "\n"
+                    .setMessage(context.getString(R.string.title_nowVersion) + versionName +" ("+ versionCode +")\n"
+                            + context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + " ("+ updateInfo.lastVersionCode +")\n"
                             + context.getString(R.string.title_size) + updateInfo.size + "\n"
                             + context.getString(R.string.title_changlog) + "\n"
                             + updateInfo.changLog.replace("\\n", "\n"))

@@ -65,6 +65,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class SongListFragment extends Fragment {
@@ -1018,11 +1020,13 @@ public class SongListFragment extends Fragment {
 
     private void searchFromList() {
         searchList.clear();
+        Pattern pattern = Pattern.compile(String.valueOf(searchEditText.getText()),Pattern.CASE_INSENSITIVE);   //大小写不敏感
+        Matcher matcher;
         for (Song song : mSongList) {
-            if (song.getSongTitle().contains(searchEditText.getText())
-                    || song.getArtistName().contains(searchEditText.getText())
-                    || song.getAlbumName().contains(searchEditText.getText()))
+            matcher = pattern.matcher(song.getSongTitle()+" "+song.getArtistName()+" "+song.getAlbumName());
+            if(matcher.find()){
                 searchList.add(song);
+            }
         }
         songAdapter.notifyDataSetChanged();
     }
@@ -1078,6 +1082,7 @@ public class SongListFragment extends Fragment {
     }
 
     public void initSongData(String name) {
+        showSonglistList(false);
         showPlaylistHeaderBar(true);
         songlistFlag = true;
         songListView.setVisibility(View.VISIBLE);
@@ -1090,7 +1095,6 @@ public class SongListFragment extends Fragment {
         songAdapter = new SongAdapter(requireContext(), mSongList, stateCheckedMap, popUpMenuListener);
         songListView.setAdapter(songAdapter);
         songAdapter.notifyDataSetChanged();
-        showSonglistList(false);
         MainActivity.mainActivity.setSongListFragmentTitle();
     }
 

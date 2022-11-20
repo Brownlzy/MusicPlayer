@@ -594,7 +594,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         alertInfoDialog = new AlertDialog.Builder(getContext());
         alertInfoDialog.setTitle(R.string.app_name);
         alertInfoDialog.setMessage(getString(R.string.appInfo).replace("\\n", "\n")
-                        + versionName+"("+versionCode+")");
+                        + versionName+" ("+versionCode+")");
         alertInfoDialog.setIcon(R.mipmap.ic_launcher);
         alertInfoDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override

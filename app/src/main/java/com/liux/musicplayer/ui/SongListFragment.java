@@ -170,6 +170,32 @@ public class SongListFragment extends Fragment {
                                     .create();
                             dialog.show();
                             break;
+                        case R.id.item_menu_add_to_list:
+                            DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MusicLibrary.addMusicToList(mSongList.get(positionToMusicId(position)).getSongPath(),CustomDialogUtils.chosenOne);
+                                    Toast.makeText(getContext(), "已添加\""+mSongList.get(positionToMusicId(position)).getSongTitle()+"\"至\""+CustomDialogUtils.chosenOne+"\"", Toast.LENGTH_SHORT).show();
+                                }
+                            };
+                            DialogInterface.OnClickListener neg=new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            };
+                            List<String> songListName=MusicLibrary.getAllSongListName();
+                            songListName.removeIf(s -> s.equals("allSongList")||s.equals("webAllSongList"));
+                            String[] sln=songListName.toArray(new String[songListName.size()]);
+                            CustomDialogUtils.chooseDialog(
+                                    getContext(),
+                                    getString(R.string.item_menu_add_to_list),
+                                    sln,
+                                    getString(R.string.confirm),
+                                    getString(R.string.cancel),
+                                    pos,
+                                    neg);
+                            break;
                     }
                     return true;
                 }

@@ -23,6 +23,8 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 
+import java.util.List;
+
 public class CustomDialogUtils {
 
     private static AlertDialog dialog;
@@ -65,7 +67,7 @@ public class CustomDialogUtils {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content.setmTitle( s.toString().trim());
+                content.setmTitle(s.toString().trim());
             }
 
             @Override
@@ -81,7 +83,7 @@ public class CustomDialogUtils {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                content.setmArtistName( s.toString().trim());
+                content.setmArtistName(s.toString().trim());
             }
 
             @Override
@@ -152,7 +154,9 @@ public class CustomDialogUtils {
 
         void clickNegative();
     }
+
     public static EditText editText;
+
     public static void editTextDialog(Context context,
                                       String title,
                                       @DrawableRes int iconId,
@@ -161,43 +165,43 @@ public class CustomDialogUtils {
                                       String strNormal,
                                       DialogInterface.OnClickListener pos,
                                       DialogInterface.OnClickListener neg,
-                                      DialogInterface.OnClickListener normal){
-        View view = LayoutInflater.from(context).inflate(R.layout.oneline_edittext,null,false);
+                                      DialogInterface.OnClickListener normal) {
+        View view = LayoutInflater.from(context).inflate(R.layout.oneline_edittext, null, false);
         editText = view.findViewById(R.id.editText);
         AlertDialog.Builder inputDialog = new AlertDialog.Builder(context);
         inputDialog.setTitle(title).setView(view);
         inputDialog.setCancelable(false);
         inputDialog.setIcon(iconId);
-        if(pos!=null)
-        inputDialog.setPositiveButton(strPos,pos);
-        if(normal!=null)
-        inputDialog.setNeutralButton(strNormal,normal);
-        if(neg!=null)
-        inputDialog.setNegativeButton(strNeg,neg);
+        if (pos != null)
+            inputDialog.setPositiveButton(strPos, pos);
+        if (normal != null)
+            inputDialog.setNeutralButton(strNormal, normal);
+        if (neg != null)
+            inputDialog.setNegativeButton(strNeg, neg);
         inputDialog.show();
     }
 
-    public static void showMusicDetails(Context context,String path) {
+    public static void showMusicDetails(Context context, String path) {
         MusicUtils.Metadata metadata = null;
         //if (myViewModel.getMusicService().isWebPlayMode()) {
         ///    metadata = MusicUtils.getMetadataFromSong(mSongList.get(musicId));
         //} else {
         metadata = MusicUtils.getMetadata(path);
-        Song song= MusicLibrary.querySong(path);
+        Song song = MusicLibrary.querySong(path);
         //}
         Bitmap bitmap = MusicUtils.getAlbumImage(path);
         AlertDialog.Builder dialog = new AlertDialog.Builder(context)
-                .setTitle(song.getSongTitle()+" - "+song.getArtistName())
+                .setTitle(song.getSongTitle() + " - " + song.getArtistName())
                 .setMessage(
-                context.getString(R.string.title_name) + metadata.title + "\n" +
-                context.getString(R.string.title_artist) + metadata.artist + "\n" +
-                        context.getString(R.string.title_album) + metadata.album + "\n" +
-                        context.getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
-                        context.getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
-                        context.getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
-                        context.getString(R.string.file_size) + metadata.sizeByte + "\n" +
-                        context.getString(R.string.title_path) +path + "\n" +
-                        context.getString(R.string.title_lyric) + song.getLyricPath()
+                        context.getString(R.string.title_name) + metadata.title + "\n" +
+                                context.getString(R.string.title_artist) + metadata.artist + "\n" +
+                                context.getString(R.string.title_album) + metadata.album + "\n" +
+                                context.getString(R.string.title_duration) + ConvertUtils.millis2FitTimeSpan(Long.parseLong(metadata.duration), 4) + "\n" +
+                                context.getString(R.string.title_bitrate) + Long.parseLong(metadata.bitrate) / 1024 + "Kbps\n" +
+                                context.getString(R.string.title_mimetype) + metadata.mimetype + "\n" +
+                                context.getString(R.string.file_size) + metadata.sizeByte + "\n" +
+                                context.getString(R.string.title_path) + path + "\n" +
+                                context.getString(R.string.title_lyric) + song.getLyricPath()
                 )
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
@@ -210,5 +214,36 @@ public class CustomDialogUtils {
             dialog.setIcon(new BitmapDrawable(context.getResources(), bitmap));
         }
         dialog.create().show();
+    }
+
+    public static String chosenOne;
+
+    public static void chooseDialog(Context context,
+                                    String title,
+                                    String[] choices,
+                                    String strPos,
+                                    String strNeg,
+                                    DialogInterface.OnClickListener pos,
+                                    DialogInterface.OnClickListener neg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setTitle(title);
+        if(choices.length>0) {
+            builder.setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    chosenOne = String.valueOf(choices[which]);
+                }
+            });
+        }else {
+            builder.setMessage("无可选项");
+        }
+        if (pos != null)
+            builder.setPositiveButton(strPos, pos);
+        if (neg != null)
+            builder.setNegativeButton(strNeg, neg);
+
+        AlertDialog dialog = builder.create();  //创建AlertDialog对象
+        dialog.show();                           //显示对话框
     }
 }

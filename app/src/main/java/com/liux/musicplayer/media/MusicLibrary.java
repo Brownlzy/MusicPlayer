@@ -73,6 +73,10 @@ public class MusicLibrary {
             }
     }
 
+    public static List<String> getAllSongListName() {
+        return allSongListList.stream().map(s -> s.n).distinct().collect(Collectors.toList());
+    }
+
     public static class SongList {
         public String n;
         public String s;
@@ -203,6 +207,7 @@ public class MusicLibrary {
     }
 
     public static void init() {
+        MusicLibrary.getAllSongListList();
         getSongListByName("allSongList");
     }
 

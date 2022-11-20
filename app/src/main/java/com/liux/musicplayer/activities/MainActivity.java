@@ -192,6 +192,36 @@ public class MainActivity extends FragmentActivity {
                         case R.id.item_menu_delete:
                             deleteThis(myViewModel.getmMediaController().getQueue().get(position).getDescription());
                             break;
+                        case R.id.item_menu_add_to_list:
+                            DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MusicLibrary.addMusicToList(myViewModel.getmMediaController().getQueue().get(position).getDescription().getMediaUri().toString(),CustomDialogUtils.chosenOne);
+                                    Toast.makeText(MainActivity.this,
+                                            "已添加\""+myViewModel.getmMediaController().getQueue().get(position).getDescription().getTitle()+"\"至\""+CustomDialogUtils.chosenOne+"\"",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            };
+                            DialogInterface.OnClickListener neg=new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            };
+                            List<String> songListName=MusicLibrary.getAllSongListName();
+                            songListName.removeIf(s -> s.equals("allSongList")||s.equals("webAllSongList"));
+                            String[] sln=songListName.toArray(new String[songListName.size()]);
+                            CustomDialogUtils.chooseDialog(
+                                    MainActivity.this,
+                                    getString(R.string.item_menu_add_to_list),
+                                    sln,
+                                    getString(R.string.confirm),
+                                    getString(R.string.cancel),
+                                    pos,
+                                    neg);
+
+                            break;
                     }
                     return true;
                 }

@@ -581,8 +581,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     private void popInfo() {
+        int versionCode=0;
         String versionName = "";
         try {
+            versionCode = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionCode;
             versionName = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -592,7 +594,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         alertInfoDialog = new AlertDialog.Builder(getContext());
         alertInfoDialog.setTitle(R.string.app_name);
         alertInfoDialog.setMessage(getString(R.string.appInfo).replace("\\n", "\n")
-                        + versionName);
+                        + versionName+"("+versionCode+")");
         alertInfoDialog.setIcon(R.mipmap.ic_launcher);
         alertInfoDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override

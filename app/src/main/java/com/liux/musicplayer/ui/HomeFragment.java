@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -44,6 +45,10 @@ import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.viewmodels.MyViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
 
@@ -230,6 +235,30 @@ public class HomeFragment extends Fragment {
                                 });
                         break;
                     case R.id.item_menu_add_to_list:
+                        DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                MusicLibrary.addMusicToList(mSong.getSongPath(),CustomDialogUtils.chosenOne);
+                                Toast.makeText(getContext(), "已添加\""+mSong.getSongTitle()+"\"至\""+CustomDialogUtils.chosenOne+"\"", Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                        DialogInterface.OnClickListener neg=new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        };
+                        List<String> songListName=MusicLibrary.getAllSongListName();
+                        songListName.removeIf(s -> s.equals("allSongList")||s.equals("webAllSongList"));
+                        String[] sln=songListName.toArray(new String[songListName.size()]);
+                        CustomDialogUtils.chooseDialog(
+                                getContext(),
+                                getString(R.string.item_menu_add_to_list),
+                                sln,
+                                getString(R.string.confirm),
+                                getString(R.string.cancel),
+                                pos,
+                                neg);
                         break;
                 }
                 return true;

@@ -70,6 +70,7 @@ public class UpdateUtils {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
+//                .url("http://192.168.137.1:8081/E%3A/CODE/MyOtaInfo/MusicPlayer/updateinfo2.json")
                 .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/updateinfo2.json")
                 .get()//default
                 .build();
@@ -179,6 +180,7 @@ public class UpdateUtils {
             if(isShowStateInfo) ld.loadFailed();
         }else {
             if(isShowStateInfo) ld.loadSuccess();
+            SharedPrefs.putLastVersion(updateInfo.lastVersionCode,updateInfo.lastVersionName);
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_update)
@@ -192,10 +194,7 @@ public class UpdateUtils {
                     .setNeutralButton(R.string.manual_download, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            Uri uri = Uri.parse(updateInfo.manual);
-                            intent.setData(uri);
-                            context.startActivity(intent);
+                            CustomDialogUtils.openUrl(context,updateInfo.manual);
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -236,11 +235,7 @@ public class UpdateUtils {
                 alertInfoDialog.setPositiveButton(news.bn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        Uri uri = Uri.parse(news.ag);
-                        intent.setData(uri);
-                        context.startActivity(intent);
-                        SharedPrefs.putLastNewsId(news.id);
+                        CustomDialogUtils.openUrl(context,news.ag);
                     }
                 });
             }else if(news.fun==2){

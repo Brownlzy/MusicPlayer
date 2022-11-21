@@ -154,5 +154,15 @@
     <string name="isUseMetaData_summary">The metadata of the music file takes precedence in the details card of the playback page</string>
     <string name="fileMetaDataInfo">"Metadata Information:"</string>
     <string name="title_custom">Custom</string>
+    <string name="copyright" translatable="false">Copyright © 2022 Brownlzy. All Rights Reserved.</string>
+    <string name="officialWebsite">Official Website</string>
+    <string name="supportMe">Support Me</string>
+    <string name="showDebug">Show Debug Settings</string>
+    <string name="findNewVersion">"Found New Version: "</string>
+    <string name="sure_to_exit">Sure to End Playing and Exit?</string>
+    <string name="changeLog">Change Log</string>
+    <string name="openSource">Open Source</string>
+    <string name="changeLogLink"><a href="">ChangeLog</a></string>
+    <string name="openSourceLink"><a href="">OpenSource</a></string>
 
 </resources>

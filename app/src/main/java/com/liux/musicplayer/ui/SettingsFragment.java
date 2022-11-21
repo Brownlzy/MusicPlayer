@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.activities.AboutActivity;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
@@ -97,6 +98,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private EditTextPreference MainFolder;
     private EditTextPreference cacheList;
     private SeekBarPreference seekBarTiming;
+    private SharedPreferences prefs;
 
     private final static String TAG = "SettingFragment";
     //注册Activity回调
@@ -178,7 +180,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Context context = getActivity();
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         assert context != null;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.registerOnSharedPreferenceChangeListener(this); // 注册
+
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         findPreference("debug").setVisible(false);
         findPreference("rsa").setVisible(false);
@@ -210,8 +214,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Close = findPreference("exit");
         userLogin = findPreference("user");
         seekBarTiming = findPreference("timing");
-
-        prefs.registerOnSharedPreferenceChangeListener(this); // 注册
 
         if (PermissionUtils.checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
@@ -257,26 +259,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     };
 
     private void initPreferenceListener() {
-        findPreference("clearCache").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(@NonNull Preference preference) {
-                CleanDataUtils.clearAllCache(requireContext());
-                String clearSize = CleanDataUtils.getTotalCacheSize(requireContext());
-                findPreference("clearCache").setSummary(clearSize);
-                return true;
-            }
-        });
         autoRun.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
                 PermissionUtils.startToAutoStartSetting(getContext());
-                return false;
-            }
-        });
-        findPreference("newsBoard").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(@NonNull Preference preference) {
-                UpdateUtils.checkNews(getContext(),true);
                 return false;
             }
         });
@@ -436,8 +422,30 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                //((MainActivity) requireActivity()).getMusicService().stopForeground(true);
-                System.exit(0);
+                AlertDialog alertDialog=new AlertDialog.Builder(getContext())
+                        .setIcon(R.drawable.ic_round_exit_to_app_24)
+                        .setTitle(R.string.exitApp)
+                        .setMessage(R.string.sure_to_exit)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getActivity().finish();
+                                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        System.exit(0);
+                                    }
+                                    },1000);
+                            }
+                        })
+                        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create();
+                alertDialog.show();
                 return false;
             }
         });
@@ -557,7 +565,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         About.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                popInfo();
+                //popInfo();
+                Intent intent=new Intent(getContext(), AboutActivity.class);
+                startActivity(intent);
                 return false;
             }
         });
@@ -747,7 +757,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onResume() {
         super.onResume();
-        String totalCacheSize = CleanDataUtils.getTotalCacheSize(requireContext());
-        findPreference("clearCache").setSummary(totalCacheSize);
+        if(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("showDebug",false)) {
+            findPreference("debug").setVisible(true);
+            if(User.isLogin&&User.userData.level<=0)
+                findPreference("rsa").setVisible(true);
+        }else {
+            findPreference("debug").setVisible(false);
+            findPreference("rsa").setVisible(false);
+        }
     }
 }

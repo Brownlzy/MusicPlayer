@@ -155,4 +155,13 @@
     <string name="isUseMetaData_summary">在播放页的详细信息卡片中优先使用音乐文件的元数据</string>
     <string name="fileMetaDataInfo">元数据信息：</string>
     <string name="title_custom">个性化</string>
+    <string name="officialWebsite">官方网站</string>
+    <string name="supportMe">支持作者</string>
+    <string name="showDebug">展示调试选项</string>
+    <string name="findNewVersion">发现新版本：</string>
+    <string name="sure_to_exit">确定停止播放并退出应用？</string>
+    <string name="changeLog">更新日志</string>
+    <string name="openSource">开源组件</string>
+    <string name="changeLogLink"><a href="">更新日志</a></string>
+    <string name="openSourceLink"><a href="">开源组件</a></string>
 </resources>

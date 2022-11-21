@@ -247,4 +247,17 @@ public class SharedPrefs {
     public static boolean isUseMetaData() {
         return sharedPreferences.getBoolean("isUseMetaData",true);
     }
+
+    public static void putLastVersion(int lastVersionCode,String lastVersionName) {
+        sharedPreferencesEditor.putInt("lastVersionCode",lastVersionCode);
+        sharedPreferencesEditor.putString("lastVersionName",lastVersionName);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static int getLastVersionCode(){
+        return sharedPreferences.getInt("lastVersionCode",0);
+    }
+    public  static String getLastVersionName(){
+        return sharedPreferences.getString("lastVersionName","null");
+    }
 }

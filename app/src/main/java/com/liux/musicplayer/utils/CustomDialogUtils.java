@@ -2,8 +2,10 @@ package com.liux.musicplayer.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -245,5 +247,12 @@ public class CustomDialogUtils {
 
         AlertDialog dialog = builder.create();  //创建AlertDialog对象
         dialog.show();                           //显示对话框
+    }
+
+    public static void openUrl(Context context,String url){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri uri = Uri.parse(url);
+        intent.setData(uri);
+        context.startActivity(intent);
     }
 }

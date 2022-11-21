@@ -99,34 +99,16 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/title_user">
+    <PreferenceCategory app:title="@string/title_about">
+
         <Preference
             app:key="user"
             app:icon="@drawable/ic_round_account_circle_24"
             app:title="@string/user_unlogin"/>
         <Preference
-            app:key="newsBoard"
-            app:title="@string/newsBoard"
-            app:icon="@drawable/ic_round_fiber_new_24"
-            app:persistent="false" />
-        <Preference
-            app:key="lastErrorLog"
-            app:icon="@drawable/ic_round_bug_report_24"
-            android:defaultValue="null"
-            app:title="@string/lastErrorLog"
-            app:defaultValue="null" />
-
-    </PreferenceCategory>
-    <PreferenceCategory app:title="@string/title_about">
-
-        <Preference
             app:icon="@drawable/ic_baseline_info_24"
             app:key="info"
             app:title="@string/aboutApp" />
-        <Preference
-            app:key="clearCache"
-            app:icon="@drawable/ic_round_delete_forever_24"
-            app:title="@string/clearCache" />
         <Preference
             app:icon="@drawable/ic_round_exit_to_app_24"
             app:key="exit"
@@ -148,16 +130,6 @@
             app:title="@string/playOrder"
             app:useSimpleSummaryProvider="true" />
 
-<!--        <EditTextPreference-->
-<!--            app:key="playingList"-->
-<!--            app:title="@string/title_playing_list"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-
-<!--        <EditTextPreference-->
-<!--            app:key="allSongList"-->
-<!--            app:title="@string/title_allSongList"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-
         <EditTextPreference
             app:key="SONGLIST_webAllSongList"
             app:title="@string/title_webPlayList"
@@ -172,6 +144,12 @@
             app:key="crashMe"
             app:icon="@drawable/ic_round_bug_report_24"
             app:title="@string/crashMe" />
+
+        <Preference
+            app:key="lastErrorLog"
+            android:defaultValue="null"
+            app:title="@string/lastErrorLog"
+            app:defaultValue="null" />
 
         <Preference
             app:key="lastCrash"

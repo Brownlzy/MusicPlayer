@@ -60,6 +60,8 @@ import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.services.FloatLyricService;
+import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.ui.SongListFragment;
@@ -489,7 +491,7 @@ public class MainActivity extends FragmentActivity {
         //homeFragment.onDestroy();
         //homeFragment.stopLyric();
         //stopProgressBar();
-        removeObserver();
+        //removeObserver();
         super.onDestroy();
     }
 
@@ -501,6 +503,21 @@ public class MainActivity extends FragmentActivity {
         }
         findViewById(R.id.splash_view).setVisibility(View.GONE);
         Log.e("TAG","onNewIntent");
+            if (intent != null) {
+                boolean isExit = intent.getBooleanExtra("exit", false);
+                if (isExit) {
+//                    stopService(new Intent(this, FloatLyricService.class));
+//                    stopService(new Intent(this, MusicService.class));
+//                    finish();
+                    finish();
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.exit(0);
+                        }
+                    },1000);
+                }
+            }
     }
 
     @Override

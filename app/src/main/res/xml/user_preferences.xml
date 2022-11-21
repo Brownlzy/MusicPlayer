@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="login"
+        app:icon="@drawable/ic_round_account_circle_24"
+        app:title="@string/loginSignUp" />
+    <Preference
+        app:key="userLevel"
+        app:icon="@drawable/ic_round_sort_24"
+        app:title="@string/userLevel"/>
+    <Preference
+        app:key="joinTime"
+        app:title="@string/joinTime"/>
+    <Preference
+        app:key="loginTime"
+        app:title="@string/loginTime"/>
+    <Preference
+        app:key="expiredTime"
+        app:title="@string/expiredTime"/>
+    <ListPreference
+        app:key="splashType"
+        app:icon="@drawable/ic_round_image_24"
+        app:title="@string/splashType"
+        android:entries="@array/splashType"
+        android:entryValues="@array/splashType_values"
+        app:defaultValue="0"
+        android:dialogTitle="@string/splashChoose"
+        app:useSimpleSummaryProvider="true"/>
+    <Preference
+        app:key="splashPicPath"
+        app:title="@string/splashPicPath"/>
+    <Preference
+        app:key="viewSplashPic"
+        app:title="@string/viewSplashPic"/>
+    <Preference
+        app:key="clearLocalSplash"
+        app:title="@string/clearLocalSplash"/>
+    <Preference
+        app:icon="@drawable/ic_round_exit_to_app_24"
+        app:key="logout"
+        app:title="@string/logout" />
+</PreferenceScreen>

@@ -26,9 +26,11 @@ public class SplashActivity  extends FragmentActivity {
         SharedPrefs.init(getApplication());
         MusicLibrary.init();
         User.init(getApplicationContext());
-        if(User.isLogin)
+        if(User.isLogin){
+            int type=SharedPrefs.getSplashType();
             ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    User.userData.userName)));
+                    User.userData.userName+(type==0?"":"_custom"))));
+        }
         startService(new Intent(SplashActivity.this, MusicService.class));
     }
 

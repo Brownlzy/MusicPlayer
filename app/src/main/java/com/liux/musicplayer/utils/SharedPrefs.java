@@ -260,4 +260,16 @@ public class SharedPrefs {
     public  static String getLastVersionName(){
         return sharedPreferences.getString("lastVersionName","null");
     }
+
+    public static int getSplashType() {
+        try {
+            return Integer.parseInt(sharedPreferences.getString("splashType","0"));
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    public static void cleanSplashPath() {
+        sharedPreferencesEditor.remove("splashPicPath").apply();
+    }
 }

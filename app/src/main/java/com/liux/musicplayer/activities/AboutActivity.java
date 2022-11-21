@@ -26,14 +26,14 @@ public class AboutActivity extends FragmentActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, new AboutFragment());
         fragmentTransaction.commit();
+        if(BuildConfig.DEBUG)
+            findViewById(R.id.tabDebugText).setVisibility(View.VISIBLE);
         ((TextView)findViewById(R.id.versionName)).setText(
                 "Version "
                 +BuildConfig.VERSION_NAME
                 +(BuildConfig.DEBUG?"_debug ":" ")
                 +"("+BuildConfig.VERSION_CODE+")"
         );
-        if(BuildConfig.DEBUG)
-            findViewById(R.id.tabDebugText).setVisibility(View.VISIBLE);
         findViewById(R.id.changeLog).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

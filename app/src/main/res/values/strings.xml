@@ -116,7 +116,7 @@
     <string name="rsa_encode_test">RSA Encode Test</string>
     <string name="rsa_private_key">RSA Private Key</string>
     <string name="user_logined">Logined</string>
-    <string name="logout">Logout</string>
+    <string name="logout">Log out</string>
     <string name="sure">Confirm</string>
     <string name="sure_to_logout">Confirm to Logout?</string>
     <string name="userName">"User Name : "</string>
@@ -164,5 +164,17 @@
     <string name="openSource">Open Source</string>
     <string name="changeLogLink"><a href="">ChangeLog</a></string>
     <string name="openSourceLink"><a href="">OpenSource</a></string>
+    <string name="login">Log in</string>
+    <string name="register">Sign up</string>
+    <string name="joinTime">"Join Time : "</string>
+    <string name="WebSplashPic">Image From Account</string>
+    <string name="LocalCustomPic">Image From Local Custom</string>
+    <string name="splashType">Splash Type</string>
+    <string name="splashPicPath">Custom Splash Image</string>
+    <string name="viewSplashPic">View Splash Image</string>
+    <string name="no_permission_info_2">Storage permission is required to read the picture of your choice</string>
+    <string name="loginSignUp">Login or SignUp</string>
+    <string name="clearLocalSplash">Clear Local Splash Image</string>
+    <string name="splashChoose">Choose Splash Image Source</string>
 
 </resources>

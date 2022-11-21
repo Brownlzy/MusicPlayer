@@ -43,6 +43,7 @@ import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.AboutActivity;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.activities.UserActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.CleanDataUtils;
@@ -300,7 +301,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                     if(rsaDecodeTest.getText().equals((String) newValue)) {
                         newUser.setText("{\"publicKey\":\"" + rsaPublicKey.getText().replace("\n", "").replace(" ", "")
                                 + "\",\"userHashRSA\":\"" + rsaEncodeTest.getText().replace("\n", "").replace(" ", "")
-                                + "\",\"expired\":\"\",\"level\":2,\"userSplash\":\"\"}");
+                                + "\",\"join\":\""+TimeUtils.getNowMills()+"\",\"expired\":\"\",\"level\":2,\"userSplash\":\"\"}");
                     }else throw new Exception("Decode Failed");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -312,37 +313,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         userLogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                if(User.isLogin){
-                    AlertDialog alertInfoDialog = null;
-                    alertInfoDialog = new AlertDialog.Builder(getContext())
-                            .setTitle(R.string.user_logined)
-                            .setMessage(getString(R.string.userName)+User.userData.userName+"\n"
-                                        +getString(R.string.userLevel)+User.userData.level+"\n"
-                                        +getString(R.string.loginTime)+ TimeUtils.millis2String(Long.parseLong(User.userData.loginTime))+"\n"
-                                        +getString(R.string.expiredTime)+TimeUtils.millis2String(Long.parseLong(User.userData.expired))
-                            )
-                            .setIcon(R.drawable.ic_round_account_circle_24)
-                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            })
-                            .setNeutralButton(R.string.logout, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    User.logout(getContext());
-                                }
-                            })
-                            .create();
-                    alertInfoDialog.show();
-                }else {
-                    userLogin.setTitle(R.string.user_unlogin);
-                    findPreference("rsa").setVisible(false);
-                    findPreference("exp").setVisible(false);
-                    findPreference("debug").setVisible(false);
-                    showLoginDialog();
-                }
+                startActivity(new Intent(getContext(), UserActivity.class));
                 return false;
             }
         });

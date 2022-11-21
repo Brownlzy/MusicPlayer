@@ -167,11 +167,13 @@ public class User {
                 userData.publicKey = userDataJson.publicKey;
                 userData.userHashRSA = userDataJson.userHashRSA;
                 userData.level = userDataJson.level;
+                userData.join=userDataJson.join;
                 userData.expired = userDataJson.expired;
                 userData.loginTime = String.valueOf(TimeUtils.getNowMills());
+                SharedPrefs.saveUserData(userData);
+                User.isLogin=true;
                 if(!isReLogin)
                     acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/pic/" + userDataJson.userSplash);
-                SharedPrefs.saveUserData(userData);
                 Log.e(TAG, String.valueOf(userData));
                 return true;
             }
@@ -181,38 +183,24 @@ public class User {
         return false;
     }
 
+//    public static void logout() {
     public static void logout(Context context) {
-        AlertDialog alertInfoDialog = null;
-        alertInfoDialog = new AlertDialog.Builder(context)
-                .setTitle(R.string.sure)
-                .setMessage(R.string.sure_to_logout)
-                .setIcon(R.drawable.ic_round_account_circle_24)
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+        User.isLogin=false;
+        FileUtils.delete(new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), userData.userName));
+        FileUtils.delete(new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), userData.userName+"_custom"));
+        SharedPrefs.cleanSplashPath();
+        userData=new UserData();
+        SharedPrefs.saveUserData(userData);
+        new Handler()
+                .postDelayed(new Runnable() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        User.isLogin=false;
-                        FileUtils.delete(new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), userData.userName));
-                        userData=new UserData();
-                        SharedPrefs.saveUserData(userData);
-                        new Handler()
-                                .postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent restartIntent = new Intent(context,SplashActivity.class);
-                                        MainActivity.mainActivity.finish();
-                                        context.startActivity(restartIntent);
-                                        //System.exit(0);
-                                    }
-                                },1000);
+                    public void run() {
+                        Intent restartIntent = new Intent(context,SplashActivity.class);
+                        MainActivity.mainActivity.finish();
+                        context.startActivity(restartIntent);
+                        //System.exit(0);
                     }
-                })
-                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .create();
-        alertInfoDialog.show();
+                },1000);
     }
 
     public static String getUserHash(String trim) {

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -65,14 +66,16 @@ public class MyViewModel extends AndroidViewModel {
     private boolean fragmentLyricState = false;
 
     public static void setActivityForeground(boolean activityForeground) {
-        MyViewModel.activityForeground = activityForeground;
-        Intent lyricIntent;
-        if (activityForeground) {
-            lyricIntent = new Intent("com.liux.musicplayer.FOREGROUND");
-        } else {
-            lyricIntent = new Intent("com.liux.musicplayer.BACKGROUND");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MyViewModel.activityForeground = activityForeground;
+            Intent lyricIntent;
+            if (activityForeground) {
+                lyricIntent = new Intent("com.liux.musicplayer.FOREGROUND");
+            } else {
+                lyricIntent = new Intent("com.liux.musicplayer.BACKGROUND");
+            }
+            MainActivity.mainActivity.sendBroadcast(lyricIntent);
         }
-        MainActivity.mainActivity.sendBroadcast(lyricIntent);
     }
 
     public MutableLiveData<List<Song>> getSongsMutableLiveData() {

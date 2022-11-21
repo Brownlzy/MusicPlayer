@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -118,7 +119,7 @@ public class MusicService extends MediaBrowserServiceCompat {
                         mNotificationManager.cancel(411);
 
                         SharedPrefs.putIsDeskLyric(true);
-                        if (!mainActivityState && mSession.isActive()) {
+                        if ((!mainActivityState||Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) && mSession.isActive()) {
                             deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                             startService(deskLyricIntent);
                         }

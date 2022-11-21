@@ -164,4 +164,16 @@
     <string name="openSource">开源组件</string>
     <string name="changeLogLink"><a href="">更新日志</a></string>
     <string name="openSourceLink"><a href="">开源组件</a></string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="joinTime">加入时间：</string>
+    <string name="WebSplashPic">来自账号系统的图片</string>
+    <string name="LocalCustomPic">本地自定义图片</string>
+    <string name="splashType">应用开屏图片</string>
+    <string name="no_permission_info_2">需要存储权限以读取您选择的图片</string>
+    <string name="splashPicPath">自定义开屏图片</string>
+    <string name="viewSplashPic">预览开屏图片</string>
+    <string name="loginSignUp">登录或注册</string>
+    <string name="clearLocalSplash">清除本地开屏图片设置</string>
+    <string name="splashChoose">选择开屏图片来源</string>
 </resources>

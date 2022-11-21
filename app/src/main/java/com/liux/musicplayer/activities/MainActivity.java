@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -393,9 +394,11 @@ public class MainActivity extends FragmentActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mainActivity = this;
-        if(User.isLogin)
+        if(User.isLogin){
+            int type=SharedPrefs.getSplashType();
             ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    User.userData.userName)));
+                    User.userData.userName+(type==0?"":"_custom"))));
+        }
         //SharedPrefs.init(getApplication());
         myViewModel = new ViewModelProvider(MainActivity.mainActivity).get(MyViewModel.class);
         //允许在主线程连接网络
@@ -427,61 +430,63 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initBackgroundCallBack() {
-        registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(Activity activity, Bundle bundle) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+                @Override
+                public void onActivityCreated(Activity activity, Bundle bundle) {
 
-            }
-
-            @Override
-            public void onActivityStarted(Activity activity) {
-                countActivity++;
-                Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
-                if (countActivity >= 0 && isBackground) {
-                    Log.e("MyApplication", "onActivityStarted: 应用进入前台");
-                    isBackground = false;
-                    //说明应用重新进入了前台
-                    //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
-                    //musicService.setActivityForeground(true);
-                    MyViewModel.setActivityForeground(true);
                 }
 
-            }
+                @Override
+                public void onActivityStarted(Activity activity) {
+                    countActivity++;
+                    Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
+                    if (countActivity >= 0 && isBackground) {
+                        Log.e("MyApplication", "onActivityStarted: 应用进入前台");
+                        isBackground = false;
+                        //说明应用重新进入了前台
+                        //Toast.makeText(MainActivity.this, "应用进入前台", Toast.LENGTH_SHORT).show();
+                        //musicService.setActivityForeground(true);
+                        MyViewModel.setActivityForeground(true);
+                    }
 
-            @Override
-            public void onActivityResumed(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityPaused(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityStopped(Activity activity) {
-                countActivity--;
-                Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
-                if (countActivity <= 0 && !isBackground) {
-                    Log.e("MyApplication", "onActivityStarted: 应用进入后台");
-                    isBackground = true;
-                    //说明应用进入了后台
-                    //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
-                    //musicService.setActivityForeground(false);
-                    MyViewModel.setActivityForeground(false);
                 }
-            }
 
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+                @Override
+                public void onActivityResumed(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivityDestroyed(Activity activity) {
+                @Override
+                public void onActivityPaused(Activity activity) {
 
-            }
-        });
+                }
+
+                @Override
+                public void onActivityStopped(Activity activity) {
+                    countActivity--;
+                    Log.e("MyApplication", "countActivity:" + countActivity + " isBack:" + String.valueOf(isBackground));
+                    if (countActivity <= 0 && !isBackground) {
+                        Log.e("MyApplication", "onActivityStarted: 应用进入后台");
+                        isBackground = true;
+                        //说明应用进入了后台
+                        //Toast.makeText(MainActivity.this, "应用进入后台", Toast.LENGTH_SHORT).show();
+                        //musicService.setActivityForeground(false);
+                        MyViewModel.setActivityForeground(false);
+                    }
+                }
+
+                @Override
+                public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+
+                }
+
+                @Override
+                public void onActivityDestroyed(Activity activity) {
+
+                }
+            });
+        }
     }
 
     @Override

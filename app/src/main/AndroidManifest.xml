@@ -24,7 +24,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
         <activity
+            android:name=".activities.UserActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
             android:name=".activities.AboutActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.OpenFileActivity"

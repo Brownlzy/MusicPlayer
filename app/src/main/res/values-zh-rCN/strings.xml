@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">综音</string>
+    <string name="app_name">综音华为版</string>
     <string name="title_home">主页</string>
     <string name="title_allSongList">曲库</string>
     <string name="title_settings">设置</string>

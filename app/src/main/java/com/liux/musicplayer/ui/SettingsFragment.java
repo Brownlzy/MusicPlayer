@@ -568,8 +568,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "SONGLIST_webAllSongList":
                 webAllSongList.setText(sharedPreferences.getString("SONGLIST_webAllSongList", ""));
                 break;
-            case "SONGLIST_allSongList":
-                allSongList.setText(sharedPreferences.getString("SONGLIST_allSongList", ""));
+            case "allSongList":
+                allSongList.setText(sharedPreferences.getString("allSongList", ""));
                 break;
             case "nowId":
                 ((EditTextPreference) findPreference("nowId")).setText(sharedPreferences.getString("nowId", "0"));

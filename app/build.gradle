@@ -7,7 +7,7 @@ android {
     buildToolsVersion "33.0.0"
 
     defaultConfig {
-        applicationId "com.liux.musicplayer"
+        applicationId "com.aspiro.tidal"
         minSdkVersion 26
         targetSdkVersion 32
         versionCode 62

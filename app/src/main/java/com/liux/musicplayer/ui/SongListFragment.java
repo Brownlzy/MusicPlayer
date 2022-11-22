@@ -216,15 +216,15 @@ public class SongListFragment extends Fragment {
                     switch (item.getItemId()) {
                         case R.id.item_menu_play:
                             Log.e("SongPlaylistFragment", "newPlaylist");
-                            if (User.isLogin) {
+//                            if (User.isLogin) {
                                 if (!MusicLibrary.getSongListByName((String) songlistAdapter.getItem(position)).isEmpty()) {
                                     Bundle bundle = new Bundle();
                                     bundle.putString("QueueTitle", (String) songlistAdapter.getItem(position));
                                     //bundle.putString("Path", mSongList.get(0).getSongPath());
                                     myViewModel.getmMediaController().getTransportControls().sendCustomAction("NEW_PLAYLIST", bundle);
                                 }
-                            } else
-                                Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+//                            } else
+//                                Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
                             break;
                         case R.id.item_menu_moreInfo:
                             //showMusicDetails(positionToMusicId(position));
@@ -500,11 +500,11 @@ public class SongListFragment extends Fragment {
                     sortSongPopMenu();
                     break;
                 case R.id.playThisList:
-                    if (User.isLogin) {
+//                    if (User.isLogin) {
                         playThisList();
-                    } else {
-                        Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
-                    }
+//                    } else {
+//                        Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+//                    }
                     break;
             }
         }

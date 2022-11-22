@@ -331,7 +331,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             public boolean onPreferenceClick(@NonNull Preference preference) {
                 if (lastErrorLog.getSummary() != null && !lastErrorLog.getSummary().equals("null")) {
                     if (FileUtils.isFileExists(requireContext().getExternalCacheDir() + "/log/" + lastErrorLog.getSummary()))
-                        CrashHandlers.shareErrorLog((String) lastErrorLog.getSummary(), requireActivity());
+                        CrashHandlers.checkIfExistsLastCrash(getActivity(),true);
                     else {
                         Toast.makeText(requireContext(), "日志文件不存在", Toast.LENGTH_SHORT).show();
                         lastErrorLog.setSummary("null");

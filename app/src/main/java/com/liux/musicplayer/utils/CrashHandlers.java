@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.TimeUtils;
+import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 
@@ -63,25 +64,33 @@ public class CrashHandlers implements UncaughtExceptionHandler {
         return INSTANCE;
     }
 
-    public static void checkIfExistsLastCrash(MainActivity mActivity) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+    public static void checkIfExistsLastCrash(Context context,boolean isManual) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isCrashed = prefs.getBoolean("lastCrash", false);
         String fileName = prefs.getString("lastErrorLog", "null");
-        if (isCrashed) {
+        if (isCrashed||isManual) {
             SharedPreferences.Editor editor = prefs.edit();
-            AlertDialog alertInfoDialog = new AlertDialog.Builder(mActivity)
+            AlertDialog alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_crashed)
-                    .setMessage(mActivity.getString(R.string.crashed_info))
+                    .setMessage(context.getString(R.string.crashed_info))
                     .setIcon(R.mipmap.ic_launcher)
                     .setPositiveButton(R.string.send_error_log, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            shareErrorLog(fileName, mActivity);
+                            shareErrorLog(fileName, false,context);
                             editor.putBoolean("lastCrash", false);
                             editor.apply();
                         }
                     })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.send_error_log_by_mail, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            shareErrorLog(fileName,true, context);
+                            editor.putBoolean("lastCrash", false);
+                            editor.apply();
+                        }
+                    })
+                    .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             editor.putBoolean("lastCrash", false);
@@ -142,7 +151,7 @@ public class CrashHandlers implements UncaughtExceptionHandler {
         // 收集设备参数信息
         collectDeviceInfo(mContext);
         // 保存日志文件
-        String fileName = "MPErrorLog-" + TimeUtils.getNowMills() + ".txt";
+        String fileName = "MPErrorLog-" + TimeUtils.getNowMills() + ".log";
         savePreference(fileName);
         saveCrashInfo2File(ex, fileName);
         //  自动分享错误日志
@@ -158,11 +167,19 @@ public class CrashHandlers implements UncaughtExceptionHandler {
         editor.apply();
     }
 
-    public static void shareErrorLog(String fileName, Context mContext) {
+    public static void shareErrorLog(String fileName,boolean isMail, Context mContext) {
         Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName(), new File(mContext.getExternalCacheDir().getPath() + "/log/" + fileName));
         Log.e("CrashHandler", uri.getPath());
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
+        if(isMail){
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "[BrownMusic]"+ BuildConfig.VERSION_NAME+" BugReport");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "收件人请填:\n\nbrownmusicplayer@outlook.com\n\n错误报告已附上，烦请您在下方描述出现问题时的情形,这将有助于帮助我解决问题：\n=======================");
+            shareIntent.putExtra(Intent.EXTRA_EMAIL, "brownmusicplayer@outlook.com");
+            shareIntent.setType("text/plain");
+            shareIntent.setType("message/rfc882");
+        }else {
+            shareIntent.setType("text/plain");
+        }
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_GRANT_READ_URI_PERMISSION);

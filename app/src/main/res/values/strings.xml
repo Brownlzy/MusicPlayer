@@ -176,5 +176,7 @@
     <string name="loginSignUp">Login or SignUp</string>
     <string name="clearLocalSplash">Clear Local Splash Image</string>
     <string name="splashChoose">Choose Splash Image Source</string>
+    <string name="contactMe"><a href="mailto:brownlzy@outlook.com">Contact Me</a></string>
+    <string name="send_error_log_by_mail">Send By Mail</string>
 
 </resources>

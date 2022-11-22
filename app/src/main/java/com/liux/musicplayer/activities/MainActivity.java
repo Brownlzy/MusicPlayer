@@ -422,7 +422,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        CrashHandlers.checkIfExistsLastCrash(MainActivity.this);
+        CrashHandlers.checkIfExistsLastCrash(MainActivity.this,false);
         if(Math.abs(SharedPrefs.getLastCheckUpdateTime()- TimeUtils.getNowMills())>86400000L)
             UpdateUtils.checkUpdate(this,false);
         if(Math.abs(SharedPrefs.getLastNewsUpdateTime()- TimeUtils.getNowMills())>7200000L)
@@ -623,11 +623,11 @@ public class MainActivity extends FragmentActivity {
         findViewById(R.id.add_all_to_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(User.isLogin) {
+//                if(User.isLogin) {
                     viewPager.setCurrentItem(1);
                     genSonglistFromPlaylist();
-                }else
-                    Toast.makeText(MainActivity.this, "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
+//                }else
+//                    Toast.makeText(MainActivity.this, "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
             }
         });
         playBarPlayingList.setOnClickListener(new View.OnClickListener() {

@@ -21,6 +21,7 @@ import androidx.core.content.FileProvider;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.models.News;
 import com.liux.musicplayer.models.UpdateInfo;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
@@ -244,6 +245,16 @@ public class UpdateUtils {
                     public void onClick(DialogInterface dialog, int which) {
                         checkUpdate(context,true);
                         SharedPrefs.putLastNewsId(news.id);
+                    }
+                });
+            }else if(news.fun==3){
+                alertInfoDialog.setPositiveButton(R.string.exitApp, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(context, MainActivity.class);
+                        intent.putExtra("exit", true);
+                        context.startActivity(intent);
+                        //SharedPrefs.putLastNewsId(news.id);
                     }
                 });
             }else {

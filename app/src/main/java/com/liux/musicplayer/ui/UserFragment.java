@@ -23,6 +23,7 @@ import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.activities.SplashActivity;
@@ -229,6 +230,18 @@ public class UserFragment extends PreferenceFragmentCompat implements SharedPref
         codeDialog.setMessage(userHash);
         codeDialog.setCancelable(false);
         codeDialog.setIcon(R.drawable.ic_round_account_circle_24);
+        codeDialog.setNeutralButton(R.string.send_error_log_by_mail,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent data=new Intent(Intent.ACTION_SENDTO);
+                        data.setData(Uri.parse("mailto:brownmusicplayer@outlook.com"));
+                        data.putExtra(Intent.EXTRA_SUBJECT, "[BrownMusic]SignUp");
+                        data.putExtra(Intent.EXTRA_TEXT, "From BrownMusic v"+ BuildConfig.VERSION_NAME+" ("+BuildConfig.VERSION_CODE+")\n"+
+                                "==============================\nuserHash:\n"+userHash);
+                        startActivity(data);
+                    }
+                });
         codeDialog.setPositiveButton(R.string.copy,
                 new DialogInterface.OnClickListener() {
                     @Override

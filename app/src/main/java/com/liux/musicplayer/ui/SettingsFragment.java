@@ -363,9 +363,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 Intent lyricIntent;
                 if ((boolean) newValue)
-                    lyricIntent = new Intent("com.liux.musicplayer.OPEN_LYRIC");
+                    lyricIntent = new Intent(getContext().getPackageName() + ".OPEN_LYRIC");
                 else
-                    lyricIntent = new Intent("com.liux.musicplayer.CLOSE_LYRIC");
+                    lyricIntent = new Intent(getContext().getPackageName() + ".CLOSE_LYRIC");
                 getActivity().sendBroadcast(lyricIntent);
                 return true;
             }
@@ -375,9 +375,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 Intent lyricIntent;
                 if ((boolean) newValue)
-                    lyricIntent = new Intent("com.liux.musicplayer.LOCK_LYRIC");
+                    lyricIntent = new Intent(getContext().getPackageName() + ".LOCK_LYRIC");
                 else
-                    lyricIntent = new Intent("com.liux.musicplayer.UNLOCK_LYRIC");
+                    lyricIntent = new Intent(getContext().getPackageName() + ".UNLOCK_LYRIC");
                 getActivity().sendBroadcast(lyricIntent);
                 return true;
             }

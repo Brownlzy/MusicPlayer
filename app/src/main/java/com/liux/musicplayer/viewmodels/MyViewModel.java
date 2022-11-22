@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaBrowserHelper;
 import com.liux.musicplayer.media.MusicLibrary;
-import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
@@ -39,9 +39,6 @@ public class MyViewModel extends AndroidViewModel {
     private final MutableLiveData<Long> currentPlayingDuration = new MutableLiveData<Long>();
     private final MutableLiveData<Integer> shuffleMode = new MutableLiveData<Integer>();
     private final MutableLiveData<Integer> repeatMode = new MutableLiveData<Integer>();
-    private static boolean activityForeground = false;
-    private static boolean isDeskTopLyric = false;
-    private static boolean isDeskTopLyricLocked = false;
     public boolean isSplash = true;
     public int playOrder = 0;
     public int viewPagerId=0;
@@ -67,12 +64,11 @@ public class MyViewModel extends AndroidViewModel {
 
     public static void setActivityForeground(boolean activityForeground) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MyViewModel.activityForeground = activityForeground;
             Intent lyricIntent;
             if (activityForeground) {
-                lyricIntent = new Intent("com.liux.musicplayer.FOREGROUND");
+                lyricIntent = new Intent(MainActivity.mainActivity.getPackageName() + ".FOREGROUND");
             } else {
-                lyricIntent = new Intent("com.liux.musicplayer.BACKGROUND");
+                lyricIntent = new Intent(MainActivity.mainActivity.getPackageName() + ".BACKGROUND");
             }
             MainActivity.mainActivity.sendBroadcast(lyricIntent);
         }

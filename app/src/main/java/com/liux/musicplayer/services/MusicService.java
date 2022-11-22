@@ -72,22 +72,39 @@ public class MusicService extends MediaBrowserServiceCompat {
         }
         return proxy;
     }
-    public CacheListener cacheListener=new CacheListener() {
+
+    public CacheListener cacheListener = new CacheListener() {
         @Override
         public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-            Log.e(TAG,percentsAvailable+"%,url="+url);
+            Log.e(TAG, percentsAvailable + "%,url=" + url);
         }
     };
 
+    private void registerLyricReceiver() {
+        lyricReceiver = new LyricReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(getPackageName() + ".CLOSE_LYRIC");
+        intentFilter.addAction(getPackageName() + ".OPEN_LYRIC");
+        intentFilter.addAction(getPackageName() + ".LOCK_LYRIC");
+        intentFilter.addAction(getPackageName() + ".UNLOCK_LYRIC");
+        intentFilter.addAction(getPackageName() + ".FOREGROUND");
+        intentFilter.addAction(getPackageName() + ".BACKGROUND");
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        intentFilter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(lyricReceiver, intentFilter);
+    }
+
     public class LyricReceiver extends BroadcastReceiver {
         public static final String TAG = "MusicReceiver";
+
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG,"LyricReceiver:"+intent.getAction());
+            Log.e(TAG, "LyricReceiver:" + intent.getAction());
             Intent deskLyricIntent = new Intent(MusicService.this, FloatLyricService.class);
-            switch (intent.getAction()){
-                case "com.liux.musicplayer.OPEN_LYRIC":
-                    if(!PermissionUtils.checkFloatPermission(MusicService.this)) {
+            switch (intent.getAction().split(getPackageName())[1]) {
+                case ".OPEN_LYRIC":
+                    if (!PermissionUtils.checkFloatPermission(MusicService.this)) {
                         //Toast.makeText(context, "请先在设置页授予悬浮窗权限", Toast.LENGTH_SHORT).show();
 //                        Intent intent1 = new Intent(MusicService.this,MainActivity.class);
 //                        intent1.putExtra("pageId",2);
@@ -96,7 +113,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 //                        PendingIntent contentIntent = PendingIntent.getActivity(
 //                                MusicService.this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE);
                         String channelId = "权限通知"; // 通知渠道
-                        Notification notification = new Notification.Builder(MusicService.this,channelId)
+                        Notification notification = new Notification.Builder(MusicService.this, channelId)
                                 .setContentTitle("综音无悬浮窗权限")
                                 .setContentText("请先在设置页授予悬浮窗权限后再开启桌面歌词")
                                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -117,29 +134,29 @@ public class MusicService extends MediaBrowserServiceCompat {
                         }
                     }
                     break;
-                case "com.liux.musicplayer.CLOSE_LYRIC":
+                case ".CLOSE_LYRIC":
                     SharedPrefs.putIsDeskLyric(false);
                     stopService(deskLyricIntent);
                     break;
-                case "com.liux.musicplayer.FOREGROUND":
+                case ".FOREGROUND":
                     mainActivityState=true;
                     stopService(deskLyricIntent);
                     break;
-                case "com.liux.musicplayer.BACKGROUND":
+                case ".BACKGROUND":
                     mainActivityState=false;
                     if(SharedPrefs.getIsDeskLyric()&&mSession.isActive()&&hasPlayedOnce) {
                         deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                         startService(deskLyricIntent);
                     }
                     break;
-                case "com.liux.musicplayer.LOCK_LYRIC":
+                case ".LOCK_LYRIC":
                     SharedPrefs.putIsDeskLyricLock(true);
                         /*if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                             intent.putExtra("isLock",true);
                             startService(deskLyricIntent);
                         }*/
                     break;
-                case "com.liux.musicplayer.UNLOCK_LYRIC":
+                case ".UNLOCK_LYRIC":
                     SharedPrefs.putIsDeskLyricLock(false);
                     /*if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                         intent.putExtra("isLock",false);
@@ -159,20 +176,6 @@ public class MusicService extends MediaBrowserServiceCompat {
                         mSession.getController().getPlaybackState()
                 );
         }
-    }
-    private void registerLyricReceiver() {
-        lyricReceiver = new LyricReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.liux.musicplayer.CLOSE_LYRIC");
-        intentFilter.addAction("com.liux.musicplayer.OPEN_LYRIC");
-        intentFilter.addAction("com.liux.musicplayer.LOCK_LYRIC");
-        intentFilter.addAction("com.liux.musicplayer.UNLOCK_LYRIC");
-        intentFilter.addAction("com.liux.musicplayer.FOREGROUND");
-        intentFilter.addAction("com.liux.musicplayer.BACKGROUND");
-        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        intentFilter.addAction(Intent.ACTION_USER_PRESENT);
-        registerReceiver(lyricReceiver, intentFilter);
     }
 
     @Override

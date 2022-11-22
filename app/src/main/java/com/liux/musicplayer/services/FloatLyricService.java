@@ -31,8 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.activities.MainActivity;
+import com.liux.musicplayer.interfaces.DeskLyricCallback;
 import com.liux.musicplayer.media.MediaBrowserHelper;
 import com.liux.musicplayer.utils.LyricUtils;
 import com.liux.musicplayer.views.StrokeTextView;
@@ -41,7 +41,6 @@ import java.util.List;
 
 
 public class FloatLyricService extends Service {
-
 
     private WindowManager winManager;
     private WindowManager.LayoutParams wmParams;

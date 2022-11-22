@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AlertDialog;
@@ -24,8 +23,6 @@ import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-
-import java.util.List;
 
 public class CustomDialogUtils {
 

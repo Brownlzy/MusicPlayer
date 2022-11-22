@@ -1,10 +1,5 @@
 package com.liux.musicplayer.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,9 +7,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.ui.AboutFragment;
 import com.liux.musicplayer.ui.UserFragment;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.utils.User;

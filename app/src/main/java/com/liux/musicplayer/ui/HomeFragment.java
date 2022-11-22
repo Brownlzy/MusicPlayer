@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -35,9 +34,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.adapters.LyricAdapter;
-import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.CustomDialogUtils;
@@ -46,9 +45,7 @@ import com.liux.musicplayer.utils.MusicUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
 

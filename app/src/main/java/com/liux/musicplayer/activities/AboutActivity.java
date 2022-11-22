@@ -1,17 +1,15 @@
 package com.liux.musicplayer.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.TimeUtils;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.ui.AboutFragment;
@@ -32,7 +30,7 @@ public class AboutActivity extends FragmentActivity {
         ((TextView)findViewById(R.id.versionName)).setText(
                 "Version "
                 +BuildConfig.VERSION_NAME
-                +(BuildConfig.DEBUG?"_debug ":" ")
+                +(BuildConfig.DEBUG?"_debug ":" " )
                 +"("+BuildConfig.VERSION_CODE+")"
         );
         findViewById(R.id.changeLog).setOnClickListener(new View.OnClickListener() {

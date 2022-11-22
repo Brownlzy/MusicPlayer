@@ -26,16 +26,11 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.PathUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.liux.musicplayer.activities.MainActivity;
-
 import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.SharedPrefs;
-import com.liux.musicplayer.utils.UploadDownloadUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 /**
@@ -44,7 +39,7 @@ import java.util.ArrayList;
  */
 public final class MediaPlayerAdapter extends PlayerAdapter {
 
-    private static final long DURATION_DELAY = 500;
+    private static final long DURATION_DELAY  = 500;
     private final Context mContext;
     private final PlaybackInfoListener mPlaybackInfoListener;
     MusicService musicService;

@@ -11,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.utils.LyricUtils;
 
 public class LyricAdapter extends BaseAdapter {

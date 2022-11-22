@@ -1,7 +1,7 @@
 package com.liux.musicplayer.utils;
 
 import android.util.Base64;
-import javax.crypto.Cipher;
+
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -15,6 +15,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.Cipher;
 
 public class RSAUtils {
     /**

@@ -1,11 +1,7 @@
 package com.liux.musicplayer.models;
 
-import android.content.Context;
-import android.media.MediaMetadataRetriever;
-
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.utils.MusicUtils;
 

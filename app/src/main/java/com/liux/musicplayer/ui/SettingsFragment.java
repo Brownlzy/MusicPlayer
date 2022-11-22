@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +16,6 @@ import android.os.Looper;
 import android.os.ResultReceiver;
 import android.provider.DocumentsContract;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -39,22 +37,17 @@ import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.AboutActivity;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.activities.UserActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.utils.CleanDataUtils;
-import com.liux.musicplayer.utils.ClipboardUtils;
-import com.liux.musicplayer.utils.CustomDialogUtils;
-import com.liux.musicplayer.utils.User;
-import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.CrashHandlers;
+import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.RSAUtils;
 import com.liux.musicplayer.utils.SharedPrefs;
-import com.liux.musicplayer.utils.UpdateUtils;
+import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.viewmodels.MyViewModel;
 
 import java.io.IOException;
@@ -71,9 +64,51 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private final static String TAG = "SettingFragment";
     //Preference控件
     private CheckBoxPreference switch_storage_permission;
     private CheckBoxPreference switch_layer_permission;
+    //注册Activity回调
+    ActivityResultLauncher<Intent> gotoAppInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            int resultCode = result.getResultCode();
+            if (resultCode == -1) {
+                if (PermissionUtils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE))
+                    switch_storage_permission.setChecked(true);
+                if (PermissionUtils.checkFloatPermission(getContext()))
+                    switch_layer_permission.setChecked(true);
+            }
+        }
+    });
+    //注册Activity回调，用于处理权限申请
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
+                    if (PermissionUtils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE))
+                        switch_storage_permission.setChecked(true);
+                } else {
+                    //准备前往信息页的Intent
+                    Intent intent = new Intent("/");
+                    ComponentName cm = new ComponentName("com.android.settings", "com.android.settings.applications.InstalledAppDetails");
+                    intent.setComponent(cm);
+                    intent.setAction("android.intent.action.VIEW");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setData(Uri.parse("package:com.liux.musicplayer"));
+                    //调用
+                    gotoAppInfo.launch(intent);
+                }
+            });
+    private final ActivityResultLauncher<Intent> requestOverlayPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), isGranted -> {
+                if (PermissionUtils.checkFloatPermission(getContext())) {
+                    Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
+                    switch_layer_permission.setChecked(true);
+                } else {
+                    Toast.makeText(getActivity(), R.string.permission_not_granted, Toast.LENGTH_LONG).show();
+                }
+            });
     private CheckBoxPreference switch_web_playlist;
     private CheckBoxPreference switch_desk_lyric;
     private CheckBoxPreference switch_desk_lyric_lock;
@@ -97,51 +132,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private EditTextPreference allSongList;
     private EditTextPreference webAllSongList;
     private EditTextPreference MainFolder;
-    private EditTextPreference cacheList;
-    private SeekBarPreference seekBarTiming;
-    private SharedPreferences prefs;
-
-    private final static String TAG = "SettingFragment";
-    //注册Activity回调
-    ActivityResultLauncher<Intent> gotoAppInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            int resultCode = result.getResultCode();
-            if (resultCode == -1) {
-                if (PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE))
-                    switch_storage_permission.setChecked(true);
-                if (PermissionUtils.checkFloatPermission(getContext())) switch_layer_permission.setChecked(true);
-            }
-        }
-    });
-    //注册Activity回调，用于处理权限申请
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
-                    if (PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE))
-                        switch_storage_permission.setChecked(true);
-                } else {
-                    //准备前往信息页的Intent
-                    Intent intent = new Intent("/");
-                    ComponentName cm = new ComponentName("com.android.settings", "com.android.settings.applications.InstalledAppDetails");
-                    intent.setComponent(cm);
-                    intent.setAction("android.intent.action.VIEW");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setData(Uri.parse("package:com.liux.musicplayer"));
-                    //调用
-                    gotoAppInfo.launch(intent);
-                }
-            });
-    private final ActivityResultLauncher<Intent> requestOverlayPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), isGranted -> {
-                if (PermissionUtils.checkFloatPermission(getContext())) {
-                    Toast.makeText(getActivity(), R.string.permission_granted, Toast.LENGTH_LONG).show();
-                    switch_layer_permission.setChecked(true);
-                } else {
-                    Toast.makeText(getActivity(), R.string.permission_not_granted, Toast.LENGTH_LONG).show();
-                }
-            });
     //用于接受系统文件管理器返回目录的回调
     ActivityResultLauncher<Intent> getFolderIntent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -174,6 +164,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             //Toast.makeText(getActivity(), sp.getString("mainFolder","---"), Toast.LENGTH_LONG).show();
         }
     });
+    private EditTextPreference cacheList;
+    private SeekBarPreference seekBarTiming;
+    private final ResultReceiver timingResult = new ResultReceiver(new Handler(Looper.getMainLooper())) {
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (!resultData.getBoolean("IS_TIMING", false))
+                seekBarTiming.setValue(0);
+        }
+    };
+    private SharedPreferences prefs;
     private MyViewModel myViewModel;
 
     @Override
@@ -192,7 +192,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_fast_start = findPreference("isNeedFastStart");
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
-        autoRun= findPreference("autoRun");
+        autoRun = findPreference("autoRun");
         switch_web_playlist = findPreference("isUseWebPlayList");
         switch_desk_lyric = findPreference("isShowLyric");
         switch_desk_lyric_lock = findPreference("deskLyricLock");
@@ -218,7 +218,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
         if (PermissionUtils.checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
-        if (PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE))
+        if (PermissionUtils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE))
             switch_storage_permission.setChecked(true);
         //错误日志
         lastCrash.setSummary(String.valueOf(prefs.getBoolean("lastCrash", false)));
@@ -230,9 +230,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         setMainFolder.setSummary(MainFolder.getSummary());
         //获取当前是否在倒计时
         myViewModel.getmMediaController().sendCommand("IS_TIMING", null, timingResult);
-        if (User.isLogin){
+        if (User.isLogin) {
             userLogin.setTitle(User.userData.userName);
-        }else{
+        } else {
             userLogin.setTitle(R.string.user_unlogin);
             findPreference("exp").setVisible(false);
             switch_new_appearance.setChecked(false);
@@ -250,14 +250,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
         initPreferenceListener();
     }
-
-    private final ResultReceiver timingResult = new ResultReceiver(new Handler(Looper.getMainLooper())) {
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            if (!resultData.getBoolean("IS_TIMING", false))
-                seekBarTiming.setValue(0);
-        }
-    };
 
     private void initPreferenceListener() {
         autoRun.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -298,11 +290,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 try {
                     rsaEncodeTest.setText(RSAUtils.privateKeyEncrypt((String) newValue, rsaPrivateKey.getText()));
                     rsaDecodeTest.setText(RSAUtils.publicKeyDecrypt(rsaEncodeTest.getText(), rsaPublicKey.getText()));
-                    if(rsaDecodeTest.getText().equals((String) newValue)) {
+                    if (rsaDecodeTest.getText().equals(newValue)) {
                         newUser.setText("{\"publicKey\":\"" + rsaPublicKey.getText().replace("\n", "").replace(" ", "")
                                 + "\",\"userHashRSA\":\"" + rsaEncodeTest.getText().replace("\n", "").replace(" ", "")
-                                + "\",\"join\":\""+TimeUtils.getNowMills()+"\",\"expired\":\"\",\"level\":2,\"userSplash\":\"\"}");
-                    }else throw new Exception("Decode Failed");
+                                + "\",\"join\":\"" + TimeUtils.getNowMills() + "\",\"expired\":\"\",\"level\":2,\"userSplash\":\"\"}");
+                    } else throw new Exception("Decode Failed");
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -331,7 +323,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             public boolean onPreferenceClick(@NonNull Preference preference) {
                 if (lastErrorLog.getSummary() != null && !lastErrorLog.getSummary().equals("null")) {
                     if (FileUtils.isFileExists(requireContext().getExternalCacheDir() + "/log/" + lastErrorLog.getSummary()))
-                        CrashHandlers.checkIfExistsLastCrash(getActivity(),true);
+                        CrashHandlers.checkIfExistsLastCrash(getActivity(), true);
                     else {
                         Toast.makeText(requireContext(), "日志文件不存在", Toast.LENGTH_SHORT).show();
                         lastErrorLog.setSummary("null");
@@ -346,10 +338,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_new_appearance.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if(User.isLogin) {
+                if (User.isLogin) {
                     ((MainActivity) getActivity()).setNewAppearance((boolean) newValue);
                     return true;
-                }else {
+                } else {
                     Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -358,9 +350,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_fast_start.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if(User.isLogin|| !((boolean) newValue)) {
+                if (User.isLogin || !((boolean) newValue)) {
                     return true;
-                }else {
+                } else {
                     Toast.makeText(getContext(), "此功能仅限注册用户使用！请先登录", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -393,7 +385,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Close.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
-                AlertDialog alertDialog=new AlertDialog.Builder(getContext())
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                         .setIcon(R.drawable.ic_round_exit_to_app_24)
                         .setTitle(R.string.exitApp)
                         .setMessage(R.string.sure_to_exit)
@@ -406,7 +398,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                                     public void run() {
                                         System.exit(0);
                                     }
-                                    },1000);
+                                }, 1000);
                             }
                         })
                         .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -439,9 +431,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if (newValue == Boolean.TRUE) {
-                    return PermissionUtils.askPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE,requestPermissionLauncher);
+                    return PermissionUtils.askPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE, requestPermissionLauncher);
                 } else {
-                    return !PermissionUtils.checkPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE);
+                    return !PermissionUtils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
                 }
             }
         });
@@ -449,7 +441,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if (newValue == Boolean.TRUE) {
-                    return PermissionUtils.requestSettingCanDrawOverlays(getContext(),requestOverlayPermissionLauncher);
+                    return PermissionUtils.requestSettingCanDrawOverlays(getContext(), requestOverlayPermissionLauncher);
                 } else {
                     return !PermissionUtils.checkFloatPermission(getContext());
                 }
@@ -494,7 +486,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                                     @Override
                                     public void run() {
                                         if (id == 200) {
-                                            if(!httpResultHandle(result, 0)){
+                                            if (!httpResultHandle(result, 0)) {
                                                 Toast.makeText(requireActivity(), "解析播放列表失败:" + id, Toast.LENGTH_SHORT).show();
                                                 switch_web_playlist.setChecked(false);
                                             }
@@ -515,7 +507,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                                 public void run() {
                                     MusicLibrary.refreshAllSongListList();
                                 }
-                            },(User.isLogin&&SharedPrefs.getIsNeedFastStart())?100:2100);
+                            }, (User.isLogin && SharedPrefs.getIsNeedFastStart()) ? 100 : 2100);
                     return true;
                 }
             }
@@ -537,7 +529,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
                 //popInfo();
-                Intent intent=new Intent(getContext(), AboutActivity.class);
+                Intent intent = new Intent(getContext(), AboutActivity.class);
                 startActivity(intent);
                 return false;
             }
@@ -561,108 +553,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         });
     }
 
-    private void popInfo() {
-        int versionCode=0;
-        String versionName = "";
-        try {
-            versionCode = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionCode;
-            versionName = requireActivity().getPackageManager().getPackageInfo(requireActivity().getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        if(BuildConfig.DEBUG) versionName=versionName+"_debug";
-        AlertDialog.Builder alertInfoDialog = null;
-        alertInfoDialog = new AlertDialog.Builder(getContext());
-        alertInfoDialog.setTitle(R.string.app_name);
-        alertInfoDialog.setMessage(getString(R.string.appInfo).replace("\\n", "\n")
-                        + versionName+" ("+versionCode+")");
-        alertInfoDialog.setIcon(R.mipmap.ic_launcher);
-        alertInfoDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        if(User.isLogin&&User.userData.level<=2) {
-            alertInfoDialog.setNegativeButton(R.string.title_debug, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    findPreference("debug").setVisible(true);
-                    if(User.isLogin&&User.userData.level<=0)
-                        findPreference("rsa").setVisible(true);
-                }
-            });
-        }
-        alertInfoDialog.setNeutralButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        UpdateUtils.checkUpdate(getContext(),true);
-                    }
-                });
-        alertInfoDialog.show();
-    }
-
-    public void showLoginDialog() {
-        DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(CustomDialogUtils.editText.getText().toString().trim().length()>=4)
-                            User.login(getContext(),CustomDialogUtils.editText.getText().toString().trim(),false);
-                        else
-                            Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
-                    }
-                };
-        DialogInterface.OnClickListener normal=new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(CustomDialogUtils.editText.getText().toString().trim().length()>=4){
-                            showRegisterDialog(CustomDialogUtils.editText.getText().toString().trim());
-                        } else
-                            Toast.makeText(getContext(), "用户名长度最小为4", Toast.LENGTH_SHORT).show();
-                    }
-                };
-        CustomDialogUtils.editTextDialog(getContext(),
-                getString(R.string.inputUserName),
-                R.drawable.ic_round_account_circle_24,
-                "登录",
-                getString(R.string.cancel),
-                "注册",
-                pos,
-                new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        },
-                normal);
-
-    }
-
-    private void showRegisterDialog(String userName) {
-        String userHash=User.getUserHash(userName);
-        AlertDialog.Builder codeDialog = new AlertDialog.Builder(getContext());
-        codeDialog.setTitle(R.string.copyToRegister);
-        codeDialog.setMessage(userHash);
-        codeDialog.setCancelable(false);
-        codeDialog.setIcon(R.drawable.ic_round_account_circle_24);
-        codeDialog.setPositiveButton(R.string.copy,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ClipboardUtils.copyText(getContext(),userHash);
-                    }
-                });
-        codeDialog.setNegativeButton(R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        codeDialog.show();
-
-
-    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
@@ -678,8 +568,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "SONGLIST_webAllSongList":
                 webAllSongList.setText(sharedPreferences.getString("SONGLIST_webAllSongList", ""));
                 break;
-            case "allSongList":
-                allSongList.setText(sharedPreferences.getString("allSongList", ""));
+            case "SONGLIST_allSongList":
+                allSongList.setText(sharedPreferences.getString("SONGLIST_allSongList", ""));
                 break;
             case "nowId":
                 ((EditTextPreference) findPreference("nowId")).setText(sharedPreferences.getString("nowId", "0"));
@@ -708,12 +598,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 Gson gson = new Gson();
                 Type songListType = new TypeToken<ArrayList<Song>>() {
                 }.getType();
-                List<Song> aList=gson.fromJson(result, songListType);
-                if(aList!=null) {
-                    SharedPrefs.saveSongListByName(aList,"webAllSongList");
-                    List<MusicLibrary.SongList> songLists=SharedPrefs.getAllSonglistList();
+                List<Song> aList = gson.fromJson(result, songListType);
+                if (aList != null) {
+                    SharedPrefs.saveSongListByName(aList, "webAllSongList");
+                    List<MusicLibrary.SongList> songLists = SharedPrefs.getAllSonglistList();
                     songLists.removeIf(songList -> songList.n.equals("webAllSongList"));
-                    songLists.add(1,new MusicLibrary.SongList("webAllSongList","",aList.size()));
+                    songLists.add(1, new MusicLibrary.SongList("webAllSongList", "", aList.size()));
                     SharedPrefs.putAllSonglistList(songLists);
                     MusicLibrary.refreshAllSongListList();
                     return true;
@@ -728,11 +618,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onResume() {
         super.onResume();
-        if(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("showDebug",false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("showDebug", false)) {
             findPreference("debug").setVisible(true);
-            if(User.isLogin&&User.userData.level<=0)
+            if (User.isLogin && User.userData.level <= 0)
                 findPreference("rsa").setVisible(true);
-        }else {
+        } else {
             findPreference("debug").setVisible(false);
             findPreference("rsa").setVisible(false);
         }

@@ -61,8 +61,6 @@ import com.liux.musicplayer.adapters.PlayingListAdapter;
 import com.liux.musicplayer.databinding.ActivityMainBinding;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.services.FloatLyricService;
-import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.ui.HomeFragment;
 import com.liux.musicplayer.ui.SettingsFragment;
 import com.liux.musicplayer.ui.SongListFragment;

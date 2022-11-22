@@ -25,8 +25,6 @@ import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
-import android.media.Rating;
-
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.models.Song;
 import com.liux.musicplayer.utils.MusicUtils;

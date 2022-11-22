@@ -1,10 +1,7 @@
 package com.liux.musicplayer.services;
 
-import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.provider.Settings;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -23,10 +19,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -36,7 +29,6 @@ import androidx.media.session.MediaButtonReceiver;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.liux.musicplayer.R;
-import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.media.MediaPlayerAdapter;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.media.PlaybackInfoListener;

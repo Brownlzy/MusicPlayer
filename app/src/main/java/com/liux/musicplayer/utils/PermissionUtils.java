@@ -2,8 +2,8 @@ package com.liux.musicplayer.utils;
 
 import android.app.AppOpsManager;
 import android.content.ComponentName;
-        import android.content.Context;
-        import android.content.Intent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -14,10 +14,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 跳转自启动页面解决方案

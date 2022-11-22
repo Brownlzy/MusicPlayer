@@ -2,7 +2,6 @@ package com.liux.musicplayer.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,7 +9,6 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
@@ -22,11 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;

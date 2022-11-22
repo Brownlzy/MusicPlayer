@@ -13,8 +13,8 @@ import androidx.fragment.app.FragmentActivity;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.MusicService;
-import com.liux.musicplayer.utils.User;
 import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.User;
 
 import java.io.File;
 

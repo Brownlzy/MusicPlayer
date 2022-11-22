@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.util.ArrayList;
 import java.util.Collections;

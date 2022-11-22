@@ -1,10 +1,7 @@
 package com.liux.musicplayer.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +10,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
-import com.liux.musicplayer.media.MusicLibrary;
-import com.liux.musicplayer.models.Song;
-import com.liux.musicplayer.utils.MusicUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;

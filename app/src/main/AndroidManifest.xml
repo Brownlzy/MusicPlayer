@@ -21,11 +21,11 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MusicPlayer">
+        android:theme="@style/Theme.App.Starting">
         <activity
             android:name=".activities.UserActivity"
             android:screenOrientation="portrait"
-            android:exported="false"  />
+            android:exported="false" />
         <activity
             android:name=".activities.AboutActivity"
             android:screenOrientation="portrait"
@@ -35,8 +35,7 @@
             android:exported="true"
             android:label="@string/title_activity_open_music_file"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MusicPlayer.NoActionBar">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

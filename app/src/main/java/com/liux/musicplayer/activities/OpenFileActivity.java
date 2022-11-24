@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -76,7 +77,9 @@ public class OpenFileActivity extends FragmentActivity {
             });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_open_music_file);
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(this);
         SharedPrefs.init(getApplication());

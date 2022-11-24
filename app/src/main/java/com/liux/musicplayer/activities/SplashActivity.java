@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.FragmentActivity;
 
 import com.liux.musicplayer.R;
@@ -21,19 +22,24 @@ import java.io.File;
 public class SplashActivity  extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Handle the splash screen transition.
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         SharedPrefs.init(getApplication());
         MusicLibrary.init();
         User.init(getApplicationContext());
-        if(User.isLogin){
-            int type=SharedPrefs.getSplashType();
-            ((ImageView)findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    User.userData.userName+(type==0?"":"_custom"))));
+        if (User.isLogin) {
+            int type = SharedPrefs.getSplashType();
+            ((ImageView) findViewById(R.id.backgroundPic)).setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    User.userData.userName + (type == 0 ? "" : "_custom"))));
         }
         startService(new Intent(SplashActivity.this, MusicService.class));
+//        // Keep the splash screen visible for this Activity
+//        splashScreen.setKeepOnScreenCondition(() -> true );
+//        startMainActivity();
+//        finish();
     }
-
 
     @Override
     protected void onResume() {
@@ -44,7 +50,7 @@ public class SplashActivity  extends FragmentActivity {
                     public void run() {
                         startMainActivity();
                     }
-                },(User.isLogin&&SharedPrefs.getIsNeedFastStart())?100:2100);
+                }, (User.isLogin && SharedPrefs.getIsNeedFastStart()) ? 200 : 2100);
     }
 
     public void startMainActivity(){
@@ -65,9 +71,14 @@ public class SplashActivity  extends FragmentActivity {
             finish();
         }
     }
+
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

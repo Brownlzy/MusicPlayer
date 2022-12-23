@@ -263,13 +263,21 @@ public class SharedPrefs {
 
     public static int getSplashType() {
         try {
-            return Integer.parseInt(sharedPreferences.getString("splashType","0"));
-        }catch (Exception e){
+            return Integer.parseInt(sharedPreferences.getString("splashType", "0"));
+        } catch (Exception e) {
             return 0;
         }
     }
 
     public static void cleanSplashPath() {
         sharedPreferencesEditor.remove("splashPicPath").apply();
+    }
+
+    public static void setWebServerEnable(boolean b) {
+        sharedPreferencesEditor.putBoolean("isEnableWebServer", b).apply();
+    }
+
+    public static boolean getIsWebServerEnable() {
+        return sharedPreferences.getBoolean("isEnableWebServer", false);
     }
 }

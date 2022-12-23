@@ -97,34 +97,32 @@ public class LyricUtils implements Serializable {
         }
     }
 
-    private void LyricFromFile(String path) {
-        try {
-            File lyricFile = FileUtils.getFileByPath(path);
-            InputStream inStream = null;
-            inStream = new FileInputStream(lyricFile);
-            InputStreamReader inputReader = new InputStreamReader(inStream);
-            BufferedReader buffReader = new BufferedReader(inputReader);
-            String line;
-            //分行读取
-            while ((line = buffReader.readLine()) != null) {
-                splitLyricFromLine(line);
-                //Log.e("Lyric",line);
+    public static String ReadTxtFile(String path) {
+        String result = "";
+        File file = new File(path);
+        if (file.isDirectory()) {
+            return "[00:00:00] 歌词文件不存在";
+        } else {
+            try {
+                InputStream instream = new FileInputStream(file);
+                if (instream != null) {
+                    InputStreamReader inputreader = new InputStreamReader(instream);
+                    BufferedReader buffreader = new BufferedReader(inputreader);
+                    String line;
+                    //分行读取
+                    while ((line = buffreader.readLine()) != null) {
+                        Log.e("TestFile", "ReadTxtFile: " + line);
+                        result = result + line + "\n";
+                    }
+                    instream.close();
+                }
+            } catch (FileNotFoundException e) {
+                return "[00:00:00] 歌词文件不存在";
+            } catch (IOException e) {
+                return "[00:00:00] 歌词文件读取失败";
             }
-            inStream.close();
-            getStartMillionTime();
-        } catch (FileNotFoundException e) {
-            //e.printStackTrace();
-            lyricList.add("歌词文件不存在");
-            startTime.add("[00:00.00]");
-            startMillionTime.add((long) 0);
-        } catch (IOException e) {
-            //e.printStackTrace();
-            lyricList.add("歌词文件加载失败");
-            startTime.add("[00:00.00]");
-            startMillionTime.add((long) 0);
+            return result;
         }
-        sendCompleted();
-        isCompleted = true;
     }
 
     public void LyricFromUrl(String s) {
@@ -249,6 +247,36 @@ public class LyricUtils implements Serializable {
         } else {
             return -1;
         }
+    }
+
+    public void LyricFromFile(String path) {
+        try {
+            File lyricFile = FileUtils.getFileByPath(path);
+            InputStream inStream = null;
+            inStream = new FileInputStream(lyricFile);
+            InputStreamReader inputReader = new InputStreamReader(inStream);
+            BufferedReader buffReader = new BufferedReader(inputReader);
+            String line;
+            //分行读取
+            while ((line = buffReader.readLine()) != null) {
+                splitLyricFromLine(line);
+                //Log.e("Lyric",line);
+            }
+            inStream.close();
+            getStartMillionTime();
+        } catch (FileNotFoundException e) {
+            //e.printStackTrace();
+            lyricList.add("歌词文件不存在");
+            startTime.add("[00:00.00]");
+            startMillionTime.add((long) 0);
+        } catch (IOException e) {
+            //e.printStackTrace();
+            lyricList.add("歌词文件加载失败");
+            startTime.add("[00:00.00]");
+            startMillionTime.add((long) 0);
+        }
+        sendCompleted();
+        isCompleted = true;
     }
 }
 

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
+import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.R;
 import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.activities.SplashActivity;
@@ -47,9 +48,9 @@ public class User {
         if (userData != null && userData.isValid) {
             userHash = SHA256Util.getSHA256StrJava(userData.userName + HASH_SALT);
             try {
-                if (Math.abs(TimeUtils.getNowMills()-Long.parseLong(userData.loginTime))>1209600000L
-                        ||Long.parseLong(userData.expired)<TimeUtils.getNowMills()
-                        ||!userHash.equals(RSAUtils.publicKeyDecrypt(userData.userHashRSA, userData.publicKey))
+                if (Math.abs(TimeUtils.getNowMills() - Long.parseLong(userData.loginTime)) > 1209600000L
+                        || Long.parseLong(userData.expired) < TimeUtils.getNowMills()
+                        || (!BuildConfig.DEBUG && !userHash.equals(RSAUtils.publicKeyDecrypt(userData.userHashRSA, userData.publicKey)))
                 ) {
                     String userName=userData.userName;
                     userData = new UserData();
@@ -76,100 +77,119 @@ public class User {
                 .closeSuccessAnim()
                 .closeFailedAnim()
                 .show();
-        userData.userName = userName;
-        userHash = SHA256Util.getSHA256StrJava(userName + HASH_SALT);
-        Log.e(TAG, userName + "  " + userHash);
-
-        handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if(msg.arg1==0){
-                    ld.loadSuccess();
-                }else {
-                    ld.loadFailed();
-                }
-                Toast.makeText(context, (String)msg.obj, Toast.LENGTH_SHORT).show();
+        userData.userName = userName + (BuildConfig.DEBUG ? "_DEBUG" : "");
+        Log.e(TAG, userName + "  DEBUG");
+        if (BuildConfig.DEBUG) {
+            Gson gson = new Gson();
+            String result = "{\"publicKey\":\"\",\"userHashRSA\":\"\",\"join\":\"" + TimeUtils.getNowMills() + "\",\"expired\":\"" + String.valueOf(TimeUtils.getNowMills() + 86400000) + "\",\"level\":0,\"userSplash\":\"0.jpg\"}";
+            userDataJson = gson.fromJson(result, UserDataJson.class);
+            if (checkResult(context, isReLogin)) {
+                ld.loadSuccess();
+                new Handler()
+                        .postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent restartIntent = new Intent(context, SplashActivity.class);
+                                MainActivity.mainActivity.finish();
+                                context.startActivity(restartIntent);
+                                //System.exit(0);
+                            }
+                        }, 1000);
+            } else {
+                ld.loadFailed();
             }
-        };
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/usr/" + userHash)
-                .get()//default
-                .build();
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "失败");
-                Message message = Message.obtain();
-                message.arg1=1;
-                message.obj = "登录失败（无法连接服务器）";
-                handler.sendMessage(message);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String result = response.body().string();
-                int id = response.code();
-                Log.d(TAG, "onResponse: " + result);
-                if (id == 200) {
-                    Gson gson = new Gson();
-                    userDataJson = gson.fromJson(result, UserDataJson.class);
-                    if(checkResult(context,isReLogin)){
-                        Message message = Message.obtain();
-                        if(isReLogin){
-                            message.arg1=0;
-                            message.obj = "重新登录成功！正在重启...";
-                        new Handler()
-                                .postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent restartIntent = new Intent(context,SplashActivity.class);
-                                        MainActivity.mainActivity.finish();
-                                        context.startActivity(restartIntent);
-                                        //System.exit(0);
-                                    }
-                                },1000);
-                        } else{
-                            message.arg1=0;
-                            message.obj = "登录成功，正在加载专属开屏图...";
-                        }
-                        handler.sendMessage(message);
-                    }else {
-                        Message message = Message.obtain();
-                        message.arg1=1;
-                        message.obj = "登录失败（鉴权失败）";
-                        handler.sendMessage(message);
+        } else {
+            userHash = SHA256Util.getSHA256StrJava(userData.userName + HASH_SALT);
+            handler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.arg1 == 0) {
+                        ld.loadSuccess();
+                    } else {
+                        ld.loadFailed();
                     }
-                } else {
-                    Log.e(TAG,"response.code失败");
+                    Toast.makeText(context, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                }
+            };
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/usr/" + userHash)
+                    .get()//default
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "失败");
                     Message message = Message.obtain();
-                    message.arg1=1;
-                    message.obj = "登录失败（无当前用户："+id+"）";
+                    message.arg1 = 1;
+                    message.obj = "登录失败（无法连接服务器）";
                     handler.sendMessage(message);
                 }
-            }
 
-        });
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    int id = response.code();
+                    Log.d(TAG, "onResponse: " + result);
+                    if (id == 200) {
+                        Gson gson = new Gson();
+                        userDataJson = gson.fromJson(result, UserDataJson.class);
+                        if (checkResult(context, isReLogin)) {
+                            Message message = Message.obtain();
+                            if (isReLogin) {
+                                message.arg1 = 0;
+                                message.obj = "重新登录成功！正在重启...";
+                                new Handler()
+                                        .postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Intent restartIntent = new Intent(context, SplashActivity.class);
+                                                MainActivity.mainActivity.finish();
+                                                context.startActivity(restartIntent);
+                                                //System.exit(0);
+                                            }
+                                        }, 1000);
+                            } else {
+                                message.arg1 = 0;
+                                message.obj = "登录成功，正在加载专属开屏图...";
+                            }
+                            handler.sendMessage(message);
+                        } else {
+                            Message message = Message.obtain();
+                            message.arg1 = 1;
+                            message.obj = "登录失败（鉴权失败）";
+                            handler.sendMessage(message);
+                        }
+                    } else {
+                        Log.e(TAG, "response.code失败");
+                        Message message = Message.obtain();
+                        message.arg1 = 1;
+                        message.obj = "登录失败（无当前用户：" + id + "）";
+                        handler.sendMessage(message);
+                    }
+                }
 
+            });
+        }
     }
 
     private static boolean checkResult(Context context,boolean isReLogin) {
         try {
-            if (userHash.equals(RSAUtils.publicKeyDecrypt(userDataJson.userHashRSA, userDataJson.publicKey))
-                &&Long.parseLong(userDataJson.expired)>TimeUtils.getNowMills()) {
+            if ((BuildConfig.DEBUG || userHash.equals(RSAUtils.publicKeyDecrypt(userDataJson.userHashRSA, userDataJson.publicKey)))
+                    && Long.parseLong(userDataJson.expired) > TimeUtils.getNowMills()) {
                 userData.isValid = true;
                 userData.publicKey = userDataJson.publicKey;
                 userData.userHashRSA = userDataJson.userHashRSA;
                 userData.level = userDataJson.level;
-                userData.join=userDataJson.join;
+                userData.join = userDataJson.join;
                 userData.expired = userDataJson.expired;
                 userData.loginTime = String.valueOf(TimeUtils.getNowMills());
                 SharedPrefs.saveUserData(userData);
-                User.isLogin=true;
-                if(!isReLogin)
+                User.isLogin = true;
+                if (!isReLogin && !BuildConfig.DEBUG)
                     acquireDownload(context, "https://brownlzy.github.io/MyOtaInfo/MusicPlayer/pic/" + userDataJson.userSplash);
                 Log.e(TAG, String.valueOf(userData));
                 return true;

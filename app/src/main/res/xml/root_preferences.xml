@@ -83,6 +83,11 @@
     <PreferenceCategory
         app:key="exp"
         app:title="@string/experiment">
+        <CheckBoxPreference
+            app:enabled="true"
+            app:icon="@drawable/ic_round_remote_24"
+            app:key="isEnableWebServer"
+            app:title="@string/isEnableWebServer" />
 
         <CheckBoxPreference
             app:key="isUseWebPlayList"

@@ -178,5 +178,8 @@
     <string name="splashChoose">Choose Splash Image Source</string>
     <string name="contactMe"><a href="mailto:brownlzy@outlook.com">Contact Me</a></string>
     <string name="send_error_log_by_mail">Send By Mail</string>
+    <string name="isEnableWebServer">Enable Web Server</string>
+    <string name="webserver_off_summary">Turn on this function to listen to music in the same LAN using a computer browser</string>
+    <string name="webserver_on_summary">Enter URL in the computer browser to start listening to music</string>
 
 </resources>

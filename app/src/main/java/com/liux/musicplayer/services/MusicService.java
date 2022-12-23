@@ -89,6 +89,8 @@ public class MusicService extends MediaBrowserServiceCompat {
         intentFilter.addAction(getPackageName() + ".UNLOCK_LYRIC");
         intentFilter.addAction(getPackageName() + ".FOREGROUND");
         intentFilter.addAction(getPackageName() + ".BACKGROUND");
+        intentFilter.addAction(getPackageName() + ".WEB_ON");
+        intentFilter.addAction(getPackageName() + ".WEB_OFF");
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_USER_PRESENT);
@@ -102,6 +104,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "LyricReceiver:" + intent.getAction());
             Intent deskLyricIntent = new Intent(MusicService.this, FloatLyricService.class);
+            Intent webServerIntent = new Intent(MusicService.this, WebService.class);
             if (intent.getAction().contains(getPackageName())) {
                 switch (intent.getAction().split(getPackageName())[1]) {
                     case ".OPEN_LYRIC":
@@ -163,6 +166,12 @@ public class MusicService extends MediaBrowserServiceCompat {
                         intent.putExtra("isLock",false);
                         startService(deskLyricIntent);
                     }*/
+                        break;
+                    case ".WEB_ON":
+                        startService(webServerIntent);
+                        break;
+                    case ".WEB_OFF":
+                        stopService(webServerIntent);
                         break;
                     case Intent.ACTION_SCREEN_OFF:
                         stopService(deskLyricIntent);

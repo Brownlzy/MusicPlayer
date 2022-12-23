@@ -43,6 +43,7 @@ import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.activities.UserActivity;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
+import com.liux.musicplayer.services.HttpServer;
 import com.liux.musicplayer.utils.CrashHandlers;
 import com.liux.musicplayer.utils.PermissionUtils;
 import com.liux.musicplayer.utils.RSAUtils;
@@ -114,6 +115,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private CheckBoxPreference switch_desk_lyric_lock;
     private CheckBoxPreference switch_new_appearance;
     private CheckBoxPreference switch_fast_start;
+    private CheckBoxPreference switch_web_server;
     private Preference setMainFolder;
     private Preference clickGotoAppDetails;
     private Preference lastErrorLog;
@@ -190,6 +192,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         //绑定控件
         switch_new_appearance = findPreference("isNewAppearance");
         switch_fast_start = findPreference("isNeedFastStart");
+        switch_web_server = findPreference("isEnableWebServer");
         switch_storage_permission = findPreference("storage_permission");
         switch_layer_permission = findPreference("layer_permission");
         autoRun = findPreference("autoRun");
@@ -215,7 +218,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Close = findPreference("exit");
         userLogin = findPreference("user");
         seekBarTiming = findPreference("timing");
-
+        if (prefs.getBoolean("isEnableWebServer", false)) {
+            switch_web_server.setSummary(getString(R.string.webserver_on_summary).replace("URL", HttpServer.Config.HTTP_URL.replace("IP", HttpServer.Config.HTTP_IP)));
+        } else {
+            switch_web_server.setSummary(getString(R.string.webserver_off_summary));
+        }
         if (PermissionUtils.checkFloatPermission(getContext()))
             switch_layer_permission.setChecked(true);
         if (PermissionUtils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -252,6 +259,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     private void initPreferenceListener() {
+        switch_web_server.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                if ((boolean) newValue)
+                    getContext().sendBroadcast(new Intent(getContext().getPackageName() + ".WEB_ON"));
+                else
+                    getContext().sendBroadcast(new Intent(getContext().getPackageName() + ".WEB_OFF"));
+                return false;
+            }
+        });
         autoRun.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -556,6 +573,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
+            case "isEnableWebServer":
+                switch_web_server.setChecked(sharedPreferences.getBoolean("isEnableWebServer", false));
+                if (sharedPreferences.getBoolean("isEnableWebServer", false)) {
+                    switch_web_server.setSummary(getString(R.string.webserver_on_summary).replace("URL", HttpServer.Config.HTTP_URL.replace("IP", HttpServer.Config.HTTP_IP)));
+                } else {
+                    switch_web_server.setSummary(getString(R.string.webserver_off_summary));
+                }
+                break;
             case "isShowLyric":
                 switch_desk_lyric.setChecked(sharedPreferences.getBoolean("isShowLyric", false));
                 break;

@@ -180,5 +180,6 @@
     <string name="send_error_log_by_mail">通过邮件发送</string>
     <string name="isEnableWebServer">启用Web服务</string>
     <string name="webserver_off_summary">开启此功能可在同一局域网下使用电脑浏览器听歌</string>
-    <string name="webserver_on_summary">在电脑浏览器中输入 URL 开始听歌</string>
+    <string name="webserver_on_summary">在电脑浏览器中输入 URL 开始听歌，在综音中的在线播放列表处填入 URLapi/playlist?name=playingList 共享正在播放列表</string>
+    <string name="webserver_oning_summary">服务器开启中，若长时间无反应，可能是端口8068被占用，请关闭相关软件重试</string>
 </resources>

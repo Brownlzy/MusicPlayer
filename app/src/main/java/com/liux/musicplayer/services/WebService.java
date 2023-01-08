@@ -11,6 +11,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -69,7 +70,8 @@ public class WebService extends Service {
             mHttpServer.asset_mgr = this.getAssets();
             mHttpServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.e("WebServer", Config.HTTP_IP + ":" + String.valueOf(Config.HTTP_PORT));
             SharedPrefs.setWebServerEnable(false);
             stopSelf();
             return;

@@ -123,7 +123,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.liux.musicplayerd"
+            android:authorities="com.liux.musicplayer"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

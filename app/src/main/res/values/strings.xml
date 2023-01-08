@@ -181,5 +181,6 @@
     <string name="isEnableWebServer">Enable Web Server</string>
     <string name="webserver_off_summary">Turn on this function to listen to music in the same LAN using a computer browser</string>
     <string name="webserver_on_summary">Enter URL in the computer browser to start listening to music</string>
+    <string name="webserver_oning_summary">The server is being started. If there is no response for a long time, port 8068 may be occupied. Please close the relevant software and try again</string>
 
 </resources>

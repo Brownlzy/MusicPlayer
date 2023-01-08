@@ -219,7 +219,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         userLogin = findPreference("user");
         seekBarTiming = findPreference("timing");
         if (prefs.getBoolean("isEnableWebServer", false)) {
-            switch_web_server.setSummary(getString(R.string.webserver_on_summary).replace("URL", HttpServer.Config.HTTP_URL.replace("IP", HttpServer.Config.HTTP_IP)));
+            switch_web_server.setSummary(getString(R.string.webserver_on_summary)
+                    .replace("URL",
+                            HttpServer.Config.HTTP_URL
+                                    .replace("IP", HttpServer.Config.HTTP_IP)
+                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT))
+                    ));
         } else {
             switch_web_server.setSummary(getString(R.string.webserver_off_summary));
         }
@@ -241,7 +246,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             userLogin.setTitle(User.userData.userName);
         } else {
             userLogin.setTitle(R.string.user_unlogin);
-            findPreference("exp").setVisible(false);
+            //findPreference("exp").setVisible(false);
             switch_new_appearance.setChecked(false);
         }
         //else if(SHA256Util.getSHA256StrJava(userRecord+getActivity().getPackageName()).equals())
@@ -262,10 +267,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch_web_server.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                if ((boolean) newValue)
+                if ((boolean) newValue) {
                     getContext().sendBroadcast(new Intent(getContext().getPackageName() + ".WEB_ON"));
-                else
+                    switch_web_server.setSummary(R.string.webserver_oning_summary);
+                } else {
                     getContext().sendBroadcast(new Intent(getContext().getPackageName() + ".WEB_OFF"));
+                }
                 return false;
             }
         });
@@ -468,7 +475,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             @Override
             public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                 if ((boolean) newValue) {
-                    SharedPreferences sp = getContext().getSharedPreferences("com.liux.musicplayer_preferences", Activity.MODE_PRIVATE);
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
                     SharedPreferences.Editor editor = sp.edit();
                     String url = sp.getString("WebPlayListUrl", "NULL");
                     if (!RegexUtils.isURL(url)) {
@@ -496,7 +503,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
-                                String result = response.body().string();
+                                String result = response.body().string().replace("%3D", "=");
                                 int id = response.code();
                                 Log.d(TAG, "onResponse: " + result);
                                 requireActivity().runOnUiThread(new Runnable() {
@@ -576,7 +583,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             case "isEnableWebServer":
                 switch_web_server.setChecked(sharedPreferences.getBoolean("isEnableWebServer", false));
                 if (sharedPreferences.getBoolean("isEnableWebServer", false)) {
-                    switch_web_server.setSummary(getString(R.string.webserver_on_summary).replace("URL", HttpServer.Config.HTTP_URL.replace("IP", HttpServer.Config.HTTP_IP)));
+                    switch_web_server.setSummary(getString(R.string.webserver_on_summary)
+                            .replace("URL",
+                                    HttpServer.Config.HTTP_URL
+                                            .replace("IP", HttpServer.Config.HTTP_IP)
+                                            .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT))
+                            ));
                 } else {
                     switch_web_server.setSummary(getString(R.string.webserver_off_summary));
                 }

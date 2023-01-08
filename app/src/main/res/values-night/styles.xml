@@ -20,6 +20,10 @@
     </style>
 
     <style name="TabBarStyle">
+        <item name="android:background">#66000000</item>
+    </style>
+
+    <style name="TabBarStyleB">
         <item name="android:background">@color/black</item>
     </style>
 

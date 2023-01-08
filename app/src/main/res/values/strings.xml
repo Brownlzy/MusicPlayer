@@ -154,7 +154,7 @@
     <string name="isUseMetaData_summary">The metadata of the music file takes precedence in the details card of the playback page</string>
     <string name="fileMetaDataInfo">"Metadata Information:"</string>
     <string name="title_custom">Custom</string>
-    <string name="copyright" translatable="false">Copyright © 2022 Brownlzy. All Rights Reserved.</string>
+    <string name="copyright" translatable="false">Copyright © 2022-2023 Brownlzy. All Rights Reserved.</string>
     <string name="officialWebsite">Official Website</string>
     <string name="supportMe">Support Me</string>
     <string name="showDebug">Show Debug Settings</string>
@@ -178,5 +178,9 @@
     <string name="splashChoose">Choose Splash Image Source</string>
     <string name="contactMe"><a href="mailto:brownlzy@outlook.com">Contact Me</a></string>
     <string name="send_error_log_by_mail">Send By Mail</string>
+    <string name="isEnableWebServer">Enable Web Server</string>
+    <string name="webserver_off_summary">Turn on this function to listen to music in the same LAN using a computer browser</string>
+    <string name="webserver_on_summary">Enter URL in the computer browser to start listening to music</string>
+    <string name="webserver_oning_summary">The server is being started. If there is no response for a long time, port 8068 may be occupied. Please close the relevant software and try again</string>
 
 </resources>

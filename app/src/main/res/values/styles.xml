@@ -20,7 +20,11 @@
     </style>
 
     <style name="TabBarStyle">
-        <item name="android:background">@color/green_700</item>
+        <item name="android:background">#9A46B14A</item>
+    </style>
+
+    <style name="TabBarStyleB">
+        <item name="android:background">@color/green_500</item>
     </style>
 
     <style name="RoundedStyle">
@@ -65,4 +69,5 @@
     <style name="SplashBackgroundColor">
         <item name="android:windowBackground">@color/white</item>
     </style>
+
 </resources>

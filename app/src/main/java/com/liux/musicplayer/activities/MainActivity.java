@@ -42,6 +42,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -386,6 +387,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         CrashHandlers crashHandlers = CrashHandlers.getInstance();
         crashHandlers.init(MainActivity.this);
@@ -571,15 +573,15 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if(isPlayingListShowing){
+        if (isPlayingListShowing) {
             showPlayingList();
-        }else if (viewPager.getCurrentItem() == 0) {
+        } else if (viewPager != null && viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else if (viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag||songListFragment.searchFlag||songListFragment.songlistFlag)) {
+        } else if (viewPager != null && viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag || songListFragment.searchFlag || songListFragment.songlistFlag)) {
             songListFragment.onBackPressed();
-        } else {
+        } else if (viewPager != null) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }

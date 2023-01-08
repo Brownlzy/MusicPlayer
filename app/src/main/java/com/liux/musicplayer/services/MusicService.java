@@ -89,6 +89,8 @@ public class MusicService extends MediaBrowserServiceCompat {
         intentFilter.addAction(getPackageName() + ".UNLOCK_LYRIC");
         intentFilter.addAction(getPackageName() + ".FOREGROUND");
         intentFilter.addAction(getPackageName() + ".BACKGROUND");
+        intentFilter.addAction(getPackageName() + ".WEB_ON");
+        intentFilter.addAction(getPackageName() + ".WEB_OFF");
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_USER_PRESENT);
@@ -102,79 +104,88 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "LyricReceiver:" + intent.getAction());
             Intent deskLyricIntent = new Intent(MusicService.this, FloatLyricService.class);
-            switch (intent.getAction().split(getPackageName())[1]) {
-                case ".OPEN_LYRIC":
-                    if (!PermissionUtils.checkFloatPermission(MusicService.this)) {
-                        //Toast.makeText(context, "请先在设置页授予悬浮窗权限", Toast.LENGTH_SHORT).show();
+            Intent webServerIntent = new Intent(MusicService.this, WebService.class);
+            if (intent.getAction().contains(getPackageName())) {
+                switch (intent.getAction().split(getPackageName())[1]) {
+                    case ".OPEN_LYRIC":
+                        if (!PermissionUtils.checkFloatPermission(MusicService.this)) {
+                            //Toast.makeText(context, "请先在设置页授予悬浮窗权限", Toast.LENGTH_SHORT).show();
 //                        Intent intent1 = new Intent(MusicService.this,MainActivity.class);
 //                        intent1.putExtra("pageId",2);
 //                        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        startActivity(intent1);
 //                        PendingIntent contentIntent = PendingIntent.getActivity(
 //                                MusicService.this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE);
-                        String channelId = "权限通知"; // 通知渠道
-                        Notification notification = new Notification.Builder(MusicService.this, channelId)
-                                .setContentTitle("综音无悬浮窗权限")
-                                .setContentText("请先在设置页授予悬浮窗权限后再开启桌面歌词")
-                                .setSmallIcon(R.mipmap.ic_launcher)
+                            String channelId = "权限通知"; // 通知渠道
+                            Notification notification = new Notification.Builder(MusicService.this, channelId)
+                                    .setContentTitle("综音无悬浮窗权限")
+                                    .setContentText("请先在设置页授予悬浮窗权限后再开启桌面歌词")
+                                    .setSmallIcon(R.mipmap.ic_launcher)
 //                                .setContentIntent(contentIntent)
-                                .build();
-                        NotificationManager mNotificationManager =
-                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                        mNotificationManager.notify(411,notification);
-                    }else {
-                        NotificationManager mNotificationManager =
-                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                        mNotificationManager.cancel(411);
+                                    .build();
+                            NotificationManager mNotificationManager =
+                                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotificationManager.notify(411, notification);
+                        } else {
+                            NotificationManager mNotificationManager =
+                                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotificationManager.cancel(411);
 
-                        SharedPrefs.putIsDeskLyric(true);
-                        if ((!mainActivityState||Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) && mSession.isActive()) {
+                            SharedPrefs.putIsDeskLyric(true);
+                            if ((!mainActivityState || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) && mSession.isActive()) {
+                                deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
+                                startService(deskLyricIntent);
+                            }
+                        }
+                        break;
+                    case ".CLOSE_LYRIC":
+                        SharedPrefs.putIsDeskLyric(false);
+                        stopService(deskLyricIntent);
+                        break;
+                    case ".FOREGROUND":
+                        mainActivityState = true;
+                        stopService(deskLyricIntent);
+                        break;
+                    case ".BACKGROUND":
+                        mainActivityState = false;
+                        if (SharedPrefs.getIsDeskLyric() && mSession.isActive() && hasPlayedOnce) {
                             deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
                             startService(deskLyricIntent);
                         }
-                    }
-                    break;
-                case ".CLOSE_LYRIC":
-                    SharedPrefs.putIsDeskLyric(false);
-                    stopService(deskLyricIntent);
-                    break;
-                case ".FOREGROUND":
-                    mainActivityState=true;
-                    stopService(deskLyricIntent);
-                    break;
-                case ".BACKGROUND":
-                    mainActivityState=false;
-                    if(SharedPrefs.getIsDeskLyric()&&mSession.isActive()&&hasPlayedOnce) {
-                        deskLyricIntent.putExtra("isLock", SharedPrefs.getIsDeskLyricLock());
-                        startService(deskLyricIntent);
-                    }
-                    break;
-                case ".LOCK_LYRIC":
-                    SharedPrefs.putIsDeskLyricLock(true);
+                        break;
+                    case ".LOCK_LYRIC":
+                        SharedPrefs.putIsDeskLyricLock(true);
                         /*if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                             intent.putExtra("isLock",true);
                             startService(deskLyricIntent);
                         }*/
-                    break;
-                case ".UNLOCK_LYRIC":
-                    SharedPrefs.putIsDeskLyricLock(false);
+                        break;
+                    case ".UNLOCK_LYRIC":
+                        SharedPrefs.putIsDeskLyricLock(false);
                     /*if(SharedPrefs.getIsDeskLyric()&&!mainActivityState){
                         intent.putExtra("isLock",false);
                         startService(deskLyricIntent);
                     }*/
-                    break;
-                case Intent.ACTION_SCREEN_OFF:
-                    stopService(deskLyricIntent);
-                    break;
-                case Intent.ACTION_SCREEN_ON:
-                    if(!mainActivityState&& SharedPrefs.getIsDeskLyric()&&mPlayback.isPlaying())
-                        startService(deskLyricIntent);
-                    break;
+                        break;
+                    case ".WEB_ON":
+                        startService(webServerIntent);
+                        break;
+                    case ".WEB_OFF":
+                        stopService(webServerIntent);
+                        break;
+                    case Intent.ACTION_SCREEN_OFF:
+                        stopService(deskLyricIntent);
+                        break;
+                    case Intent.ACTION_SCREEN_ON:
+                        if (!mainActivityState && SharedPrefs.getIsDeskLyric() && mPlayback.isPlaying())
+                            startService(deskLyricIntent);
+                        break;
+                }
+                if (mSession.getController().getPlaybackState() != null)
+                    new MediaPlayerListener().mServiceManager.updateNotificationForLyric(
+                            mSession.getController().getPlaybackState()
+                    );
             }
-            if(mSession.getController().getPlaybackState()!=null)
-                new MediaPlayerListener().mServiceManager.updateNotificationForLyric(
-                        mSession.getController().getPlaybackState()
-                );
         }
     }
 
@@ -196,8 +207,11 @@ public class MusicService extends MediaBrowserServiceCompat {
         mSession.setSessionActivity(mMediaNotificationManager.createContentIntent());
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
-        mPlaylist=MusicLibrary.getPlayingMediaItemList();
-        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
+        mPlaylist = MusicLibrary.getPlayingMediaItemList();
+        mCallback.onCustomAction("REFRESH_PLAYLIST", null);
+
+        if (SharedPrefs.getIsWebServerEnable())
+            sendBroadcast(new Intent(getPackageName() + ".WEB_ON"));
     }
 
     @Override

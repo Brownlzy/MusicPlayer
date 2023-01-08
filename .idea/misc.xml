@@ -5,21 +5,51 @@
       <map>
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable-v24/ic_more_items.xml" value="0.2985" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable-v24/ic_settings_24dp.xml" value="0.2985" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_baseline_music_note_float_24.xml" value="0.1965" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_baseline_playlist_play_24.xml" value="0.2985" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_baseline_playlist_play_36.xml" value="0.2985" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_baseline_replay_float_24.xml" value="0.1965" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2985" />
-        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
-        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/fragment_home.xml" value="0.14688675302966986" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_outline_lock_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_outline_settings_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_outline_skip_next_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_outline_skip_previous_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_arrow_circle_down_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_close_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_label_important_24.xml" value="0.1585" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_pause_circle_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_play_circle_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_skip_next_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_zoom_in_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/drawable/ic_round_zoom_out_float_24.xml" value="0.1965" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/activity_about.xml" value="0.22934472934472935" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/activity_open_music_file.xml" value="0.365625" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/activity_splash.xml" value="0.18854166666666666" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/activity_user.xml" value="0.33" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/fragment_playlist.xml" value="0.13055303717135086" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/fragment_settings.xml" value="0.358695652173913" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/item_lyric.xml" value="0.21" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/item_playing_list.xml" value="0.33" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/item_playlist.xml" value="0.14365113296280463" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/notification_large.xml" value="0.365625" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/notification_small.xml" value="0.365625" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/layout/oneline_edittext.xml" value="0.1859375" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1875" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/home_info_menu.xml" value="0.365625" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/lyric_item_menu.xml" value="0.14365113296280463" />
         <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/playlist_item_menu.xml" value="0.14365113296280463" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/playlist_list_item_menu.xml" value="0.14895833333333333" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/sort_list_way_menu.xml" value="0.14895833333333333" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/menu/sort_way_menu.xml" value="0.14895833333333333" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/xml/about_preferences.xml" value="0.3645833333333333" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/xml/root_preferences.xml" value="0.18697916666666667" />
+        <entry key="..\:/CODE/Android/MusicPlayer/app/src/main/res/xml/user_preferences.xml" value="0.25" />
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>

@@ -95,7 +95,7 @@ public class HttpServer extends NanoHTTPD {
                                 if (cover != null)
                                     fis = Bitmap2InputStream(cover);
                                 //fis.skip(Long.parseLong(session.getHeaders().get("range").split("bytes=")[1].split("-")[0]));
-                                return newFixedLengthResponse(Response.Status.OK, "image/jpeg", fis, fis.available() - 1);
+                                return newFixedLengthResponse(Response.Status.OK, "image/jpeg", fis, fis.available());
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + file1);
@@ -111,7 +111,7 @@ public class HttpServer extends NanoHTTPD {
                             try {
                                 fis = new FileInputStream(file);
                                 //fis.skip(Long.parseLong(session.getHeaders().get("range").split("bytes=")[1].split("-")[0]));
-                                return newFixedLengthResponse(Response.Status.OK, mimeType, fis, fis.available() - 1);
+                                return newFixedLengthResponse(Response.Status.OK, mimeType, fis, fis.available());
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                                 return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + file);

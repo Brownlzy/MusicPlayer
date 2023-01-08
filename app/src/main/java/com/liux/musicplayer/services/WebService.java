@@ -3,6 +3,7 @@ package com.liux.musicplayer.services;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.liux.musicplayer.R;
+import com.liux.musicplayer.activities.MainActivity;
 import com.liux.musicplayer.services.HttpServer.Config;
 import com.liux.musicplayer.utils.SharedPrefs;
 
@@ -77,7 +79,7 @@ public class WebService extends Service {
             return;
         }
         SharedPrefs.setWebServerEnable(true);
-        createNotification(Config.HTTP_URL.replace("IP", ip));
+        createNotification(Config.HTTP_URL.replace("IP", ip).replace("PORT", String.valueOf(Config.HTTP_PORT)));
         startForeground(NOTIFICATION_ID, mNotification);
     }
 
@@ -107,11 +109,12 @@ public class WebService extends Service {
     }
 
     private Notification createNotification(String url) {
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
         mNotification = new Notification.Builder(WebService.this, CHANNEL_ID)
                 .setContentTitle("WebServer Running...")
                 .setContentText("URL: " + url)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                //.setContentIntent(contentIntent)
+                .setContentIntent(contentIntent)
                 .build();
         return mNotification;
     }

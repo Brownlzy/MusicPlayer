@@ -143,8 +143,6 @@ public class MainActivity extends FragmentActivity {
         initViewPager2();
         initBackgroundCallBack();
         initObserver();
-        if (SharedPrefs.getIsWebServerEnable())
-            sendBroadcast(new Intent(getPackageName() + ".WEB_ON"));
         //setMainActivityData();
     }
 

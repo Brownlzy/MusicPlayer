@@ -207,8 +207,11 @@ public class MusicService extends MediaBrowserServiceCompat {
         mSession.setSessionActivity(mMediaNotificationManager.createContentIntent());
 
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
-        mPlaylist=MusicLibrary.getPlayingMediaItemList();
-        mCallback.onCustomAction("REFRESH_PLAYLIST",null);
+        mPlaylist = MusicLibrary.getPlayingMediaItemList();
+        mCallback.onCustomAction("REFRESH_PLAYLIST", null);
+
+        if (SharedPrefs.getIsWebServerEnable())
+            sendBroadcast(new Intent(getPackageName() + ".WEB_ON"));
     }
 
     @Override

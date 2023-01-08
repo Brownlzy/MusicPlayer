@@ -1,5 +1,6 @@
 package com.liux.musicplayer.models;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.HttpServer;
 
@@ -54,19 +55,20 @@ public class API {
         public PlayList(List<Song> songList) {
             playlist = new ArrayList<>();
             for (Song s : songList) {
-                playlist.add(new Song(
-                        s.getSongTitle(),
-                        s.getSongDuration(),
-                        s.getArtistName(),
-                        s.getAlbumName(),
-                        s.getmId(),
-                        HttpServer.Config.HTTP_URL
-                                .replace("IP", HttpServer.Config.HTTP_IP)
-                                .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path=" + s.getSongPath(),
-                        HttpServer.Config.HTTP_URL
-                                .replace("IP", HttpServer.Config.HTTP_IP)
-                                .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path=" + s.getLyricPath()
-                ));
+                if (FileUtils.isFileExists(s.getSongPath()))
+                    playlist.add(new Song(
+                            s.getSongTitle(),
+                            s.getSongDuration(),
+                            s.getArtistName(),
+                            s.getAlbumName(),
+                            s.getmId(),
+                            HttpServer.Config.HTTP_URL
+                                    .replace("IP", HttpServer.Config.HTTP_IP)
+                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path=" + s.getSongPath(),
+                            HttpServer.Config.HTTP_URL
+                                    .replace("IP", HttpServer.Config.HTTP_IP)
+                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path=" + s.getLyricPath()
+                    ));
             }
         }
     }

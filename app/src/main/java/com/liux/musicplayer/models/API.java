@@ -64,10 +64,12 @@ public class API {
                             s.getmId(),
                             HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
-                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path=" + s.getSongPath(),
+                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
+                                    + s.getSongPath(),
                             HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
-                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path=" + s.getLyricPath()
+                                    .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
+                                    + s.getLyricPath()
                     ));
             }
         }
@@ -80,7 +82,7 @@ public class API {
         String loop = "all";
         String order = "random";
         String preload = "auto";
-        float volume = 0.7f;
+        float volume = 0.2f;
         boolean mutex = true;
         boolean listFolded = false;
         int listMaxHeight = 90;

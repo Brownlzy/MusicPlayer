@@ -10,7 +10,7 @@ android {
         applicationId "com.liux.musicplayer"
         minSdkVersion 26
         targetSdkVersion 32
-        versionCode 67
+        versionCode 68
         versionName "3.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

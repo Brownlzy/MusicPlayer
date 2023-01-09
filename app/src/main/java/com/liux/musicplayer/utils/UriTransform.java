@@ -12,6 +12,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class UriTransform {
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -189,11 +192,45 @@ public class UriTransform {
 
     /**
      * 判断文件路径的文件名是否存在文件扩展名 eg: /external/images/media/2283
+     *
      * @param filePath
      * @return
      */
     public static boolean isFilePathWithExtension(String filePath) {
         String filename = getFilenameWithExtension(filePath);
         return filename.contains(".");
+    }
+
+    /**
+     * URLEncoder编码
+     */
+    public static String toURLEncoded(String paramString) {
+        if (paramString == null || paramString.equals("")) {
+            return "";
+        }
+        try {
+            String str = new String(paramString.getBytes(), "UTF-8");
+            str = URLEncoder.encode(str, "UTF-8");
+            return str;
+        } catch (Exception localException) {
+        }
+        return "";
+    }
+
+    /**
+     * URLDecoder解码
+     */
+    public static String toURLDecoder(String paramString) {
+        if (paramString == null || paramString.equals("")) {
+            return "";
+        }
+        try {
+            String url = new String(paramString.getBytes(), "UTF-8");
+            url = URLDecoder.decode(url, "UTF-8");
+            return url;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

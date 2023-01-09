@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.HttpServer;
 import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.UriTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,10 @@ public class API {
             name = song.getSongTitle();
             artist = song.getArtistName();
             theme = "#4CAF50";
-            url = "/api/file?path=" + song.getSongPath();
-            cover = "/api/cover?path=" + song.getSongPath();
+            url = "/api/file?path=" + UriTransform.toURLEncoded(song.getSongPath());
+            cover = "/api/cover?path=" + UriTransform.toURLEncoded(song.getSongPath());
             if (!song.getLyricPath().equals("null"))
-                lrc = "/api/file?path=" + song.getLyricPath();
+                lrc = "/api/file?path=" + UriTransform.toURLEncoded(song.getLyricPath());
             else
                 lrc = "no-lrc.lrc";
         }
@@ -42,7 +43,6 @@ public class API {
 
         public SongListList(List<MusicLibrary.SongList> allSongListList) {
             this.playlists = allSongListList.stream().map(songList -> songList.n).distinct().collect(Collectors.toList());
-            ;
             //this.playlists.add(0,"playingList");
             this.playlists.add(0, "正在播放");
             playlists.remove("allSongList");
@@ -81,11 +81,11 @@ public class API {
                             HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
-                                    + s.getSongPath(),
+                                    + UriTransform.toURLEncoded(s.getSongPath()),
                             (s.getLyricPath().equals("null")) ? "null" : (HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
-                                    + s.getLyricPath())
+                                    + UriTransform.toURLEncoded(s.getLyricPath()))
                     ));
             }
         }

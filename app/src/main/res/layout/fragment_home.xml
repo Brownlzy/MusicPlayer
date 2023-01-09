@@ -120,8 +120,8 @@
                         android:id="@+id/placeholder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
                         android:src="@drawable/ic_launcher1080"
+                        android:adjustViewBounds="true"
                         android:visibility="invisible"
                         app:layout_constraintDimensionRatio="1:1"
                         app:shapeAppearance="@style/RoundedStyle" />

@@ -148,7 +148,7 @@
     <string name="webAllSongList">Web List</string>
     <string name="clearCache">Clear Cache</string>
     <string name="title_activity_open_music_file">OpenMusicFile</string>
-    <string name="Copied">Copied</string>
+    <string name="Copied">Copied: </string>
     <string name="item_menu_add_to_list">Add to List</string>
     <string name="isUseMetaData">Use Metadata</string>
     <string name="isUseMetaData_summary">The metadata of the music file takes precedence in the details card of the playback page</string>
@@ -183,5 +183,8 @@
     <string name="webserver_on_summary">Enter URL in the computer browser to start listening to music</string>
     <string name="webserver_oning_summary">The server is being started. If there is no response for a long time, port 8068 may be occupied. Please close the relevant software and try again</string>
     <string name="title_updateDate">"Release Date: "</string>
+    <string name="serverBanned">Failed to obtain the update. Do you want to go to the official Blueplay Cloud Disk to see if there is a new version?</string>
+    <string name="lanzou_download">Go to Lanzou (pwd: 6jsh)</string>
+    <string name="ExitFlag">Sorry, this software has been temporarily disabled and cannot be used until the network receives the unlocking instruction.</string>
 
 </resources>

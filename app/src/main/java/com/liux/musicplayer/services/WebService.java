@@ -71,6 +71,7 @@ public class WebService extends Service {
         try {
             mHttpServer.asset_mgr = this.getAssets();
             mHttpServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+            mHttpServer.mContext = this;
         } catch (IOException e) {
             //e.printStackTrace();
             Log.e("WebServer", Config.HTTP_IP + ":" + String.valueOf(Config.HTTP_PORT));

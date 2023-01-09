@@ -1,19 +1,29 @@
 package com.liux.musicplayer.services;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.API;
 import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.User;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +37,7 @@ public class HttpServer extends NanoHTTPD {
     private static final String TAG = "HttpServer";
     private final Gson mGson = new GsonBuilder().disableHtmlEscaping().create();
     AssetManager asset_mgr;
-    private int count = 0;
+    Context mContext;
 
     public HttpServer(String hostname, int port) {
         super(hostname, port);
@@ -47,7 +57,6 @@ public class HttpServer extends NanoHTTPD {
         if (Method.GET == session.getMethod()) {
             Log.i(TAG, "dealWith: " + url);
             if (url.startsWith("/api/")) {
-                count++;
                 Map<String, List<String>> param = session.getParameters();
                 switch (url) {
                     case Config.HTTP_API_HELLO_WORLD:
@@ -101,11 +110,10 @@ public class HttpServer extends NanoHTTPD {
                             InputStream is = null;
                             try {
                                 Bitmap cover = MusicUtils.getAlbumImage(file1);
-                                if (cover != null)
-                                    is = Bitmap2InputStream(cover);
-                                else {
-                                    is = asset_mgr.open("wap/default-cover.png", AssetManager.ACCESS_BUFFER);
+                                if (cover == null) {
+                                    cover = drawable2Bitmap(mContext.getDrawable(R.drawable.ic_launcher_foreground));
                                 }
+                                is = Bitmap2InputStream(cover);
                                 //fis.skip(Long.parseLong(session.getHeaders().get("range").split("bytes=")[1].split("-")[0]));
                                 return newFixedLengthResponse(Response.Status.OK, "image/jpeg", is, is.available());
                             } catch (IOException e) {
@@ -114,6 +122,23 @@ public class HttpServer extends NanoHTTPD {
                             }
                         } else {
                             return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + file1);
+                        }
+                    case Config.HTTP_API_BACK_PIC:
+                        int type = SharedPrefs.getSplashType();
+                        Uri uri = Uri.fromFile(new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                                User.userData.userName + (type == 0 ? "" : "_custom")));
+                        if (FileUtils.isFileExists(uri.getPath())) {
+                            FileInputStream fis = null;
+                            try {
+                                fis = new FileInputStream(uri.getPath());
+                                //fis.skip(Long.parseLong(session.getHeaders().get("range").split("bytes=")[1].split("-")[0]));
+                                return newFixedLengthResponse(Response.Status.OK, "image/jpeg", fis, fis.available());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + uri.getPath());
+                            }
+                        } else {
+                            return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + uri.getPath());
                         }
                     case Config.HTTP_API_FILE:
                         String file = param.get("path").get(0);
@@ -161,6 +186,20 @@ public class HttpServer extends NanoHTTPD {
         return is;
     }
 
+    public Bitmap drawable2Bitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap
+                .createBitmap(
+                        drawable.getIntrinsicWidth(),
+                        drawable.getIntrinsicHeight(),
+                        drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                                : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
     private <T> Response responseJsonString(int code, T data, String msg) {
         MyResponse response = new MyResponse(code, data, msg);
         String jsonString = mGson.toJson(response);
@@ -183,10 +222,11 @@ public class HttpServer extends NanoHTTPD {
         public static final String HTTP_API_SONG_LIST = "/api/songlist";
         public static final String HTTP_API_SONG = "/api/song";
         public static final String HTTP_API_SONG_PIC = "/api/cover";
-        public static final String HTTP_API_SONG_LYRIC = "/api/song_lyric";
+        public static final String HTTP_API_BACK_PIC = "/api/bg";
+        public static final String HTTP_API_SONG_LYRIC = "/api/songlyric";
         public static final String HTTP_API_FILE = "/api/file";
         public static final String HTTP_API_PLAYLIST = "/api/playlist";
-        public static String HTTP_IP = "IP";//这是我当前手机流量下的IP地址
+        public static String HTTP_IP = "IP";
     }
 
     private static class MyResponse<T> {

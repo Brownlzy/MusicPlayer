@@ -280,4 +280,12 @@ public class SharedPrefs {
     public static boolean getIsWebServerEnable() {
         return sharedPreferences.getBoolean("isEnableWebServer", false);
     }
+
+    public static void putExitFlag(boolean b) {
+        sharedPreferencesEditor.putBoolean("ExitFlag", b).apply();
+    }
+
+    public static boolean getExitFlag() {
+        return sharedPreferences.getBoolean("ExitFlag", false);
+    }
 }

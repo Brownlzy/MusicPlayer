@@ -26,7 +26,7 @@ public class API {
         public SongDetail(Song song) {
             name = song.getSongTitle();
             artist = song.getArtistName();
-            theme = "#FADFA3";
+            theme = "#4CAF50";
             url = "/api/file?path=" + song.getSongPath();
             cover = "/api/cover?path=" + song.getSongPath();
             if (!song.getLyricPath().equals("null"))
@@ -48,7 +48,7 @@ public class API {
             playlists.remove("allSongList");
             playlists.remove("webAllSongList");
             playlists.add("所有歌曲");
-            this.total = allSongListList.size();
+            this.total = playlists.size();
         }
     }
 
@@ -82,10 +82,10 @@ public class API {
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
                                     + s.getSongPath(),
-                            HttpServer.Config.HTTP_URL
+                            (s.getLyricPath().equals("null")) ? "null" : (HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
-                                    + s.getLyricPath()
+                                    + s.getLyricPath())
                     ));
             }
         }
@@ -93,15 +93,16 @@ public class API {
 
     public static class Info {
         boolean mini = false;
+        boolean fixed = false;
         boolean autoplay = false;
-        String theme = "#FADFA3";
+        String theme = "#4CAF50";
         String loop = "all";
         String order = "random";
         String preload = "auto";
         float volume = 0.5f;
         boolean mutex = true;
         boolean listFolded = false;
-        int listMaxHeight = 10;
+        String listMaxHeight = "700px";
         int lrcType = 3;
 
         public Info() {

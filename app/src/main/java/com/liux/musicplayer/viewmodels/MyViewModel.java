@@ -427,7 +427,7 @@ public class MyViewModel extends AndroidViewModel {
                 nowLyric.setValue(new LyricUtils("null"));
                 nowAlbum = MusicUtils.getAlbumImage("null");
                 nowPlaying.setValue(
-                        new Song("这是文件路径", "歌曲名称", "歌手", "专辑名", "0", 0L)
+                        new Song("这是文件路径", "歌曲名称", "歌手", "专辑名", "0", 0L, "null")
                 );
 
             } else {

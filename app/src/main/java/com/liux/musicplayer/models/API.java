@@ -78,6 +78,7 @@ public class API {
                             s.getArtistName(),
                             s.getAlbumName(),
                             s.getmId(),
+                            s.getSize(),
                             HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="

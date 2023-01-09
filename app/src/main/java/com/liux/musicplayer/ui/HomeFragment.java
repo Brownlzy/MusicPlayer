@@ -313,7 +313,6 @@ public class HomeFragment extends Fragment {
                         getString(R.string.title_path) + song.getSongPath() + "\n" +
                         getString(R.string.title_lyric) + song.getLyricPath());
             }
-            Log.e("11111", String.valueOf(song.getSize())+" "+song.getSongDuration());
             //读取专辑图片
             //Bitmap bitmap = myViewModel.getMusicService().getAlbumImage();
             //if (bitmap == null) {   //获取图片失败，使用默认图片

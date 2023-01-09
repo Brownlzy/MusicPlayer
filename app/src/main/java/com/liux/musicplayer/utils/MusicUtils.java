@@ -10,12 +10,17 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.models.Song;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -67,8 +72,46 @@ public class MusicUtils {
         }
     }
 
+    static Bitmap bitmap;
+
+    public static Bitmap getBitmap(String netUrl) {
+        URL url = null;
+        try {
+            url = new URL(netUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            if (conn.getResponseCode() == 200) {
+                InputStream inputStream = conn.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                return bitmap;
+            } else {
+                Bitmap bitmap = null;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                return bitmap;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Bitmap bitmap = null;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            return bitmap;
+        }
+    }
+
     private static Bitmap getWebAlbumImage(String path) {
-        return null;
+        if (path.contains("/api/file?path=")) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    bitmap = getBitmap(path.replace("/api/file?path=", "/api/cover?path="));
+                }
+            }).start();
+
+            return bitmap;
+        } else
+            return null;
     }
 
     public static Metadata getMetadata(String path) {
@@ -106,8 +149,8 @@ public class MusicUtils {
         md.album = song.getAlbumName();
         md.artist = song.getArtistName();
         md.duration = String.valueOf(song.getSongDuration());
-        md.mimetype = "MUSIC/WEB";
-        md.bitrate = String.valueOf((long)((double)song.getSize()/((double)song.getSongDuration()/8000)));
+        md.mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(path.substring(path.lastIndexOf("."), path.length())));
+        md.bitrate = String.valueOf((long) ((double) song.getSize() / ((double) song.getSongDuration() / 8000)));
         Log.e("getWebMetadata","size:"+md.sizeLong);
         Log.e("getWebMetadata","duration:"+song.getSongDuration());
         Log.e("getWebMetadata","bitrate:"+md.bitrate);
@@ -152,7 +195,7 @@ public class MusicUtils {
             while (cursor.moveToNext()) {
                 Song song = new Song(
                         //歌曲路径
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)).replace("/storage/emulated/0","/sdcard"),
+                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)).replace("/storage/emulated/0", "/sdcard"),
                         //歌曲名称
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)),
                         //歌手
@@ -162,8 +205,9 @@ public class MusicUtils {
                         //歌曲时长
                         String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))),
                         //歌曲大小
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE))
-
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)),
+                        //歌曲ID
+                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
                 );
 //                if (song.size > 1000 * 800) {
 //                    // 注释部分是切割标题，分离出歌曲名和歌手 （本地媒体库读取的歌曲信息不规范）

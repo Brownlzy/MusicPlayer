@@ -212,7 +212,7 @@ public class MusicLibrary {
     //添加音乐
     public static void addMusicToList(String path, String listName) {
         MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(path);
-        Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong);
+        Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong, null);
         List<Song> theList = SharedPrefs.getSongListByName(listName);
         if (theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
             theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
@@ -236,7 +236,7 @@ public class MusicLibrary {
         List<Song> theList = SharedPrefs.getSongListByName(listName);
         for (String path : pathList) {
             MusicUtils.Metadata newMetadata = MusicUtils.getMetadata(path);
-            Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong);
+            Song newSong = new Song(path, newMetadata.title, newMetadata.artist, newMetadata.album, newMetadata.duration, newMetadata.sizeLong, null);
             if (theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).contains(path)) {  //如果播放列表已有同路径的音乐，就更新其内容
                 theList.set(theList.stream().map(t -> t.getSongPath()).distinct().collect(Collectors.toList()).indexOf(path), newSong);
             } else {
@@ -298,7 +298,7 @@ public class MusicLibrary {
         Bundle extra = new Bundle();
         extra.putString("LYRIC_URI", song.getLyricPath());
         return new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
-                .setMediaId(song.getSongPath())
+                .setMediaId(song.getmId())
                 .setMediaUri(Uri.parse(song.getSongPath()))
                 .setTitle(song.getSongTitle())
                 .setExtras(extra)
@@ -321,7 +321,8 @@ public class MusicLibrary {
     public static void savePlayingList(List<MediaSessionCompat.QueueItem> mPlaylist) {
         PlayingListOfSong.clear();
         for (MediaSessionCompat.QueueItem queueItem : mPlaylist) {
-            Song song = new Song(queueItem.getDescription().getMediaUri().toString(),
+            Song song = new Song(queueItem.getDescription().getMediaId(),
+                    queueItem.getDescription().getMediaUri().toString(),
                     String.valueOf(queueItem.getDescription().getTitle()),
                     String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[0],
                     String.valueOf(queueItem.getDescription().getSubtitle()).split(" - ")[1],

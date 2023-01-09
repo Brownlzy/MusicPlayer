@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.utils.MusicUtils;
+import com.liux.musicplayer.utils.SHA256Util;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -29,14 +30,14 @@ public class Song implements Cloneable {
         setmArtistName("null");
     }
 
-    public Song(String mTitle, int mDuration, String mArtistName, String mId) {
-        this.mTitle = mTitle;
-        this.mDuration = mDuration;
-        this.mArtistName = mArtistName;
-        this.mId = mId;
-    }
+//    public Song(String mTitle, int mDuration, String mArtistName, String mId) {
+//        this.mTitle = mTitle;
+//        this.mDuration = mDuration;
+//        this.mArtistName = mArtistName;
+//        this.mId = mId;
+//    }
 
-    public Song(String mTitle, int mDuration, String mArtistName,String mAlbumName, String mId, String mPath, String mLyricPath) {
+    public Song(String mTitle, int mDuration, String mArtistName, String mAlbumName, String mId, String mPath, String mLyricPath) {
         this.mTitle = mTitle;
         this.mDuration = mDuration;
         this.mArtistName = mArtistName;
@@ -46,53 +47,51 @@ public class Song implements Cloneable {
         this.mLyricPath = mLyricPath;
     }
 
+    public Song(String mTitle, int mDuration, String mArtistName, String mAlbumName, String mId, Long mSize, String mPath, String mLyricPath) {
+        this.mTitle = mTitle;
+        this.mDuration = mDuration;
+        this.mArtistName = mArtistName;
+        this.mAlbumName = mAlbumName;
+        this.mSize = mSize;
+        this.mId = SHA256Util.md5(mPath);
+        this.mPath = mPath;
+        this.mLyricPath = mLyricPath;
+    }
+
     public Song(String mSongPath) {
         this.mPath = mSongPath;
+        this.mId = SHA256Util.md5(mSongPath);
         MusicUtils.Metadata metadata = getMetadata(mSongPath);
-        initSong(mSongPath,metadata.title,metadata.artist,metadata.album, metadata.duration, metadata.sizeLong);
+        initSong(mSongPath, metadata.title, metadata.artist, metadata.album, metadata.duration, metadata.sizeLong, mId);
     }
 
-    public Song(String path, String title, String artist, String album, String duration, Long sizeLong) {
-        initSong(path,title,artist,album,duration,sizeLong);
-    }
-    public void initSong(String path, String title, String artist, String album, String duration, Long sizeLong) {
-        this.mPath=path;
-        this.mTitle=title;
-        this.mArtistName=artist;
-        this.mAlbumName=album;
-        this.mDuration= Integer.parseInt(duration);
-        this.mSize=sizeLong;
-        if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
-            if (mTitle == null||mTitle.equals("null"))
-                mTitle = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
-            if (mArtistName == null)
-                mArtistName = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
-        } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
-            if (mTitle == null||mTitle.equals("null"))
-                mTitle = FileUtils.getFileNameNoExtension(path).split("-")[1];
-            if (mArtistName == null)
-                mArtistName = FileUtils.getFileNameNoExtension(path).split("-")[0];
-        } else {
-            if (mTitle == null||mTitle.equals("null")) mTitle = FileUtils.getFileNameNoExtension(path);
-            if (mArtistName == null) mArtistName = "null";
-        }
-        if(mAlbumName==null) mAlbumName="null";
-        //判断是否存在歌词
-        if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
-            mLyricPath = path.replace(FileUtils.getFileExtension(path), "lrc");
-        else
-            mLyricPath = "null";
+    public Song(String path, String title, String artist, String album, String duration, Long sizeLong, String id) {
+        initSong(path, title, artist, album, duration, sizeLong, id);
     }
 
-    public Song(String path, String title, String s, String s1, String string) {
-        MusicUtils.Metadata metadata=getMetadata(path);
-        this.mPath=path;
-        this.mTitle=title;
-        this.mArtistName=s;
-        this.mAlbumName=s1;
-        this.mLyricPath=string;
-        this.mDuration= Integer.parseInt(metadata.duration);
-        this.mSize=metadata.sizeLong;
+    public Song(String id, String path, String title, String artist, String album, String lyricPath) {
+        MusicUtils.Metadata metadata = getMetadata(path);
+        this.mPath = path;
+        this.mId = id;
+        this.mTitle = title;
+        this.mArtistName = artist;
+        this.mAlbumName = album;
+        this.mLyricPath = lyricPath;
+        this.mDuration = Integer.parseInt(metadata.duration);
+        this.mSize = metadata.sizeLong;
+    }
+
+    public Song(@NonNull final String title, final int trackNumber, final int year, final int duration, final String path, final String lyricPath, final String albumName, final int artistId, final String artistName) {
+        mTitle = title;
+        mTrackNumber = trackNumber;
+        mYear = year;
+        mDuration = duration;
+        mPath = path;
+        mId = SHA256Util.md5(path);
+        mLyricPath = lyricPath;
+        mAlbumName = albumName;
+        mArtistId = artistId;
+        mArtistName = artistName;
     }
 
     public static MusicUtils.Metadata getMetadata(String path) {
@@ -111,24 +110,47 @@ public class Song implements Cloneable {
         mArtistName = artistName;
     }
 
-    public Song(@NonNull final String title, final int trackNumber, final int year, final int duration, final String path, final String lyricPath, final String albumName, final int artistId, final String artistName) {
-        mTitle = title;
-        mTrackNumber = trackNumber;
-        mYear = year;
-        mDuration = duration;
-        mPath = path;
-        mLyricPath = lyricPath;
-        mAlbumName = albumName;
-        mArtistId = artistId;
-        mArtistName = artistName;
-    }
-
     public Song(@NonNull final String title, final int trackNumber, final int year, final int duration, final String path) {
         mTitle = title;
         mTrackNumber = trackNumber;
         mYear = year;
         mDuration = duration;
         mPath = path;
+        mId = SHA256Util.md5(path);
+    }
+
+    public void initSong(String path, String title, String artist, String album, String duration, Long sizeLong, String id) {
+        this.mPath = path;
+        if (id == null)
+            this.mId = SHA256Util.md5(path);
+        else
+            this.mId = id;
+        this.mTitle = title;
+        this.mArtistName = artist;
+        this.mAlbumName = album;
+        this.mDuration = Integer.parseInt(duration);
+        this.mSize = sizeLong;
+        if (FileUtils.getFileNameNoExtension(path).matches(".* - .*")) {
+            if (mTitle == null || mTitle.equals("null"))
+                mTitle = FileUtils.getFileNameNoExtension(path).split(" - ")[1];
+            if (mArtistName == null)
+                mArtistName = FileUtils.getFileNameNoExtension(path).split(" - ")[0];
+        } else if (FileUtils.getFileNameNoExtension(path).matches(".*-.*")) {
+            if (mTitle == null || mTitle.equals("null"))
+                mTitle = FileUtils.getFileNameNoExtension(path).split("-")[1];
+            if (mArtistName == null)
+                mArtistName = FileUtils.getFileNameNoExtension(path).split("-")[0];
+        } else {
+            if (mTitle == null || mTitle.equals("null"))
+                mTitle = FileUtils.getFileNameNoExtension(path);
+            if (mArtistName == null) mArtistName = "null";
+        }
+        if (mAlbumName == null) mAlbumName = "null";
+        //判断是否存在歌词
+        if (FileUtils.isFileExists(path.replace(FileUtils.getFileExtension(path), "lrc")))
+            mLyricPath = path.replace(FileUtils.getFileExtension(path), "lrc");
+        else
+            mLyricPath = "null";
     }
 
     @NonNull
@@ -223,8 +245,10 @@ public class Song implements Cloneable {
     }
 
     public String getmId() {
-        //return mId;
-        return mPath;
+        if (mId == null)
+            return SHA256Util.md5(mPath);
+        else
+            return mId;
     }
 
     public void setmId(String mId) {

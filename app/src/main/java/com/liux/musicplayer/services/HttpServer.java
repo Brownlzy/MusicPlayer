@@ -70,9 +70,18 @@ public class HttpServer extends NanoHTTPD {
                                 "请求成功！"
                         );
                     case Config.HTTP_API_SONG_LIST:
+                        String listName = (param.get("name")).get(0);
+                        switch (listName) {
+                            case "正在播放":
+                                listName = "playingList";
+                                break;
+                            case "所有歌曲":
+                                listName = "allSongList";
+                                break;
+                        }
                         return responseJsonString(
                                 200,
-                                new API.SongList(MusicLibrary.getSongListByName((param.get("name")).get(0))),
+                                new API.SongList(MusicLibrary.getSongListByName(listName)),
                                 "请求成功！"
                         );
                     case Config.HTTP_API_PLAYLIST:
@@ -89,16 +98,19 @@ public class HttpServer extends NanoHTTPD {
                     case Config.HTTP_API_SONG_PIC:
                         String file1 = param.get("path").get(0);
                         if (FileUtils.isFileExists(file1)) {
-                            InputStream fis = null;
+                            InputStream is = null;
                             try {
                                 Bitmap cover = MusicUtils.getAlbumImage(file1);
                                 if (cover != null)
-                                    fis = Bitmap2InputStream(cover);
+                                    is = Bitmap2InputStream(cover);
+                                else {
+                                    is = asset_mgr.open("wap/default-cover.png", AssetManager.ACCESS_BUFFER);
+                                }
                                 //fis.skip(Long.parseLong(session.getHeaders().get("range").split("bytes=")[1].split("-")[0]));
-                                return newFixedLengthResponse(Response.Status.OK, "image/jpeg", fis, fis.available());
+                                return newFixedLengthResponse(Response.Status.OK, "image/jpeg", is, is.available());
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + file1);
+                                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在封面：" + file1);
                             }
                         } else {
                             return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + file1);

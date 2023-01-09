@@ -265,11 +265,11 @@ public class MusicLibrary {
     }
 
     public static List<Song> getSongListByName(String name) {
-        if (SongLists.containsKey(name))
+        if (false && SongLists.containsKey(name))//防止文件更新而不自知暂时禁用
             return SongLists.get(name);
         else {
             List<Song> newSongList = SharedPrefs.getSongListByName(name);
-            if (!name.equals("allSongList")&&!name.equals("webAllSongList")) {
+            if (!name.equals("allSongList") && !name.equals("webAllSongList")) {
                 newSongList.removeIf(song -> !allListSongsTreeMap.containsKey(song.getSongPath()));
             } else {
                 for (Song song : newSongList) {

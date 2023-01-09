@@ -102,7 +102,7 @@ public class API {
         float volume = 0.5f;
         boolean mutex = true;
         boolean listFolded = false;
-        String listMaxHeight = "700px";
+        String listMaxHeight = "500px";
         int lrcType = 3;
 
         public Info() {

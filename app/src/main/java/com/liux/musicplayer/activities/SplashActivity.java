@@ -15,6 +15,7 @@ import com.liux.musicplayer.R;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.MusicService;
 import com.liux.musicplayer.utils.SharedPrefs;
+import com.liux.musicplayer.utils.UpdateUtils;
 import com.liux.musicplayer.utils.User;
 
 import java.io.File;
@@ -58,16 +59,20 @@ public class SplashActivity  extends FragmentActivity {
         if(verCode>0&&verCode<30) {
             Toast.makeText(SplashActivity.this, "检测到低版本数据，请清除数据后使用", Toast.LENGTH_LONG).show();
         }else {
-            if(verCode==30&&User.isLogin) {
+            if (verCode == 30 && User.isLogin) {
                 User.logout(this);
                 Toast.makeText(SplashActivity.this, "由于登录系统修改，重新登录后才能正常显示开屏图片", Toast.LENGTH_LONG).show();
             }
-            if(verCode==-1) SharedPrefs.cleanOldData();
+            if (verCode == -1) SharedPrefs.cleanOldData();
             SharedPrefs.putVersionCode();
-            Intent intent =new Intent(SplashActivity.this, MainActivity.class);
+            overridePendingTransition(0, 0);
+            if (SharedPrefs.getExitFlag()) {
+                UpdateUtils.checkNews(this, true);
+                return;
+            }
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             intent.putExtra("splash", true);
             startActivity(intent);
-            overridePendingTransition(0, 0);
             finish();
         }
     }

@@ -65,6 +65,28 @@ public class UpdateUtils {
                 } else if (isShowStateInfo) {
                     Toast.makeText(context, (String) msg.obj, Toast.LENGTH_SHORT).show();
                     ld.loadFailed();
+                    AlertDialog.Builder alertInfoDialog = null;
+                    alertInfoDialog = new AlertDialog.Builder(context)
+                            .setTitle(R.string.title_update)
+                            .setMessage(R.string.serverBanned)
+                            .setIcon(R.mipmap.ic_launcher)
+                            .setCancelable(false)
+                            .setNeutralButton(R.string.lanzou_download, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ClipboardUtils.copyText(context, "6jsh");
+                                    //Toast.makeText(context, "已复制提取码", Toast.LENGTH_SHORT).show();
+                                    CustomDialogUtils.openUrl(context, "https://wwm.lanzouw.com/b03vb50vc");
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                    alertInfoDialog.create();
+                    alertInfoDialog.show();
+
                 }
             }
         };
@@ -81,7 +103,7 @@ public class UpdateUtils {
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure: ");
                 Message message = Message.obtain();
-                message.arg1 = 0;
+                message.arg1 = 10;
                 message.obj = "获取更新信息失败（无法连接服务器）";
                 updateHandler.sendMessage(message);
             }
@@ -121,15 +143,36 @@ public class UpdateUtils {
                 if (msg.arg1 == 200) {
                     newsHandle(context, String.valueOf(msg.obj), isManual);
                     SharedPrefs.putLastNewsUpdateTime(TimeUtils.getNowMills());
-                } else if (isManual) {
+                } else if (isManual || SharedPrefs.getExitFlag()) {
                     Toast.makeText(context, String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
                     ldn.loadFailed();
+                    if (SharedPrefs.getExitFlag()) {
+                        AlertDialog.Builder alertInfoDialog = null;
+                        alertInfoDialog = new AlertDialog.Builder(context);
+                        alertInfoDialog.setTitle(R.string.newsBoard);
+                        alertInfoDialog.setMessage(R.string.ExitFlag);
+                        alertInfoDialog.setIcon(R.mipmap.ic_launcher);
+                        alertInfoDialog.setCancelable(false);
+                        alertInfoDialog.setPositiveButton(R.string.exitApp, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SharedPrefs.putExitFlag(true);
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.putExtra("exit", true);
+                                context.startActivity(intent);
+                                //SharedPrefs.putLastNewsId(news.id);
+                            }
+                        });
+                        alertInfoDialog.create();
+                        alertInfoDialog.show();
+                    }
                 }
             }
         };
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
+                //.url("http://192.168.3.4:8081/E%3A/CODE/MyOtaInfo/MusicPlayer/newsboard.json")
                 .url("https://brownlzy.github.io/MyOtaInfo/MusicPlayer/newsboard.json")
                 .get()//default
                 .build();
@@ -185,8 +228,9 @@ public class UpdateUtils {
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.title_update)
-                    .setMessage(context.getString(R.string.title_nowVersion) + versionName +" ("+ versionCode +")\n"
-                            + context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + " ("+ updateInfo.lastVersionCode +")\n"
+                    .setMessage(context.getString(R.string.title_nowVersion) + versionName + " (" + versionCode + ")\n"
+                            + context.getString(R.string.title_lastVersion) + updateInfo.lastVersionName + " (" + updateInfo.lastVersionCode + ")\n"
+                            + context.getString(R.string.title_updateDate) + updateInfo.date + "\n"
                             + context.getString(R.string.title_size) + updateInfo.size + "\n"
                             + context.getString(R.string.title_changlog) + "\n"
                             + updateInfo.changLog.replace("\\n", "\n"))
@@ -225,39 +269,50 @@ public class UpdateUtils {
         Gson gson = new Gson();
         News news = gson.fromJson(result, News.class);
         if (isManual || news.id > SharedPrefs.getLastNewsId()) {
-            if(isManual) ldn.loadSuccess();
+            if (isManual) ldn.loadSuccess();
             AlertDialog.Builder alertInfoDialog = null;
             alertInfoDialog = new AlertDialog.Builder(context);
             alertInfoDialog.setTitle(R.string.newsBoard);
             alertInfoDialog.setMessage(news.ct);
             alertInfoDialog.setIcon(R.mipmap.ic_launcher);
             alertInfoDialog.setCancelable(false);
-            if(news.fun==1) {
+            if (news.fun != 3) {
+                if (SharedPrefs.getExitFlag()) {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("splash", true);
+                    context.startActivity(intent);
+                    SharedPrefs.putExitFlag(false);
+                    return;
+                }
+                SharedPrefs.putExitFlag(false);
+            }
+            if (news.fun == 1) {//打开指定链接
                 alertInfoDialog.setPositiveButton(news.bn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CustomDialogUtils.openUrl(context,news.ag);
+                        CustomDialogUtils.openUrl(context, news.ag);
                     }
                 });
-            }else if(news.fun==2){
+            } else if (news.fun == 2) {//检查更新
                 alertInfoDialog.setPositiveButton(R.string.title_checkUpdate, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        checkUpdate(context,true);
+                        checkUpdate(context, true);
                         SharedPrefs.putLastNewsId(news.id);
                     }
                 });
-            }else if(news.fun==3){
+            } else if (news.fun == 3) {//强制退出
                 alertInfoDialog.setPositiveButton(R.string.exitApp, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        SharedPrefs.putExitFlag(true);
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.putExtra("exit", true);
                         context.startActivity(intent);
                         //SharedPrefs.putLastNewsId(news.id);
                     }
                 });
-            }else {
+            } else {//普通消息
                 alertInfoDialog.setPositiveButton(R.string.readed, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

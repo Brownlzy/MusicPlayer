@@ -411,12 +411,23 @@ public class MainActivity extends FragmentActivity {
         intent.setClass(MainActivity.this, MusicService.class);
         //startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);*/
-        if(getIntent().getExtras()!=null&&getIntent().getExtras().getBoolean("splash")) {
-            findViewById(R.id.splash_view).setVisibility(View.VISIBLE);
-        }else {
-            findViewById(R.id.splash_view).setVisibility(View.GONE);
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().getBoolean("exit")) {
+                finish();
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.exit(0);
+                    }
+                }, 1000);
+            }
+            if (getIntent().getExtras().getBoolean("splash")) {
+                findViewById(R.id.splash_view).setVisibility(View.VISIBLE);
+            } else {
+                findViewById(R.id.splash_view).setVisibility(View.GONE);
+            }
         }
-        Log.e("TAG","onCreate");
+        Log.e("TAG", "onCreate");
     }
 
     @Override
@@ -560,7 +571,13 @@ public class MainActivity extends FragmentActivity {
         Bitmap bitmap = myViewModel.getNowAlbumArt();
 
         shapeableImageView.setImageBitmap(bitmap);
-        backImageView.setImageBitmap(bitmap);
+        if (bitmap != null) {
+            backImageView.setImageBitmap(bitmap);
+        } else {
+            int type = SharedPrefs.getSplashType();
+            backImageView.setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    User.userData.userName + (type == 0 ? "" : "_custom"))));
+        }
     }
 
     public void playPrevOrNext(boolean isNext) {

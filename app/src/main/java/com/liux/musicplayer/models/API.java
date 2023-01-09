@@ -1,11 +1,18 @@
 package com.liux.musicplayer.models;
 
+import static com.liux.musicplayer.services.MusicService.LIST_PLAY;
+import static com.liux.musicplayer.services.MusicService.REPEAT_LIST;
+import static com.liux.musicplayer.services.MusicService.REPEAT_ONE;
+import static com.liux.musicplayer.services.MusicService.SHUFFLE_PLAY;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.HttpServer;
+import com.liux.musicplayer.utils.SharedPrefs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class API {
     public static class SongDetail {
@@ -19,20 +26,29 @@ public class API {
         public SongDetail(Song song) {
             name = song.getSongTitle();
             artist = song.getArtistName();
-            theme = "#FADFA3";
+            theme = "#4CAF50";
             url = "/api/file?path=" + song.getSongPath();
             cover = "/api/cover?path=" + song.getSongPath();
-            lrc = "/api/file?path=" + song.getLyricPath();
+            if (!song.getLyricPath().equals("null"))
+                lrc = "/api/file?path=" + song.getLyricPath();
+            else
+                lrc = "no-lrc.lrc";
         }
     }
 
     public static class SongListList {
         int total;
-        List<MusicLibrary.SongList> playlists;
+        List<String> playlists;
 
         public SongListList(List<MusicLibrary.SongList> allSongListList) {
-            this.playlists = allSongListList;
-            this.total = allSongListList.size();
+            this.playlists = allSongListList.stream().map(songList -> songList.n).distinct().collect(Collectors.toList());
+            ;
+            //this.playlists.add(0,"playingList");
+            this.playlists.add(0, "正在播放");
+            playlists.remove("allSongList");
+            playlists.remove("webAllSongList");
+            playlists.add("所有歌曲");
+            this.total = playlists.size();
         }
     }
 
@@ -66,10 +82,10 @@ public class API {
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
                                     + s.getSongPath(),
-                            HttpServer.Config.HTTP_URL
+                            (s.getLyricPath().equals("null")) ? "null" : (HttpServer.Config.HTTP_URL
                                     .replace("IP", HttpServer.Config.HTTP_IP)
                                     .replace("PORT", String.valueOf(HttpServer.Config.HTTP_PORT)) + "api/file?path="
-                                    + s.getLyricPath()
+                                    + s.getLyricPath())
                     ));
             }
         }
@@ -77,15 +93,37 @@ public class API {
 
     public static class Info {
         boolean mini = false;
+        boolean fixed = false;
         boolean autoplay = false;
-        String theme = "#FADFA3";
+        String theme = "#4CAF50";
         String loop = "all";
         String order = "random";
         String preload = "auto";
-        float volume = 0.2f;
+        float volume = 0.5f;
         boolean mutex = true;
         boolean listFolded = false;
-        int listMaxHeight = 90;
+        String listMaxHeight = "500px";
         int lrcType = 3;
+
+        public Info() {
+            switch (SharedPrefs.getPlayOrder()) {
+                case LIST_PLAY:
+                    loop = "none";
+                    order = "list";
+                    break;
+                case REPEAT_LIST:
+                    loop = "all";
+                    order = "list";
+                    break;
+                case REPEAT_ONE:
+                    loop = "one";
+                    order = "list";
+                    break;
+                case SHUFFLE_PLAY:
+                    loop = "all";
+                    order = "random";
+                    break;
+            }
+        }
     }
 }

@@ -149,7 +149,7 @@
     <string name="webAllSongList">在线列表</string>
     <string name="clearCache">清理缓存</string>
     <string name="title_activity_open_music_file">使用综音播放</string>
-    <string name="Copied">已复制</string>
+    <string name="Copied">已复制：</string>
     <string name="item_menu_add_to_list">添加到歌单</string>
     <string name="isUseMetaData">使用元数据</string>
     <string name="isUseMetaData_summary">在播放页的详细信息卡片中优先使用音乐文件的元数据</string>
@@ -182,4 +182,8 @@
     <string name="webserver_off_summary">开启此功能可在同一局域网下使用电脑浏览器听歌</string>
     <string name="webserver_on_summary">在电脑浏览器中输入 URL 开始听歌，在综音中的在线播放列表处填入 URLapi/playlist?name=playingList 共享正在播放列表</string>
     <string name="webserver_oning_summary">服务器开启中，若长时间无反应，可能是端口8068被占用，请关闭相关软件重试</string>
+    <string name="title_updateDate">更新时间：</string>
+    <string name="serverBanned">获取更新信息失败，要去官方蓝奏云盘看看有没有新版本吗？</string>
+    <string name="lanzou_download">去看看(提取码：6jsh)</string>
+    <string name="ExitFlag">对不起，本软件已被临时停用，在联网收到解锁指令前禁止使用</string>
 </resources>

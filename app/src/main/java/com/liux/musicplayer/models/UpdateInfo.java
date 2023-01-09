@@ -6,6 +6,7 @@ public class UpdateInfo {
     public int lastVersionCode;
     public String filename;
     public String size;
+    public String date;
     public String changLog;
     public String manual;
 }

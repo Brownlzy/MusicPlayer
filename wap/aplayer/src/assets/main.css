@@ -25,11 +25,26 @@ a,
   body {
     display: flex;
     place-items: center;
+    background-image:url('/api/bg');
+    background-size: contain;
   }
 
   #app {
-    display: grid;
+    /* display: grid; */
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  body {
+    place-items: center;
+    background-image:url('/api/bg');
+    background-size: cover;
+  }
+
+  #app {
+    /* display: grid; */
+    grid-template-columns: 1fr 1fr;
   }
 }

@@ -288,12 +288,14 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onChanged(Song song) {
                 setPlayBarTitle(song);
-                Log.e("Main", "duration" + song.getSongDuration());
+                cacheProgressBar.setProgress(0);
+                //Log.e("Main", "duration" + song.getSongDuration());
                 setSeekBarMax(song.getSongDuration());
-                if (myViewModel.getmMediaController().getPlaybackState() != null)
+                if (myViewModel.getmMediaController().getPlaybackState() != null) {
                     setSeekBarDuration(myViewModel.getmMediaController().getPlaybackState().getPosition());
-                else
+                } else {
                     setSeekBarDuration(0L);
+                }
                 setPlayingListView(song);
                 startProgressBar();
             }
@@ -529,7 +531,6 @@ public class MainActivity extends FragmentActivity {
 
     public void setPlayBarTitle(Song song) {
         playBarTitle.setText(song.getSongTitle() + " - " + song.getArtistName());
-        cacheProgressBar.setProgress(0);
         Bitmap bitmap = myViewModel.getNowAlbumArt();
 
         shapeableImageView.setImageBitmap(bitmap);
@@ -972,17 +973,25 @@ public class MainActivity extends FragmentActivity {
         });
     }
     @SuppressLint("SetTextI18n")
-    public void setSongListFragmentTitle(){
-        TabTitle.setText(getString(R.string.title_allSongList)+
+    public void setSongListFragmentTitle() {
+        String listHead = songListFragment.nowSongListName;
+        if (listHead == null)
+            listHead = "";
+        else
+            switch (listHead) {
+                case "allSongList":
+                    listHead = getString(R.string.allSongList);
+                    break;
+                case "webAllSongList":
+                    listHead = getString(R.string.webAllSongList);
+                    break;
+            }
+        TabTitle.setText(getString(R.string.title_allSongList) +
                 (songListFragment.songlistFlag
-                        ?" - "+(songListFragment.nowSongListName.equals("allSongList")
-                            ?getString(R.string.allSongList)
-                            :songListFragment.nowSongListName)
-                        +" "+
-                                getString(R.string.songlist_summary)
-                                        .replace("%d",String.valueOf(MusicLibrary.getSongListByName(songListFragment.nowSongListName).size()))
-
-                        :""));
+                        ? " - " + listHead + " " +
+                        getString(R.string.songlist_summary)
+                                .replace("%d", String.valueOf(MusicLibrary.getSongListByName(songListFragment.nowSongListName).size()))
+                        : ""));
     }
     public void setPlayBarTitle(boolean isShow) {
         if (isShow) {

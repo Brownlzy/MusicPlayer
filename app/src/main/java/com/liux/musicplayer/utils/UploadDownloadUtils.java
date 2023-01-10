@@ -16,7 +16,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -155,7 +154,7 @@ public class UploadDownloadUtils {
                     mHandler.sendMessage(message);
                     cacheMap.put(url, fileName);
                     saveCacheList();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     ArrayList<String> array = new ArrayList<String>();
                     array.add(url);

@@ -50,6 +50,7 @@ public class MusicService extends MediaBrowserServiceCompat {
     public static final int REPEAT_LIST = 1;
     public static final int REPEAT_ONE = 2;
     public static final int SHUFFLE_PLAY = 3;
+    private static final String TAG = "MusicService";
 
     Handler sleepHandler;
     public MediaSessionCallback mCallback;
@@ -57,28 +58,52 @@ public class MusicService extends MediaBrowserServiceCompat {
     private MediaNotificationManager mMediaNotificationManager;
     private MediaPlayerAdapter mPlayback;
     private boolean mServiceInStartedState;
+    public static int progress = 0;
     private List<MediaBrowserCompat.MediaItem> mPlaylist = new ArrayList<>();
-    private List<MediaSessionCompat.QueueItem> queueItems=new ArrayList<>();
-    private static final String TAG ="SimpleMusicService";
-    private boolean mainActivityState=true;
+    private List<MediaSessionCompat.QueueItem> queueItems = new ArrayList<>();
+    private boolean pauseFlag = false;
+    private boolean mainActivityState = true;
     public LyricReceiver lyricReceiver;
     private LyricUtils lyric=new LyricUtils();
     private boolean hasPlayedOnce=false;
     private HttpProxyCacheServer proxy;
-
+    private ProgressThread progressThread;
     public HttpProxyCacheServer getProxy() {
         if(proxy==null) {
             proxy = new HttpProxyCacheServer(this);
         }
         return proxy;
     }
-
     public CacheListener cacheListener = new CacheListener() {
         @Override
         public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-            Log.e(TAG, percentsAvailable + "%,url=" + url);
+            //Log.e(TAG, percentsAvailable + "%,url=" + url);
+            progress = percentsAvailable;
+            Intent progressIntent = new Intent(getPackageName() + ".CACHE_PROGRESS");
+            progressIntent.putExtra("p", percentsAvailable);
+            sendBroadcast(progressIntent);
+            if (progress != 100) {
+                if (progressThread == null) {
+                    progressThread = new ProgressThread();
+                    progressThread.start();
+                }
+                progressThread.resumeThread();
+            } else {
+                progressThread.pauseThread();
+            }
         }
     };
+
+    @Override
+    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        Log.d(TAG, "MusicService onLoadChildren called: ");
+        Log.d(TAG, "MusicService onLoadChildren parentId: " + parentId);
+        Log.d(TAG, "MusicService onLoadChildren result: " + result);
+        //if(mPlaylist==null||mPlaylist.size()==0)
+        //mCallback.onCustomAction("REFRESH_PLAYLIST",null);
+
+        result.sendResult(mPlaylist);
+    }
 
     private void registerLyricReceiver() {
         lyricReceiver = new LyricReceiver();
@@ -237,20 +262,65 @@ public class MusicService extends MediaBrowserServiceCompat {
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
-        Log.e(TAG, "onGetRoot: "+clientPackageName);
+        Log.e(TAG, "onGetRoot: " + clientPackageName);
         return new BrowserRoot(MusicService.class.getSimpleName(), null);
 //        return null;
     }
 
-    @Override
-    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
-        Log.d(TAG, "SimpleMusicService onLoadChildren called: ");
-        Log.d(TAG, "SimpleMusicService onLoadChildren parentId: " + parentId);
-        Log.d(TAG, "SimpleMusicService onLoadChildren result: " + result);
-        //if(mPlaylist==null||mPlaylist.size()==0)
-        //mCallback.onCustomAction("REFRESH_PLAYLIST",null);
+    private class ProgressThread extends Thread {
+        private final Object lock = new Object();
+        private boolean pause = false;
 
-        result.sendResult(mPlaylist);
+        //调用这个方法实现暂停线程
+        void pauseThread() {
+            pause = true;
+        }
+
+        boolean isPaused() {
+            return pause;
+        }
+
+        //调用这个方法实现恢复线程的运行
+        void resumeThread() {
+            pause = false;
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+
+        //注意：这个方法只能在run方法里调用，不然会阻塞主线程，导致页面无响应
+        void onPause() {
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            while (true) {
+                // 让线程处于暂停等待状态
+                while (pause) {
+                    onPause();
+                }
+                try {
+                    Log.e("CACHE_PROGRESS_INFO", "播放进度：" + mPlayback.getNowPercentage() + "\t缓冲进度：" + progress);
+                    if (mPlayback.isPlaying() && mPlayback.getNowPercentage() > progress - 5) {
+                        mCallback.onPause();
+                        pauseFlag = true;
+                    } else if (mPlayback.getNowPercentage() <= progress - 10 && pauseFlag) {
+                        mCallback.onPlay();
+                    }
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -299,7 +369,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
-            Log.d(TAG, "onAddQueueItem: Called SimpleMusicService");
+            Log.d(TAG, "onAddQueueItem: Called MusicService");
             Log.d(TAG, String.format("onAddQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
             onRemoveQueueItem(description);
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
@@ -375,7 +445,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
-            Log.d(TAG, "onRemoveQueueItem: Called SimpleMusicService");
+            Log.d(TAG, "onRemoveQueueItem: Called MusicService");
             Log.d(TAG, String.format("onRemoveQueueItem: %s. Index: %s", description.getTitle(), description.hashCode()));
             MediaSessionCompat.QueueItem toDelete=queueItemHashMap.get(description.getMediaUri().getPath());
             int toDeleteId= mPlaylist.indexOf(toDelete);
@@ -406,7 +476,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         /*@Override
         public void onPrepareFromMediaId(String mediaId, Bundle extras) {
-            Log.d(TAG, "onPrepare: Called SimpleMusicService");
+            Log.d(TAG, "onPrepare: Called MusicService");
             if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
                 // Nothing to play.
                 return;
@@ -428,7 +498,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         @Override
         public void onPrepareFromUri(Uri uri, Bundle extras) {
             super.onPrepareFromUri(uri, extras);
-            Log.d(TAG, "onPrepare: Called SimpleMusicService");
+            Log.d(TAG, "onPrepare: Called MusicService");
             if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
                 // Nothing to play.
                 return;
@@ -469,7 +539,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPrepare() {
-            Log.d(TAG, "onPrepare: Called SimpleMusicService");
+            Log.d(TAG, "onPrepare: Called MusicService");
             if (mPlaylist.isEmpty()) {
                 mSession.setMetadata(null);
                 // Nothing to play.
@@ -492,7 +562,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPlay() {
-            Log.d(TAG, "onPlay: Called SimpleMusicService");
+            Log.d(TAG, "onPlay: Called MusicService");
             if (!isReadyToPlay()) {
                 // Nothing to play.
                 Log.d(TAG, "not ready to play: ");
@@ -526,7 +596,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         /*@Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            Log.d(TAG, "onPlayFromMediaId: Called SimpleMusicService" + mediaId);
+            Log.d(TAG, "onPlayFromMediaId: Called MusicService" + mediaId);
             if (!isReadyToPlay()) {
                 // Nothing to play.
                 Log.d(TAG, "not ready to play: ");
@@ -549,7 +619,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         @Override
         public void onPlayFromUri(Uri uri, Bundle extras) {
             super.onPlayFromUri(uri, extras);
-            Log.d(TAG, "onPlayFromMediaId: Called SimpleMusicService" + uri);
+            Log.d(TAG, "onPlayFromMediaId: Called MusicService" + uri);
             if (!isReadyToPlay()) {
                 // Nothing to play.
                 Log.d(TAG, "not ready to play: ");
@@ -578,6 +648,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onPause() {
             Log.d(TAG, "onPause: Called");
             mPlayback.pause();
+            pauseFlag = false;
         }
 
         @Override
@@ -616,8 +687,8 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onSetShuffleMode(int shuffleMode) {
-            Log.d(TAG, "onSetShuffleMode: Called inside SimpleMusicService");
-            mShuffleMode=shuffleMode;
+            Log.d(TAG, "onSetShuffleMode: Called inside MusicService");
+            mShuffleMode = shuffleMode;
             isRandom = shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL;
             MediaSessionCompat.QueueItem nowItem = null;
             if (isRandom) {

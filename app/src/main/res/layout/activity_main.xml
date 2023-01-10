@@ -15,7 +15,7 @@
         android:gravity="start|bottom"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal"
-        android:visibility="visible"></RelativeLayout>
+        android:visibility="visible" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/backImageView"
@@ -232,12 +232,35 @@
                         android:text="0:00"
                         android:visibility="visible" />
 
-                    <SeekBar
-                        android:id="@+id/seekBar"
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:visibility="visible" />
+                        android:layout_weight="1">
+
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:max="100"
+                            android:maxHeight="2dp"
+                            android:minHeight="2dp"
+                            android:paddingStart="16dp"
+                            android:paddingTop="17dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="17dp"
+                            android:progress="0"
+                            android:progressDrawable="@drawable/cache_progress_bar"
+                            android:visibility="visible"
+                            tools:progress="60" />
+
+                        <SeekBar
+                            android:id="@+id/seekBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="visible"
+                            tools:progress="30" />
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/allProgress"

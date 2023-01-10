@@ -186,14 +186,16 @@ public class UploadDownloadUtils {
 
     private void saveCacheList() {
         cacheList.clear();
-        for (String url:cacheMap.keySet()) {
-           cacheList.add(new MyCache(url,cacheMap.get(url)));
+        for (String url : cacheMap.keySet()) {
+            cacheList.add(new MyCache(url, cacheMap.get(url)));
         }
         Gson gson = new Gson();
-        Type cacheListType = new TypeToken<ArrayList<MyCache>>() {
-        }.getType();
-        String strCacheListJson = gson.toJson(cacheList, cacheListType);
-        SharedPrefs.putCacheList(strCacheListJson);
+        try {
+            String strCacheListJson = gson.toJson(cacheList);
+            SharedPrefs.putCacheList(strCacheListJson);
+        } catch (Exception ignored) {
+
+        }
     }
 
     Handler mHandler = new Handler(Looper.getMainLooper()) {

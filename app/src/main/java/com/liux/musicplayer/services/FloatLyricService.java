@@ -717,6 +717,6 @@ private LyricUtils nowLyric=new LyricUtils();
     }
 
     public void updatePlayInfo(String nowPlaying) {
-        ((TextView) (mFloatingLayout.findViewById(R.id.nowPlaying))).setText(getText(R.string.nowPlaying) + nowPlaying);
+        ((TextView) (mFloatingLayout.findViewById(R.id.nowPlaying))).setText(nowPlaying);
     }
 }

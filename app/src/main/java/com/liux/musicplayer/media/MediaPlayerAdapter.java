@@ -55,13 +55,27 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     // while not playing.
 
     private int mSeekWhileNotPlaying = -1;
-    private String TAG="MediaPlayerAdaptar";
+    private String TAG = "MediaPlayerAdaptar";
 
     public MediaPlayerAdapter(MusicService musicService, PlaybackInfoListener listener) {
         super(musicService.getApplicationContext());
         this.musicService = musicService;
         mContext = musicService.getApplicationContext();
         mPlaybackInfoListener = listener;
+    }
+
+    private int lastProgress = 0;
+
+    // Implements PlaybackControl.
+    @Override
+    public void playFromMedia(MediaMetadataCompat metadata) {
+        mCurrentMedia = metadata;
+        playFile(metadata.getDescription().getMediaUri().toString());
+    }
+
+    @Override
+    public MediaMetadataCompat getCurrentMedia() {
+        return mCurrentMedia;
     }
 
     /**
@@ -77,27 +91,27 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    mPlaybackInfoListener.onPlaybackCompleted();
+                    {
+                        mPlaybackInfoListener.onPlaybackCompleted();
+                        // Set the state to "paused" because it most closely matches the state
+                        // in MediaPlayer with regards to available state transitions compared
+                        // to "stop".
+                        // Paused allows: seekTo(), start(), pause(), stop()
+                        // Stop allows: stop()
+                        // 避免切歌时后台启动前台服务
+                        setNewState(PlaybackStateCompat.STATE_BUFFERING);
+                        if (isRepeating) {
+                            //musicService.mCallback.onSkipToThis();
+                            //mMediaPlayer.seekTo(0);
+                            //setNewState(PlaybackStateCompat.STATE_PLAYING);
+                            mFilename = null;
+                            playFromMedia(getCurrentMedia());
+                            //musicService.mCallback.onSkipToThis();
+                        } else {
 
+                            musicService.mCallback.onSkipToNext();
 
-                    // Set the state to "paused" because it most closely matches the state
-                    // in MediaPlayer with regards to available state transitions compared
-                    // to "stop".
-                    // Paused allows: seekTo(), start(), pause(), stop()
-                    // Stop allows: stop()
-                    // 避免切歌时后台启动前台服务
-                    setNewState(PlaybackStateCompat.STATE_BUFFERING);
-                    if (isRepeating) {
-                        //musicService.mCallback.onSkipToThis();
-                        //mMediaPlayer.seekTo(0);
-                        //setNewState(PlaybackStateCompat.STATE_PLAYING);
-                        mFilename=null;
-                        playFromMedia(getCurrentMedia());
-                        //musicService.mCallback.onSkipToThis();
-                    } else {
-
-                        musicService.mCallback.onSkipToNext();
-
+                        }
                     }
                 }
             });
@@ -110,65 +124,14 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
                 @Override
                 public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                    Log.e("mMediaPlayer/onBufferingUpdat", String.valueOf(percent));
+//                    Log.e("mMediaPlayer/onBufferingUpdat", String.valueOf(percent));
+//                    Intent progressIntent = new Intent(mContext.getPackageName() + ".CACHE_PROGRESS");
+//                    progressIntent.putExtra("p", percent);
+//                    mContext.sendBroadcast(progressIntent);
                 }
             });
-        }
-    }
-
-    // Implements PlaybackControl.
-    @Override
-    public void playFromMedia(MediaMetadataCompat metadata) {
-        mCurrentMedia = metadata;
-        playFile(metadata.getDescription().getMediaUri().toString());
-    }
-
-    @Override
-    public MediaMetadataCompat getCurrentMedia() {
-        return mCurrentMedia;
-    }
-
-    private void playFile(String filename) {
-        boolean mediaChanged = (mFilename == null || !filename.equals(mFilename));
-        if (mCurrentMediaPlayedToCompletion) {
-            // Last audio file was played to completion, the resourceId hasn't changed, but the
-            // player was released, so force a reload of the media file for playback.
-            mediaChanged = true;
-            mCurrentMediaPlayedToCompletion = false;
-        }
-        if (!mediaChanged) {
-            if (!isPlaying()) {
-                play();
-            }
-            return;
         } else {
-            release();
-        }
-
-        mFilename = filename;
-
-        if (FileUtils.isFileExists(mFilename)) {
-            try {
-                initializeMediaPlayer();
-                mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(filename));
-                mMediaPlayer.prepare();
-            } catch (Exception e) {
-                onStop();
-                mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + mFilename, e));
-            }
-        } else if (mFilename.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
-            try {
-                String proxyUrl = musicService.getProxy().getProxyUrl(mFilename);
-                musicService.getProxy().registerCacheListener(musicService.cacheListener, mFilename);
-                initializeMediaPlayer();
-                mMediaPlayer.setDataSource(proxyUrl);
-                mMediaPlayer.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            setNewState(PlaybackStateCompat.STATE_BUFFERING);
-        } else {
-            throw new RuntimeException("Failed to open file: " + mFilename);
+            mMediaPlayer.reset();
         }
     }
 
@@ -319,6 +282,58 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         if (mMediaPlayer != null) {
             mMediaPlayer.setVolume(volume, volume);
         }
+    }
+
+    private void playFile(String filename) {
+        boolean mediaChanged = (mFilename == null || !filename.equals(mFilename));
+        if (mCurrentMediaPlayedToCompletion) {
+            // Last audio file was played to completion, the resourceId hasn't changed, but the
+            // player was released, so force a reload of the media file for playback.
+            mediaChanged = true;
+            mCurrentMediaPlayedToCompletion = false;
+        }
+        if (!mediaChanged) {
+            if (!isPlaying()) {
+                play();
+            }
+            return;
+        } else {
+            release();
+        }
+
+        mFilename = filename;
+
+        if (FileUtils.isFileExists(mFilename)) {
+            try {
+                initializeMediaPlayer();
+                mMediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(filename));
+                mMediaPlayer.prepare();
+            } catch (Exception e) {
+                onStop();
+                mPlaybackInfoListener.onPlayingError(new RuntimeException("Failed to open file: " + mFilename, e));
+            }
+        } else if (mFilename.matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
+            try {
+                String proxyUrl = musicService.getProxy().getProxyUrl(mFilename);
+                musicService.getProxy().registerCacheListener(musicService.cacheListener, mFilename);
+                initializeMediaPlayer();
+                mMediaPlayer.setDataSource(proxyUrl);
+                mMediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            setNewState(PlaybackStateCompat.STATE_BUFFERING);
+        } else {
+            throw new RuntimeException("Failed to open file: " + mFilename);
+        }
+    }
+
+    public int getNowPercentage() {
+        if (mMediaPlayer.isPlaying()
+                && mMediaPlayer.getDuration() != 0) {
+            lastProgress = 100 * mMediaPlayer.getCurrentPosition() / mMediaPlayer.getDuration();
+        }
+        return lastProgress;
     }
 
     public void setRepeating(boolean b) {

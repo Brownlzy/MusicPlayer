@@ -9,9 +9,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -35,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -105,6 +108,7 @@ public class MainActivity extends FragmentActivity {
     private TextView playProgressNowText;
     private TextView playProgressAllText;
     private TextView debugText;
+    private ProgressBar cacheProgressBar;
     private ProgressThread progressThread;
     private ShapeableImageView shapeableImageView;
     private ShapeableImageView backImageView;
@@ -121,19 +125,14 @@ public class MainActivity extends FragmentActivity {
     private boolean isPlayList = false;
     private boolean isHome = false;
 
-    public static boolean isExits(String pkg, String cls, Context context) {
-            ActivityManager am =(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-            ActivityManager.RunningTaskInfo task = tasks.get(0);
-            if (task != null) {
-                return TextUtils.equals(task.topActivity.getPackageName(), pkg) && TextUtils.equals(task.topActivity.getClassName(), cls);
-            }
-            return false;
-    }
+    //接收缓冲进度
+    private ProgressReceiver progressReceiver;
 
-    private void nowLoading(int musicId) {
-        prepareInfo(musicId);
-        playButton.setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_24));
+    private void registerProgressReceiver() {
+        progressReceiver = new ProgressReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(getPackageName() + ".CACHE_PROGRESS");
+        registerReceiver(progressReceiver, intentFilter);
     }
 
     public void initMainActivity() {
@@ -143,7 +142,35 @@ public class MainActivity extends FragmentActivity {
         initViewPager2();
         initBackgroundCallBack();
         initObserver();
+        registerProgressReceiver();
         //setMainActivityData();
+    }
+
+    public static boolean isExits(String pkg, String cls, Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        ActivityManager.RunningTaskInfo task = tasks.get(0);
+        if (task != null) {
+            return TextUtils.equals(task.topActivity.getPackageName(), pkg) && TextUtils.equals(task.topActivity.getClassName(), cls);
+        }
+        return false;
+    }
+
+    private void nowLoading(int musicId) {
+        prepareInfo(musicId);
+        playButton.setImageDrawable(getDrawable(R.drawable.ic_round_arrow_circle_down_24));
+    }
+
+    @Override
+    public void onDestroy() {
+        //musicService.unregisterMusicServiceCallback(musicServiceCallback);
+        //unbindService(serviceConnection);
+        //homeFragment.onDestroy();
+        //homeFragment.stopLyric();
+        //stopProgressBar();
+        //removeObserver();
+        unregisterReceiver(progressReceiver);
+        super.onDestroy();
     }
 
     private PlayingListAdapter.RefreshListener refreshListener = new PlayingListAdapter.RefreshListener() {
@@ -500,25 +527,29 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        //musicService.unregisterMusicServiceCallback(musicServiceCallback);
-        //unbindService(serviceConnection);
-        //homeFragment.onDestroy();
-        //homeFragment.stopLyric();
-        //stopProgressBar();
-        //removeObserver();
-        super.onDestroy();
+    public void setPlayBarTitle(Song song) {
+        playBarTitle.setText(song.getSongTitle() + " - " + song.getArtistName());
+        cacheProgressBar.setProgress(0);
+        Bitmap bitmap = myViewModel.getNowAlbumArt();
+
+        shapeableImageView.setImageBitmap(bitmap);
+        if (bitmap != null) {
+            backImageView.setImageBitmap(bitmap);
+        } else {
+            int type = SharedPrefs.getSplashType();
+            backImageView.setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    User.userData.userName + (type == 0 ? "" : "_custom"))));
+        }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(getIntent().getExtras()!=null&&viewPager!=null) {
-            viewPager.setCurrentItem(getIntent().getExtras().getInt("pageId",0),false);
+        if (getIntent().getExtras() != null && viewPager != null) {
+            viewPager.setCurrentItem(getIntent().getExtras().getInt("pageId", 0), false);
         }
         findViewById(R.id.splash_view).setVisibility(View.GONE);
-        Log.e("TAG","onNewIntent");
+        Log.e("TAG", "onNewIntent");
             if (intent != null) {
                 boolean isExit = intent.getBooleanExtra("exit", false);
                 if (isExit) {
@@ -566,43 +597,6 @@ public class MainActivity extends FragmentActivity {
     //        return null;
     //}
 
-    public void setPlayBarTitle(Song song) {
-        playBarTitle.setText(song.getSongTitle() + " - " + song.getArtistName());
-        Bitmap bitmap = myViewModel.getNowAlbumArt();
-
-        shapeableImageView.setImageBitmap(bitmap);
-        if (bitmap != null) {
-            backImageView.setImageBitmap(bitmap);
-        } else {
-            int type = SharedPrefs.getSplashType();
-            backImageView.setImageURI(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    User.userData.userName + (type == 0 ? "" : "_custom"))));
-        }
-    }
-
-    public void playPrevOrNext(boolean isNext) {
-        if (isNext)
-            myViewModel.getmMediaController().getTransportControls().skipToNext();
-        else
-            myViewModel.getmMediaController().getTransportControls().skipToPrevious();
-        stopProgressBar();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isPlayingListShowing) {
-            showPlayingList();
-        } else if (viewPager != null && viewPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
-        } else if (viewPager != null && viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag || songListFragment.searchFlag || songListFragment.songlistFlag)) {
-            songListFragment.onBackPressed();
-        } else if (viewPager != null) {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-        }
-    }
-
     private void initViewCompat() {
         debugText=findViewById(R.id.tabDebugText);
         splashCard = findViewById(R.id.splash_view);
@@ -620,6 +614,7 @@ public class MainActivity extends FragmentActivity {
         playBarPrev = findViewById(R.id.playPrevious);
         playBarNext = findViewById(R.id.playNext);
         playBarPlayingList = findViewById(R.id.playList);
+        cacheProgressBar = findViewById(R.id.progressBar);
         shapeableImageView = findViewById(R.id.playBarAlbumImage);
         backImageView = findViewById(R.id.backImageView);
         playingList = findViewById(R.id.main_list_playing);
@@ -742,11 +737,47 @@ public class MainActivity extends FragmentActivity {
         //resetPlayProgress();
     }
 
+    public void playPrevOrNext(boolean isNext) {
+        if (isNext)
+            myViewModel.getmMediaController().getTransportControls().skipToNext();
+        else
+            myViewModel.getmMediaController().getTransportControls().skipToPrevious();
+        stopProgressBar();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isPlayingListShowing) {
+            showPlayingList();
+        } else if (viewPager != null && viewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else if (viewPager != null && viewPager.getCurrentItem() == 1 && (songListFragment.multipleChooseFlag || songListFragment.searchFlag || songListFragment.songlistFlag)) {
+            songListFragment.onBackPressed();
+        } else if (viewPager != null) {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
+    }
+
+    public class ProgressReceiver extends BroadcastReceiver {
+        public ProgressReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int progress = intent.getIntExtra("p", 0);
+            if (cacheProgressBar != null)
+                cacheProgressBar.setProgress(progress);
+            //Log.e(TAG, progress + "%");
+        }
+    }
+
     private void genSonglistFromPlaylist() {
-        if(adapter.getCount()==0){
+        if (adapter.getCount() == 0) {
             Toast.makeText(MainActivity.this, "播放列表为空", Toast.LENGTH_SHORT).show();
-        }else {
-            DialogInterface.OnClickListener pos=new DialogInterface.OnClickListener() {
+        } else {
+            DialogInterface.OnClickListener pos = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (CustomDialogUtils.editText.getText().toString().trim().length() >= 1) {

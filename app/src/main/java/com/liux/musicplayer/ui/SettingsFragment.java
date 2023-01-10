@@ -530,6 +530,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                                 @Override
                                 public void run() {
                                     MusicLibrary.refreshAllSongListList();
+                                    myViewModel.getmMediaController().getTransportControls().sendCustomAction("CLEAR_PLAYLIST", null);
                                 }
                             }, (User.isLogin && SharedPrefs.getIsNeedFastStart()) ? 100 : 2100);
                     return true;

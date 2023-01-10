@@ -1,6 +1,7 @@
 package com.liux.musicplayer.services;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -59,10 +60,18 @@ public class HttpServer extends NanoHTTPD {
             if (url.startsWith("/api/")) {
                 Map<String, List<String>> param = session.getParameters();
                 switch (url) {
-                    case Config.HTTP_API_HELLO_WORLD:
+                    case Config.HTTP_API_VERSION:
+                        int versionCode = 0;
+                        String versionName = "";
+                        try {
+                            versionName = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionName;
+                            versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         return responseJsonString(
                                 200,
-                                "Hello World!",
+                                new API.VERSION(mContext.getPackageName(), versionName, versionCode),
                                 "请求成功！"
                         );
                     case Config.HTTP_API_INFO:
@@ -84,10 +93,10 @@ public class HttpServer extends NanoHTTPD {
                             case "正在播放":
                                 listName = "playingList";
                                 break;
-                            case "在线歌曲":
+                            case "在线列表":
                                 listName = "webAllSongList";
                                 break;
-                            case "所有歌曲":
+                            case "所有音乐":
                                 listName = "allSongList";
                                 break;
                         }
@@ -97,8 +106,20 @@ public class HttpServer extends NanoHTTPD {
                                 "请求成功！"
                         );
                     case Config.HTTP_API_PLAYLIST:
+                        String listName2 = (param.get("name")).get(0);
+                        switch (listName2) {
+                            case "正在播放":
+                                listName2 = "playingList";
+                                break;
+                            case "在线列表":
+                                listName2 = "webAllSongList";
+                                break;
+                            case "所有音乐":
+                                listName2 = "allSongList";
+                                break;
+                        }
                         return responseJsonString(
-                                new API.PlayList(MusicLibrary.getSongListByName((param.get("name")).get(0))).playlist
+                                new API.PlayList(MusicLibrary.getSongListByName(listName2)).playlist
                         );
                     case Config.HTTP_API_SONG:
                         API.SongDetail songDetail = new API.SongDetail(MusicLibrary.querySong(param.get("path").get(0)));
@@ -227,7 +248,7 @@ public class HttpServer extends NanoHTTPD {
     public static class Config {
         public static final String HTTP_URL = "http://IP:PORT/";
         public static int HTTP_PORT = 8068;
-        public static final String HTTP_API_HELLO_WORLD = "/api/hello_world";
+        public static final String HTTP_API_VERSION = "/api/version";
         public static final String HTTP_API_INFO = "/api/info";
         public static final String HTTP_API_SONG_LIST_LIST = "/api/allsonglist";
         public static final String HTTP_API_SONG_LIST = "/api/songlist";

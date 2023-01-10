@@ -6,6 +6,7 @@ import static com.liux.musicplayer.services.MusicService.REPEAT_ONE;
 import static com.liux.musicplayer.services.MusicService.SHUFFLE_PLAY;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.liux.musicplayer.BuildConfig;
 import com.liux.musicplayer.media.MusicLibrary;
 import com.liux.musicplayer.services.HttpServer;
 import com.liux.musicplayer.utils.SharedPrefs;
@@ -52,8 +53,8 @@ public class API {
             playlists.remove("allSongList");
             playlists.remove("webAllSongList");
             playlists.add(0, "正在播放");
-            playlists.add(1, "所有歌曲");
-            playlists.add(2, "在线歌曲");
+            playlists.add(1, "所有音乐");
+            playlists.add(2, "在线列表");
             this.total = playlists.size();
         }
     }
@@ -103,8 +104,8 @@ public class API {
         boolean fixed = false;
         boolean autoplay = false;
         String theme = "#4CAF50";
-        String loop = "all";
-        String order = "random";
+        String loop;
+        String order;
         String preload = "auto";
         float volume = 0.5f;
         boolean mutex = true;
@@ -131,6 +132,19 @@ public class API {
                     order = "random";
                     break;
             }
+        }
+    }
+
+    public static class VERSION {
+        String packageName;
+        String versionName;
+        int versionCode;
+        boolean debug = BuildConfig.DEBUG;
+
+        public VERSION(String packageName, String versionName, int versionCode) {
+            this.packageName = packageName;
+            this.versionName = versionName;
+            this.versionCode = versionCode;
         }
     }
 }

@@ -154,7 +154,7 @@
     <string name="isUseMetaData_summary">The metadata of the music file takes precedence in the details card of the playback page</string>
     <string name="fileMetaDataInfo">"Metadata Information:"</string>
     <string name="title_custom">Custom</string>
-    <string name="copyright" translatable="false">Copyright © 2022-2023 Brownlzy. All Rights Reserved.</string>
+    <string name="copyright" translatable="false">Copyright © 22-23 Brownlzy. All Rights Reserved.</string>
     <string name="officialWebsite">Official Website</string>
     <string name="supportMe">Support Me</string>
     <string name="showDebug">Show Debug Settings</string>

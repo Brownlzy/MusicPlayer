@@ -28,12 +28,18 @@ public class API {
             name = song.getSongTitle();
             artist = song.getArtistName();
             theme = "#4CAF50";
-            url = "/api/file?path=" + UriTransform.toURLEncoded(song.getSongPath());
-            cover = "/api/cover?path=" + UriTransform.toURLEncoded(song.getSongPath());
-            if (!song.getLyricPath().equals("null"))
-                lrc = "/api/file?path=" + UriTransform.toURLEncoded(song.getLyricPath());
-            else
-                lrc = "no-lrc.lrc";
+            if (song.getSongPath().matches("^(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[\\S\\s]*")) {
+                url = song.getSongPath();
+                cover = "/api/cover?path=earth";
+                lrc = song.getLyricPath();
+            } else {
+                url = "/api/file?path=" + UriTransform.toURLEncoded(song.getSongPath());
+                cover = "/api/cover?path=" + UriTransform.toURLEncoded(song.getSongPath());
+                if (!song.getLyricPath().equals("null"))
+                    lrc = "/api/file?path=" + UriTransform.toURLEncoded(song.getLyricPath());
+                else
+                    lrc = "no-lrc.lrc";
+            }
         }
     }
 
@@ -42,12 +48,12 @@ public class API {
         List<String> playlists;
 
         public SongListList(List<MusicLibrary.SongList> allSongListList) {
-            this.playlists = allSongListList.stream().map(songList -> songList.n).distinct().collect(Collectors.toList());
-            //this.playlists.add(0,"playingList");
-            this.playlists.add(0, "正在播放");
+            playlists = allSongListList.stream().map(songList -> songList.n).distinct().collect(Collectors.toList());
             playlists.remove("allSongList");
             playlists.remove("webAllSongList");
-            playlists.add("所有歌曲");
+            playlists.add(0, "正在播放");
+            playlists.add(1, "所有歌曲");
+            playlists.add(2, "在线歌曲");
             this.total = playlists.size();
         }
     }

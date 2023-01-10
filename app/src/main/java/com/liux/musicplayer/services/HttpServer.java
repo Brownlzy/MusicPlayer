@@ -84,6 +84,9 @@ public class HttpServer extends NanoHTTPD {
                             case "正在播放":
                                 listName = "playingList";
                                 break;
+                            case "在线歌曲":
+                                listName = "webAllSongList";
+                                break;
                             case "所有歌曲":
                                 listName = "allSongList";
                                 break;
@@ -106,8 +109,8 @@ public class HttpServer extends NanoHTTPD {
                         );
                     case Config.HTTP_API_SONG_PIC:
                         String file1 = param.get("path").get(0);
+                        InputStream is = null;
                         if (FileUtils.isFileExists(file1)) {
-                            InputStream is = null;
                             try {
                                 Bitmap cover = MusicUtils.getAlbumImage(file1);
                                 if (cover == null) {
@@ -121,7 +124,15 @@ public class HttpServer extends NanoHTTPD {
                                 return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在封面：" + file1);
                             }
                         } else {
-                            return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在：" + file1);
+                            try {
+                                Bitmap cover = drawable2Bitmap(mContext.getDrawable(R.drawable.ic_round_earth_24));
+                                is = Bitmap2InputStream(cover);
+                                //fis.skip(Long.parseLong(session.getHeaders().get("range").split("bytes=")[1].split("-")[0]));
+                                return newFixedLengthResponse(Response.Status.OK, "image/jpeg", is, is.available());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", "文件不存在封面：" + file1);
+                            }
                         }
                     case Config.HTTP_API_BACK_PIC:
                         int type = SharedPrefs.getSplashType();

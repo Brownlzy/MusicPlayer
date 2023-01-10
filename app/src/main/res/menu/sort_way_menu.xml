@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sort_title_up"
+        android:title="@string/sort_title_up" />
+    <item
+        android:id="@+id/sort_title_down"
+        android:title="@string/sort_title_down" />
+    <item
+        android:id="@+id/sort_artist_up"
+        android:title="@string/sort_artist_up" />
+    <item
+        android:id="@+id/sort_artist_down"
+        android:title="@string/sort_artist_down" />
+    <item
+        android:id="@+id/sort_album_up"
+        android:title="@string/sort_album_up" />
+    <item
+        android:id="@+id/sort_album_down"
+        android:title="@string/sort_album_down" />
+<!--    <item-->
+<!--        android:id="@+id/sort_time_up"-->
+<!--        android:title="@string/sort_time_up" />-->
+<!--    <item-->
+<!--        android:id="@+id/sort_time_down"-->
+<!--        android:title="@string/sort_time_down" />-->
+</menu>

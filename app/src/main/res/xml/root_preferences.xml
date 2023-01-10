@@ -1,0 +1,217 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/title_permission">
+
+        <Preference
+            app:key="gotoAppDetails"
+            app:title="@string/gotoAppDetails" />
+
+        <CheckBoxPreference
+            android:persistent="false"
+            app:icon="@drawable/ic_baseline_sd_storage_24"
+            app:key="storage_permission"
+            app:summaryOff="@string/switch_storage_permission_off"
+            app:summaryOn="@string/switch_storage_permission_on"
+            app:title="@string/give_storage_permission" />
+
+        <CheckBoxPreference
+            android:persistent="false"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="layer_permission"
+            app:summaryOff="@string/switch_layer_permission_off"
+            app:summaryOn="@string/switch_layer_permission_on"
+            app:title="@string/give_layer_permission" />
+        <Preference
+            android:persistent="false"
+            app:key="autoRun"
+            app:icon="@drawable/ic_baseline_miscellaneous_services_24"
+            app:title="@string/autoRun"
+            app:summary="@string/autoRun_summary"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/title_playsettings">
+
+        <SeekBarPreference
+            app:key="timing"
+            app:title="@string/timing"
+            app:min="0"
+            android:max="120"
+            app:showSeekBarValue="true"
+            app:summary="@string/timing_summary"
+            app:icon="@drawable/ic_round_timer_24" />
+
+        <CheckBoxPreference
+            app:key="isShowLyric"
+            app:title="@string/isShowLyric"
+            app:summary="@string/isShowLyric_summary"
+            app:dependency="layer_permission"
+            app:icon="@drawable/ic_baseline_subtitles_24" />
+
+        <CheckBoxPreference
+            app:key="deskLyricLock"
+            app:title="@string/deskLyricLock"
+            app:icon="@drawable/ic_round_lock_24"
+            app:dependency="layer_permission" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/title_custom">
+
+        <CheckBoxPreference
+            app:key="isUseMetaData"
+            app:title="@string/isUseMetaData"
+            app:defaultValue="true"
+            app:icon="@drawable/ic_round_local_offer_24"
+            app:summary="@string/isUseMetaData_summary"/>
+
+        <CheckBoxPreference
+            app:key="isNewAppearance"
+            app:title="@string/newAppearance"
+            app:icon="@drawable/ic_round_photo_album_24"
+            app:summary="@string/newAppearance_summary" />
+
+        <CheckBoxPreference
+            app:key="isNeedFastStart"
+            app:title="@string/isNeedFastStart"
+            app:icon="@drawable/ic_round_label_important_24"
+            app:summary="@string/isNeedFastStart_summary"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="exp"
+        app:title="@string/experiment">
+        <CheckBoxPreference
+            app:enabled="true"
+            app:icon="@drawable/ic_round_remote_24"
+            app:key="isEnableWebServer"
+            app:title="@string/isEnableWebServer" />
+
+        <CheckBoxPreference
+            app:key="isUseWebPlayList"
+            app:enabled="true"
+            app:icon="@drawable/ic_round_earth_24"
+            app:title="@string/isUseWebPlayList"
+            app:summary="@string/isUseWebPlayList_summary" />
+
+        <EditTextPreference
+            app:key="WebPlayListUrl"
+            app:title="@string/WebPlayListUrl"
+            app:icon="@drawable/ic_round_link_24"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/title_about">
+
+        <Preference
+            app:key="user"
+            app:icon="@drawable/ic_round_account_circle_24"
+            app:title="@string/user_unlogin"/>
+        <Preference
+            app:icon="@drawable/ic_baseline_info_24"
+            app:key="info"
+            app:title="@string/aboutApp" />
+        <Preference
+            app:icon="@drawable/ic_round_exit_to_app_24"
+            app:key="exit"
+            app:title="@string/exitApp" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="debug"
+        app:title="@string/title_debug">
+
+        <EditTextPreference
+            app:key="nowId"
+            app:title="@string/nowId"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="playOrder"
+            app:title="@string/playOrder"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="SONGLIST_webAllSongList"
+            app:title="@string/title_webPlayList"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="cacheList"
+            app:title="@string/title_cacheList"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="crashMe"
+            app:icon="@drawable/ic_round_bug_report_24"
+            app:title="@string/crashMe" />
+
+        <Preference
+            app:key="lastErrorLog"
+            android:defaultValue="null"
+            app:title="@string/lastErrorLog"
+            app:defaultValue="null" />
+
+        <Preference
+            app:key="lastCrash"
+            app:title="@string/lastCrash"
+            app:defaultValue="false" />
+
+        <Preference
+            app:icon="@drawable/ic_baseline_folder_24"
+            app:key="setMainFolder"
+            app:isPreferenceVisible="false"
+            app:title="@string/mainfolder" />
+
+        <CheckBoxPreference
+            app:key="isMoveMusic"
+            app:title="@string/isMoveMusic"
+            app:isPreferenceVisible="false"
+            app:summary="@string/isMoveMusic_summary" />
+
+        <EditTextPreference
+            android:defaultValue="/storage/emulated/0/Android/data/com.liux.musicplayer/Music/"
+            app:key="mainFolder"
+            app:isPreferenceVisible="false"
+            app:title="@string/mainfolder" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:key="rsa"
+        app:title="@string/title_rsa">
+
+        <EditTextPreference
+            app:key="newUser"
+            app:icon="@drawable/ic_round_account_circle_24"
+            app:title="@string/newUser"
+            android:persistent="false"/>
+
+        <EditTextPreference
+            app:key="rsa_private_key"
+            app:icon="@drawable/ic_round_key_24"
+            app:title="@string/rsa_private_key"
+            app:useSimpleSummaryProvider="true"/>
+
+        <EditTextPreference
+            app:key="rsa_encode_test"
+            app:title="@string/rsa_encode_test"
+            android:persistent="false"/>
+
+        <EditTextPreference
+            app:key="rsa_public_key"
+            app:icon="@drawable/ic_round_key_24"
+            app:title="@string/rsa_public_key"
+            app:useSimpleSummaryProvider="true"/>
+
+        <EditTextPreference
+            app:key="rsa_decode_test"
+            app:title="@string/rsa_decode_test"
+            android:persistent="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

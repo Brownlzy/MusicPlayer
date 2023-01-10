@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:icon="@drawable/ic_round_earth_24"
+        app:key="officialWebsite"
+        app:title="@string/officialWebsite"/>
+    <Preference
+        app:key="supportMe"
+        app:title="@string/supportMe"
+        app:icon="@drawable/ic_outline_money_24"/>
+    <Preference
+        app:icon="@drawable/ic_round_arrow_circle_up_24"
+        app:key="checkUpdate"
+        app:title="@string/title_checkUpdate"/>
+    <Preference
+        app:isPreferenceVisible="false"
+        app:icon="@drawable/ic_baseline_article_24"
+        app:key="changeLog"
+        app:title="@string/changeLog"/>
+    <Preference
+        app:key="newsBoard"
+        app:title="@string/newsBoard"
+        app:icon="@drawable/ic_round_fiber_new_24"
+        app:persistent="false" />
+    <Preference
+        app:isPreferenceVisible="false"
+        app:key="openSource"
+        app:title="@string/openSource"
+        app:icon="@drawable/ic_baseline_source_24"/>
+    <Preference
+        app:key="clearCache"
+        app:icon="@drawable/ic_round_delete_forever_24"
+        app:title="@string/clearCache" />
+    <Preference
+        app:key="lastErrorLog"
+        app:icon="@drawable/ic_round_bug_report_24"
+        android:defaultValue="null"
+        app:title="@string/lastErrorLog"
+        app:defaultValue="null" />
+    <CheckBoxPreference
+        app:icon="@drawable/ic_baseline_miscellaneous_services_24"
+        app:key="showDebug"
+        app:title="@string/showDebug" />
+    <Preference
+        app:icon="@drawable/ic_round_exit_to_app_24"
+        app:key="exit"
+        app:title="@string/exitApp" />
+
+
+</PreferenceScreen>

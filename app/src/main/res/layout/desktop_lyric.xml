@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/desktopLyricLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#66000000"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:id="@+id/lyricLayout"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
+                android:id="@+id/firstScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <com.liux.musicplayer.views.StrokeTextView
+                    android:id="@+id/firstLyric"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="horizontal"
+                    android:singleLine="true"
+                    android:textColor="@color/teal_200"
+                    android:textFontWeight="700"
+                    android:textSize="24sp"
+                    tools:text="作曲：无" />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:id="@+id/secondScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <com.liux.musicplayer.views.StrokeTextView
+                    android:id="@+id/secondLyric"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="horizontal"
+                    android:singleLine="true"
+                    android:textColor="#ffffffff"
+                    android:textFontWeight="700"
+                    android:textSize="24sp"
+                    tools:text="纯音乐，请欣赏" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/lyricCover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/lyricLayout"
+            android:layout_alignTop="@+id/lyricLayout"
+            android:layout_alignEnd="@+id/lyricLayout" />
+
+        <LinearLayout
+            android:id="@+id/lyricHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top">
+
+            <ImageView
+                android:id="@+id/appIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_baseline_music_note_float_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="@string/app_name"
+                android:textColor="#ffffffff"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:src="@drawable/ic_round_close_float_24" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/lyricCtrlBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#66000000"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/nowPlaying"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scrollbars="horizontal"
+            android:singleLine="true"
+            android:text="NowPlaying"
+            android:textAlignment="center"
+            android:textColor="#ffffffff" />
+
+        <LinearLayout
+            android:id="@+id/playBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lyricLayout"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/lockLyric"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/playPrev"
+                android:src="@drawable/ic_outline_lock_float_24" />
+
+            <ImageView
+                android:id="@+id/playPrevious"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/playPrev"
+                android:src="@drawable/ic_outline_skip_previous_float_24" />
+
+            <ImageView
+                android:id="@+id/playPause"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/pauseOrPlay"
+                android:src="@drawable/ic_round_play_circle_float_24" />
+
+            <ImageView
+                android:id="@+id/playNext"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/playNext"
+                android:src="@drawable/ic_outline_skip_next_float_24" />
+
+            <ImageView
+                android:id="@+id/lyricSettings"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/playOrder"
+                android:src="@drawable/ic_outline_settings_float_24" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/settingsBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/color_red"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#F44336"
+                android:clickable="true"
+                android:src="@drawable/ic_round_check_24"
+                app:shapeAppearance="@style/CircleStyle" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/color_blue"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#03A9F4"
+                android:clickable="true"
+                android:src="@drawable/ic_round_check_24"
+                app:shapeAppearance="@style/CircleStyle" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/color_green"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#4CAF50"
+                android:clickable="true"
+                android:src="@drawable/ic_round_check_24"
+                app:shapeAppearance="@style/CircleStyle" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/color_yellow"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#FFC107"
+                android:clickable="true"
+                android:src="@drawable/ic_round_check_24"
+                app:shapeAppearance="@style/CircleStyle" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/color_purple"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#673AB7"
+                android:clickable="true"
+                android:src="@drawable/ic_round_check_24"
+                app:shapeAppearance="@style/CircleStyle" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/largerText"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/playNext"
+                android:src="@drawable/ic_round_zoom_in_float_24" />
+
+            <ImageView
+                android:id="@+id/smallerText"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/playOrder"
+                android:src="@drawable/ic_round_zoom_out_float_24" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="HeaderBarAddSongs">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">#000000</item>
+        <item name="android:gravity">left</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="HeaderBarEditSongs">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">#000000</item>
+        <item name="android:gravity">right</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="TabBarStyle">
+        <item name="android:background">#66000000</item>
+    </style>
+
+    <style name="TabBarStyleB">
+        <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="RoundedStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">15dp</item>
+    </style>
+
+    <style name="CircleStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CutStyle">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
+    <style name="BlurColor">
+        <item name="realtimeOverlayColor">#66121212</item>
+    </style>
+
+    <style name="MainActivityBlurColor">
+        <item name="realtimeOverlayColor">#99000000</item>
+    </style>
+
+    <style name="CardViewBackgroundColor">
+        <item name="cardBackgroundColor">#80000000</item>
+    </style>
+
+    <style name="DarkCardViewBackgroundColor">
+        <item name="cardBackgroundColor">#CC000000</item>
+    </style>
+
+    <style name="navBackgroundColor">
+        <item name="backgroundColor">#0D000000</item>
+    </style>
+
+    <style name="alertBackFrame">
+        <item name="background">@android:drawable/alert_dark_frame</item>>
+    </style>
+
+    <style name="SplashBackgroundColor">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+</resources>

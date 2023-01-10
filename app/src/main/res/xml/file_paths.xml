@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <path>
+        <external-cache-path
+            path="/apk"
+            name="NewApk" />
+        <external-cache-path
+            path="/log"
+            name="ErrorLogs" />
+        <external-cache-path
+            path="/tmp"
+            name="CacheMusicFiles" />
+    </path>
+</resources>

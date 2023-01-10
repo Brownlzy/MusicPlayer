@@ -67,11 +67,10 @@ public class WebService extends Service {
         int ipAddress = wifiInfo.getIpAddress();
         String ip = (ipAddress & 0xff) + "." + (ipAddress >> 8 & 0xff) + "." + (ipAddress >> 16 & 0xff) + "." + (ipAddress >> 24 & 0xff);
         Config.HTTP_IP = ip;
-        mHttpServer = new HttpServer(ip, Config.HTTP_PORT);
+        mHttpServer = new HttpServer(this, ip, Config.HTTP_PORT);
         try {
             mHttpServer.asset_mgr = this.getAssets();
             mHttpServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-            mHttpServer.mContext = this;
         } catch (IOException e) {
             //e.printStackTrace();
             Log.e("WebServer", Config.HTTP_IP + ":" + String.valueOf(Config.HTTP_PORT));
